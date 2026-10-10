@@ -3,6 +3,7 @@ import {
   AbsoluteFill,
   Easing,
   interpolate,
+  interpolateColors,
   spring,
   useCurrentFrame,
   useVideoConfig,
@@ -56,7 +57,8 @@ const MaskedWords: React.FC<{
               style={{
                 ...style,
                 display: "inline-block",
-                transform: `translateY(${(1 - progress) * 110}%) rotate(${(1 - progress) * 6}deg)`,
+                transform: `translate3d(0, ${(1 - progress) * 105}%, 0)`,
+                willChange: "transform",
                 opacity: progress,
               }}
             >
@@ -94,11 +96,11 @@ const KaraokeWords: React.FC<{
         const pop = spring({
           frame: frame - wordStart,
           fps,
-          config: { damping: 12, stiffness: 220, mass: 0.6 },
+          config: { damping: 20, stiffness: 160, mass: 0.7 },
         });
         const highlight = interpolate(
           frame,
-          [wordStart, wordStart + stagger, wordStart + stagger * 2.5],
+          [wordStart, wordStart + stagger * 2, wordStart + stagger * 5],
           [1, 1, 0],
           { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
         );
@@ -111,8 +113,9 @@ const KaraokeWords: React.FC<{
               opacity: interpolate(pop, [0, 0.4], [0, 1], {
                 extrapolateRight: "clamp",
               }),
-              transform: `translateY(${(1 - pop) * 22}px) scale(${0.85 + pop * 0.15})`,
-              color: highlight > 0.5 ? ACCENT : WHITE,
+              transform: `translate3d(0, ${(1 - pop) * 18}px, 0)`,
+              willChange: "transform, opacity",
+              color: interpolateColors(highlight, [0, 1], [WHITE, ACCENT]),
             }}
           >
             {word}
@@ -178,7 +181,7 @@ export const ExerciseSubtitle: React.FC<{
         color: WHITE,
         opacity: 1 - exit,
         transform: `translateY(${exit * 50}px)`,
-        filter: `blur(${exit * 10}px)`,
+        filter: exit > 0 ? `blur(${exit * 8}px)` : undefined,
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
@@ -230,8 +233,7 @@ export const ExerciseSubtitle: React.FC<{
           alignSelf: "flex-start",
           padding: "10px 26px 13px 24px",
           borderRadius: 26,
-          background: "rgba(255,255,255,0.12)",
-          backdropFilter: "blur(16px)",
+          background: "rgba(20,32,36,0.55)",
           border: "1.5px solid rgba(168,199,207,0.75)",
           boxShadow: "0 8px 30px rgba(0,0,0,0.25)",
           fontSize: 33,
