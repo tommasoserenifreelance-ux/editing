@@ -171,79 +171,84 @@ export const ExerciseSubtitle: React.FC<{
     <AbsoluteFill
       style={{
         justifyContent: "flex-end",
-        padding: "0 72px 340px 72px",
+        padding: "0 68px 300px 68px",
         fontFamily: `"${FONT_FAMILY}", serif`,
         fontStyle: "italic",
         fontWeight: 700,
         color: WHITE,
         opacity: 1 - exit,
-        transform: `translateY(${exit * 60}px)`,
+        transform: `translateY(${exit * 50}px)`,
         filter: `blur(${exit * 10}px)`,
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: 22 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
         <div
           style={{
-            fontSize: 132,
+            fontSize: 104,
             fontWeight: 900,
             lineHeight: 1,
             color: ACCENT,
             textShadow,
-            transform: `scale(${0.4 + numberIn * 0.6}) rotate(${(1 - numberIn) * -12}deg)`,
+            transform: `scale(${0.5 + numberIn * 0.5}) rotate(${(1 - numberIn) * -10}deg)`,
             transformOrigin: "left bottom",
             opacity: numberIn,
           }}
         >
           {exercise.number}
         </div>
+        {/* Hairline that draws out from the number */}
+        <div
+          style={{
+            flex: 1,
+            height: 2,
+            marginTop: 18,
+            background: `linear-gradient(to right, ${ACCENT}, rgba(168,199,207,0))`,
+            transform: `scaleX(${barIn})`,
+            transformOrigin: "left",
+          }}
+        />
+      </div>
+
+      <div style={{ marginTop: 18 }}>
+        <MaskedWords
+          text={exercise.title}
+          startFrame={titleStart}
+          stagger={wordStagger}
+          style={{
+            fontSize: 70,
+            fontWeight: 900,
+            lineHeight: 1.1,
+            letterSpacing: 1.5,
+            textShadow,
+          }}
+        />
       </div>
 
       <div
         style={{
-          height: 6,
-          width: 160 * barIn,
-          background: ACCENT,
-          borderRadius: 3,
-          margin: "10px 0 22px 4px",
-        }}
-      />
-
-      <MaskedWords
-        text={exercise.title}
-        startFrame={titleStart}
-        stagger={wordStagger}
-        style={{
-          fontSize: 86,
-          fontWeight: 900,
-          lineHeight: 1.08,
-          letterSpacing: 1,
-          textShadow,
-        }}
-      />
-
-      <div
-        style={{
-          marginTop: 26,
+          marginTop: 24,
           alignSelf: "flex-start",
-          padding: "10px 26px 14px 24px",
-          borderRadius: 28,
-          background: "rgba(10,10,10,0.55)",
-          border: `2px solid ${ACCENT}`,
-          fontSize: 40,
-          lineHeight: 1.2,
+          padding: "10px 26px 13px 24px",
+          borderRadius: 26,
+          background: "rgba(255,255,255,0.12)",
+          backdropFilter: "blur(16px)",
+          border: "1.5px solid rgba(168,199,207,0.75)",
+          boxShadow: "0 8px 30px rgba(0,0,0,0.25)",
+          fontSize: 33,
+          lineHeight: 1.25,
           opacity: detailIn,
-          transform: `translateX(${(1 - detailIn) * -80}px)`,
+          transform: `translateX(${(1 - detailIn) * -60}px)`,
         }}
       >
         {exercise.detail}
       </div>
 
-      <div style={{ marginTop: 26 }}>
+      <div style={{ marginTop: 22 }}>
         <KaraokeWords
           text={exercise.description}
           startFrame={descriptionStart}
           stagger={wordStagger}
-          style={{ fontSize: 52, lineHeight: 1.2, textShadow }}
+          style={{ fontSize: 44, lineHeight: 1.22, textShadow }}
         />
       </div>
     </AbsoluteFill>

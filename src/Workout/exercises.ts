@@ -1,15 +1,35 @@
+export const WORKOUT_FPS = 30;
+
+export type Clip = {
+  src: string;
+  durationInFrames: number;
+};
+
+// Source videos, played back to back
+export const clips: Clip[] = [
+  { src: "clips/esercizi-1-3.mp4", durationInFrames: 524 },
+  { src: "clips/esercizio-4.mp4", durationInFrames: 201 },
+  { src: "clips/esercizio-5.mp4", durationInFrames: 255 },
+  { src: "clips/esercizio-6.mp4", durationInFrames: 299 },
+  { src: "clips/esercizio-7.mp4", durationInFrames: 256 },
+];
+
+export const clipStart = (clipIndex: number) =>
+  clips.slice(0, clipIndex).reduce((sum, c) => sum + c.durationInFrames, 0);
+
+export const WORKOUT_DURATION_IN_FRAMES = clipStart(clips.length);
+
 export type Exercise = {
   number: string;
   title: string;
   detail: string;
   description: string;
-  // Scene boundaries in seconds, aligned with the cuts in the source video
-  from: number;
-  to: number;
+  clip: number;
+  // Frames within the clip; omitted means the whole clip.
+  // Exercises 1–3 share one clip and are split at its scene cuts.
+  from?: number;
+  to?: number;
 };
-
-export const WORKOUT_FPS = 30;
-export const WORKOUT_DURATION_SECONDS = 17.45;
 
 export const exercises: Exercise[] = [
   {
@@ -17,23 +37,60 @@ export const exercises: Exercise[] = [
     title: "CORSA – 5 MINUTI",
     detail: "Pendenza 1% · Velocità 8",
     description: "Riscaldamento cardiovascolare e attivazione muscolare.",
+    clip: 0,
     from: 0,
-    to: 3.667,
+    to: 110,
   },
   {
     number: "02.",
     title: "AFFONDO INDIETRO – 4×10",
     detail: "Muscoli: quadricipiti e grande gluteo.",
     description: "Migliora forza, equilibrio e stabilità.",
-    from: 3.667,
-    to: 11.167,
+    clip: 0,
+    from: 110,
+    to: 335,
   },
   {
     number: "03.",
     title: "STEP UP – 4×10",
     detail: "Muscoli: quadricipiti, grande gluteo e ischiocrurali.",
     description: "Sviluppa forza e coordinazione delle gambe.",
-    from: 11.167,
-    to: WORKOUT_DURATION_SECONDS,
+    clip: 0,
+    from: 335,
+  },
+  {
+    number: "04.",
+    title: "HIP THRUST – 4×10",
+    detail: "Muscolo: grande gluteo.",
+    description: "Favorisce lo sviluppo di forza e volume dei glutei.",
+    clip: 1,
+  },
+  {
+    number: "05.",
+    title: "LAT MACHINE PRESA LARGA – 4×10",
+    detail: "Muscolo: gran dorsale.",
+    description: "Rinforza la schiena e migliora la forza di trazione.",
+    clip: 2,
+  },
+  {
+    number: "06.",
+    title: "FRENCH PRESS CON MANUBRI – 4×10",
+    detail: "Muscoli: tricipiti.",
+    description: "Isola i tricipiti e ne stimola lo sviluppo muscolare.",
+    clip: 3,
+  },
+  {
+    number: "07.",
+    title: "ALZATE LATERALI – 4×10",
+    detail: "Muscolo: deltoide laterale.",
+    description: "Sviluppa le spalle, migliorandone ampiezza e definizione.",
+    clip: 4,
   },
 ];
+
+export const exerciseRange = (exercise: Exercise) => {
+  const start = clipStart(exercise.clip);
+  const from = start + (exercise.from ?? 0);
+  const to = start + (exercise.to ?? clips[exercise.clip].durationInFrames);
+  return { from, durationInFrames: to - from };
+};
