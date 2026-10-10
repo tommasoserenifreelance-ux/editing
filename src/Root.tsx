@@ -2,12 +2,23 @@ import { Composition, Folder } from "remotion";
 import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
+import { WORKOUT_DURATION_SECONDS, WORKOUT_FPS } from "./Workout/exercises";
+import { WorkoutVideo } from "./Workout/WorkoutVideo";
 
 // Each <Composition> is an entry in the sidebar!
 
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      <Composition
+        // npx remotion render Allenamento out/allenamento.mp4
+        id="Allenamento"
+        component={WorkoutVideo}
+        durationInFrames={Math.floor(WORKOUT_DURATION_SECONDS * WORKOUT_FPS)}
+        fps={WORKOUT_FPS}
+        width={1080}
+        height={1920}
+      />
       <Folder name="Elements">
         <Composition
           id="Logo"
@@ -50,7 +61,6 @@ export const RemotionRoot: React.FC = () => {
           titleColor: "#000000",
         }}
       />
-
     </>
   );
 };
