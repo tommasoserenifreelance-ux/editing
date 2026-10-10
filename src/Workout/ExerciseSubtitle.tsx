@@ -10,7 +10,7 @@ import {
 import type { Exercise } from "./exercises";
 import { FONT_FAMILY } from "./font";
 
-const ACCENT = "#E9FF5B";
+const ACCENT = "#A8C7CF";
 const WHITE = "#FFFFFF";
 const EXIT_FRAMES = 9;
 
@@ -166,7 +166,6 @@ export const ExerciseSubtitle: React.FC<{
     fps,
     config: { damping: 18, stiffness: 140 },
   });
-  const sceneProgress = frame / durationInFrames;
 
   return (
     <AbsoluteFill
@@ -196,41 +195,6 @@ export const ExerciseSubtitle: React.FC<{
           }}
         >
           {exercise.number}
-        </div>
-        <div
-          style={{
-            display: "flex",
-            gap: 10,
-            alignSelf: "flex-end",
-            marginBottom: 22,
-          }}
-        >
-          {Array.from({ length: total }).map((_, i) => (
-            <div
-              key={i}
-              style={{
-                width: 54,
-                height: 7,
-                borderRadius: 4,
-                background: "rgba(255,255,255,0.3)",
-                overflow: "hidden",
-                opacity: barIn,
-              }}
-            >
-              <div
-                style={{
-                  height: "100%",
-                  background: i <= index ? ACCENT : "transparent",
-                  width:
-                    i < index
-                      ? "100%"
-                      : i === index
-                        ? `${sceneProgress * 100}%`
-                        : 0,
-                }}
-              />
-            </div>
-          ))}
         </div>
       </div>
 
