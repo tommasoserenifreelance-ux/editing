@@ -160,10 +160,6 @@ export const ExerciseSubtitle: React.FC<{
     fps,
     config: { damping: 11, stiffness: 160, mass: 0.8 },
   });
-  const barIn = interpolate(frame, [0, 14 * pace], [0, 1], {
-    extrapolateRight: "clamp",
-    easing: Easing.out(Easing.cubic),
-  });
   const detailIn = spring({
     frame: frame - detailStart,
     fps,
@@ -199,17 +195,6 @@ export const ExerciseSubtitle: React.FC<{
         >
           {exercise.number}
         </div>
-        {/* Hairline that draws out from the number */}
-        <div
-          style={{
-            flex: 1,
-            height: 2,
-            marginTop: 18,
-            background: `linear-gradient(to right, ${ACCENT}, rgba(168,199,207,0))`,
-            transform: `scaleX(${barIn})`,
-            transformOrigin: "left",
-          }}
-        />
       </div>
 
       <div style={{ marginTop: 18 }}>

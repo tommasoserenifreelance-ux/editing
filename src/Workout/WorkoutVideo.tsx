@@ -9,6 +9,7 @@ import {
   useCurrentFrame,
 } from "remotion";
 import { ExerciseSubtitle } from "./ExerciseSubtitle";
+import { Hook } from "./Hook";
 import { clips, clipStart, exerciseRange, exercises } from "./exercises";
 import "./font";
 
@@ -59,6 +60,9 @@ export const WorkoutVideo: React.FC = () => {
             "linear-gradient(to top, rgba(8,14,16,0.72) 0%, rgba(8,14,16,0.4) 26%, rgba(8,14,16,0) 46%)",
         }}
       />
+      <Sequence durationInFrames={clips[0].durationInFrames} name="Hook">
+        <Hook />
+      </Sequence>
       {exercises.map((exercise, i) => (
         <Sequence
           key={exercise.number}
