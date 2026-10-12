@@ -3,12 +3,22 @@ import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
 import { Credits, creditsSchema } from "./Credits/Credits";
+import { SpinningNewspaper } from "./Newspaper/SpinningNewspaper";
 
 // Each <Composition> is an entry in the sidebar!
 
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      <Composition
+        // npx remotion render SpinningNewspaper out/spinning-newspaper.mp4
+        id="SpinningNewspaper"
+        component={SpinningNewspaper}
+        durationInFrames={210}
+        fps={30}
+        width={1080}
+        height={1080}
+      />
       <Composition
         // npx remotion render RamatexCredits out/ramatex-credits.mp4
         id="RamatexCredits"
@@ -65,7 +75,6 @@ export const RemotionRoot: React.FC = () => {
           titleColor: "#000000",
         }}
       />
-
     </>
   );
 };
