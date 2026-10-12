@@ -1,7 +1,7 @@
 import numpy as np, wave, sys
 
 SR = 48000
-DUR = 20.78
+DUR = 24.5  # 20.25s of footage + logo end card (crossfade through black at ~20.5)
 N = int(SR * DUR)
 rng = np.random.default_rng(7)
 music = np.zeros((N, 2))
@@ -68,7 +68,8 @@ chords = [
     (4.04, 2.75, [34, 46, 53, 62, 65]),     # Bb(add)
     (6.79, 4.2, [31, 43, 50, 58, 62]),      # Gm
     (11.0, 4.9, [38, 50, 57, 64, 65, 69]),  # Dm(add9)
-    (15.9, 4.88, [34, 46, 57, 62, 65, 69]), # Bbmaj7
+    (15.9, 4.6, [34, 46, 57, 62, 65, 69]),  # Bbmaj7
+    (20.55, 3.95, [26, 38, 50, 57, 62, 64, 69]),  # Dm(add9) under the logo
 ]
 for st, d, notes in chords:
     t = tt(d + 1.5)
@@ -101,7 +102,7 @@ while True:
     if 2.6 < s < 9.0 and b % 2 == 0:
         place(music, s, kick(60, 36, 0.5), 0.35)
         place(music, s + 0.22, kick(55, 34, 0.4), 0.18)  # "lub-dub"
-    if 11.0 <= s < 19.8:
+    if 11.0 <= s < 20.2 and not 13.4 < s < 14.7:  # breathe through the dip to black
         place(music, s, kick(), 0.42)
     b += 1
 
@@ -109,7 +110,11 @@ while True:
 arp = [62, 69, 72, 74, 77, 74, 72, 69]
 k = 0
 s = 11.0
-while s < 19.6:
+while s < 20.2:
+    if 13.4 < s < 14.7:
+        s += BEAT / 2
+        k += 1
+        continue
     seg = 0 if s < 15.9 else 1
     m = arp[k % len(arp)] - (0 if seg == 0 else 0)
     if seg == 1 and m == 72:
@@ -124,7 +129,7 @@ while s < 19.6:
     k += 1
 
 # Sub bass under reveal section
-t = tt(8.8)
+t = tt(9.3)
 sub = np.sin(2 * np.pi * midi(26) * t)
 sub[int(4.9 * SR):] = np.sin(2 * np.pi * midi(22) * t[int(4.9 * SR):])
 place(music, 11.0, sub * env(len(t), 0.05, 1.5), 0.16)
@@ -257,14 +262,35 @@ place(sfx, 11.0, bell(midi(74), 4), 0.12)
 place(sfx, 11.0, bell(midi(81), 4), 0.06)
 place(send, 11.0, bell(midi(74), 4), 0.15)
 
-# Rotating patch: slow airy swooshes following the turn
-for s in (13.2, 16.6, 18.6):
-    place(sfx, s, whoosh(1.2, 0.6, 300, 6000), 0.07)
+# 13.5-14.1 dip to black: whoosh peaking on the black frame, soft bell as the shot fades back up
+place(sfx, 13.3, whoosh(1.0, 0.8, 150, 3000), 0.16)
+place(sfx, 14.2, bell(midi(69), 3.0), 0.07)
+place(send, 14.2, bell(midi(69), 3.0), 0.10)
+place(sfx, 14.2, fft_filter(noise(1.2), lo=4000, hi=12000) * env(int(1.2 * SR), 0.5, 0.6, 1), 0.03)
 
-# Ending: final low hit + bell tail
-place(sfx, 19.3, whoosh(0.5, 0.85, 100, 2000), 0.15)
-place(sfx, 19.75, boom(1.1), 0.4)
-place(sfx, 19.75, bell(midi(62), 1.1), 0.10)
+# 14.75-20.25 slow continuous rotation: one long airy swell panning with the turn
+rot = whoosh(5.5, 0.6, 400, 6000)
+pan = np.linspace(-0.6, 0.6, len(rot))
+place(sfx, 14.75, np.stack([rot * np.sqrt((1 - pan) / 2), rot * np.sqrt((1 + pan) / 2)], 1) * 1.414, 0.05)
+
+# 20.25-20.5 crossfade through black into the logo: riser + whoosh landing on the black frame
+place(sfx, 19.3, riser(1.2), 0.18)
+place(sfx, 19.95, whoosh(0.7, 0.8, 100, 3000), 0.22)
+
+# 20.55 logo appears: main impact + bells
+place(sfx, 20.55, boom(3.5), 0.6)
+place(send, 20.55, boom(3.5), 0.1)
+place(sfx, 20.55, bell(midi(62), 3.9), 0.12)
+place(sfx, 20.55, bell(midi(74), 3.9), 0.07)
+place(send, 20.55, bell(midi(74), 3.9), 0.15)
+
+# 21.75-22.55 glint sweeping across the logo: sparkle sweep left -> right
+gl = sparkles(0.8, 60, 60, 11)
+gl[:, 0] *= np.linspace(1, 0.2, len(gl))
+gl[:, 1] *= np.linspace(0.2, 1, len(gl))
+place(sfx, 21.75, gl, 0.08)
+place(send, 21.75, gl, 0.08)
+place(sfx, 21.75, bell(midi(86), 2.0), 0.03, pan=0.3)
 
 # ---------------- REVERB ----------------
 irt = tt(2.8)
@@ -281,8 +307,8 @@ wet /= np.max(np.abs(wet)) + 1e-9
 wet *= 0.25
 
 mix = music + sfx + wet
-# fade out the last 0.6s
-fo = int(0.6 * SR)
+# fade out the last 1.2s
+fo = int(1.2 * SR)
 mix[-fo:] *= np.linspace(1, 0, fo)[:, None] ** 2
 mix /= np.max(np.abs(mix)) + 1e-9
 mix *= 0.89
