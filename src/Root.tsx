@@ -2,6 +2,11 @@ import { Composition, Folder } from "remotion";
 import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
+import {
+  OVERLAY_DURATION,
+  OVERLAY_FPS,
+  PilatesOverlay,
+} from "./PilatesOverlay";
 import { PILATES_DURATION, PilatesReformer } from "./PilatesReformer";
 
 // Each <Composition> is an entry in the sidebar!
@@ -56,6 +61,14 @@ export const RemotionRoot: React.FC = () => {
         component={PilatesReformer}
         durationInFrames={PILATES_DURATION}
         fps={30}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="PilatesOverlay"
+        component={PilatesOverlay}
+        durationInFrames={OVERLAY_DURATION}
+        fps={OVERLAY_FPS}
         width={1080}
         height={1920}
       />
