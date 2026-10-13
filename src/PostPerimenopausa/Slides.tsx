@@ -107,18 +107,18 @@ export const Slide2: React.FC = () => (
     >
       <div style={{ padding: "50px 60px 40px" }}>
         <div style={{ fontSize: 28, letterSpacing: 7, fontWeight: 500 }}>ULTIM’ORA</div>
-        <div style={{ fontFamily: fonts.serif, fontSize: 38, marginTop: 22, lineHeight: 1.3 }}>
+        <div style={{ fontFamily: fonts.title, fontSize: 38, marginTop: 22, lineHeight: 1.3 }}>
           Uno studio* su
         </div>
-        <div style={{ fontFamily: fonts.serif, fontSize: 52, fontWeight: 500, color: colors.blush, lineHeight: 1.2 }}>
+        <div style={{ fontFamily: fonts.title, fontSize: 54, fontWeight: 700, color: colors.blush, lineHeight: 1.2 }}>
           quasi 8.000 donne over 35
         </div>
-        <div style={{ fontFamily: fonts.serif, fontSize: 38, lineHeight: 1.3 }}>
+        <div style={{ fontFamily: fonts.title, fontSize: 38, lineHeight: 1.3 }}>
           ha scoperto che il sintomo che cambia
           <br />
           di più in perimenopausa è…
         </div>
-        <div style={{ fontFamily: fonts.serif, fontSize: 96, lineHeight: 1.15, marginTop: 6 }}>
+        <div style={{ fontFamily: fonts.title, fontSize: 100, fontWeight: 700, lineHeight: 1.1, marginTop: 10 }}>
           la stanchezza.
         </div>
       </div>
@@ -126,7 +126,7 @@ export const Slide2: React.FC = () => (
         <div style={{ fontSize: 26, letterSpacing: 6, fontWeight: 500, color: colors.blush }}>
           LE DONNE IN PERIMENOPAUSA:
         </div>
-        <div style={{ fontFamily: fonts.serif, fontStyle: "italic", fontSize: 46, marginTop: 10 }}>
+        <div style={{ fontFamily: fonts.title, fontWeight: 700, fontSize: 50, marginTop: 10 }}>
           “Ma va?”
         </div>
       </div>

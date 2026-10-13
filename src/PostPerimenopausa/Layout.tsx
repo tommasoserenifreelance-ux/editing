@@ -58,11 +58,12 @@ export const Title: React.FC<{
 }> = ({ color, size = 66, children, style }) => (
   <div
     style={{
-      fontFamily: fonts.serif,
+      fontFamily: fonts.title,
       fontSize: size,
-      lineHeight: 1.12,
+      fontWeight: 500,
+      lineHeight: 1.08,
       color,
-      letterSpacing: -0.5,
+      letterSpacing: -1,
       ...style,
     }}
   >
@@ -107,5 +108,6 @@ export const Bullets: React.FC<{ items: string[]; color?: string; dot: string }>
 );
 
 export const Em: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <span style={{ fontStyle: "italic" }}>{children}</span>
+  // League Spartan non ha il corsivo: l'enfasi passa al grassetto
+  <span style={{ fontWeight: 700 }}>{children}</span>
 );

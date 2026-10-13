@@ -4,19 +4,13 @@ import { staticFile } from "remotion";
 // Font salvati in public/fonts (Google Fonts, licenza OFL)
 loadFont({ family: "Inter", url: staticFile("fonts/Inter.woff2"), weight: "300 600" });
 loadFont({
-  family: "Playfair Display",
-  url: staticFile("fonts/PlayfairDisplay.woff2"),
-  weight: "400 600",
-});
-loadFont({
-  family: "Playfair Display",
-  url: staticFile("fonts/PlayfairDisplay-Italic.woff2"),
-  weight: "400 600",
-  style: "italic",
+  family: "League Spartan",
+  url: staticFile("fonts/LeagueSpartan.woff2"),
+  weight: "300 800",
 });
 
 export const fonts = {
-  serif: "Playfair Display",
+  title: "League Spartan",
   sans: "Inter",
 };
 
