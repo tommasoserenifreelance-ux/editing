@@ -24,6 +24,23 @@ export const RemotionRoot: React.FC = () => {
         schema={trampolinoReelSchema}
         defaultProps={defaultTrampolinoReelProps}
       />
+      <Composition
+        // Same reel on the shorter 8.5s take.
+        id="TrampolinoReelCorto"
+        component={TrampolinoReel}
+        durationInFrames={205}
+        fps={24}
+        width={1080}
+        height={1920}
+        schema={trampolinoReelSchema}
+        defaultProps={{
+          ...defaultTrampolinoReelProps,
+          videoSrc: "video-3.mp4",
+          musicSrc: "music-short.mp3",
+          firstLabelAt: 2.6,
+          labelInterval: 0.7,
+        }}
+      />
       <Folder name="Elements">
         <Composition
           id="Logo"
