@@ -1,7 +1,15 @@
-import { Composition, Folder } from "remotion";
+import { Composition, Folder, Still } from "remotion";
 import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
+import {
+  Slide1,
+  Slide2,
+  Slide3,
+  Slide4,
+  Slide5,
+} from "./PostPerimenopausa/Slides";
+import { SLIDE_HEIGHT, SLIDE_WIDTH } from "./PostPerimenopausa/theme";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -51,6 +59,17 @@ export const RemotionRoot: React.FC = () => {
         }}
       />
 
+      <Folder name="PostPerimenopausa">
+        {[Slide1, Slide2, Slide3, Slide4, Slide5].map((component, i) => (
+          <Still
+            key={i}
+            id={`Perimenopausa-${i + 1}`}
+            component={component}
+            width={SLIDE_WIDTH}
+            height={SLIDE_HEIGHT}
+          />
+        ))}
+      </Folder>
     </>
   );
 };
