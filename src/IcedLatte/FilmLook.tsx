@@ -18,7 +18,7 @@ export const FilmLook: React.FC = () => {
         style={{
           backgroundColor: "#ffb27a",
           mixBlendMode: "soft-light",
-          opacity: 0.22,
+          opacity: 0.16,
         }}
       />
       <AbsoluteFill

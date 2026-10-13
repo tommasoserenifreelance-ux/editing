@@ -29,28 +29,25 @@ const HOOK: Shot = {
   origin: "40% 58%",
 };
 
-// Only in-focus ranges: the espresso clip goes soft after 4.2s and the stir
-// clip between 1.2s and 2.4s, so those parts are left out.
+// Each action is kept whole: no cutting before a pour or the beans are done.
 const SHOTS: Shot[] = [
   // Ice into the glass
-  { src: MAIN, from: 1.5, playbackRate: 1.5, frames: 36, origin: "42% 62%" },
+  { src: MAIN, from: 1.4, playbackRate: 1.5, frames: 44, origin: "42% 62%" },
   // Syrup drizzle
   { src: MAIN, from: 8.9, playbackRate: 1.5, frames: 80, origin: "47% 62%" },
   // Milk pour
   { src: MAIN, from: 18.3, playbackRate: 1.5, frames: 90, origin: "45% 64%" },
-  // Espresso over the top
-  { src: COFFEE, from: 1.9, playbackRate: 1.2, frames: 56, origin: "45% 55%" },
-  // Stir
-  { src: STIR, from: 0.2, playbackRate: 1, frames: 28, origin: "42% 55%" },
-  // Final glass, slow push-in
+  // Espresso over the top, the whole pour
+  { src: COFFEE, from: 1.9, playbackRate: 1.3, frames: 141, origin: "45% 55%" },
+  // Coffee beans on top, then the finished glass with a slow push-in
   {
     src: STIR,
-    from: 2.6,
-    playbackRate: 0.6,
-    frames: 75,
+    from: 0.3,
+    playbackRate: 1,
+    frames: 117,
     origin: "40% 58%",
     zoomFrom: 1.12,
-    zoomTo: 1.25,
+    zoomTo: 1.22,
   },
 ];
 

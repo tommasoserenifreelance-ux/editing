@@ -10,7 +10,7 @@ import {
 
 // Vintage film look: low contrast, softer saturation, warm cast.
 export const GRADE =
-  "contrast(0.86) saturate(0.85) brightness(1.05) sepia(0.2)";
+  "contrast(0.9) saturate(1.08) brightness(1.04) sepia(0.12)";
 
 export type ClipProps = {
   src: string;
