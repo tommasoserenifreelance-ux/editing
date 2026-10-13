@@ -130,9 +130,10 @@ const Label: React.FC<{
   );
 };
 
-const Headline: React.FC<{ text: string; start: number }> = ({
+const Headline: React.FC<{ text: string; start: number; y: number }> = ({
   text,
   start,
+  y,
 }) => {
   const fade = useFadeIn(start);
   const [left, right] = text.split(">");
@@ -141,7 +142,7 @@ const Headline: React.FC<{ text: string; start: number }> = ({
     <div
       style={{
         position: "absolute",
-        top: 150,
+        top: y,
         width: "100%",
         textAlign: "center",
         fontFamily: DISPLAY_FONT,
@@ -174,6 +175,7 @@ export const TrampolinoReel: React.FC<TrampolinoReelProps> = ({
   hookTitle,
   hookSubtitle,
   headline,
+  headlineY,
   labels,
   hookEnd,
   firstLabelAt,
@@ -184,7 +186,7 @@ export const TrampolinoReel: React.FC<TrampolinoReelProps> = ({
       <OffthreadVideo src={staticFile(videoSrc)} muted />
       <Html5Audio src={staticFile(musicSrc)} volume={musicVolume} />
       <Hook title={hookTitle} subtitle={hookSubtitle} end={hookEnd} />
-      <Headline text={headline} start={hookEnd} />
+      <Headline text={headline} start={hookEnd} y={headlineY} />
       {labels.map((label, i) => (
         <Label
           key={i}
