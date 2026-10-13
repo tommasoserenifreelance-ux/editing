@@ -14,10 +14,10 @@ export const RemotionRoot: React.FC = () => {
   return (
     <>
       <Composition
-        // Vertical reel: public/video.mp4 with benefit labels over it.
+        // Vertical reel: a clip from public/ with benefit labels over it.
         id="TrampolinoReel"
         component={TrampolinoReel}
-        durationInFrames={293}
+        durationInFrames={364}
         fps={24}
         width={1080}
         height={1920}

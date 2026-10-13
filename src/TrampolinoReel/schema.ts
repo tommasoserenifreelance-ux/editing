@@ -8,6 +8,10 @@ const label = z.object({
 });
 
 export const trampolinoReelSchema = z.object({
+  // Files in public/.
+  videoSrc: z.string(),
+  musicSrc: z.string(),
+  musicVolume: z.number().min(0).max(1),
   hookTitle: z.string(),
   hookSubtitle: z.string(),
   headline: z.string(),
@@ -21,6 +25,9 @@ export const trampolinoReelSchema = z.object({
 export type TrampolinoReelProps = z.infer<typeof trampolinoReelSchema>;
 
 export const defaultTrampolinoReelProps: TrampolinoReelProps = {
+  videoSrc: "video-2.mp4",
+  musicSrc: "music.mp3",
+  musicVolume: 0.8,
   hookTitle: "Faccio rebounding\nogni giorno",
   hookSubtitle: "Ecco perché dovresti farlo anche tu",
   headline: "10 minuti di rebounding > 10 minuti di camminata",
@@ -36,5 +43,5 @@ export const defaultTrampolinoReelProps: TrampolinoReelProps = {
   ],
   hookEnd: 2,
   firstLabelAt: 2.8,
-  labelInterval: 1.05,
+  labelInterval: 1.35,
 };

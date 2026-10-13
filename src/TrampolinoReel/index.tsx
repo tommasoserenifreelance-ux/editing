@@ -1,5 +1,6 @@
 import {
   AbsoluteFill,
+  Html5Audio,
   interpolate,
   OffthreadVideo,
   staticFile,
@@ -167,6 +168,9 @@ const Headline: React.FC<{ text: string; start: number }> = ({
 };
 
 export const TrampolinoReel: React.FC<TrampolinoReelProps> = ({
+  videoSrc,
+  musicSrc,
+  musicVolume,
   hookTitle,
   hookSubtitle,
   headline,
@@ -177,7 +181,8 @@ export const TrampolinoReel: React.FC<TrampolinoReelProps> = ({
 }) => {
   return (
     <AbsoluteFill style={{ backgroundColor: "black" }}>
-      <OffthreadVideo src={staticFile("video.mp4")} />
+      <OffthreadVideo src={staticFile(videoSrc)} muted />
+      <Html5Audio src={staticFile(musicSrc)} volume={musicVolume} />
       <Hook title={hookTitle} subtitle={hookSubtitle} end={hookEnd} />
       <Headline text={headline} start={hookEnd} />
       {labels.map((label, i) => (
