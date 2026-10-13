@@ -1,7 +1,8 @@
 import React from "react";
-import { AbsoluteFill, Series } from "remotion";
+import { AbsoluteFill, Audio, Sequence, Series, staticFile } from "remotion";
 import { Clip, ClipProps } from "./Clip";
-import { Title, TitleWord } from "./Title";
+import { FilmLook } from "./FilmLook";
+import { Title, TitleWord, WORD_DELAY, WORD_STAGGER } from "./Title";
 
 const MAIN = "clip-ghiaccio-latte.mp4";
 const COFFEE = "clip-caffe.mov";
@@ -17,113 +18,39 @@ export const TITLE_WORDS: TitleWord[] = [
 
 type Shot = ClipProps & { frames: number };
 
-// Hook (finished drink + title), then the recipe in quick cuts.
+// Hook (finished drink + title), then the recipe.
 const HOOK: Shot = {
   src: STIR,
-  from: 2.95,
+  from: 2.6,
   playbackRate: 0.5,
   frames: 72,
-  zoomFrom: 1.25,
-  zoomTo: 1.4,
+  zoomFrom: 1.15,
+  zoomTo: 1.25,
   origin: "40% 58%",
 };
 
+// Only in-focus ranges: the espresso clip goes soft after 4.2s and the stir
+// clip between 1.2s and 2.4s, so those parts are left out.
 const SHOTS: Shot[] = [
   // Ice into the glass
-  {
-    src: MAIN,
-    from: 1.6,
-    playbackRate: 1.5,
-    frames: 38,
-    origin: "42% 62%",
-    zoomFrom: 1.3,
-    zoomTo: 1.4,
-    flash: true,
-  },
+  { src: MAIN, from: 1.5, playbackRate: 1.5, frames: 36, origin: "42% 62%" },
   // Syrup drizzle
-  {
-    src: MAIN,
-    from: 8.9,
-    playbackRate: 1.3,
-    frames: 42,
-    origin: "47% 60%",
-    zoomFrom: 1.25,
-    zoomTo: 1.35,
-    punch: true,
-  },
-  {
-    src: MAIN,
-    from: 10.8,
-    playbackRate: 1.3,
-    frames: 44,
-    origin: "47% 64%",
-    zoomFrom: 1.55,
-    zoomTo: 1.65,
-    punch: true,
-  },
+  { src: MAIN, from: 8.9, playbackRate: 1.5, frames: 80, origin: "47% 62%" },
   // Milk pour
-  {
-    src: MAIN,
-    from: 18.3,
-    playbackRate: 1.4,
-    frames: 46,
-    origin: "45% 64%",
-    zoomFrom: 1.3,
-    zoomTo: 1.4,
-    punch: true,
-  },
-  {
-    src: MAIN,
-    from: 20.6,
-    playbackRate: 1.4,
-    frames: 48,
-    origin: "45% 66%",
-    zoomFrom: 1.6,
-    zoomTo: 1.72,
-    punch: true,
-  },
+  { src: MAIN, from: 18.3, playbackRate: 1.5, frames: 90, origin: "45% 64%" },
   // Espresso over the top
-  {
-    src: COFFEE,
-    from: 2.2,
-    playbackRate: 1.6,
-    frames: 58,
-    origin: "45% 55%",
-    zoomFrom: 1.25,
-    zoomTo: 1.35,
-    flash: true,
-  },
-  {
-    src: COFFEE,
-    from: 5.8,
-    playbackRate: 1.6,
-    frames: 66,
-    origin: "42% 56%",
-    zoomFrom: 1.55,
-    zoomTo: 1.65,
-    punch: true,
-  },
+  { src: COFFEE, from: 1.9, playbackRate: 1.2, frames: 56, origin: "45% 55%" },
   // Stir
-  {
-    src: STIR,
-    from: 0.3,
-    playbackRate: 1.3,
-    frames: 64,
-    origin: "42% 55%",
-    zoomFrom: 1.3,
-    zoomTo: 1.4,
-    punch: true,
-  },
+  { src: STIR, from: 0.2, playbackRate: 1, frames: 28, origin: "42% 55%" },
   // Final glass, slow push-in
   {
     src: STIR,
-    from: 2.95,
+    from: 2.6,
     playbackRate: 0.6,
-    frames: 60,
+    frames: 75,
     origin: "40% 58%",
-    zoomFrom: 1.35,
-    zoomTo: 1.6,
-    punch: true,
+    zoomFrom: 1.12,
+    zoomTo: 1.25,
   },
 ];
 
@@ -132,25 +59,36 @@ export const ICED_LATTE_DURATION = [HOOK, ...SHOTS].reduce(
   0,
 );
 
-const Vignette: React.FC = () => (
-  <AbsoluteFill
-    style={{
-      background:
-        "radial-gradient(ellipse at 50% 55%, rgba(0,0,0,0) 55%, rgba(15,8,3,0.55) 100%)",
-      pointerEvents: "none",
-    }}
-  />
-);
+const TitleSfx: React.FC = () => {
+  const lastWordAt = WORD_DELAY + (TITLE_WORDS.length - 1) * WORD_STAGGER;
+  return (
+    <>
+      <Audio src={staticFile("sfx/whoosh.wav")} volume={0.5} />
+      {TITLE_WORDS.map((_, i) => (
+        <Sequence key={i} from={WORD_DELAY + i * WORD_STAGGER}>
+          <Audio src={staticFile("sfx/pop.wav")} volume={0.35} />
+        </Sequence>
+      ))}
+      <Sequence from={lastWordAt + 6}>
+        <Audio src={staticFile("sfx/chime.wav")} volume={0.3} />
+      </Sequence>
+      <Sequence from={HOOK.frames - 12}>
+        <Audio src={staticFile("sfx/whoosh.wav")} volume={0.4} />
+      </Sequence>
+    </>
+  );
+};
 
 export const IcedLatte: React.FC = () => {
   return (
-    <AbsoluteFill style={{ backgroundColor: "#140c08" }}>
+    <AbsoluteFill style={{ backgroundColor: "#1c130d" }}>
       <Series>
         <Series.Sequence durationInFrames={HOOK.frames} name="Hook + titolo">
           <Clip {...HOOK} />
           {/* Darken behind the title so it reads like the reference. */}
           <AbsoluteFill style={{ backgroundColor: "rgba(30, 15, 6, 0.38)" }} />
           <Title words={TITLE_WORDS} />
+          <TitleSfx />
         </Series.Sequence>
         {SHOTS.map(({ frames, ...shot }, i) => (
           <Series.Sequence key={i} durationInFrames={frames}>
@@ -158,7 +96,7 @@ export const IcedLatte: React.FC = () => {
           </Series.Sequence>
         ))}
       </Series>
-      <Vignette />
+      <FilmLook />
     </AbsoluteFill>
   );
 };

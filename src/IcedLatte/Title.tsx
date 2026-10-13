@@ -20,6 +20,10 @@ loadFont({
 // Cream-yellow from the reference.
 export const TITLE_COLOR = "#F4EDB2";
 
+// Word i starts animating at WORD_DELAY + i * WORD_STAGGER (sound effects sync to this).
+export const WORD_DELAY = 6;
+export const WORD_STAGGER = 4;
+
 export type TitleWord = { text: string; size: number };
 
 export const Title: React.FC<{ words: TitleWord[] }> = ({ words }) => {
@@ -60,12 +64,13 @@ export const Title: React.FC<{ words: TitleWord[] }> = ({ words }) => {
           alignItems: "center",
           fontFamily,
           color: TITLE_COLOR,
-          textShadow: "0 6px 40px rgba(40, 20, 5, 0.45)",
+          textShadow:
+            "0 0 28px rgba(255, 228, 160, 0.35), 0 6px 40px rgba(40, 20, 5, 0.45)",
         }}
       >
         {words.map((word, i) => {
           const progress = spring({
-            frame: frame - 6 - i * 4,
+            frame: frame - WORD_DELAY - i * WORD_STAGGER,
             fps,
             config: { damping: 14, stiffness: 160, mass: 0.6 },
           });

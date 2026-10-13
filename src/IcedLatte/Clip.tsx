@@ -1,7 +1,6 @@
 import React from "react";
 import {
   AbsoluteFill,
-  Easing,
   interpolate,
   OffthreadVideo,
   staticFile,
@@ -9,24 +8,20 @@ import {
   useVideoConfig,
 } from "remotion";
 
-// "Pop" grade: more contrast, richer coffee tones, slightly warm.
+// Vintage film look: low contrast, softer saturation, warm cast.
 export const GRADE =
-  "contrast(1.14) saturate(1.32) brightness(1.04) sepia(0.06)";
+  "contrast(0.86) saturate(0.85) brightness(1.05) sepia(0.2)";
 
 export type ClipProps = {
   src: string;
   // Start point in the source file, in seconds.
   from: number;
   playbackRate?: number;
-  // Slow zoom across the clip (ken burns).
+  // Gentle zoom across the clip (ken burns). Kept low so the image stays sharp.
   zoomFrom?: number;
   zoomTo?: number;
   // Where the zoom is centered (usually the glass), as CSS transform-origin.
   origin?: string;
-  // Quick zoom-in punch on the first frames of the cut.
-  punch?: boolean;
-  // White flash at the start of the cut.
-  flash?: boolean;
   volume?: number;
 };
 
@@ -34,54 +29,43 @@ export const Clip: React.FC<ClipProps> = ({
   src,
   from,
   playbackRate = 1,
-  zoomFrom = 1.2,
-  zoomTo = 1.3,
+  zoomFrom = 1.12,
+  zoomTo = 1.18,
   origin = "50% 62%",
-  punch = false,
-  flash = false,
-  volume = 0.6,
+  volume = 0.5,
 }) => {
   const frame = useCurrentFrame();
   const { fps, durationInFrames } = useVideoConfig();
 
-  const drift = interpolate(frame, [0, durationInFrames], [zoomFrom, zoomTo], {
+  const scale = interpolate(frame, [0, durationInFrames], [zoomFrom, zoomTo], {
     extrapolateRight: "clamp",
   });
-  const punchScale = punch
-    ? interpolate(frame, [0, 6], [1.12, 1], {
-        extrapolateRight: "clamp",
-        easing: Easing.out(Easing.cubic),
-      })
-    : 1;
-  const blur = punch
-    ? interpolate(frame, [0, 4], [6, 0], { extrapolateRight: "clamp" })
-    : 0;
-  const flashOpacity = flash
-    ? interpolate(frame, [0, 5], [0.85, 0], { extrapolateRight: "clamp" })
-    : 0;
+  const video = {
+    src: staticFile(src),
+    trimBefore: Math.round(from * fps),
+    playbackRate,
+    style: { width: "100%", height: "100%", objectFit: "cover" as const },
+  };
 
   return (
-    <AbsoluteFill style={{ backgroundColor: "#140c08", overflow: "hidden" }}>
+    <AbsoluteFill style={{ backgroundColor: "#1c130d", overflow: "hidden" }}>
       <AbsoluteFill
-        style={{
-          transform: `scale(${drift * punchScale})`,
-          transformOrigin: origin,
-          filter: `${GRADE} blur(${blur}px)`,
-        }}
+        style={{ transform: `scale(${scale})`, transformOrigin: origin }}
       >
-        <OffthreadVideo
-          src={staticFile(src)}
-          trimBefore={Math.round(from * fps)}
-          playbackRate={playbackRate}
-          volume={volume}
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-        />
-      </AbsoluteFill>
-      {flash ? (
+        <AbsoluteFill style={{ filter: GRADE }}>
+          <OffthreadVideo {...video} volume={volume} />
+        </AbsoluteFill>
+        {/* Bloom: blurred, brightened copy screened on top of the highlights. */}
         <AbsoluteFill
-          style={{ backgroundColor: "#fff6e0", opacity: flashOpacity }}
-        />
-      ) : null}
+          style={{
+            filter: `${GRADE} blur(26px) brightness(1.25)`,
+            mixBlendMode: "screen",
+            opacity: 0.38,
+          }}
+        >
+          <OffthreadVideo {...video} muted />
+        </AbsoluteFill>
+      </AbsoluteFill>
     </AbsoluteFill>
   );
 };
