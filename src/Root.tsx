@@ -49,6 +49,22 @@ export const RemotionRoot: React.FC = () => {
         height={1920}
         defaultProps={{
           frameSrc: "cover-frame.jpg",
+          variant: "photo" as const,
+          photoScale: 0.88,
+          titleTop: "10 minuti di rebounding",
+          titleBottom: "10 minuti di camminata",
+          subtitle: "Ecco perché",
+        }}
+      />
+      <Still
+        id="CopertinaSfocata"
+        component={Cover}
+        width={1080}
+        height={1920}
+        defaultProps={{
+          frameSrc: "cover-frame.jpg",
+          variant: "blur" as const,
+          photoScale: 1,
           titleTop: "10 minuti di rebounding",
           titleBottom: "10 minuti di camminata",
           subtitle: "Ecco perché",

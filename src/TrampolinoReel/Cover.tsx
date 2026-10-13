@@ -8,13 +8,40 @@ const SHADOW =
 // (y 240-1680) so it survives the profile-grid crop.
 export const Cover: React.FC<{
   frameSrc: string;
+  // "photo": sharp frame, shrunk from the bottom so the head clears the
+  // grid crop, over a blurred copy. "blur": the whole frame blurred.
+  variant: "photo" | "blur";
+  photoScale: number;
   titleTop: string;
   titleBottom: string;
   subtitle: string;
-}> = ({ frameSrc, titleTop, titleBottom, subtitle }) => {
+}> = ({ frameSrc, variant, photoScale, titleTop, titleBottom, subtitle }) => {
+  const src = staticFile(frameSrc);
   return (
     <AbsoluteFill style={{ backgroundColor: "black" }}>
-      <Img src={staticFile(frameSrc)} />
+      <Img
+        src={src}
+        style={{
+          position: "absolute",
+          inset: 0,
+          filter: "blur(28px) brightness(0.8)",
+          transform: "scale(1.15)",
+        }}
+      />
+      {variant === "photo" ? (
+        <Img
+          src={src}
+          style={{
+            position: "absolute",
+            inset: 0,
+            transform: `scale(${photoScale})`,
+            transformOrigin: "50% 100%",
+            maskImage:
+              "linear-gradient(90deg, transparent, black 6%, black 94%, transparent), linear-gradient(180deg, transparent, black 5%)",
+            maskComposite: "intersect",
+          }}
+        />
+      ) : null}
       <AbsoluteFill
         style={{
           background:
@@ -24,7 +51,11 @@ export const Cover: React.FC<{
       <div
         style={{
           position: "absolute",
-          top: 1060,
+          top: variant === "photo" ? 1060 : 0,
+          bottom: variant === "photo" ? undefined : 0,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
           width: "100%",
           textAlign: "center",
           textTransform: "uppercase",
