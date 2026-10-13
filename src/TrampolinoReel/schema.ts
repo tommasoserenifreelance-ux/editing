@@ -27,7 +27,7 @@ export type TrampolinoReelProps = z.infer<typeof trampolinoReelSchema>;
 export const defaultTrampolinoReelProps: TrampolinoReelProps = {
   videoSrc: "video-2.mp4",
   musicSrc: "music.mp3",
-  musicVolume: 0.8,
+  musicVolume: 1,
   hookTitle: "Faccio rebounding\nogni giorno",
   hookSubtitle: "Ecco perché dovresti farlo anche tu",
   headline: "10 minuti di rebounding > 10 minuti di camminata",
