@@ -1,8 +1,9 @@
-import { Composition, Folder } from "remotion";
+import { Composition, Folder, Still } from "remotion";
 import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
 import { TrampolinoReel } from "./TrampolinoReel";
+import { Cover } from "./TrampolinoReel/Cover";
 import {
   defaultTrampolinoReelProps,
   trampolinoReelSchema,
@@ -39,6 +40,18 @@ export const RemotionRoot: React.FC = () => {
           musicSrc: "music-short.mp3",
           firstLabelAt: 2.3,
           labelInterval: 0.45,
+        }}
+      />
+      <Still
+        id="Copertina"
+        component={Cover}
+        width={1080}
+        height={1920}
+        defaultProps={{
+          frameSrc: "cover-frame.jpg",
+          titleTop: "10 minuti di rebounding",
+          titleBottom: "10 minuti di camminata",
+          subtitle: "Ecco perché",
         }}
       />
       <Folder name="Elements">
