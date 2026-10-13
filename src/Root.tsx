@@ -2,12 +2,28 @@ import { Composition, Folder } from "remotion";
 import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
+import { TrampolinoReel } from "./TrampolinoReel";
+import {
+  defaultTrampolinoReelProps,
+  trampolinoReelSchema,
+} from "./TrampolinoReel/schema";
 
 // Each <Composition> is an entry in the sidebar!
 
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      <Composition
+        // Vertical reel: public/video.mp4 with benefit labels over it.
+        id="TrampolinoReel"
+        component={TrampolinoReel}
+        durationInFrames={293}
+        fps={24}
+        width={1080}
+        height={1920}
+        schema={trampolinoReelSchema}
+        defaultProps={defaultTrampolinoReelProps}
+      />
       <Folder name="Elements">
         <Composition
           id="Logo"

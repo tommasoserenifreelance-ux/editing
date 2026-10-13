@@ -1,0 +1,40 @@
+import { z } from "zod";
+
+const label = z.object({
+  text: z.string(),
+  side: z.enum(["left", "right", "center"]),
+  // Vertical centre of the label, in px on the 1080x1920 canvas.
+  y: z.number(),
+});
+
+export const trampolinoReelSchema = z.object({
+  hookTitle: z.string(),
+  hookSubtitle: z.string(),
+  headline: z.string(),
+  labels: z.array(label),
+  // Seconds.
+  hookEnd: z.number(),
+  firstLabelAt: z.number(),
+  labelInterval: z.number(),
+});
+
+export type TrampolinoReelProps = z.infer<typeof trampolinoReelSchema>;
+
+export const defaultTrampolinoReelProps: TrampolinoReelProps = {
+  hookTitle: "Faccio rebounding\nogni giorno",
+  hookSubtitle: "Ecco perché dovresti farlo anche tu",
+  headline: "10 minuti di rebounding > 10 minuti di camminata",
+  labels: [
+    { text: "Parte della mia\nroutine quotidiana", side: "left", y: 440 },
+    { text: "Gambe più leggere\nmeno gonfie", side: "right", y: 580 },
+    { text: "Dormo meglio", side: "left", y: 780 },
+    { text: "Rafforza core e\npavimento pelvico", side: "right", y: 900 },
+    { text: "Migliora la\ncircolazione", side: "left", y: 1110 },
+    { text: "Favorisce il\ndrenaggio linfatico", side: "right", y: 1270 },
+    { text: "Più equilibrio\ne coordinazione", side: "left", y: 1440 },
+    { text: "Bastano 10 minuti al giorno", side: "center", y: 1810 },
+  ],
+  hookEnd: 2,
+  firstLabelAt: 2.8,
+  labelInterval: 1.05,
+};
