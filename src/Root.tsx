@@ -37,8 +37,8 @@ export const RemotionRoot: React.FC = () => {
           ...defaultTrampolinoReelProps,
           videoSrc: "video-3.mp4",
           musicSrc: "music-short.mp3",
-          firstLabelAt: 2.6,
-          labelInterval: 0.7,
+          firstLabelAt: 2.3,
+          labelInterval: 0.45,
         }}
       />
       <Folder name="Elements">
