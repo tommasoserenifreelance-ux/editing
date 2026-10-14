@@ -16,6 +16,8 @@ const CROSS_STROKE = 8;
 export type CoffeeCupsProps = {
   cups: number;
   crossLast: boolean;
+  // Leave the background empty so the clip can be layered over footage.
+  transparent?: boolean;
 };
 
 export const COFFEE_FPS = 30;
@@ -200,12 +202,16 @@ const Cup: React.FC<{ delay: number; width: number; crossed: boolean }> = ({
   );
 };
 
-export const CoffeeCups: React.FC<CoffeeCupsProps> = ({ cups, crossLast }) => {
+export const CoffeeCups: React.FC<CoffeeCupsProps> = ({
+  cups,
+  crossLast,
+  transparent = false,
+}) => {
   const width = Math.min(MAX_CUP_WIDTH, (ROW_WIDTH - (cups - 1) * GAP) / cups);
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: colors.bg,
+        backgroundColor: transparent ? undefined : colors.bg,
         justifyContent: "center",
         alignItems: "center",
       }}
