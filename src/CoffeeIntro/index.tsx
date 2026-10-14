@@ -16,7 +16,6 @@ export const COFFEE_INTRO_FPS = 30;
 export const COFFEE_INTRO_DURATION = 120;
 
 const EXIT = 10;
-const SUBTITLE = "Vediamo cosa dicono i dati";
 
 const display = "Bricolage Grotesque";
 const emoji = '"Apple Color Emoji", "Noto Color Emoji", "Segoe UI Emoji"';
@@ -36,7 +35,6 @@ Promise.all(
 
 const colors = {
   cobalt: "#2557F5",
-  cobaltDeep: "#1638C4",
   navy: "#0B1B4D",
   sky: "#9CC4FF",
   ice: "#EAF2FF",
@@ -91,10 +89,9 @@ const Sparkle: React.FC<{
   );
 };
 
-const CupBadge: React.FC = () => {
+const Cup: React.FC = () => {
   const frame = useCurrentFrame();
-  const badge = usePop(0, 11);
-  const cup = usePop(5, 8);
+  const cup = usePop(0, 8);
   const float = Math.sin(frame / 9) * 6 * Math.min(1, frame / 30);
 
   return (
@@ -103,26 +100,17 @@ const CupBadge: React.FC = () => {
         style={{
           position: "absolute",
           inset: 0,
-          borderRadius: 84,
-          background: `linear-gradient(145deg, ${colors.cobalt}, ${colors.cobaltDeep})`,
-          border: `9px solid ${colors.white}`,
-          boxShadow: lift(14),
-          transform: `translateY(${float}px) scale(${badge}) rotate(${interpolate(badge, [0, 1], [-30, -7])}deg)`,
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          fontFamily: emoji,
+          fontSize: 260,
+          lineHeight: 1,
+          filter: "drop-shadow(0 18px 24px rgba(11, 27, 77, 0.35))",
+          transform: `translateY(${float}px) scale(${cup}) rotate(${interpolate(cup, [0, 1], [-25, -4])}deg)`,
         }}
       >
-        <div
-          style={{
-            fontFamily: emoji,
-            fontSize: 176,
-            lineHeight: 1,
-            transform: `scale(${cup}) rotate(${interpolate(cup, [0, 1], [20, 7])}deg)`,
-          }}
-        >
-          ☕
-        </div>
+        ☕
       </div>
       <Sparkle x={-30} y={30} size={78} delay={14} color={colors.sky} />
       <Sparkle x={325} y={-5} size={58} delay={18} color={colors.white} />
@@ -184,61 +172,6 @@ const Slab: React.FC<{
   );
 };
 
-const DataBars: React.FC = () => {
-  const frame = useCurrentFrame();
-  const heights = [0.45, 0.75, 1];
-  return (
-    <svg width={44} height={40} viewBox="0 0 44 40">
-      {heights.map((h, i) => {
-        const grow = interpolate(frame - 46 - i * 3, [0, 10], [0, h], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-        });
-        return (
-          <rect
-            key={h}
-            x={i * 16}
-            y={40 - grow * 40}
-            width={11}
-            height={grow * 40}
-            rx={3}
-            fill={i === 2 ? colors.sky : colors.white}
-          />
-        );
-      })}
-    </svg>
-  );
-};
-
-const Subtitle: React.FC = () => {
-  const progress = usePop(40, 13);
-  return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 22,
-        fontFamily: display,
-        fontWeight: 600,
-        fontSize: 54,
-        letterSpacing: -0.5,
-        color: colors.white,
-        backgroundColor: colors.navy,
-        border: `5px solid ${colors.sky}`,
-        borderRadius: 999,
-        padding: "18px 44px 22px 36px",
-        boxShadow: "0 18px 40px rgba(11, 27, 77, 0.4)",
-        whiteSpace: "nowrap",
-        opacity: Math.min(1, progress * 3),
-        transform: `translateY(${interpolate(progress, [0, 1], [60, 0])}px) scale(${interpolate(progress, [0, 1], [0.8, 1])})`,
-      }}
-    >
-      <DataBars />
-      {SUBTITLE}
-    </div>
-  );
-};
-
 export const CoffeeIntro: React.FC = () => {
   const frame = useCurrentFrame();
   const exit = interpolate(
@@ -257,7 +190,7 @@ export const CoffeeIntro: React.FC = () => {
         transform: `scale(${interpolate(exit, [0, 1], [0.85, 1])})`,
       }}
     >
-      <CupBadge />
+      <Cup />
       <div
         style={{
           marginTop: 70,
@@ -283,9 +216,6 @@ export const CoffeeIntro: React.FC = () => {
           color={colors.navy}
           shift={40}
         />
-      </div>
-      <div style={{ marginTop: 56 }}>
-        <Subtitle />
       </div>
     </AbsoluteFill>
   );
