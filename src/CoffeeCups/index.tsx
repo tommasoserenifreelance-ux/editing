@@ -6,16 +6,29 @@ import {
   useVideoConfig,
 } from "remotion";
 
-const CUPS = 4;
 const START = 15;
 const STAGGER = 25;
 const HOLD = 90;
+// The cross starts once the last cup has landed and is drawn stroke by stroke.
+const CROSS_DELAY = 20;
+const CROSS_STROKE = 8;
+
+export type CoffeeCupsProps = {
+  cups: number;
+  crossLast: boolean;
+};
 
 export const COFFEE_FPS = 30;
-export const COFFEE_DURATION = START + (CUPS - 1) * STAGGER + HOLD;
+export const coffeeDuration = ({ cups, crossLast }: CoffeeCupsProps) =>
+  START +
+  (cups - 1) * STAGGER +
+  (crossLast ? CROSS_DELAY + 2 * CROSS_STROKE : 0) +
+  HOLD;
 
-const CUP_WIDTH = 230;
+// Shrink the cups so the whole row always fits the 1080px frame.
+const ROW_WIDTH = 1000;
 const GAP = 20;
+const MAX_CUP_WIDTH = 230;
 
 const colors = {
   bg: "#FFFFFF",
@@ -25,6 +38,7 @@ const colors = {
   coffee: "#5A3522",
   crema: "#B57A4B",
   steam: "#C9C2BB",
+  cross: "#E0262B",
 };
 
 const Steam: React.FC<{ frame: number }> = ({ frame }) => {
@@ -54,7 +68,41 @@ const Steam: React.FC<{ frame: number }> = ({ frame }) => {
   );
 };
 
-const Cup: React.FC<{ delay: number }> = ({ delay }) => {
+const Cross: React.FC<{ frame: number }> = ({ frame }) => {
+  const LENGTH = 260;
+  const strokes = ["M 20 20 L 200 200", "M 200 20 L 20 200"];
+  return (
+    <g>
+      {strokes.map((d, i) => {
+        const drawn = interpolate(
+          frame - i * CROSS_STROKE,
+          [0, CROSS_STROKE],
+          [0, 1],
+          { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+        );
+        return (
+          <path
+            key={d}
+            d={d}
+            fill="none"
+            stroke={colors.cross}
+            strokeWidth={22}
+            strokeLinecap="round"
+            strokeDasharray={LENGTH}
+            strokeDashoffset={LENGTH * (1 - drawn)}
+            opacity={drawn > 0 ? 1 : 0}
+          />
+        );
+      })}
+    </g>
+  );
+};
+
+const Cup: React.FC<{ delay: number; width: number; crossed: boolean }> = ({
+  delay,
+  width,
+  crossed,
+}) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const local = frame - delay;
@@ -73,8 +121,8 @@ const Cup: React.FC<{ delay: number }> = ({ delay }) => {
 
   return (
     <svg
-      width={CUP_WIDTH}
-      height={CUP_WIDTH}
+      width={width}
+      height={width}
       viewBox="0 -10 240 230"
       style={{
         opacity,
@@ -147,11 +195,13 @@ const Cup: React.FC<{ delay: number }> = ({ delay }) => {
         fill={colors.crema}
         opacity={0.7}
       />
+      {crossed ? <Cross frame={local - CROSS_DELAY} /> : null}
     </svg>
   );
 };
 
-export const CoffeeCups: React.FC = () => {
+export const CoffeeCups: React.FC<CoffeeCupsProps> = ({ cups, crossLast }) => {
+  const width = Math.min(MAX_CUP_WIDTH, (ROW_WIDTH - (cups - 1) * GAP) / cups);
   return (
     <AbsoluteFill
       style={{
@@ -161,8 +211,13 @@ export const CoffeeCups: React.FC = () => {
       }}
     >
       <div style={{ display: "flex", gap: GAP }}>
-        {Array.from({ length: CUPS }, (_, i) => (
-          <Cup key={i} delay={START + i * STAGGER} />
+        {Array.from({ length: cups }, (_, i) => (
+          <Cup
+            key={i}
+            delay={START + i * STAGGER}
+            width={width}
+            crossed={crossLast && i === cups - 1}
+          />
         ))}
       </div>
     </AbsoluteFill>
