@@ -1,5 +1,10 @@
 import { Composition, Folder } from "remotion";
 import { COFFEE_FPS, CoffeeCups, coffeeDuration } from "./CoffeeCups";
+import {
+  COFFEE_INTRO_DURATION,
+  COFFEE_INTRO_FPS,
+  CoffeeIntro,
+} from "./CoffeeIntro";
 import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
@@ -90,6 +95,14 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
         defaultProps={{ cups: 5, crossLast: true }}
+      />
+      <Composition
+        id="CoffeeIntro"
+        component={CoffeeIntro}
+        durationInFrames={COFFEE_INTRO_DURATION}
+        fps={COFFEE_INTRO_FPS}
+        width={1080}
+        height={1920}
       />
     </>
   );
