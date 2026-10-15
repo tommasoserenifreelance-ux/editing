@@ -6,54 +6,116 @@ export type Caption = { from: number; to: number; text: string };
 export type Clip = {
   // File in public/truefalse/, or null for a placeholder while editing.
   src: string | null;
-  // Seconds of the source file to use.
-  trimStart?: number;
   duration: number;
   // Part of the clip shown in black & white (the question).
   question: { from: number; to: number } | null;
-  // Correct answer, revealed with a green (true) or red (false) flash.
+  // Correct answer: green (true) or red (false) on the stickers.
   answer: boolean | null;
   revealAt: number;
+  // Flash and badge on the reveal. Off for a clip that continues an answer.
+  flash?: boolean;
   captions: Caption[];
 };
 
 export const FPS = 24;
-export const TRANSITION_SECONDS = 0.4;
+// Swipe between clips, played over frozen frames so voices never overlap.
+export const TRANSITION_SECONDS = 0.35;
 
-export const LABELS = { true: "Vero", or: "o", false: "Falso" };
+export const LABELS = {
+  top: ["Sfatiamo", "i"],
+  bottom: "Falsi miti",
+  true: "Vero",
+  false: "Falso",
+};
 
 export const CLIPS: Clip[] = [
   {
-    src: null,
-    duration: 4,
+    src: "collagene_1.mp4",
+    duration: 4.79,
     question: null,
     answer: null,
     revealAt: 0,
     captions: [
-      { from: 0.2, to: 2, text: "Oggi giochiamo a vero o falso" },
-      { from: 2, to: 3.8, text: "Vediamo quante ne indovini" },
+      { from: 0.35, to: 1.85, text: "Collagene." },
+      { from: 1.9, to: 4.75, text: "Sfatiamo dei falsi miti" },
     ],
   },
   {
-    src: null,
-    duration: 6,
-    question: { from: 0, to: 3 },
-    answer: true,
-    revealAt: 3,
-    captions: [
-      { from: 0.2, to: 3, text: "Domanda di esempio numero uno?" },
-      { from: 3, to: 5.8, text: "Vero!" },
-    ],
-  },
-  {
-    src: null,
-    duration: 6,
-    question: { from: 0, to: 3 },
+    src: "collagene_2.mp4",
+    duration: 6.875,
+    question: { from: 0, to: 6.15 },
     answer: false,
-    revealAt: 3,
+    revealAt: 6.15,
     captions: [
-      { from: 0.2, to: 3, text: "Domanda di esempio numero due?" },
-      { from: 3, to: 5.8, text: "Falso!" },
+      { from: 0, to: 1.0, text: "Il collagene che bevi" },
+      { from: 1.0, to: 2.4, text: "va diretto nella pelle?" },
+      { from: 6.15, to: 6.875, text: "No," },
+    ],
+  },
+  {
+    src: "collagene_3.mp4",
+    duration: 6.25,
+    question: null,
+    answer: false,
+    revealAt: 0,
+    flash: false,
+    captions: [
+      { from: 0, to: 2.2, text: "viene digerito in aminoacidi" },
+      { from: 2.2, to: 3.35, text: "e piccoli peptidi." },
+      { from: 3.35, to: 4.25, text: "Ed è il corpo" },
+      { from: 4.25, to: 6.2, text: "a decidere dove utilizzarlo" },
+    ],
+  },
+  {
+    src: "collagene_4.mp4",
+    duration: 14.5,
+    question: { from: 0, to: 5.0 },
+    answer: false,
+    revealAt: 5.35,
+    captions: [
+      { from: 0, to: 2.5, text: "Non c'è differenza se assumo il collagene" },
+      { from: 2.5, to: 5.0, text: "subito dopo i pasti o lontano dai pasti" },
+      { from: 5.35, to: 6.0, text: "Falso!" },
+      { from: 6.05, to: 7.65, text: "Perché è meglio assumerlo" },
+      { from: 7.7, to: 9.6, text: "lontano dai pasti." },
+      { from: 9.6, to: 10.55, text: "Tuttavia" },
+      { from: 10.6, to: 13.25, text: "non succede nulla se lo vuoi assumere" },
+      { from: 13.3, to: 14.45, text: "durante i pasti" },
+    ],
+  },
+  {
+    src: "collagene_5.mp4",
+    duration: 14.583,
+    question: { from: 0, to: 4.1 },
+    answer: false,
+    revealAt: 4.2,
+    captions: [
+      { from: 0.2, to: 2.55, text: "Il collagene incomincia a calare" },
+      { from: 2.55, to: 4.1, text: "a partire dai 45 anni" },
+      { from: 4.2, to: 4.9, text: "Falso!" },
+      {
+        from: 4.95,
+        to: 8.05,
+        text: "Incomincia già a calare, pensate un po',",
+      },
+      { from: 8.1, to: 10.3, text: "a partire dai 25 anni." },
+      { from: 10.4, to: 12.25, text: "Ovviamente con la perimenopausa" },
+      { from: 12.3, to: 14.5, text: "e la menopausa il calo diventa maggiore" },
+    ],
+  },
+  {
+    src: "collagene_6.mp4",
+    duration: 10.208,
+    question: { from: 0, to: 1.5 },
+    answer: false,
+    revealAt: 1.6,
+    captions: [
+      { from: 0, to: 1.5, text: "Il collagene serve solo per la pelle?" },
+      { from: 1.6, to: 1.95, text: "Falso!" },
+      { from: 1.95, to: 3.5, text: "Serve anche per ossa," },
+      { from: 3.5, to: 5.1, text: "tendini, cartilagini e vasi." },
+      { from: 5.3, to: 6.8, text: "È la proteina" },
+      { from: 6.8, to: 10.0, text: "più abbondante nel nostro corpo" },
     ],
   },
 ];
