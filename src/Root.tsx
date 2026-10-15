@@ -1,4 +1,5 @@
 import { Composition, Folder } from "remotion";
+import { CONTO_DURATION, CONTO_FPS, ContoGenerali } from "./ContoGenerali";
 import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
@@ -69,6 +70,14 @@ export const RemotionRoot: React.FC = () => {
         component={PilatesOverlay}
         durationInFrames={OVERLAY_DURATION}
         fps={OVERLAY_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="ContoGenerali"
+        component={ContoGenerali}
+        durationInFrames={CONTO_DURATION}
+        fps={CONTO_FPS}
         width={1080}
         height={1920}
       />
