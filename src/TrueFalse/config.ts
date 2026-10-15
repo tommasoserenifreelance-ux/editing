@@ -12,6 +12,8 @@ export type Clip = {
   // Correct answer: green (true) or red (false) on the stickers.
   answer: boolean | null;
   revealAt: number;
+  // End of the reveal (seconds); by default it lasts to the end of the clip.
+  revealEnd?: number;
   // Flash and badge on the reveal. Off for a clip that continues an answer.
   flash?: boolean;
   captions: Caption[];
@@ -36,8 +38,8 @@ export const CLIPS: Clip[] = [
     answer: null,
     revealAt: 0,
     captions: [
-      { from: 0.35, to: 1.85, text: "Collagene." },
-      { from: 1.9, to: 4.75, text: "Sfatiamo dei falsi miti" },
+      { from: 1.9, to: 2.9, text: "Collagene." },
+      { from: 2.95, to: 4.75, text: "Sfatiamo dei falsi miti" },
     ],
   },
   {
@@ -81,7 +83,8 @@ export const CLIPS: Clip[] = [
       { from: 8.6, to: 9.6, text: "Tuttavia" },
       { from: 9.6, to: 10.6, text: "non succede nulla" },
       { from: 10.6, to: 11.75, text: "se lo vuoi assumere" },
-      { from: 11.75, to: 13.3, text: "durante i pasti" },
+      { from: 11.75, to: 13.3, text: "per la tua digeribilità" },
+      { from: 13.3, to: 14.45, text: "subito dopo un pasto" },
     ],
   },
   {
@@ -107,17 +110,19 @@ export const CLIPS: Clip[] = [
   {
     src: "collagene_6.mp4",
     duration: 10.208,
-    question: { from: 0, to: 3.5 },
+    question: { from: 0, to: 1.95 },
     answer: false,
-    revealAt: 3.55,
+    revealAt: 1.95,
+    // Back to normal for the closing line.
+    revealEnd: 5.3,
     captions: [
-      { from: 0, to: 1.55, text: "Il collagene" },
-      { from: 1.55, to: 3.5, text: "serve solo per la pelle?" },
-      { from: 3.55, to: 4.12, text: "Falso!" },
-      { from: 4.12, to: 5.28, text: "Serve anche per ossa," },
-      { from: 5.28, to: 6.78, text: "tendini, cartilagini e vasi." },
-      { from: 6.78, to: 8.1, text: "È la proteina" },
-      { from: 8.1, to: 10.1, text: "più abbondante nel nostro corpo" },
+      { from: 0, to: 0.9, text: "Il collagene" },
+      { from: 0.9, to: 1.95, text: "serve solo per la pelle?" },
+      { from: 1.95, to: 2.45, text: "Falso!" },
+      { from: 2.45, to: 3.5, text: "Serve anche per ossa," },
+      { from: 3.5, to: 5.3, text: "tendini, cartilagini e vasi." },
+      { from: 5.35, to: 6.8, text: "È la proteina" },
+      { from: 6.8, to: 10.1, text: "più importante per il nostro corpo" },
     ],
   },
 ];

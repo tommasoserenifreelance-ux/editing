@@ -90,11 +90,18 @@ const ClipVideo: React.FC<{ clip: Clip; index: number; muted: boolean }> = ({
 // Green or red flash on the reveal, settling into a soft glow at the edges.
 const Reveal: React.FC<{ answer: boolean }> = ({ answer }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const { fps, durationInFrames } = useVideoConfig();
   const color = answerColor(answer);
-  const flash = interpolate(frame, [0, 3, 18], [0, 0.55, 0.14], clamp);
-  const glow = interpolate(frame, [0, 6], [0, 1], clamp);
-  const pop = spring({ frame, fps, config: { damping: 11, mass: 0.7 } });
+  // Fades out when the reveal has an end inside the clip.
+  const out = interpolate(
+    frame,
+    [durationInFrames - 8, durationInFrames],
+    [1, 0],
+    clamp,
+  );
+  const flash = interpolate(frame, [0, 3, 18], [0, 0.55, 0.14], clamp) * out;
+  const glow = interpolate(frame, [0, 6], [0, 1], clamp) * out;
+  const pop = spring({ frame, fps, config: { damping: 11, mass: 0.7 } }) * out;
 
   return (
     <AbsoluteFill>
@@ -179,7 +186,14 @@ const ClipContent: React.FC<{ clip: Clip; index: number; muted: boolean }> = ({
   <AbsoluteFill>
     <ClipVideo clip={clip} index={index} muted={muted} />
     {clip.answer !== null && clip.flash !== false ? (
-      <Sequence from={s(clip.revealAt)}>
+      <Sequence
+        from={s(clip.revealAt)}
+        durationInFrames={
+          clip.revealEnd === undefined
+            ? Infinity
+            : s(clip.revealEnd) - s(clip.revealAt)
+        }
+      >
         <Reveal answer={clip.answer} />
       </Sequence>
     ) : null}
@@ -235,7 +249,10 @@ const Stickers: React.FC = () => {
   });
   const clip = CLIPS[index];
   const local = frame - seqStarts[index] - leads[index];
-  const revealed = clip.answer !== null && local >= s(clip.revealAt);
+  const revealed =
+    clip.answer !== null &&
+    local >= s(clip.revealAt) &&
+    (clip.revealEnd === undefined || local < s(clip.revealEnd));
   const pop = !revealed
     ? 0
     : clip.flash === false
