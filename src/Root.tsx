@@ -1,5 +1,6 @@
-import { Composition, Folder } from "remotion";
+import { Composition, Folder, Still } from "remotion";
 import { CONTO_DURATION, CONTO_FPS, ContoGenerali } from "./ContoGenerali";
+import { ContoGeneraliCover } from "./ContoGenerali/Cover";
 import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
@@ -78,6 +79,12 @@ export const RemotionRoot: React.FC = () => {
         component={ContoGenerali}
         durationInFrames={CONTO_DURATION}
         fps={CONTO_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Still
+        id="ContoGeneraliCover"
+        component={ContoGeneraliCover}
         width={1080}
         height={1920}
       />
