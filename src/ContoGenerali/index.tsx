@@ -1,5 +1,6 @@
 import {
   AbsoluteFill,
+  Audio,
   Easing,
   interpolate,
   OffthreadVideo,
@@ -593,6 +594,76 @@ const EndCard: React.FC = () => {
   );
 };
 
+// ---------- sound effects ----------
+
+type Sfx =
+  | "whoosh"
+  | "swoosh"
+  | "pop"
+  | "tick"
+  | "ding"
+  | "kaching"
+  | "stamp"
+  | "impact"
+  | "riser";
+
+const SFX: { at: number; file: Sfx; volume: number }[] = [];
+const sfx = (at: number, file: Sfx, volume: number) =>
+  SFX.push({ at: Math.max(0, at), file, volume });
+
+cutawayWindows.forEach((w) => {
+  sfx(w.from - 5, "whoosh", 0.75);
+  sfx(w.to - 6, "swoosh", 0.35);
+  const words = CLIPS[w.clip].words;
+  if (w.scene === "atm") {
+    sfx(w.from + 10, "kaching", 0.55);
+    sfx(w.from + 18, "stamp", 0.8);
+  } else if (w.scene === "app") {
+    sfx(w.from + 44, "ding", 0.55);
+  } else if (w.scene === "cards") {
+    sfx(w.from + 14, "ding", 0.5);
+    sfx(g(w.clip, words[16].s), "swoosh", 0.7);
+    sfx(g(w.clip, words[20].s), "swoosh", 0.7);
+  } else {
+    sfx(g(w.clip, words[19].s), "stamp", 0.85);
+  }
+});
+
+ITEMS.forEach((it) => {
+  if (it.kind === "block") {
+    it.lines.forEach((line, i) =>
+      sfx(it.from + line.at, i === 0 ? "pop" : "tick", i === 0 ? 0.5 : 0.35),
+    );
+  } else if (it.kind === "name") {
+    sfx(it.from, "swoosh", 0.6);
+  } else if (it.red) {
+    sfx(it.from, "pop", 0.45);
+  }
+});
+
+REASONS.forEach((r) => sfx(clipStartF[r.clip] + 2, "tick", 0.5));
+
+sfx(SPEECH_END - 36, "riser", 0.22);
+sfx(SPEECH_END, "impact", 0.8);
+sfx(SPEECH_END + 22, "ding", 0.45);
+
+SFX.sort((a, b) => a.at - b.at);
+
+const SoundEffects: React.FC = () => (
+  <>
+    {SFX.filter(
+      (cue, i) =>
+        !SFX.slice(0, i).some(
+          (prev) => prev.file === cue.file && cue.at - prev.at < 4,
+        ),
+    ).map((cue, i) => (
+      <Sequence key={`${cue.file}-${cue.at}-${i}`} from={cue.at}>
+        <Audio src={staticFile(`sfx/${cue.file}.wav`)} volume={cue.volume} />
+      </Sequence>
+    ))}
+  </>
+);
+
 export const ContoGenerali: React.FC = () => {
   return (
     <AbsoluteFill style={{ backgroundColor: "black" }}>
@@ -644,6 +715,7 @@ export const ContoGenerali: React.FC = () => {
       <Sequence from={SPEECH_END} durationInFrames={END_CARD}>
         <EndCard />
       </Sequence>
+      <SoundEffects />
     </AbsoluteFill>
   );
 };
