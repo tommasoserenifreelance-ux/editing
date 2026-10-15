@@ -114,15 +114,15 @@ export const CLIPS: Clip[] = [
     answer: false,
     revealAt: 2.9,
     // Back to normal for the closing line.
-    revealEnd: 6.0,
+    revealEnd: 7.3,
     captions: [
       { from: 0, to: 1.53, text: "Il collagene" },
       { from: 1.53, to: 2.9, text: "serve solo per la pelle?" },
       { from: 2.9, to: 3.5, text: "Falso!" },
       { from: 3.55, to: 4.55, text: "Serve anche per ossa," },
-      { from: 4.55, to: 6.0, text: "tendini, cartilagini e vasi." },
-      { from: 6.1, to: 7.3, text: "È la proteina" },
-      { from: 7.3, to: 10.1, text: "più importante per il nostro corpo" },
+      { from: 4.55, to: 7.3, text: "tendini, cartilagini e vasi." },
+      { from: 7.35, to: 8.35, text: "È la proteina" },
+      { from: 8.35, to: 10.1, text: "più importante per il nostro corpo" },
     ],
   },
 ];
