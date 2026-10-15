@@ -2,6 +2,7 @@ import { linearTiming, TransitionSeries } from "@remotion/transitions";
 import { slide } from "@remotion/transitions/slide";
 import {
   AbsoluteFill,
+  Audio,
   Freeze,
   interpolate,
   OffthreadVideo,
@@ -107,7 +108,7 @@ const Reveal: React.FC<{ answer: boolean }> = ({ answer }) => {
       <AbsoluteFill
         style={{ boxShadow: `inset 0 0 160px 30px ${color}`, opacity: glow }}
       />
-      <AbsoluteFill style={{ alignItems: "center", paddingTop: 210 }}>
+      <AbsoluteFill style={{ alignItems: "center", paddingTop: 1070 }}>
         <div
           style={{
             transform: `scale(${pop}) rotate(${interpolate(pop, [0, 1], [-12, -4])}deg)`,
@@ -287,6 +288,30 @@ const Stickers: React.FC = () => {
   );
 };
 
+// Whoosh on every swipe, buzzer (false) or ding (true) on every reveal.
+const SoundEffects: React.FC = () => (
+  <>
+    {seqStarts.slice(1).map((start) => (
+      <Sequence key={`w${start}`} from={start - 2}>
+        <Audio src={staticFile("sfx/whoosh.wav")} volume={0.55} />
+      </Sequence>
+    ))}
+    {CLIPS.map((clip, i) =>
+      clip.answer === null || clip.flash === false ? null : (
+        <Sequence
+          key={`a${i}`}
+          from={seqStarts[i] + leads[i] + s(clip.revealAt)}
+        >
+          <Audio
+            src={staticFile(clip.answer ? "sfx/correct.wav" : "sfx/wrong.wav")}
+            volume={0.4}
+          />
+        </Sequence>
+      ),
+    )}
+  </>
+);
+
 export const TrueFalse: React.FC = () => (
   <AbsoluteFill style={{ backgroundColor: "black" }}>
     <TransitionSeries>
@@ -309,5 +334,6 @@ export const TrueFalse: React.FC = () => (
       ])}
     </TransitionSeries>
     <Stickers />
+    <SoundEffects />
   </AbsoluteFill>
 );
