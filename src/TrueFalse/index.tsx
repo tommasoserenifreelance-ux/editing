@@ -2,6 +2,7 @@ import { linearTiming, TransitionSeries } from "@remotion/transitions";
 import { slide } from "@remotion/transitions/slide";
 import {
   AbsoluteFill,
+  Img,
   Audio,
   Freeze,
   interpolate,
@@ -108,7 +109,7 @@ const Reveal: React.FC<{ answer: boolean }> = ({ answer }) => {
       <AbsoluteFill
         style={{ boxShadow: `inset 0 0 160px 30px ${color}`, opacity: glow }}
       />
-      <AbsoluteFill style={{ alignItems: "center", paddingTop: 1070 }}>
+      <AbsoluteFill style={{ alignItems: "center", paddingTop: 1105 }}>
         <div
           style={{
             transform: `scale(${pop}) rotate(${interpolate(pop, [0, 1], [-12, -4])}deg)`,
@@ -266,7 +267,7 @@ const Stickers: React.FC = () => {
   };
 
   return (
-    <AbsoluteFill style={{ padding: "520px 0 0 56px", fontFamily: sans }}>
+    <AbsoluteFill style={{ padding: "750px 0 0 56px", fontFamily: sans }}>
       <div
         style={{
           opacity: enter,
@@ -287,6 +288,19 @@ const Stickers: React.FC = () => {
     </AbsoluteFill>
   );
 };
+
+const Watermark: React.FC = () => (
+  <AbsoluteFill style={{ alignItems: "flex-end", padding: "90px 60px 0 0" }}>
+    <Img
+      src={staticFile("logo.png")}
+      style={{
+        width: 120,
+        opacity: 0.8,
+        filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.35))",
+      }}
+    />
+  </AbsoluteFill>
+);
 
 // Whoosh on every swipe, buzzer (false) or ding (true) on every reveal.
 const SoundEffects: React.FC = () => (
@@ -334,6 +348,7 @@ export const TrueFalse: React.FC = () => (
       ])}
     </TransitionSeries>
     <Stickers />
+    <Watermark />
     <SoundEffects />
   </AbsoluteFill>
 );
