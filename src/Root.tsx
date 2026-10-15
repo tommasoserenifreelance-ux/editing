@@ -8,6 +8,8 @@ import {
   PilatesOverlay,
 } from "./PilatesOverlay";
 import { PILATES_DURATION, PilatesReformer } from "./PilatesReformer";
+import { TRUE_FALSE_DURATION, TrueFalse } from "./TrueFalse";
+import { FPS as TRUE_FALSE_FPS } from "./TrueFalse/config";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -69,6 +71,14 @@ export const RemotionRoot: React.FC = () => {
         component={PilatesOverlay}
         durationInFrames={OVERLAY_DURATION}
         fps={OVERLAY_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="TrueFalse"
+        component={TrueFalse}
+        durationInFrames={TRUE_FALSE_DURATION}
+        fps={TRUE_FALSE_FPS}
         width={1080}
         height={1920}
       />
