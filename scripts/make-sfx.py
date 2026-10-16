@@ -80,17 +80,6 @@ save("heartbeat", beat)
 click = env(rng.standard_normal(int(SR * 0.05)), 0.0005, 0.006)
 save("tick", band(click, 1500, 9000) + env(np.sin(2 * np.pi * 2400 * t(0.05)), 0.0005, 0.01), 0.7)
 
-# "Wrong" buzz with a slash of noise, for the crossed-out diets.
-buzz = np.sign(np.sin(2 * np.pi * 140 * t(0.32))) * 0.5 + np.sign(np.sin(2 * np.pi * 147 * t(0.32))) * 0.5
-buzz = band(buzz, 80, 2500) * np.minimum(1, np.arange(len(buzz)) / 400) * np.exp(-t(0.32) / 0.18)
-slash = rng.standard_normal(len(buzz))
-slash = moving_band(slash, np.linspace(6000, 1200, len(slash)), 900) * np.exp(-t(0.32) / 0.06)
-save("wrong", buzz + 0.6 * slash, 0.75)
-
-# Stamp thud.
-thud = env(sweep(160, 45, 0.3, 0.3), 0.001, 0.08) + 0.4 * band(env(rng.standard_normal(int(SR * 0.3)), 0.001, 0.02), 200, 4000)
-save("stamp", thud)
-
 # Bright two-note chime for the final check.
 chime = np.zeros(int(SR * 1.2))
 for start, f in [(0, 1318.5), (0.09, 1975.5)]:
@@ -100,7 +89,3 @@ for start, f in [(0, 1318.5), (0.09, 1975.5)]:
     i = int(start * SR)
     chime[i : i + len(s)] += s
 save("ding", chime, 0.7)
-
-# Soft rising tone for the growth line.
-rise = sweep(300, 1100, 0.7, 2) * np.sin(np.pi * t(0.7) / 0.7) ** 2
-save("rise", rise + 0.5 * sweep(600, 2200, 0.7, 2) * np.sin(np.pi * t(0.7) / 0.7) ** 2, 0.5)

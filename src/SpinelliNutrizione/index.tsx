@@ -1,341 +1,216 @@
 import {
   AbsoluteFill,
   Audio,
+  Easing,
   interpolate,
   OffthreadVideo,
   Sequence,
-  Series,
-  spring,
   staticFile,
   useCurrentFrame,
-  useVideoConfig,
 } from "remotion";
 import { sans } from "../PilatesReformer/theme";
 import { brand } from "./brand";
-import {
-  Clipboard,
-  DietTags,
-  Growth,
-  Heartbeat,
-  MedicalCross,
-  NeedsStack,
-  Plate,
-  ProgressBar,
-  Refresh,
-  Wipe,
-} from "./graphics";
+import { Clipboard, DietTags, Growth, Heartbeat, NeedsRow } from "./graphics";
 
 export const SPINELLI_FPS = 30;
 
-type Line = {
-  // Seconds, relative to the untrimmed source clip.
-  from: number;
-  to: number;
-  text: string;
-  highlight?: string[];
-};
-
-type Graphic = {
-  // Seconds, relative to the untrimmed source clip.
-  from: number;
-  to: number;
-  render: (duration: number) => React.ReactNode;
-};
-
-type Clip = {
-  src: string;
-  trimStart: number;
-  end: number;
-  zoom: [number, number];
-  // Moments (source seconds) that get a quick punch-in zoom.
-  punches: number[];
-  lines: Line[];
-  graphics: Graphic[];
-  // [source seconds, file in public/sfx, volume]
-  sounds: [number, string, number][];
-};
-
 const f = (s: number) => Math.round(s * SPINELLI_FPS);
-const clipFrames = (c: Clip) => f(c.end) - f(c.trimStart);
 
-// Line timings come from the speech envelope of each clip, split by syllables.
-const CLIPS: Clip[] = [
+// The two clips are one continuous take: the end of "approccio" is in the
+// first 0.3 s of the second clip, so it is kept untrimmed.
+const CLIPS = [
+  { src: "video/spinelli-1.mp4", trimStart: 0.4, end: 7.03, zoom: [1, 1.04] },
+  { src: "video/spinelli-2.mp4", trimStart: 0, end: 12.16, zoom: [1.04, 1.08] },
+] as const;
+
+const clipFrames = (i: number) => f(CLIPS[i].end) - f(CLIPS[i].trimStart);
+const clipStart = (i: number) =>
+  CLIPS.slice(0, i).reduce((n, _, j) => n + clipFrames(j), 0);
+
+// Composition frame for a moment (in seconds) of the untrimmed source clip.
+const at = (clip: number, s: number) =>
+  clipStart(clip) + f(s) - f(CLIPS[clip].trimStart);
+
+export const SPINELLI_DURATION = clipStart(CLIPS.length);
+
+type Caption = { from: number; to: number; text: string; highlight: string[] };
+
+// Timings come from the speech envelope of each clip.
+const CAPTIONS: Caption[] = [
   {
-    src: "video/spinelli-1.mp4",
-    trimStart: 0.4,
-    end: 7.03,
-    zoom: [1.06, 1],
-    punches: [4.35, 5.8],
-    sounds: [
-      [0.55, "pop", 0.3],
-      [1.0, "heartbeat", 0.4],
-      [1.7, "pop", 0.35],
-      [3.05, "whoosh", 0.3],
-      [4.35, "wrong", 0.3],
-      [5.2, "whoosh", 0.3],
-      [5.25, "pop", 0.3],
-    ],
-    graphics: [
-      { from: 0.55, to: 1.7, render: (d) => <Heartbeat duration={d} /> },
-      { from: 1.7, to: 2.95, render: (d) => <Plate duration={d} /> },
-      {
-        from: 3.05,
-        to: 5.2,
-        render: (d) => <DietTags duration={d} strikeAt={f(4.35 - 3.05)} />,
-      },
-      { from: 5.2, to: 7.03, render: (d) => <Refresh duration={d + 6} /> },
-    ],
-    lines: [
-      { from: 0.55, to: 1.7, text: "La tua salute", highlight: ["salute"] },
-      {
-        from: 1.7,
-        to: 2.95,
-        text: "parte da ciò che mangi.",
-        highlight: ["mangi."],
-      },
-      {
-        from: 3.05,
-        to: 4.35,
-        text: "Sei stanca delle solite diete",
-        highlight: ["diete"],
-      },
-      { from: 4.35, to: 5.2, text: "che non funzionano?" },
-      { from: 5.2, to: 5.8, text: "È il momento" },
-      {
-        from: 5.8,
-        to: 7.03,
-        text: "di cambiare approccio.",
-        highlight: ["approccio."],
-      },
-    ],
+    from: at(0, 0.55),
+    to: at(0, 2.95),
+    text: "La tua salute parte da ciò che mangi.",
+    highlight: ["salute", "mangi."],
   },
   {
-    src: "video/spinelli-2.mp4",
-    trimStart: 0.55,
-    end: 12.16,
-    zoom: [1, 1.06],
-    punches: [0.85, 11.1],
-    sounds: [
-      [0.9, "pop", 0.35],
-      [2.2, "pop", 0.3],
-      [2.47, "tick", 0.4],
-      [2.93, "tick", 0.4],
-      [3.4, "tick", 0.4],
-      [3.5, "stamp", 0.45],
-      [5.1, "pop", 0.35],
-      [6.4, "pop", 0.35],
-      [7.7, "pop", 0.35],
-      [9.75, "rise", 0.25],
-      [11.1, "ding", 0.3],
-    ],
-    graphics: [
-      { from: 0.85, to: 2.2, render: (d) => <MedicalCross duration={d} /> },
-      {
-        from: 2.2,
-        to: 5.1,
-        render: (d) => <Clipboard duration={d} stampAt={f(3.5 - 2.2)} />,
-      },
-      {
-        from: 5.1,
-        to: 9.6,
-        render: (d) => (
-          <NeedsStack duration={d} at={[0, f(6.4 - 5.1), f(7.7 - 5.1)]} />
-        ),
-      },
-      {
-        from: 9.75,
-        to: 12.16,
-        render: (d) => <Growth duration={d + 6} checkAt={f(11.1 - 9.75)} />,
-      },
-    ],
-    lines: [
-      {
-        from: 0.85,
-        to: 2.2,
-        text: "Al Centro Medico Spinelli",
-        highlight: ["Centro", "Medico", "Spinelli"],
-      },
-      { from: 2.2, to: 3.5, text: "ti aspetta un protocollo" },
-      {
-        from: 3.5,
-        to: 5.1,
-        text: "nutrizionale personalizzato",
-        highlight: ["personalizzato"],
-      },
-      { from: 5.1, to: 6.4, text: "sulle tue esigenze," },
-      {
-        from: 6.4,
-        to: 7.7,
-        text: "sul tuo metabolismo",
-        highlight: ["metabolismo"],
-      },
-      {
-        from: 7.7,
-        to: 9.6,
-        text: "e sui tuoi obiettivi.",
-        highlight: ["obiettivi."],
-      },
-      {
-        from: 9.75,
-        to: 11.1,
-        text: "Il cambiamento inizia",
-        highlight: ["cambiamento"],
-      },
-      {
-        from: 11.1,
-        to: 12.16,
-        text: "dalla tua scelta.",
-        highlight: ["scelta."],
-      },
-    ],
+    from: at(0, 3.05),
+    to: at(0, 5.2),
+    text: "Sei stanca delle solite diete che non funzionano?",
+    highlight: ["diete"],
+  },
+  {
+    from: at(0, 5.2),
+    to: at(1, 0.45),
+    text: "È il momento di cambiare approccio.",
+    highlight: ["approccio."],
+  },
+  {
+    from: at(1, 0.85),
+    to: at(1, 2.2),
+    text: "Al Centro Medico Spinelli",
+    highlight: ["Centro", "Medico", "Spinelli"],
+  },
+  {
+    from: at(1, 2.2),
+    to: at(1, 5.1),
+    text: "ti aspetta un protocollo nutrizionale personalizzato",
+    highlight: ["personalizzato"],
+  },
+  {
+    from: at(1, 5.1),
+    to: at(1, 7.7),
+    text: "sulle tue esigenze, sul tuo metabolismo",
+    highlight: ["esigenze,", "metabolismo"],
+  },
+  {
+    from: at(1, 7.7),
+    to: at(1, 9.6),
+    text: "e sui tuoi obiettivi.",
+    highlight: ["obiettivi."],
+  },
+  {
+    from: at(1, 9.75),
+    to: SPINELLI_DURATION,
+    text: "Il cambiamento inizia dalla tua scelta.",
+    highlight: ["cambiamento", "scelta."],
   },
 ];
 
-export const SPINELLI_DURATION = CLIPS.reduce((n, c) => n + clipFrames(c), 0);
+type Graphic = {
+  from: number;
+  to: number;
+  render: (duration: number, from: number) => React.ReactNode;
+};
 
-const CUT = clipFrames(CLIPS[0]);
-const WIPE = 14;
+const GRAPHICS: Graphic[] = [
+  {
+    from: at(0, 0.55),
+    to: at(0, 2.95),
+    render: (d) => <Heartbeat duration={d} />,
+  },
+  {
+    from: at(0, 3.05),
+    to: at(0, 5.2),
+    render: (d, from) => (
+      <DietTags duration={d} strikeAt={at(0, 4.35) - from} />
+    ),
+  },
+  {
+    from: at(1, 2.2),
+    to: at(1, 5.1),
+    render: (d) => <Clipboard duration={d} />,
+  },
+  {
+    from: at(1, 5.1),
+    to: at(1, 9.6),
+    render: (d, from) => (
+      <NeedsRow duration={d} at={[0, at(1, 6.4) - from, at(1, 7.7) - from]} />
+    ),
+  },
+  {
+    from: at(1, 9.75),
+    to: SPINELLI_DURATION,
+    // Stays on screen through the last frame.
+    render: (d, from) => (
+      <Growth duration={d + 10} checkAt={at(1, 11.1) - from} />
+    ),
+  },
+];
 
-// Words light up one after another, roughly following the speech.
-const Caption: React.FC<{ line: Line; duration: number }> = ({
-  line,
+// [composition frame, file in public/sfx, volume]
+const SOUNDS: [number, string, number][] = [
+  [at(0, 1.3), "heartbeat", 0.3],
+  [at(0, 3.05), "pop", 0.2],
+  [at(0, 4.35), "whoosh", 0.18],
+  [at(1, 2.73), "tick", 0.3],
+  [at(1, 3.33), "tick", 0.3],
+  [at(1, 3.93), "tick", 0.3],
+  [at(1, 5.1), "pop", 0.2],
+  [at(1, 6.4), "pop", 0.2],
+  [at(1, 7.7), "pop", 0.2],
+  [at(1, 11.3), "ding", 0.25],
+];
+
+const soft = {
+  extrapolateLeft: "clamp",
+  extrapolateRight: "clamp",
+  easing: Easing.out(Easing.cubic),
+} as const;
+
+const CaptionView: React.FC<{ caption: Caption; duration: number }> = ({
+  caption,
   duration,
 }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-  const enter = spring({ frame, fps, config: { damping: 13, mass: 0.5 } });
-  const exit = interpolate(frame, [duration - 3, duration], [1, 0], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const words = line.text.split(" ");
-  const total = words.reduce((n, w) => n + w.length, 0);
-  let chars = 0;
+  const enter = interpolate(frame, [0, 8], [0, 1], soft);
+  const exit = interpolate(frame, [duration - 5, duration], [1, 0], soft);
 
   return (
-    <AbsoluteFill
-      style={{
-        alignItems: "center",
-        justifyContent: "flex-end",
-        paddingBottom: 470,
-      }}
-    >
+    <AbsoluteFill style={{ alignItems: "center", paddingTop: 1270 }}>
       <div
         style={{
-          opacity: Math.min(1, enter * 2) * exit,
-          transform: `translateY(${interpolate(enter, [0, 1], [30, 0])}px) scale(${interpolate(enter, [0, 1], [0.9, 1])})`,
-          maxWidth: 960,
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          columnGap: 18,
-          padding: "10px 30px",
-          borderRadius: 22,
-          background: brand.cream,
+          opacity: enter * exit,
+          transform: `translateY(${interpolate(enter, [0, 1], [12, 0])}px)`,
+          maxWidth: 940,
+          textAlign: "center",
           fontFamily: sans,
           fontWeight: 700,
-          fontSize: 66,
-          lineHeight: 1.3,
-          filter: "drop-shadow(0 8px 20px rgba(0,0,0,0.28))",
+          fontSize: 60,
+          lineHeight: 1.45,
+          filter: "drop-shadow(0 8px 20px rgba(0,0,0,0.25))",
         }}
       >
-        {words.map((w, i) => {
-          const at = (chars / total) * duration * 0.8;
-          chars += w.length;
-          const pop = spring({
-            frame: frame - at,
-            fps,
-            config: { damping: 10, mass: 0.4 },
-          });
-          const key = line.highlight?.includes(w);
-          return (
+        <span
+          style={{
+            background: brand.cream,
+            color: brand.ink,
+            padding: "8px 24px",
+            borderRadius: 18,
+            boxDecorationBreak: "clone",
+            WebkitBoxDecorationBreak: "clone",
+          }}
+        >
+          {caption.text.split(" ").map((w, i) => (
             <span
               key={i}
               style={{
-                display: "inline-block",
-                color: key ? brand.magenta : brand.ink,
-                opacity: interpolate(pop, [0, 1], [0.25, 1], {
-                  extrapolateRight: "clamp",
-                }),
-                transform: `translateY(${interpolate(pop, [0, 0.5, 1], [0, key ? -14 : -8, 0])}px) scale(${interpolate(pop, [0, 0.5, 1], [1, 1.06, 1])})`,
+                color: caption.highlight.includes(w)
+                  ? brand.magenta
+                  : undefined,
               }}
             >
+              {i > 0 ? " " : ""}
               {w}
             </span>
-          );
-        })}
+          ))}
+        </span>
       </div>
     </AbsoluteFill>
   );
 };
 
-const ClipScene: React.FC<{ clip: Clip; entryPunch: boolean }> = ({
-  clip,
-  entryPunch,
-}) => {
+const ClipVideo: React.FC<{ index: number }> = ({ index }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-  const duration = clipFrames(clip);
-  const local = (s: number) => f(s) - f(clip.trimStart);
-
-  const punch = clip.punches.reduce(
-    (n, p) =>
-      n +
-      interpolate(frame - local(p), [0, 3, 18], [0, 1, 0], {
-        extrapolateLeft: "clamp",
-        extrapolateRight: "clamp",
-      }),
-    0,
-  );
-  const entry = entryPunch
-    ? 1 - spring({ frame, fps, config: { damping: 14 } })
-    : 0;
-  const scale =
-    interpolate(frame, [0, duration], clip.zoom) *
-    (1 + 0.07 * punch + 0.15 * entry);
-
-  // Short audio ramps so the cut between clips doesn't click.
-  const volume = (fr: number) =>
-    interpolate(fr, [0, 3, duration - 3, duration], [0, 1, 1, 0], {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-    });
-
+  const clip = CLIPS[index];
+  const scale = interpolate(frame, [0, clipFrames(index)], clip.zoom);
   return (
-    <AbsoluteFill>
-      <AbsoluteFill style={{ transform: `scale(${scale})` }}>
-        <OffthreadVideo
-          src={staticFile(clip.src)}
-          trimBefore={f(clip.trimStart)}
-          volume={volume}
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-        />
-      </AbsoluteFill>
-      {clip.graphics.map((g) => {
-        const length = Math.min(f(g.to), f(clip.end)) - f(g.from);
-        return (
-          <Sequence key={g.from} from={local(g.from)} durationInFrames={length}>
-            {g.render(length)}
-          </Sequence>
-        );
-      })}
-      {clip.sounds.map(([at, name, vol]) => (
-        <Sequence key={`${name}-${at}`} from={local(at)}>
-          <Audio src={staticFile(`sfx/${name}.wav`)} volume={vol} />
-        </Sequence>
-      ))}
-      {clip.lines.map((line) => {
-        const length = Math.min(f(line.to), f(clip.end)) - f(line.from);
-        return (
-          <Sequence
-            key={line.text}
-            from={local(line.from)}
-            durationInFrames={length}
-          >
-            <Caption line={line} duration={length} />
-          </Sequence>
-        );
-      })}
+    <AbsoluteFill style={{ transform: `scale(${scale})` }}>
+      <OffthreadVideo
+        src={staticFile(clip.src)}
+        trimBefore={f(clip.trimStart)}
+        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+      />
     </AbsoluteFill>
   );
 };
@@ -343,20 +218,30 @@ const ClipScene: React.FC<{ clip: Clip; entryPunch: boolean }> = ({
 export const SpinelliNutrizione: React.FC = () => {
   return (
     <AbsoluteFill style={{ backgroundColor: "black" }}>
-      <Series>
-        {CLIPS.map((clip, i) => (
-          <Series.Sequence key={clip.src} durationInFrames={clipFrames(clip)}>
-            <ClipScene clip={clip} entryPunch={i > 0} />
-          </Series.Sequence>
-        ))}
-      </Series>
-      <Sequence from={CUT - WIPE / 2} durationInFrames={WIPE}>
-        <Wipe duration={WIPE} />
-      </Sequence>
-      <Sequence from={CUT - 10}>
-        <Audio src={staticFile("sfx/whoosh.wav")} volume={0.45} />
-      </Sequence>
-      <ProgressBar total={SPINELLI_DURATION} />
+      {CLIPS.map((clip, i) => (
+        <Sequence
+          key={clip.src}
+          from={clipStart(i)}
+          durationInFrames={clipFrames(i)}
+        >
+          <ClipVideo index={i} />
+        </Sequence>
+      ))}
+      {GRAPHICS.map((g) => (
+        <Sequence key={g.from} from={g.from} durationInFrames={g.to - g.from}>
+          {g.render(g.to - g.from, g.from)}
+        </Sequence>
+      ))}
+      {CAPTIONS.map((c) => (
+        <Sequence key={c.text} from={c.from} durationInFrames={c.to - c.from}>
+          <CaptionView caption={c} duration={c.to - c.from} />
+        </Sequence>
+      ))}
+      {SOUNDS.map(([frame, name, volume]) => (
+        <Sequence key={`${name}-${frame}`} from={frame}>
+          <Audio src={staticFile(`sfx/${name}.wav`)} volume={volume} />
+        </Sequence>
+      ))}
     </AbsoluteFill>
   );
 };
