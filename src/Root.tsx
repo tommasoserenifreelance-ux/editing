@@ -1,4 +1,4 @@
-import { Composition, Folder } from "remotion";
+import { Composition, Folder, Still } from "remotion";
 import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
@@ -9,6 +9,7 @@ import {
 } from "./PilatesOverlay";
 import { PILATES_DURATION, PilatesReformer } from "./PilatesReformer";
 import { TRUE_FALSE_DURATION, TrueFalse } from "./TrueFalse";
+import { Cover } from "./TrueFalse/Cover";
 import { FPS as TRUE_FALSE_FPS } from "./TrueFalse/config";
 
 // Each <Composition> is an entry in the sidebar!
@@ -81,6 +82,20 @@ export const RemotionRoot: React.FC = () => {
         fps={TRUE_FALSE_FPS}
         width={1080}
         height={1920}
+      />
+      <Still
+        id="CoverProdottoInCamera"
+        component={Cover}
+        width={1080}
+        height={1920}
+        defaultProps={{ image: "prodotto-in-camera.png" }}
+      />
+      <Still
+        id="CoverProdottoEViso"
+        component={Cover}
+        width={1080}
+        height={1920}
+        defaultProps={{ image: "prodotto-e-viso.png" }}
       />
     </>
   );
