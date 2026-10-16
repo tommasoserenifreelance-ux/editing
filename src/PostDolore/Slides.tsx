@@ -286,7 +286,6 @@ export const Slide9: React.FC = () => (
           </div>
         ))}
       </div>
-      <div style={{ height: 3, backgroundColor: colors.pink }} />
       <Title color={colors.white} size={52}>
         Mandalo a un’amica e segui <Hl color={colors.blush}>@dr.eleonorapiccolo</Hl> per vivere
         questa fase con più consapevolezza.
