@@ -36,8 +36,8 @@
   .swipe { position: absolute; left: 76px; bottom: 62px; font-size: 24px; color: var(--grey); letter-spacing: 1px; }
 
   /* Cover: foto a tutto schermo (cover.jpg), fallback beige */
-  .cover { background: #c9a98a url("cover.jpg") center 20% / cover no-repeat; }
-  .cover::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(40,25,15,.55) 100%); }
+  .cover { background: #c9a98a url("cover.jpg") center top / cover no-repeat; }
+  .cover::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(40,25,15,.62) 100%); }
   .cover > * { z-index: 1; }
   .cover .content { top: auto; bottom: 170px; }
   .cover h1 { font-size: 76px; color: #fff; }
@@ -45,6 +45,7 @@
   .cover .date { position: absolute; left: 76px; bottom: 540px; font-family: "Playfair"; font-weight: 700; font-size: 150px; line-height: .9; color: #fff; letter-spacing: -4px; }
   .cover .date span { font-family: "Inter"; font-size: 34px; font-weight: 600; letter-spacing: 6px; text-transform: uppercase; margin-left: 14px; vertical-align: 18px; }
   .cover .swipe { color: #fff; }
+  .cover .logo { left: 70px; transform: none; top: 70px; }
   .cover .dots i { background: rgba(255,255,255,.5); } .cover .dots i.on { background: #fff; }
 </style>
 </head>
