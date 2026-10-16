@@ -10,7 +10,7 @@ import {
   useVideoConfig,
 } from "remotion";
 import { CaptionMode, Captions, chunkStart, wt as wordAt } from "./captions";
-import { CLIP_OFFSETS, Sfx, TalkingHead } from "./primitives";
+import { CLIP_OFFSETS, PrintDefs, Sfx, TalkingHead } from "./primitives";
 import {
   Barre,
   Benefits,
@@ -109,6 +109,7 @@ const modeAt = (t: number) => {
 
 export const Testosterone: React.FC = () => (
   <AbsoluteFill style={{ backgroundColor: colors.black }}>
+    <PrintDefs />
     {SCENES.map((s, i) => {
       const start = sec(s.from);
       const end = i < SCENES.length - 1 ? sec(SCENES[i + 1].from) : TESTO_DURATION;

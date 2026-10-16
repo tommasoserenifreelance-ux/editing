@@ -66,12 +66,105 @@ export const usePop = (delay = 0, damping = 11) => {
   });
 };
 
-export const Fill: React.FC<{
-  bg: string;
-  children?: React.ReactNode;
-}> = ({ bg, children }) => (
-  <AbsoluteFill style={{ backgroundColor: bg }}>{children}</AbsoluteFill>
+/**
+ * SVG filters shared by the whole video (mounted once at the root).
+ * `print`: rough edges + worn white specks, `sticker`: same + white outline.
+ * Apply with `filter: "url(#print)"` on any element.
+ */
+const PrintFilter: React.FC<{ id: string; outline: number }> = ({
+  id,
+  outline,
+}) => (
+  <filter id={id} x="-20%" y="-20%" width="140%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="4" result="warp" />
+    <feDisplacementMap in="SourceGraphic" in2="warp" scale="5" xChannelSelector="R" yChannelSelector="G" result="rough" />
+    <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="3" seed="11" result="grain" />
+    <feColorMatrix in="grain" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  -60 0 0 0 16.5" result="specks" />
+    <feComposite in="specks" in2="rough" operator="in" result="wear" />
+    {outline > 0 ? (
+      <>
+        <feMorphology in="rough" operator="dilate" radius={outline} result="fat" />
+        <feFlood floodColor="#fff" />
+        <feComposite in2="fat" operator="in" result="outline" />
+      </>
+    ) : null}
+    <feMerge>
+      {outline > 0 ? <feMergeNode in="outline" /> : null}
+      <feMergeNode in="rough" />
+      <feMergeNode in="wear" />
+    </feMerge>
+  </filter>
 );
+
+export const PrintDefs: React.FC = () => (
+  <svg width={0} height={0} style={{ position: "absolute" }}>
+    <defs>
+      <PrintFilter id="print" outline={0} />
+      <PrintFilter id="sticker" outline={9} />
+      {[0, 1].map((v) => (
+        <filter key={v} id={v ? "paperLight" : "paper"} x="0" y="0" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" seed="2" />
+          <feColorMatrix
+            type="matrix"
+            values={`0 0 0 0 ${v}  0 0 0 0 ${v}  0 0 0 0 ${v}  0 0 0 -1.4 1.05`}
+          />
+        </filter>
+      ))}
+    </defs>
+  </svg>
+);
+
+export type Paper = "white" | "black" | "coral" | "mint";
+
+const PAPER_BG: Record<Paper, string> = {
+  white: colors.white,
+  black: colors.black,
+  coral: colors.coral,
+  mint: colors.mint,
+};
+
+/**
+ * Scene background with a printed-paper feel: grain, faint diagonal
+ * stripes and (on colour) a soft vignette, as in the illustrated reference.
+ */
+export const Fill: React.FC<{
+  bg: Paper;
+  children?: React.ReactNode;
+}> = ({ bg, children }) => {
+  const dark = bg === "black";
+  const colour = bg === "coral" || bg === "mint";
+  return (
+    <AbsoluteFill style={{ backgroundColor: PAPER_BG[bg] }}>
+      <AbsoluteFill
+        style={{
+          backgroundImage: `repeating-linear-gradient(-45deg, ${
+            dark ? "rgba(255,255,255,0.025)" : "rgba(0,0,0,0.035)"
+          } 0 3px, transparent 3px 11px)`,
+        }}
+      />
+      {colour ? (
+        <AbsoluteFill
+          style={{
+            background:
+              "radial-gradient(ellipse 75% 60% at 50% 45%, rgba(255,255,255,0.12), rgba(0,0,0,0.22))",
+          }}
+        />
+      ) : null}
+      <svg
+        width={1080}
+        height={1920}
+        style={{
+          position: "absolute",
+          opacity: dark ? 0.06 : 0.1,
+          mixBlendMode: dark ? "screen" : "multiply",
+        }}
+      >
+        <rect width="100%" height="100%" filter={dark ? "url(#paperLight)" : "url(#paper)"} />
+      </svg>
+      {children}
+    </AbsoluteFill>
+  );
+};
 
 /**
  * The speaker, playing from the clip that covers the given global time.
@@ -227,7 +320,7 @@ export const Word3D: React.FC<{
           color,
           whiteSpace: "nowrap",
           textShadow: `${depth}, 0 0 40px ${color}88`,
-          filter: `blur(${blur}px)`,
+          filter: `url(#print) blur(${blur}px)`,
           transform: `translateY(${interpolate(p, [0, 1], [260, 0])}px) rotateX(${interpolate(p, [0, 1], [70, 14])}deg) rotateY(${-18 + wobble}deg) rotateZ(${rotate}deg) scale(${interpolate(p, [0, 1], [0.4, 1])})`,
         }}
       >
@@ -272,7 +365,7 @@ export const Scribble: React.FC<{
         strokeLinejoin="round"
         strokeDasharray={len}
         strokeDashoffset={len * (1 - drawn)}
-        style={{ filter: `drop-shadow(0 0 10px ${color}aa)` }}
+        style={{ filter: `url(#print) drop-shadow(0 0 10px ${color}aa)` }}
       />
       <Sfx at={delay} name="draw" volume={0.4} />
     </svg>
@@ -368,7 +461,7 @@ export const Bubble: React.FC<{
         justifyContent: "center",
         transform: `scale(${p})`,
         opacity: frame < delay ? 0 : 1,
-        filter: `grayscale(${grey}) brightness(${1 + grey * 0.15})`,
+        filter: `url(#print) grayscale(${grey}) brightness(${1 + grey * 0.15})`,
       }}
     >
       <svg viewBox="0 0 100 100" width={size * 0.56} height={size * 0.56}>
@@ -402,6 +495,7 @@ export const Link: React.FC<{
       style={{ position: "absolute", left: 0, top: 0, pointerEvents: "none" }}
     >
       <line
+        filter="url(#print)"
         x1={x1}
         y1={y1}
         x2={x1 + (x2 - x1) * t}

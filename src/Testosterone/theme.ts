@@ -38,6 +38,9 @@ export const colors = {
   brandDeep: "#9E7B00",
   green: "#3DFF2E",
   pink: "#FF5C8A",
+  coral: "#EF5B6E",
+  mint: "#4CCFA2",
+  printInk: "#1E1A24",
 };
 
 // Pastel circle backgrounds, same family as the reference avatar grid.

@@ -63,7 +63,7 @@ export const Mascolinita: React.FC<SceneProps> = ({ t0 }) => {
   const draw = interpolate(frame, [0, 16], [0, 1], clamp);
   const p = usePop(0);
   return (
-    <Fill bg={colors.white}>
+    <Fill bg="white">
       <svg
         viewBox="0 0 200 200"
         width={420}
@@ -73,7 +73,7 @@ export const Mascolinita: React.FC<SceneProps> = ({ t0 }) => {
           left: 330,
           top: 430,
           transform: `scale(${p}) rotate(${interpolate(p, [0, 1], [-20, 0])}deg)`,
-          filter: `drop-shadow(0 0 24px ${colors.blue}66)`,
+          filter: `url(#print) drop-shadow(0 0 24px ${colors.blue}66)`,
         }}
       >
         <circle
@@ -116,7 +116,7 @@ export const Mascolinita: React.FC<SceneProps> = ({ t0 }) => {
 export const TestoWord: React.FC<SceneProps> = ({ t0 }) => {
   const d = at(t0, "testosterone");
   return (
-    <Fill bg={colors.black}>
+    <Fill bg="black">
       <Word3D text="TESTOSTERONE" size={112} top={770} delay={d} />
       <Scribble
         delay={d + 8}
@@ -153,7 +153,7 @@ export const CardScene: React.FC<
   const rowY = 1270;
   const slot = 1080 / items.length;
   return (
-    <Fill bg={colors.white}>
+    <Fill bg="white">
       <GridFloor
         top={860}
         width={1000}
@@ -253,7 +253,7 @@ export const CorpoMente: React.FC<SceneProps> = ({ t0 }) => (
 
 /* "È l'energia e l'umore." — black screen, two emoji */
 export const EnergiaUmore: React.FC<SceneProps> = ({ t0 }) => (
-  <Fill bg={colors.black}>
+  <Fill bg="black">
     <Emoji name="bolt" x={360} y={640} size={260} delay={at(t0, "l'energia")} />
     <Emoji name="smile" x={720} y={640} size={260} delay={at(t0, "l'umore")} />
   </Fill>
@@ -286,8 +286,8 @@ export const PuntiDiVista: React.FC<SceneProps> = ({ t0 }) => {
     .sort((a, b) => a.d - b.d)
     .map((o) => o.i);
   return (
-    <Fill bg={colors.white}>
-      <GridFloor top={1180} width={1000} opacity={0.6} />
+    <Fill bg="mint">
+      <GridFloor top={1180} width={1000} opacity={0.35} />
       {order.map((idx, k) => {
         const sp = spots[idx];
         return (
@@ -296,7 +296,7 @@ export const PuntiDiVista: React.FC<SceneProps> = ({ t0 }) => {
             x={sp.x}
             y={sp.y}
             size={sp.s}
-            color={colors.grey}
+            color="#2E9E7B"
             delay={k * 1.6}
             sound={k % 3 === 0 ? "tick" : undefined}
           >
@@ -316,7 +316,7 @@ export const PuntiDiVista: React.FC<SceneProps> = ({ t0 }) => {
 
 /* "Quindi come cambia con l'età?" — black text screen + yellow ? */
 export const Domanda: React.FC<SceneProps> = ({ t0 }) => (
-  <Fill bg={colors.black}>
+  <Fill bg="black">
     <Word3D
       text="?"
       size={300}
@@ -350,9 +350,13 @@ export const Grafico: React.FC<SceneProps> = ({ t0 }) => {
   const axes = interpolate(frame, [0, 10], [0, 1], clamp);
   const ages = [30, 40, 50, 60, 70];
   return (
-    <Fill bg={colors.white}>
+    <Fill bg="white">
       <Heading text="livelli ormonali" top={430} opacity={axes} />
-      <svg width={1080} height={1920} style={{ position: "absolute" }}>
+      <svg
+        width={1080}
+        height={1920}
+        style={{ position: "absolute", filter: "url(#print)" }}
+      >
         <line
           x1={X0}
           y1={Y1}
@@ -465,7 +469,7 @@ export const Trentacinque: React.FC<SceneProps> = ({ t0 }) => {
     config: { damping: 8, mass: 0.5 },
   });
   return (
-    <Fill bg={colors.white}>
+    <Fill bg="coral">
       <div
         style={{
           position: "absolute",
@@ -477,8 +481,11 @@ export const Trentacinque: React.FC<SceneProps> = ({ t0 }) => {
           fontSize: 460,
           letterSpacing: "-0.06em",
           color: colors.brand,
-          WebkitTextStroke: `6px ${colors.brandDeep}`,
-          textShadow: `0 0 50px ${colors.brand}aa, 8px 10px 0 ${colors.brandDeep}`,
+          WebkitTextStroke: `10px ${colors.printInk}`,
+          paintOrder: "stroke fill",
+          // print misregistration: offset ink + mint layers under the yellow
+          textShadow: `14px 16px 0 ${colors.printInk}, -10px -6px 0 ${colors.mint}`,
+          filter: "url(#sticker)",
           transform: `scale(${p * (1 + 0.08 * Math.sin(hit * Math.PI))}) rotate(${interpolate(p, [0, 1], [-12, -4])}deg)`,
         }}
       >
@@ -490,6 +497,7 @@ export const Trentacinque: React.FC<SceneProps> = ({ t0 }) => {
         text="anni"
         delay={at(t0, "anno")}
         size={130}
+        color={colors.white}
         style={{ left: 0, right: 0, top: 1190 }}
       />
     </Fill>
@@ -517,9 +525,13 @@ export const Barre: React.FC<SceneProps> = ({ t0 }) => {
       height: h,
       borderRadius: "30px 30px 0 0",
       background: bg,
+      border: h > 2 ? `6px solid ${colors.printInk}` : "none",
+      borderBottom: "none",
+      filter: "url(#print)",
     }) as const;
+  const line = interpolate(frame, [dL - 2, dL + 8], [0, 1], clamp);
   return (
-    <Fill bg={colors.white}>
+    <Fill bg="white">
       <Heading text="dipende più da" top={380} />
       <div
         style={{
@@ -531,11 +543,12 @@ export const Barre: React.FC<SceneProps> = ({ t0 }) => {
       <div
         style={{
           position: "absolute",
-          left: 140,
-          right: 140,
+          left: 540 - 400 * line,
+          width: 800 * line,
           top: base,
-          height: 5,
-          background: colors.ink,
+          height: 6,
+          background: colors.printInk,
+          filter: "url(#print)",
         }}
       />
       <Sfx at={dL} name="rise" volume={0.5} />
@@ -569,7 +582,7 @@ export const Cause: React.FC<SceneProps> = ({ t0 }) => {
     { word: "stress", label: "stress\ncronico", emoji: "stress", x: 810, y: 1130 },
   ];
   return (
-    <Fill bg={colors.white}>
+    <Fill bg="coral">
       {items.map((it, i) => (
         <React.Fragment key={i}>
           <Emoji
@@ -584,7 +597,7 @@ export const Cause: React.FC<SceneProps> = ({ t0 }) => {
             text={it.label}
             delay={at(t0, it.word) + 2}
             size={50}
-            color={g > 0.5 ? colors.greyDark : colors.ink}
+            color={g > 0.5 ? colors.white : colors.ink}
             style={{ left: it.x - 200, width: 400, top: it.y + 120 }}
           />
         </React.Fragment>
@@ -610,7 +623,7 @@ export const Cause: React.FC<SceneProps> = ({ t0 }) => {
 
 /* "integratore antietà" — black screen, pill */
 export const Integratore: React.FC = () => (
-  <Fill bg={colors.black}>
+  <Fill bg="black">
     <Emoji name="pill" x={540} y={640} size={300} delay={2} />
   </Fill>
 );
