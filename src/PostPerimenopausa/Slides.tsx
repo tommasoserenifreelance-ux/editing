@@ -122,7 +122,7 @@ export const Slide2: React.FC = () => (
           la stanchezza.
         </div>
       </div>
-      <div style={{ padding: "10px 60px 64px" }}>
+      <div style={{ borderTop: `3px solid ${colors.pink}`, padding: "30px 60px 40px" }}>
         <div style={{ fontSize: 26, letterSpacing: 6, fontWeight: 500, color: colors.blush }}>
           LE DONNE IN PERIMENOPAUSA:
         </div>
@@ -209,6 +209,7 @@ export const Slide5: React.FC = () => (
         Stanchezza e irritabilità vengono spesso liquidate con un “è lo stress” o un “sarà l’età”. I
         dati aiutano a prenderle sul serio e a parlarne con il medico senza sentirti esagerata.
       </Body>
+      <div style={{ height: 3, backgroundColor: colors.pink, marginTop: 8 }} />
       <Title color={colors.white} size={50}>
         <span style={{ color: colors.blush }}>
           <Em>Per cominciare basta una frase:</Em>
