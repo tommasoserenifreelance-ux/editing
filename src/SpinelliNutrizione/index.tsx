@@ -9,15 +9,22 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { colors, sans, serif } from "../PilatesReformer/theme";
+import { sans } from "../PilatesReformer/theme";
+import { brand } from "./brand";
+import {
+  Clipboard,
+  DietTags,
+  Growth,
+  Heartbeat,
+  MedicalCross,
+  NeedsStack,
+  Plate,
+  ProgressBar,
+  Refresh,
+  Wipe,
+} from "./graphics";
 
 export const SPINELLI_FPS = 30;
-
-const brand = {
-  magenta: "#C8236F",
-  cream: "#FBF6F1",
-  ink: colors.ink,
-};
 
 type Line = {
   // Seconds, relative to the untrimmed source clip.
@@ -27,12 +34,26 @@ type Line = {
   highlight?: string[];
 };
 
+type Graphic = {
+  // Seconds, relative to the untrimmed source clip.
+  from: number;
+  to: number;
+  render: (duration: number) => React.ReactNode;
+};
+
 type Clip = {
   src: string;
   trimStart: number;
   end: number;
+  zoom: [number, number];
+  // Moments (source seconds) that get a quick punch-in zoom.
+  punches: number[];
   lines: Line[];
+  graphics: Graphic[];
 };
+
+const f = (s: number) => Math.round(s * SPINELLI_FPS);
+const clipFrames = (c: Clip) => f(c.end) - f(c.trimStart);
 
 // Line timings come from the speech envelope of each clip, split by syllables.
 const CLIPS: Clip[] = [
@@ -40,6 +61,18 @@ const CLIPS: Clip[] = [
     src: "video/spinelli-1.mp4",
     trimStart: 0.4,
     end: 7.03,
+    zoom: [1.06, 1],
+    punches: [4.35, 5.8],
+    graphics: [
+      { from: 0.55, to: 1.7, render: (d) => <Heartbeat duration={d} /> },
+      { from: 1.7, to: 2.95, render: (d) => <Plate duration={d} /> },
+      {
+        from: 3.05,
+        to: 5.2,
+        render: (d) => <DietTags duration={d} strikeAt={f(4.35 - 3.05)} />,
+      },
+      { from: 5.2, to: 7.03, render: (d) => <Refresh duration={d + 6} /> },
+    ],
     lines: [
       { from: 0.55, to: 1.7, text: "La tua salute", highlight: ["salute"] },
       {
@@ -68,6 +101,28 @@ const CLIPS: Clip[] = [
     src: "video/spinelli-2.mp4",
     trimStart: 0.55,
     end: 12.16,
+    zoom: [1, 1.06],
+    punches: [0.85, 11.1],
+    graphics: [
+      { from: 0.85, to: 2.2, render: (d) => <MedicalCross duration={d} /> },
+      {
+        from: 2.2,
+        to: 5.1,
+        render: (d) => <Clipboard duration={d} stampAt={f(3.5 - 2.2)} />,
+      },
+      {
+        from: 5.1,
+        to: 9.6,
+        render: (d) => (
+          <NeedsStack duration={d} at={[0, f(6.4 - 5.1), f(7.7 - 5.1)]} />
+        ),
+      },
+      {
+        from: 9.75,
+        to: 12.16,
+        render: (d) => <Growth duration={d + 6} checkAt={f(11.1 - 9.75)} />,
+      },
+    ],
     lines: [
       {
         from: 0.85,
@@ -111,13 +166,12 @@ const CLIPS: Clip[] = [
   },
 ];
 
-const f = (s: number) => Math.round(s * SPINELLI_FPS);
-const clipFrames = (c: Clip) => f(c.end) - f(c.trimStart);
-
 export const SPINELLI_DURATION = CLIPS.reduce((n, c) => n + clipFrames(c), 0);
 
-const LOCKUP = f(2.4);
+const CUT = clipFrames(CLIPS[0]);
+const WIPE = 14;
 
+// Words light up one after another, roughly following the speech.
 const Caption: React.FC<{ line: Line; duration: number }> = ({
   line,
   duration,
@@ -130,6 +184,8 @@ const Caption: React.FC<{ line: Line; duration: number }> = ({
     extrapolateRight: "clamp",
   });
   const words = line.text.split(" ");
+  const total = words.reduce((n, w) => n + w.length, 0);
+  let chars = 0;
 
   return (
     <AbsoluteFill
@@ -144,48 +200,75 @@ const Caption: React.FC<{ line: Line; duration: number }> = ({
           opacity: Math.min(1, enter * 2) * exit,
           transform: `translateY(${interpolate(enter, [0, 1], [30, 0])}px) scale(${interpolate(enter, [0, 1], [0.9, 1])})`,
           maxWidth: 960,
-          textAlign: "center",
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          columnGap: 18,
+          padding: "10px 30px",
+          borderRadius: 22,
+          background: brand.cream,
           fontFamily: sans,
           fontWeight: 700,
           fontSize: 66,
-          lineHeight: 1.45,
+          lineHeight: 1.3,
           filter: "drop-shadow(0 8px 20px rgba(0,0,0,0.28))",
         }}
       >
-        <span
-          style={{
-            background: brand.cream,
-            color: brand.ink,
-            padding: "8px 26px",
-            borderRadius: 18,
-            boxDecorationBreak: "clone",
-            WebkitBoxDecorationBreak: "clone",
-          }}
-        >
-          {words.map((w, i) => (
+        {words.map((w, i) => {
+          const at = (chars / total) * duration * 0.8;
+          chars += w.length;
+          const pop = spring({
+            frame: frame - at,
+            fps,
+            config: { damping: 10, mass: 0.4 },
+          });
+          const key = line.highlight?.includes(w);
+          return (
             <span
               key={i}
               style={{
-                color: line.highlight?.includes(w) ? brand.magenta : undefined,
+                display: "inline-block",
+                color: key ? brand.magenta : brand.ink,
+                opacity: interpolate(pop, [0, 1], [0.25, 1], {
+                  extrapolateRight: "clamp",
+                }),
+                transform: `scale(${interpolate(pop, [0, 0.5, 1], [1, key ? 1.15 : 1.08, 1])})`,
               }}
             >
-              {i > 0 ? " " : ""}
               {w}
             </span>
-          ))}
-        </span>
+          );
+        })}
       </div>
     </AbsoluteFill>
   );
 };
 
-const ClipScene: React.FC<{ clip: Clip; zoom: [number, number] }> = ({
+const ClipScene: React.FC<{ clip: Clip; entryPunch: boolean }> = ({
   clip,
-  zoom,
+  entryPunch,
 }) => {
   const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
   const duration = clipFrames(clip);
-  const scale = interpolate(frame, [0, duration], zoom);
+  const local = (s: number) => f(s) - f(clip.trimStart);
+
+  const punch = clip.punches.reduce(
+    (n, p) =>
+      n +
+      interpolate(frame - local(p), [0, 3, 18], [0, 1, 0], {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+      }),
+    0,
+  );
+  const entry = entryPunch
+    ? 1 - spring({ frame, fps, config: { damping: 14 } })
+    : 0;
+  const scale =
+    interpolate(frame, [0, duration], clip.zoom) *
+    (1 + 0.07 * punch + 0.15 * entry);
+
   // Short audio ramps so the cut between clips doesn't click.
   const volume = (fr: number) =>
     interpolate(fr, [0, 3, duration - 3, duration], [0, 1, 1, 0], {
@@ -203,82 +286,26 @@ const ClipScene: React.FC<{ clip: Clip; zoom: [number, number] }> = ({
           style={{ width: "100%", height: "100%", objectFit: "cover" }}
         />
       </AbsoluteFill>
+      {clip.graphics.map((g) => {
+        const length = Math.min(f(g.to), f(clip.end)) - f(g.from);
+        return (
+          <Sequence key={g.from} from={local(g.from)} durationInFrames={length}>
+            {g.render(length)}
+          </Sequence>
+        );
+      })}
       {clip.lines.map((line) => {
-        const from = f(line.from) - f(clip.trimStart);
         const length = Math.min(f(line.to), f(clip.end)) - f(line.from);
         return (
-          <Sequence key={line.text} from={from} durationInFrames={length}>
+          <Sequence
+            key={line.text}
+            from={local(line.from)}
+            durationInFrames={length}
+          >
             <Caption line={line} duration={length} />
           </Sequence>
         );
       })}
-    </AbsoluteFill>
-  );
-};
-
-// Clinic name + service, shown over the closing line.
-const Lockup: React.FC = () => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-  const enter = spring({ frame, fps, config: { damping: 16 } });
-  const bar = spring({ frame: frame - 6, fps, config: { damping: 20 } });
-
-  return (
-    <AbsoluteFill style={{ alignItems: "center", paddingTop: 150 }}>
-      <div
-        style={{
-          opacity: enter,
-          transform: `translateY(${interpolate(enter, [0, 1], [-30, 0])}px)`,
-          background: "rgba(251, 246, 241, 0.94)",
-          borderRadius: 28,
-          padding: "34px 56px 38px",
-          textAlign: "center",
-          boxShadow: "0 14px 40px rgba(0,0,0,0.22)",
-        }}
-      >
-        <div
-          style={{
-            fontFamily: sans,
-            fontWeight: 500,
-            fontSize: 30,
-            letterSpacing: 8,
-            color: brand.magenta,
-          }}
-        >
-          CENTRO MEDICO
-        </div>
-        <div
-          style={{
-            fontFamily: serif,
-            fontWeight: 700,
-            fontSize: 92,
-            lineHeight: 1.05,
-            color: brand.ink,
-          }}
-        >
-          Spinelli
-        </div>
-        <div
-          style={{
-            height: 4,
-            width: 120 * bar,
-            background: brand.magenta,
-            margin: "18px auto 16px",
-            borderRadius: 2,
-          }}
-        />
-        <div
-          style={{
-            fontFamily: serif,
-            fontStyle: "italic",
-            fontWeight: 500,
-            fontSize: 38,
-            color: colors.muted,
-          }}
-        >
-          Protocollo nutrizionale personalizzato
-        </div>
-      </div>
     </AbsoluteFill>
   );
 };
@@ -289,13 +316,14 @@ export const SpinelliNutrizione: React.FC = () => {
       <Series>
         {CLIPS.map((clip, i) => (
           <Series.Sequence key={clip.src} durationInFrames={clipFrames(clip)}>
-            <ClipScene clip={clip} zoom={i === 0 ? [1.08, 1] : [1, 1.06]} />
+            <ClipScene clip={clip} entryPunch={i > 0} />
           </Series.Sequence>
         ))}
       </Series>
-      <Sequence from={SPINELLI_DURATION - LOCKUP}>
-        <Lockup />
+      <Sequence from={CUT - WIPE / 2} durationInFrames={WIPE}>
+        <Wipe duration={WIPE} />
       </Sequence>
+      <ProgressBar total={SPINELLI_DURATION} />
     </AbsoluteFill>
   );
 };
