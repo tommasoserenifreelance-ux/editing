@@ -24,7 +24,7 @@ const wt = (w: string, after = 0) => chunkStart(wordAt(w, after));
 
 const VOICE_END = 55.03;
 export const TESTO_FPS = FPS;
-export const TESTO_DURATION = sec(VOICE_END + 0.4);
+export const TESTO_DURATION = sec(VOICE_END);
 
 type Scene = {
   from: number; // seconds
@@ -56,7 +56,7 @@ const SCENES: Scene[] = [
   { from: wt("Per", 41), caption: "none", render: (t0) => <Cause t0={t0} /> },
   { from: CLIP_OFFSETS[3], caption: "white", render: th() },
   { from: wt("integratore"), caption: "white", render: () => <Integratore /> },
-  { from: wt("da", 53), caption: "white", render: th(["leggero"]) },
+  { from: wt("a", 54), caption: "white", render: th(["leggero"]) },
 ];
 
 const sceneAt = (t: number) => {
@@ -69,7 +69,7 @@ const modeAt = (t: number) => {
   const i = sceneAt(t);
   return {
     mode: SCENES[i].caption,
-    end: SCENES[i + 1]?.from ?? VOICE_END + 0.4,
+    end: SCENES[i + 1]?.from ?? VOICE_END,
   };
 };
 

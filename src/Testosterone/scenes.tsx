@@ -413,8 +413,10 @@ export const Grafico: React.FC<SceneProps> = ({ t0 }) => {
 /* "35" in fluo green */
 export const Trentacinque: React.FC<SceneProps> = ({ t0 }) => {
   const frame = useCurrentFrame();
-  const d = at(t0, "trentacinquesimo");
-  const n = Math.round(interpolate(frame, [d, d + 14], [0, 35], clamp));
+  const d = 0;
+  const n = Math.round(
+    interpolate(frame, [d, at(t0, "trentacinquesimo") + 8], [0, 35], clamp),
+  );
   const p = usePop(d, 10);
   return (
     <Fill bg={colors.white}>
