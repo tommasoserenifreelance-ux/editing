@@ -1,21 +1,22 @@
 import { continueRender, delayRender, staticFile } from "remotion";
 
-export const sans = "Inter";
+// Helvetica where installed, TeX Gyre Heros (free Helvetica clone) bundled as fallback.
+export const sans = '"Helvetica Neue", Helvetica, "TeX Gyre Heros", Arial, sans-serif';
+const HEROS = "TeX Gyre Heros";
 export const serif = "Playfair Display";
 
 // Fonts are bundled in public/fonts so rendering works offline.
 const FONTS: [string, string, string, string][] = [
-  [sans, "500", "normal", "inter-latin-500-normal"],
-  [sans, "600", "normal", "inter-latin-600-normal"],
-  [sans, "800", "normal", "inter-latin-800-normal"],
-  [serif, "500", "italic", "playfair-display-latin-500-italic"],
-  [serif, "600", "italic", "playfair-display-latin-600-italic"],
+  [HEROS, "400", "normal", "texgyreheros-regular.otf"],
+  [HEROS, "700", "normal", "texgyreheros-bold.otf"],
+  [serif, "500", "italic", "playfair-display-latin-500-italic.woff2"],
+  [serif, "600", "italic", "playfair-display-latin-600-italic.woff2"],
 ];
 
 const handle = delayRender("Loading fonts");
 Promise.all(
   FONTS.map(([family, weight, style, file]) =>
-    new FontFace(family, `url(${staticFile(`fonts/${file}.woff2`)})`, {
+    new FontFace(family, `url(${staticFile(`fonts/${file}`)})`, {
       weight,
       style,
     })
@@ -33,6 +34,8 @@ export const colors = {
   blue: "#2F5CFF",
   blueDeep: "#1631A8",
   yellow: "#FFE03A",
+  brand: "#F7C600", // LongevaMed yellow
+  brandDeep: "#9E7B00",
   green: "#3DFF2E",
   pink: "#FF5C8A",
 };

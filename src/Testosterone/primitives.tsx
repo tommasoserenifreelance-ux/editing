@@ -1,8 +1,11 @@
 import React from "react";
 import {
   AbsoluteFill,
+  Audio,
+  Img,
   interpolate,
   OffthreadVideo,
+  Sequence,
   spring,
   staticFile,
   useCurrentFrame,
@@ -18,6 +21,39 @@ export const clipFor = (t: number) => {
   while (i < CLIP_OFFSETS.length - 1 && t >= CLIP_OFFSETS[i + 1] - 0.001) i++;
   return i;
 };
+
+export type SfxName =
+  | "pop1"
+  | "pop2"
+  | "pop3"
+  | "whoosh"
+  | "swoosh"
+  | "whoosh_long"
+  | "whoosh_down"
+  | "impact"
+  | "tick"
+  | "typing"
+  | "counter"
+  | "riser"
+  | "riser_short"
+  | "draw"
+  | "ding"
+  | "rise"
+  | "powerdown";
+
+// Master level for all effects, under the voice.
+const SFX_GAIN = 0.7;
+
+/** One-shot sound effect at a frame of the current sequence. */
+export const Sfx: React.FC<{ at: number; name: SfxName; volume?: number }> = ({
+  at,
+  name,
+  volume = 0.5,
+}) => (
+  <Sequence from={Math.max(0, Math.round(at))} layout="none">
+    <Audio src={staticFile(`sfx/${name}.wav`)} volume={volume * SFX_GAIN} />
+  </Sequence>
+);
 
 // Elastic pop used by every element that enters (reference: overshoot, no fades).
 export const usePop = (delay = 0, damping = 11) => {
@@ -46,12 +82,10 @@ export const TalkingHead: React.FC<{
   punch?: number[]; // extra punch-in moments, seconds relative to scene start
 }> = ({ start, punch = [] }) => {
   const frame = useCurrentFrame();
-  const { fps, durationInFrames } = useVideoConfig();
+  const { fps } = useVideoConfig();
   const ci = clipFor(start);
   const settle = spring({ frame, fps, config: { damping: 20, mass: 0.5 } });
-  let scale =
-    interpolate(settle, [0, 1], [1.07, 1]) +
-    interpolate(frame, [0, durationInFrames], [0, 0.045]);
+  let scale = interpolate(settle, [0, 1], [1.07, 1]);
   for (const p of punch) {
     const f = Math.round(p * fps);
     if (frame >= f) {
@@ -72,6 +106,9 @@ export const TalkingHead: React.FC<{
           transformOrigin: "50% 30%",
         }}
       />
+      {punch.map((p) => (
+        <Sfx key={p} at={p * fps - 2} name="swoosh" volume={0.35} />
+      ))}
     </AbsoluteFill>
   );
 };
@@ -184,7 +221,7 @@ export const Word3D: React.FC<{
       <div
         style={{
           fontFamily: sans,
-          fontWeight: 800,
+          fontWeight: 700,
           fontSize: size,
           letterSpacing: "-0.05em",
           color,
@@ -196,6 +233,7 @@ export const Word3D: React.FC<{
       >
         {text}
       </div>
+      <Sfx at={delay} name="impact" volume={0.35} />
     </div>
   );
 };
@@ -236,6 +274,7 @@ export const Scribble: React.FC<{
         strokeDashoffset={len * (1 - drawn)}
         style={{ filter: `drop-shadow(0 0 10px ${color}aa)` }}
       />
+      <Sfx at={delay} name="draw" volume={0.4} />
     </svg>
   );
 };
@@ -266,6 +305,7 @@ export const SerifLabel: React.FC<{
         ...style,
       }}
     >
+      <Sfx at={delay} name="typing" volume={0.35} />
       {text.split("\n").map((line, li, lines) => {
         const base = lines.slice(0, li).join("").length;
         return (
@@ -305,8 +345,9 @@ export const Bubble: React.FC<{
   color: string;
   delay: number;
   grey?: number; // 0..1 desaturation
+  sound?: SfxName;
   children: React.ReactNode;
-}> = ({ x, y, size, color, delay, grey = 0, children }) => {
+}> = ({ x, y, size, color, delay, grey = 0, sound, children }) => {
   const p = usePop(delay);
   const frame = useCurrentFrame();
   const floatY = Math.sin((frame - delay) / 20 + x) * 4;
@@ -333,6 +374,7 @@ export const Bubble: React.FC<{
       <svg viewBox="0 0 100 100" width={size * 0.56} height={size * 0.56}>
         {children}
       </svg>
+      {sound ? <Sfx at={delay} name={sound} volume={0.25} /> : null}
     </div>
   );
 };
@@ -369,6 +411,54 @@ export const Link: React.FC<{
         strokeLinecap="round"
         strokeDasharray={dashed ? "18 22" : undefined}
       />
+      <Sfx at={delay} name="draw" volume={0.25} />
     </svg>
+  );
+};
+
+/**
+ * 3D emoji (Microsoft Fluent Emoji 3D, MIT) — no circle, pops in with
+ * overshoot and a little wobble, then floats.
+ */
+const POPS = ["pop1", "pop2", "pop3"] as const;
+
+export const Emoji: React.FC<{
+  name: string;
+  x: number;
+  y: number;
+  size: number;
+  delay: number;
+  grey?: number;
+  volume?: number;
+}> = ({ name, x, y, size, delay, grey = 0, volume = 0.55 }) => {
+  const frame = useCurrentFrame();
+  const p = usePop(delay, 9);
+  const local = frame - delay;
+  const floatY = Math.sin(local / 18 + x / 97) * 6;
+  const rot =
+    interpolate(p, [0, 1], [-25, 0]) + Math.sin(local / 22 + y / 50) * 3;
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left: x - size / 2,
+        top: y - size / 2 + floatY,
+        width: size,
+        height: size,
+        opacity: frame < delay ? 0 : 1,
+        transform: `scale(${p}) rotate(${rot}deg)`,
+        filter: `grayscale(${grey}) drop-shadow(0 22px 26px rgba(0,0,0,${0.18 * (1 - grey * 0.5)}))`,
+      }}
+    >
+      <Img
+        src={staticFile(`emoji/${name}.png`)}
+        style={{ width: "100%", height: "100%" }}
+      />
+      <Sfx
+        at={delay}
+        name={POPS[Math.abs(Math.round(x + y)) % 3]}
+        volume={volume}
+      />
+    </div>
   );
 };

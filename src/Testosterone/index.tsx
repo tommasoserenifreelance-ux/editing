@@ -1,20 +1,28 @@
 import React from "react";
-import { AbsoluteFill, Audio, Sequence, staticFile } from "remotion";
+import {
+  AbsoluteFill,
+  Audio,
+  Easing,
+  interpolate,
+  Sequence,
+  staticFile,
+  useCurrentFrame,
+  useVideoConfig,
+} from "remotion";
 import { CaptionMode, Captions, chunkStart, wt as wordAt } from "./captions";
-
-import { CLIP_OFFSETS, TalkingHead } from "./primitives";
+import { CLIP_OFFSETS, Sfx, TalkingHead } from "./primitives";
 import {
   Barre,
   Benefits,
   Cause,
+  CorpoMente,
   Domanda,
+  EnergiaUmore,
   Grafico,
   Integratore,
   Mascolinita,
   PuntiDiVista,
-  Sistema,
   TestoWord,
-  TextScreen,
   Trentacinque,
 } from "./scenes";
 import { colors, FPS, sec } from "./theme";
@@ -42,9 +50,9 @@ const SCENES: Scene[] = [
   { from: wt("simbolo"), caption: "none", render: (t0) => <Mascolinita t0={t0} /> },
   { from: wt("il", 2), caption: "none", render: (t0) => <TestoWord t0={t0} /> },
   { from: wt("Sostiene"), caption: "none", render: (t0) => <Benefits t0={t0} /> },
-  { from: CLIP_OFFSETS[1], caption: "white", render: () => <TextScreen bg={colors.black} /> },
+  { from: CLIP_OFFSETS[1], caption: "white", render: (t0) => <EnergiaUmore t0={t0} /> },
   { from: wt("È", 14), caption: "white", render: th(["sistema"]) },
-  { from: wt("che", 16), caption: "none", render: (t0) => <Sistema t0={t0} /> },
+  { from: wt("che", 16), caption: "none", render: (t0) => <CorpoMente t0={t0} /> },
   { from: wt("Per"), caption: "white", render: th(["squilibrio"]) },
   { from: wt("si", 21), caption: "none", render: (t0) => <PuntiDiVista t0={t0} /> },
   { from: wt("Quindi"), caption: "white", render: (t0) => <Domanda t0={t0} /> },
@@ -58,6 +66,32 @@ const SCENES: Scene[] = [
   { from: wt("integratore"), caption: "white", render: () => <Integratore /> },
   { from: wt("a", 54), caption: "white", render: th(["leggero"]) },
 ];
+
+/**
+ * Camera move on every scene, alternating a slow zoom-in with a fast
+ * zoom-out that settles (the reference never sits still).
+ */
+const Cam: React.FC<{ dir: "in" | "out"; children: React.ReactNode }> = ({
+  dir,
+  children,
+}) => {
+  const frame = useCurrentFrame();
+  const { durationInFrames } = useVideoConfig();
+  const scale =
+    dir === "in"
+      ? interpolate(frame, [0, durationInFrames], [1, 1.1], {
+          easing: Easing.inOut(Easing.quad),
+        })
+      : interpolate(frame, [0, Math.min(durationInFrames, 40)], [1.16, 1], {
+          extrapolateRight: "clamp",
+          easing: Easing.out(Easing.cubic),
+        });
+  return (
+    <AbsoluteFill style={{ transform: `scale(${scale})` }}>
+      {children}
+    </AbsoluteFill>
+  );
+};
 
 const sceneAt = (t: number) => {
   let i = 0;
@@ -80,11 +114,14 @@ export const Testosterone: React.FC = () => (
       const end = i < SCENES.length - 1 ? sec(SCENES[i + 1].from) : TESTO_DURATION;
       return (
         <Sequence key={i} from={start} durationInFrames={end - start}>
-          {s.render(s.from)}
+          <Cam dir={i % 2 === 0 ? "in" : "out"}>{s.render(s.from)}</Cam>
+          {i > 0 ? (
+            <Sfx at={0} name={i % 2 ? "whoosh" : "swoosh"} volume={0.3} />
+          ) : null}
         </Sequence>
       );
     })}
     <Captions modeAt={modeAt} />
-    <Audio src={staticFile("longeva/voice.m4a")} />
+    <Audio src={staticFile("longeva/voice.m4a")} volume={0.85} />
   </AbsoluteFill>
 );

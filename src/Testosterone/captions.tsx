@@ -65,9 +65,9 @@ const CaptionText: React.FC<{ text: string; color: string }> = ({
       <div
         style={{
           fontFamily: sans,
-          fontWeight: 600,
-          fontSize: 58,
-          letterSpacing: "-0.035em",
+          fontWeight: 700,
+          fontSize: 56,
+          letterSpacing: "-0.02em",
           color,
           opacity: k,
           transform: `scale(${0.96 + 0.04 * k})`,

@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  AbsoluteFill,
   interpolate,
   OffthreadVideo,
   spring,
@@ -10,34 +9,20 @@ import {
 } from "remotion";
 import { wt } from "./captions";
 import {
-  Belly,
-  Body,
-  Bolt,
-  Bone,
-  Brain,
-  Cells,
-  Couch,
-  Dumbbell,
-  Heart,
-  Moon,
-  Person,
-  Scale,
-  Smile,
-  Storm,
-} from "./icons";
-import {
   Bubble,
   clipFor,
   CLIP_OFFSETS,
+  Emoji,
   Fill,
   GridFloor,
   Link,
   Scribble,
   SerifLabel,
+  Sfx,
   usePop,
   Word3D,
 } from "./primitives";
-import { colors, FPS, pastels, sans, sec } from "./theme";
+import { colors, FPS, sans, sec } from "./theme";
 
 type SceneProps = { t0: number };
 
@@ -48,6 +33,29 @@ const clamp = {
   extrapolateLeft: "clamp",
   extrapolateRight: "clamp",
 } as const;
+
+const Heading: React.FC<{ text: string; top: number; opacity?: number }> = ({
+  text,
+  top,
+  opacity = 1,
+}) => (
+  <div
+    style={{
+      position: "absolute",
+      top,
+      width: "100%",
+      textAlign: "center",
+      fontFamily: sans,
+      fontWeight: 700,
+      fontSize: 50,
+      letterSpacing: "-0.03em",
+      color: colors.ink,
+      opacity,
+    }}
+  >
+    {text}
+  </div>
+);
 
 /* "simbolo della mascolinità" — Mars symbol drawing itself */
 export const Mascolinita: React.FC<SceneProps> = ({ t0 }) => {
@@ -86,24 +94,14 @@ export const Mascolinita: React.FC<SceneProps> = ({ t0 }) => {
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeDasharray={200}
-          strokeDashoffset={200 * (1 - interpolate(frame, [8, 20], [0, 1], clamp))}
+          strokeDashoffset={
+            200 * (1 - interpolate(frame, [8, 20], [0, 1], clamp))
+          }
         />
       </svg>
-      <div
-        style={{
-          position: "absolute",
-          top: 1010,
-          width: "100%",
-          textAlign: "center",
-          fontFamily: sans,
-          fontWeight: 600,
-          fontSize: 48,
-          letterSpacing: "-0.03em",
-          color: colors.ink,
-        }}
-      >
-        simbolo della
-      </div>
+      <Sfx at={0} name="draw" volume={0.45} />
+      <Sfx at={8} name="pop2" volume={0.4} />
+      <Heading text="simbolo della" top={1010} />
       <SerifLabel
         text="mascolinità"
         delay={at(t0, "mascolinità")}
@@ -119,7 +117,7 @@ export const TestoWord: React.FC<SceneProps> = ({ t0 }) => {
   const d = at(t0, "testosterone");
   return (
     <Fill bg={colors.black}>
-      <Word3D text="TESTOSTERONE" size={132} top={760} delay={d} />
+      <Word3D text="TESTOSTERONE" size={112} top={770} delay={d} />
       <Scribble
         delay={d + 8}
         d="M150 120 C 320 60, 520 190, 700 110 S 930 70, 960 150"
@@ -136,31 +134,38 @@ export const TestoWord: React.FC<SceneProps> = ({ t0 }) => {
   );
 };
 
-/* What it does — the speaker shrinks into a card, benefits pop around him */
-const CARD = { x: 290, y: 140, w: 500, h: 680 };
+/**
+ * The speaker shrinks into a card; items pop in a row underneath, each
+ * linked to the card. Labels sit below the emoji so no line crosses text.
+ */
+type CardItem = { word: string; emoji: string; label: string };
 
-export const Benefits: React.FC<SceneProps> = ({ t0 }) => {
+const CARD = { x: 270, y: 200, w: 540, h: 740 };
+
+export const CardScene: React.FC<
+  SceneProps & { items: CardItem[]; emojiSize: number; labelSize: number }
+> = ({ t0, items, emojiSize, labelSize }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const p = spring({ frame, fps, config: { damping: 16, mass: 0.6 } });
   const lerp = (a: number, b: number) => a + (b - a) * p;
   const ci = clipFor(t0);
-  const items = [
-    { word: "massa", label: "forza\nmuscolare", icon: <Dumbbell />, x: 290, y: 1220 },
-    { word: "densità", label: "densità\nossea", icon: <Bone />, x: 790, y: 1220 },
-    { word: "globuli", label: "globuli\nrossi", icon: <Cells />, x: 290, y: 1640 },
-    { word: "desiderio", label: "desiderio", icon: <Heart />, x: 790, y: 1640 },
-  ];
+  const rowY = 1270;
+  const slot = 1080 / items.length;
   return (
     <Fill bg={colors.white}>
-      <GridFloor top={720} width={1000} opacity={interpolate(frame, [6, 14], [0, 0.7], clamp)} />
+      <GridFloor
+        top={860}
+        width={1000}
+        opacity={interpolate(frame, [6, 14], [0, 0.6], clamp)}
+      />
       {items.map((it, i) => (
         <Link
           key={`l${i}`}
           x1={540}
           y1={CARD.y + CARD.h}
-          x2={it.x}
-          y2={it.y}
+          x2={slot * (i + 0.5)}
+          y2={rowY - emojiSize * 0.55}
           delay={at(t0, it.word) - 4}
           dashed
           width={7}
@@ -168,23 +173,21 @@ export const Benefits: React.FC<SceneProps> = ({ t0 }) => {
       ))}
       {items.map((it, i) => (
         <React.Fragment key={i}>
-          <Bubble
-            x={it.x}
-            y={it.y}
-            size={230}
-            color={pastels[[0, 1, 5, 2][i]]}
+          <Emoji
+            name={it.emoji}
+            x={slot * (i + 0.5)}
+            y={rowY}
+            size={emojiSize}
             delay={at(t0, it.word)}
-          >
-            {it.icon}
-          </Bubble>
+          />
           <SerifLabel
             text={it.label}
             delay={at(t0, it.word) + 2}
-            size={50}
+            size={labelSize}
             style={{
-              left: it.x - 200,
-              width: 400,
-              top: it.y - 248,
+              left: slot * i,
+              width: slot,
+              top: rowY + emojiSize * 0.58,
             }}
           />
         </React.Fragment>
@@ -218,71 +221,52 @@ export const Benefits: React.FC<SceneProps> = ({ t0 }) => {
   );
 };
 
-/* "ormone di sistema ... corpo e mente" — hub with satellites */
-export const Sistema: React.FC<SceneProps> = ({ t0 }) => {
-  const cx = 540;
-  const cy = 820;
-  const sats = [<Dumbbell key="a" />, <Bone key="b" />, <Cells key="c" />, <Heart key="d" />, <Bolt key="e" />, <Smile key="f" />];
-  const s0 = at(t0, "tocca");
-  return (
-    <Fill bg={colors.white}>
-      {sats.map((_, i) => {
-        const a = (i / sats.length) * Math.PI * 2 - Math.PI / 2;
-        return (
-          <Link
-            key={`l${i}`}
-            x1={cx}
-            y1={cy}
-            x2={cx + Math.cos(a) * 330}
-            y2={cy + Math.sin(a) * 330}
-            delay={s0 + i * 3}
-            width={6}
-          />
-        );
-      })}
-      {sats.map((icon, i) => {
-        const a = (i / sats.length) * Math.PI * 2 - Math.PI / 2;
-        return (
-          <Bubble
-            key={i}
-            x={cx + Math.cos(a) * 330}
-            y={cy + Math.sin(a) * 330}
-            size={150}
-            color={pastels[i]}
-            delay={s0 + i * 3 + 4}
-          >
-            {icon}
-          </Bubble>
-        );
-      })}
-      <Bubble x={cx} y={cy} size={260} color={colors.blue} delay={0}>
-        <text
-          x="50"
-          y="72"
-          textAnchor="middle"
-          fontFamily={sans}
-          fontWeight={800}
-          fontSize="66"
-          fill="#fff"
-        >
-          T
-        </text>
-      </Bubble>
-      <Link x1={cx} y1={cy + 130} x2={290} y2={1520} delay={at(t0, "corpo") - 3} color={colors.ink} width={5} dashed />
-      <Link x1={cx} y1={cy + 130} x2={790} y2={1520} delay={at(t0, "mente") - 3} color={colors.ink} width={5} dashed />
-      <Bubble x={290} y={1560} size={210} color={pastels[7]} delay={at(t0, "corpo")}>
-        <Body />
-      </Bubble>
-      <Bubble x={790} y={1560} size={210} color={pastels[0]} delay={at(t0, "mente")}>
-        <Brain />
-      </Bubble>
-      <SerifLabel text="corpo" delay={at(t0, "corpo") + 2} size={70} style={{ left: 90, width: 400, top: 1700 }} />
-      <SerifLabel text="mente" delay={at(t0, "mente") + 2} size={70} style={{ left: 590, width: 400, top: 1700 }} />
-    </Fill>
-  );
-};
+export const Benefits: React.FC<SceneProps> = ({ t0 }) => (
+  <CardScene
+    t0={t0}
+    emojiSize={225}
+    labelSize={48}
+    items={[
+      { word: "massa", emoji: "biceps", label: "forza\nmuscolare" },
+      { word: "densità", emoji: "bone", label: "densità\nossea" },
+      { word: "globuli", emoji: "blood", label: "globuli\nrossi" },
+      {
+        word: "desiderio",
+        emoji: "heartfire",
+        label: "desiderio e\nfunzione\nsessuale",
+      },
+    ]}
+  />
+);
+
+export const CorpoMente: React.FC<SceneProps> = ({ t0 }) => (
+  <CardScene
+    t0={t0}
+    emojiSize={260}
+    labelSize={72}
+    items={[
+      { word: "corpo", emoji: "muscleman", label: "corpo" },
+      { word: "mente", emoji: "brain", label: "mente" },
+    ]}
+  />
+);
+
+/* "È l'energia e l'umore." — black screen, two emoji */
+export const EnergiaUmore: React.FC<SceneProps> = ({ t0 }) => (
+  <Fill bg={colors.black}>
+    <Emoji name="bolt" x={360} y={640} size={260} delay={at(t0, "l'energia")} />
+    <Emoji name="smile" x={720} y={640} size={260} delay={at(t0, "l'umore")} />
+  </Fill>
+);
 
 /* "si fa sentire sotto tanti punti di vista" — grey avatars multiplying */
+const Person = () => (
+  <g fill="#fff">
+    <circle cx="50" cy="36" r="20" />
+    <path d="M14 96 C14 70 30 60 50 60 C70 60 86 70 86 96 Z" />
+  </g>
+);
+
 export const PuntiDiVista: React.FC<SceneProps> = ({ t0 }) => {
   const spots: { x: number; y: number; s: number }[] = [];
   const rows = [
@@ -307,7 +291,15 @@ export const PuntiDiVista: React.FC<SceneProps> = ({ t0 }) => {
       {order.map((idx, k) => {
         const sp = spots[idx];
         return (
-          <Bubble key={idx} x={sp.x} y={sp.y} size={sp.s} color={colors.grey} delay={k * 1.6}>
+          <Bubble
+            key={idx}
+            x={sp.x}
+            y={sp.y}
+            size={sp.s}
+            color={colors.grey}
+            delay={k * 1.6}
+            sound={k % 3 === 0 ? "tick" : undefined}
+          >
             <Person />
           </Bubble>
         );
@@ -349,30 +341,34 @@ export const Grafico: React.FC<SceneProps> = ({ t0 }) => {
   const dPink = at(t0, "donna");
   const dBlue = at(t0, "calo");
   const pinkT = interpolate(frame, [dPink, at(t0, "netto") + 6], [0, 1], clamp);
-  const blueT = interpolate(frame, [dBlue, at(t0, "ormone") + 8], [0, 1], clamp);
+  const blueT = interpolate(
+    frame,
+    [dBlue, at(t0, "ormone") + 8],
+    [0, 1],
+    clamp,
+  );
   const axes = interpolate(frame, [0, 10], [0, 1], clamp);
   const ages = [30, 40, 50, 60, 70];
   return (
     <Fill bg={colors.white}>
-      <div
-        style={{
-          position: "absolute",
-          top: 430,
-          width: "100%",
-          textAlign: "center",
-          fontFamily: sans,
-          fontWeight: 600,
-          fontSize: 46,
-          letterSpacing: "-0.03em",
-          color: colors.ink,
-          opacity: axes,
-        }}
-      >
-        livelli ormonali
-      </div>
+      <Heading text="livelli ormonali" top={430} opacity={axes} />
       <svg width={1080} height={1920} style={{ position: "absolute" }}>
-        <line x1={X0} y1={Y1} x2={X0 + (X1 - X0) * axes} y2={Y1} stroke={colors.ink} strokeWidth={5} />
-        <line x1={X0} y1={Y1} x2={X0} y2={Y1 - (Y1 - Y0) * axes} stroke={colors.ink} strokeWidth={5} />
+        <line
+          x1={X0}
+          y1={Y1}
+          x2={X0 + (X1 - X0) * axes}
+          y2={Y1}
+          stroke={colors.ink}
+          strokeWidth={5}
+        />
+        <line
+          x1={X0}
+          y1={Y1}
+          x2={X0}
+          y2={Y1 - (Y1 - Y0) * axes}
+          stroke={colors.ink}
+          strokeWidth={5}
+        />
         {ages.map((a, i) => (
           <text
             key={a}
@@ -380,7 +376,6 @@ export const Grafico: React.FC<SceneProps> = ({ t0 }) => {
             y={Y1 + 60}
             textAnchor="middle"
             fontFamily={sans}
-            fontWeight={500}
             fontSize={36}
             fill={colors.greyDark}
             opacity={axes}
@@ -388,13 +383,49 @@ export const Grafico: React.FC<SceneProps> = ({ t0 }) => {
             {a}
           </text>
         ))}
-        <path d={pinkD} fill="none" stroke={colors.pink} strokeWidth={14} strokeLinecap="round" pathLength={1} strokeDasharray={1} strokeDashoffset={1 - pinkT} style={{ filter: `drop-shadow(0 0 12px ${colors.pink}88)` }} />
-        <path d={blueD} fill="none" stroke={colors.blue} strokeWidth={14} strokeLinecap="round" pathLength={1} strokeDasharray={1} strokeDashoffset={1 - blueT} style={{ filter: `drop-shadow(0 0 12px ${colors.blue}88)` }} />
+        <path
+          d={pinkD}
+          fill="none"
+          stroke={colors.pink}
+          strokeWidth={14}
+          strokeLinecap="round"
+          pathLength={1}
+          strokeDasharray={1}
+          strokeDashoffset={1 - pinkT}
+          style={{ filter: `drop-shadow(0 0 12px ${colors.pink}88)` }}
+        />
+        <path
+          d={blueD}
+          fill="none"
+          stroke={colors.blue}
+          strokeWidth={14}
+          strokeLinecap="round"
+          pathLength={1}
+          strokeDasharray={1}
+          strokeDashoffset={1 - blueT}
+          style={{ filter: `drop-shadow(0 0 12px ${colors.blue}88)` }}
+        />
       </svg>
-      <SerifLabel text="donna" delay={dPink + 2} size={68} color={colors.pink} style={{ left: 740, top: 1130 }} />
-      <SerifLabel text="crollo netto" delay={at(t0, "crollo")} size={58} color={colors.pink} style={{ left: 590, top: 610 }} />
-      <SerifLabel text="uomo" delay={at(t0, "l'uomo")} size={68} color={colors.blue} style={{ left: 840, top: 900 }} />
-      <SerifLabel text={"calo lento,\ngraduale"} delay={at(t0, "lento")} size={58} color={colors.blue} style={{ left: 170, top: 900 }} />
+      <Sfx at={0} name="draw" volume={0.35} />
+      <Sfx at={dPink} name="riser_short" volume={0.4} />
+      <Sfx at={at(t0, "netto")} name="whoosh_down" volume={0.3} />
+      <Sfx at={dBlue} name="riser" volume={0.35} />
+      <Emoji name="woman" x={860} y={1110} size={130} delay={dPink + 2} volume={0.4} />
+      <Emoji name="man" x={880} y={880} size={130} delay={at(t0, "l'uomo")} volume={0.4} />
+      <SerifLabel
+        text="crollo netto"
+        delay={at(t0, "crollo")}
+        size={58}
+        color={colors.pink}
+        style={{ left: 590, top: 610 }}
+      />
+      <SerifLabel
+        text={"calo lento,\ngraduale"}
+        delay={at(t0, "lento")}
+        size={58}
+        color={colors.blue}
+        style={{ left: 170, top: 900 }}
+      />
       <Scribble
         delay={at(t0, "inesorabile")}
         viewBox="0 0 1080 1920"
@@ -403,21 +434,36 @@ export const Grafico: React.FC<SceneProps> = ({ t0 }) => {
         d="M170 1035 C 260 1075, 380 1072, 470 1030"
         style={{ left: 0, top: 0, width: 1080, height: 1920 }}
       />
-      <div style={{ position: "absolute", left: 0, right: 0, top: 1460, textAlign: "center", fontFamily: sans, fontWeight: 600, fontSize: 40, color: colors.greyDark, opacity: axes }}>
+      <div
+        style={{
+          position: "absolute",
+          left: 0,
+          right: 0,
+          top: 1460,
+          textAlign: "center",
+          fontFamily: sans,
+          fontSize: 40,
+          color: colors.greyDark,
+          opacity: axes,
+        }}
+      >
         età
       </div>
     </Fill>
   );
 };
 
-/* "35" in fluo green */
+/* "35" in LongevaMed yellow, counting up */
 export const Trentacinque: React.FC<SceneProps> = ({ t0 }) => {
   const frame = useCurrentFrame();
-  const d = 0;
-  const n = Math.round(
-    interpolate(frame, [d, at(t0, "trentacinquesimo") + 8], [0, 35], clamp),
-  );
-  const p = usePop(d, 10);
+  const end = at(t0, "trentacinquesimo") + 8;
+  const n = Math.round(interpolate(frame, [0, end], [0, 35], clamp));
+  const p = usePop(0, 10);
+  const hit = spring({
+    frame: frame - end,
+    fps: FPS,
+    config: { damping: 8, mass: 0.5 },
+  });
   return (
     <Fill bg={colors.white}>
       <div
@@ -427,19 +473,25 @@ export const Trentacinque: React.FC<SceneProps> = ({ t0 }) => {
           width: "100%",
           textAlign: "center",
           fontFamily: sans,
-          fontWeight: 800,
-          fontSize: 440,
+          fontWeight: 700,
+          fontSize: 460,
           letterSpacing: "-0.06em",
-          color: colors.green,
-          WebkitTextStroke: "6px #12920A",
-          textShadow: `0 0 50px ${colors.green}cc, 8px 10px 0 #0E6E08`,
-          transform: `scale(${p}) rotate(${interpolate(p, [0, 1], [-12, -4])}deg)`,
-          opacity: frame < d ? 0 : 1,
+          color: colors.brand,
+          WebkitTextStroke: `6px ${colors.brandDeep}`,
+          textShadow: `0 0 50px ${colors.brand}aa, 8px 10px 0 ${colors.brandDeep}`,
+          transform: `scale(${p * (1 + 0.08 * Math.sin(hit * Math.PI))}) rotate(${interpolate(p, [0, 1], [-12, -4])}deg)`,
         }}
       >
         {n}
       </div>
-      <SerifLabel text="anni" delay={at(t0, "anno")} size={130} style={{ left: 0, right: 0, top: 1170 }} />
+      <Sfx at={0} name="counter" volume={0.45} />
+      <Sfx at={end} name="ding" volume={0.3} />
+      <SerifLabel
+        text="anni"
+        delay={at(t0, "anno")}
+        size={130}
+        style={{ left: 0, right: 0, top: 1190 }}
+      />
     </Fill>
   );
 };
@@ -450,19 +502,56 @@ export const Barre: React.FC<SceneProps> = ({ t0 }) => {
   const { fps } = useVideoConfig();
   const base = 1400;
   const bar = (delay: number, h: number) =>
-    h * spring({ frame: frame - delay, fps, config: { damping: 12, mass: 0.7 } });
-  const hL = bar(at(t0, "stile"), 780);
-  const hR = bar(at(t0, "dall'età"), 240);
+    h *
+    spring({ frame: frame - delay, fps, config: { damping: 12, mass: 0.7 } });
+  const dL = at(t0, "stile");
+  const dR = at(t0, "dall'età");
+  const hL = bar(dL, 780);
+  const hR = bar(dR, 240);
+  const barStyle = (left: number, h: number, bg: string) =>
+    ({
+      position: "absolute",
+      left,
+      width: 260,
+      top: base - h,
+      height: h,
+      borderRadius: "30px 30px 0 0",
+      background: bg,
+    }) as const;
   return (
     <Fill bg={colors.white}>
-      <div style={{ position: "absolute", top: 380, width: "100%", textAlign: "center", fontFamily: sans, fontWeight: 600, fontSize: 52, letterSpacing: "-0.03em", color: colors.ink }}>
-        dipende più da
-      </div>
-      <div style={{ position: "absolute", left: 220, width: 260, top: base - hL, height: hL, borderRadius: "30px 30px 0 0", background: colors.green, boxShadow: `0 0 50px ${colors.green}aa` }} />
-      <div style={{ position: "absolute", left: 600, width: 260, top: base - hR, height: hR, borderRadius: "30px 30px 0 0", background: colors.grey }} />
-      <div style={{ position: "absolute", left: 140, right: 140, top: base, height: 5, background: colors.ink }} />
-      <SerifLabel text={"stile\ndi vita"} delay={at(t0, "stile")} size={72} style={{ left: 150, width: 400, top: base + 40 }} />
-      <SerifLabel text="età" delay={at(t0, "dall'età")} size={72} style={{ left: 530, width: 400, top: base + 40 }} />
+      <Heading text="dipende più da" top={380} />
+      <div
+        style={{
+          ...barStyle(220, hL, colors.brand),
+          boxShadow: `0 0 50px ${colors.brand}88`,
+        }}
+      />
+      <div style={barStyle(600, hR, colors.grey)} />
+      <div
+        style={{
+          position: "absolute",
+          left: 140,
+          right: 140,
+          top: base,
+          height: 5,
+          background: colors.ink,
+        }}
+      />
+      <Sfx at={dL} name="rise" volume={0.5} />
+      <Sfx at={dR} name="pop3" volume={0.4} />
+      <SerifLabel
+        text={"stile\ndi vita"}
+        delay={dL}
+        size={72}
+        style={{ left: 150, width: 400, top: base + 40 }}
+      />
+      <SerifLabel
+        text="età"
+        delay={dR}
+        size={72}
+        style={{ left: 530, width: 400, top: base + 40 }}
+      />
     </Fill>
   );
 };
@@ -470,67 +559,58 @@ export const Barre: React.FC<SceneProps> = ({ t0 }) => {
 /* Lifestyle causes, then everything goes grey and T drops */
 export const Cause: React.FC<SceneProps> = ({ t0 }) => {
   const frame = useCurrentFrame();
-  const g = interpolate(frame, [at(t0, "abbassano"), at(t0, "abbassano") + 10], [0, 1], clamp);
+  const dGrey = at(t0, "abbassano");
+  const g = interpolate(frame, [dGrey, dGrey + 10], [0, 1], clamp);
   const items = [
-    { word: "sovrappeso", label: "sovrappeso", icon: <Scale />, x: 270, y: 560 },
-    { word: "grasso", label: "grasso\nviscerale", icon: <Belly />, x: 810, y: 560 },
-    { word: "sonno", label: "sonno\nscarso", icon: <Moon />, x: 540, y: 900 },
-    { word: "sedentarietà", label: "sedentarietà", icon: <Couch />, x: 270, y: 1240 },
-    { word: "stress", label: "stress\ncronico", icon: <Storm />, x: 810, y: 1240 },
+    { word: "sovrappeso", label: "sovrappeso", emoji: "scale", x: 270, y: 470 },
+    { word: "grasso", label: "grasso\nviscerale", emoji: "burger", x: 810, y: 470 },
+    { word: "sonno", label: "sonno\nscarso", emoji: "yawn", x: 540, y: 800 },
+    { word: "sedentarietà", label: "sedentarietà", emoji: "couch", x: 270, y: 1130 },
+    { word: "stress", label: "stress\ncronico", emoji: "stress", x: 810, y: 1130 },
   ];
-  const dArrow = at(t0, "incredibilmente");
-  const arrowY = interpolate(frame, [dArrow, dArrow + 10], [-80, 0], clamp);
-  const arrowO = interpolate(frame, [dArrow, dArrow + 4], [0, 1], clamp);
   return (
     <Fill bg={colors.white}>
       {items.map((it, i) => (
         <React.Fragment key={i}>
-          <Bubble x={it.x} y={it.y} size={220} color={pastels[[2, 1, 6, 3, 5][i]]} delay={at(t0, it.word)} grey={g}>
-            {it.icon}
-          </Bubble>
+          <Emoji
+            name={it.emoji}
+            x={it.x}
+            y={it.y}
+            size={210}
+            delay={at(t0, it.word)}
+            grey={g}
+          />
           <SerifLabel
             text={it.label}
             delay={at(t0, it.word) + 2}
             size={50}
-            style={{ left: it.x - 200, width: 400, top: it.y + 128 }}
+            color={g > 0.5 ? colors.greyDark : colors.ink}
+            style={{ left: it.x - 200, width: 400, top: it.y + 120 }}
           />
         </React.Fragment>
       ))}
-      <svg width={160} height={170} viewBox="0 0 160 170" style={{ position: "absolute", left: 460, top: 1450 + arrowY, opacity: arrowO, filter: `drop-shadow(0 0 18px ${colors.blue}99)` }}>
-        <path d="M80 10 V140 M30 95 L80 150 L130 95" fill="none" stroke={colors.blue} strokeWidth={26} strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-      <Word3D text="TESTOSTERONE" size={118} top={1640} delay={at(t0, "testosterone")} />
+      <Sfx at={dGrey} name="powerdown" volume={0.45} />
+      <Emoji
+        name="chart"
+        x={540}
+        y={1480}
+        size={220}
+        delay={at(t0, "incredibilmente")}
+      />
+      <Sfx at={at(t0, "incredibilmente")} name="whoosh_down" volume={0.4} />
+      <Word3D
+        text="TESTOSTERONE"
+        size={100}
+        top={1630}
+        delay={at(t0, "testosterone")}
+      />
     </Fill>
   );
 };
 
-/* "integratore antietà" — black screen, capsule */
-export const Integratore: React.FC = () => {
-  const p = usePop(2, 10);
-  const frame = useCurrentFrame();
-  return (
-    <Fill bg={colors.black}>
-      <div
-        style={{
-          position: "absolute",
-          left: 400,
-          top: 560,
-          width: 280,
-          height: 120,
-          borderRadius: 60,
-          overflow: "hidden",
-          display: "flex",
-          transform: `scale(${p}) rotate(${-30 + Math.sin(frame / 10) * 4}deg)`,
-          boxShadow: `0 0 50px ${colors.yellow}66`,
-        }}
-      >
-        <div style={{ flex: 1, background: colors.yellow }} />
-        <div style={{ flex: 1, background: colors.white }} />
-      </div>
-    </Fill>
-  );
-};
-
-export const TextScreen: React.FC<{ bg: string }> = ({ bg }) => (
-  <AbsoluteFill style={{ backgroundColor: bg }} />
+/* "integratore antietà" — black screen, pill */
+export const Integratore: React.FC = () => (
+  <Fill bg={colors.black}>
+    <Emoji name="pill" x={540} y={640} size={300} delay={2} />
+  </Fill>
 );
