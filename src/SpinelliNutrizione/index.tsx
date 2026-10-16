@@ -1,6 +1,5 @@
 import {
   AbsoluteFill,
-  Audio,
   Easing,
   interpolate,
   OffthreadVideo,
@@ -128,20 +127,6 @@ const GRAPHICS: Graphic[] = [
   },
 ];
 
-// [composition frame, file in public/sfx, volume]
-const SOUNDS: [number, string, number][] = [
-  [at(0, 1.3), "heartbeat", 0.3],
-  [at(0, 3.05), "pop", 0.2],
-  [at(0, 4.35), "whoosh", 0.18],
-  [at(1, 2.73), "tick", 0.3],
-  [at(1, 3.33), "tick", 0.3],
-  [at(1, 3.93), "tick", 0.3],
-  [at(1, 5.1), "pop", 0.2],
-  [at(1, 6.4), "pop", 0.2],
-  [at(1, 7.7), "pop", 0.2],
-  [at(1, 11.3), "ding", 0.25],
-];
-
 const soft = {
   extrapolateLeft: "clamp",
   extrapolateRight: "clamp",
@@ -235,11 +220,6 @@ export const SpinelliNutrizione: React.FC = () => {
       {CAPTIONS.map((c) => (
         <Sequence key={c.text} from={c.from} durationInFrames={c.to - c.from}>
           <CaptionView caption={c} duration={c.to - c.from} />
-        </Sequence>
-      ))}
-      {SOUNDS.map(([frame, name, volume]) => (
-        <Sequence key={`${name}-${frame}`} from={frame}>
-          <Audio src={staticFile(`sfx/${name}.wav`)} volume={volume} />
         </Sequence>
       ))}
     </AbsoluteFill>
