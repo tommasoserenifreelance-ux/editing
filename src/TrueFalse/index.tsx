@@ -307,7 +307,7 @@ const Stickers: React.FC = () => {
 };
 
 const Watermark: React.FC = () => (
-  <AbsoluteFill style={{ alignItems: "flex-end", padding: "90px 60px 0 0" }}>
+  <AbsoluteFill style={{ alignItems: "flex-end", padding: "250px 80px 0 0" }}>
     <Img
       src={staticFile("logo.png")}
       style={{

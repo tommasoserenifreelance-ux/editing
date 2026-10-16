@@ -23,7 +23,7 @@ export const Cover: React.FC<{ image: string }> = ({ image }) => (
           "linear-gradient(180deg, rgba(0,0,0,0) 52%, rgba(0,0,0,0.55) 88%)",
       }}
     />
-    <AbsoluteFill style={{ alignItems: "flex-end", padding: "90px 60px 0 0" }}>
+    <AbsoluteFill style={{ alignItems: "flex-end", padding: "250px 80px 0 0" }}>
       <Img
         src={staticFile("logo.png")}
         style={{
