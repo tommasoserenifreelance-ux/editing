@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Giornata Mondiale della Menopausa</title>
+<style>
+  @font-face { font-family: "Playfair"; font-weight: 700; src: url("../public/fonts/playfair-display-latin-700-normal.woff2"); }
+  @font-face { font-family: "Playfair"; font-style: italic; font-weight: 500; src: url("../public/fonts/playfair-display-latin-500-italic.woff2"); }
+  :root {
+    --ink: #141414;
+    --grey: #6a6a6a;
+    --sand: #c8b089;
+    --sand-light: #e9dfcf;
+    --bg: #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #ddd; font-family: "Inter", sans-serif; }
+  .slide {
+    width: 1080px; height: 1350px; background: var(--bg); position: relative;
+    overflow: hidden; margin: 0 0 40px;
+  }
+  /* Wordmark (placeholder per il logo ufficiale) */
+  .logo { position: absolute; top: 78px; left: 50%; transform: translateX(-50%); width: 260px; height: 150px; color: var(--ink); }
+  .logo .la { position: absolute; left: 0; top: 0; font-family: "Playfair"; font-style: italic; font-weight: 500; font-size: 40px; }
+  .logo .w1, .logo .w2 { position: absolute; font-family: "Playfair"; font-weight: 700; font-size: 66px; letter-spacing: -2px; line-height: 1; }
+  .logo .w1 { left: 22px; top: 28px; }
+  .logo .w2 { left: 48px; top: 76px; }
+
+  .content { position: absolute; left: 76px; right: 76px; top: 420px; }
+  .kicker { font-size: 24px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--sand); margin-bottom: 34px; }
+  .lead { font-size: 31px; line-height: 1.38; color: var(--grey); max-width: 700px; margin-bottom: 40px; }
+  h1 { font-size: 64px; line-height: 1.12; font-weight: 700; color: var(--ink); letter-spacing: -1px; max-width: 820px; }
+  h2 { font-size: 54px; line-height: 1.15; font-weight: 700; color: var(--ink); letter-spacing: -0.8px; max-width: 800px; margin-bottom: 40px; }
+  p { font-size: 31px; line-height: 1.42; color: var(--grey); max-width: 820px; margin-bottom: 26px; }
+  p.strong { color: var(--ink); font-weight: 700; font-size: 34px; line-height: 1.3; margin-top: 18px; }
+  .rule { width: 64px; height: 4px; background: var(--sand); margin: 0 0 34px; }
+
+  .dots { position: absolute; right: 70px; bottom: 70px; display: flex; gap: 14px; }
+  .dots i { width: 12px; height: 12px; border-radius: 50%; background: var(--sand-light); }
+  .dots i.on { background: var(--sand); width: 15px; height: 15px; margin-top: -1.5px; }
+  .swipe { position: absolute; left: 76px; bottom: 62px; font-size: 24px; color: var(--grey); letter-spacing: 1px; }
+
+  /* Cover: foto a tutto schermo (cover.jpg), fallback beige */
+  .cover { background: #c9a98a url("cover.jpg") center 20% / cover no-repeat; }
+  .cover::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(40,25,15,.55) 100%); }
+  .cover > * { z-index: 1; }
+  .cover .content { top: auto; bottom: 170px; }
+  .cover h1 { font-size: 76px; color: #fff; }
+  .cover .kicker { color: #fff; opacity: .95; }
+  .cover .date { position: absolute; left: 76px; bottom: 540px; font-family: "Playfair"; font-weight: 700; font-size: 150px; line-height: .9; color: #fff; letter-spacing: -4px; }
+  .cover .date span { font-family: "Inter"; font-size: 34px; font-weight: 600; letter-spacing: 6px; text-transform: uppercase; margin-left: 14px; vertical-align: 18px; }
+  .cover .swipe { color: #fff; }
+  .cover .dots i { background: rgba(255,255,255,.5); } .cover .dots i.on { background: #fff; }
+</style>
+</head>
+<body>
+
+<!-- 1 · COVER -->
+<section class="slide cover" id="s1">
+  <div class="logo"><span class="la">la</span><span class="w1">Meno</span><span class="w2">pausa</span></div>
+  <div class="date">18<span>ottobre 2026</span></div>
+  <div class="content">
+    <div class="kicker">Giornata Mondiale della Menopausa</div>
+    <h1>La menopausa riguarda molto più del ciclo.</h1>
+  </div>
+  <div class="swipe">Scorri →</div>
+  <div class="dots"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+</section>
+
+<!-- 2 · INTRO -->
+<section class="slide" id="s2">
+  <div class="logo"><span class="la">la</span><span class="w1">Meno</span><span class="w2">pausa</span></div>
+  <div class="content">
+    <div class="lead">Cuore. Cervello. Ossa. Articolazioni. Vescica. Intestino.</div>
+    <h2>La menopausa coinvolge tutto il corpo.</h2>
+    <p>Eppure la medicina è spesso divisa per specialità. Così molte donne finiscono per consultare più specialisti per sintomi che, in realtà, potrebbero essere collegati.</p>
+    <p class="strong">Ecco cosa ogni donna dovrebbe sapere.</p>
+  </div>
+  <div class="dots"><i></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div>
+</section>
+
+<!-- 3 · CUORE -->
+<section class="slide" id="s3">
+  <div class="logo"><span class="la">la</span><span class="w1">Meno</span><span class="w2">pausa</span></div>
+  <div class="content">
+    <div class="kicker">01 · Il cuore</div>
+    <h2>Il tuo cuore</h2>
+    <p>Gli estrogeni aiutano a mantenere sani i vasi sanguigni e influenzano infiammazione e colesterolo.</p>
+    <p>Quando calano, cambia anche il rischio cardiovascolare. Palpitazioni, variazioni della pressione e del colesterolo possono comparire durante la transizione menopausale.</p>
+    <p class="strong">La salute del cuore deve far parte del discorso sulla menopausa.</p>
+  </div>
+  <div class="dots"><i></i><i></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
+</section>
+
+<!-- 4 · CERVELLO E UMORE -->
+<section class="slide" id="s4">
+  <div class="logo"><span class="la">la</span><span class="w1">Meno</span><span class="w2">pausa</span></div>
+  <div class="content">
+    <div class="kicker">02 · Cervello e umore</div>
+    <h2>Il tuo cervello e il tuo umore</h2>
+    <p>Gli estrogeni interagiscono con neurotrasmettitori come serotonina e dopamina e hanno un ruolo importante nel funzionamento del cervello.</p>
+    <p>Quando gli ormoni oscillano o diminuiscono, alcune donne sperimentano ansia, depressione, nebbia mentale, difficoltà di memoria e disturbi del sonno.</p>
+    <p class="strong">Nuovi sintomi dell’umore o della memoria in questa fase della vita meritano una valutazione che tenga conto anche degli ormoni.</p>
+  </div>
+  <div class="dots"><i></i><i></i><i></i><i class="on"></i><i></i><i></i><i></i></div>
+</section>
+
+<!-- 5 · ARTICOLAZIONI, INTESTINO, VESCICA -->
+<section class="slide" id="s5">
+  <div class="logo"><span class="la">la</span><span class="w1">Meno</span><span class="w2">pausa</span></div>
+  <div class="content">
+    <div class="kicker">03 · Articolazioni, intestino, vescica</div>
+    <h2>Articolazioni, intestino e vescica</h2>
+    <p>Dolori e rigidità articolari possono diventare più frequenti durante la transizione menopausale.</p>
+    <p>I cambiamenti ormonali possono influire anche su digestione, gonfiore e regolarità intestinale.</p>
+    <p>Cistiti ricorrenti, urgenza urinaria, secchezza o fastidio vaginale possono essere segni della <b style="color:var(--ink)">sindrome genitourinaria della menopausa</b>, legata al calo degli estrogeni nei tessuti vaginali e urinari.</p>
+  </div>
+  <div class="dots"><i></i><i></i><i></i><i></i><i class="on"></i><i></i><i></i></div>
+</section>
+
+<!-- 6 · OSSA -->
+<section class="slide" id="s6">
+  <div class="logo"><span class="la">la</span><span class="w1">Meno</span><span class="w2">pausa</span></div>
+  <div class="content">
+    <div class="kicker">04 · Le ossa</div>
+    <h2>Le tue ossa</h2>
+    <p>Gli estrogeni hanno un ruolo importante nel mantenere le ossa forti. Quando diminuiscono, la perdita di massa ossea può accelerare, soprattutto negli anni intorno alla menopausa.</p>
+    <p>L’osteoporosi può svilupparsi in silenzio: la salute delle ossa conta molto prima che avvenga una frattura.</p>
+    <p class="strong">Alimentazione, esercizio con carico, densitometria quando indicata e, per alcune donne, la terapia ormonale possono far parte del percorso.</p>
+  </div>
+  <div class="dots"><i></i><i></i><i></i><i></i><i></i><i class="on"></i><i></i></div>
+</section>
+
+<!-- 7 · CHIUSURA -->
+<section class="slide" id="s7">
+  <div class="logo"><span class="la">la</span><span class="w1">Meno</span><span class="w2">pausa</span></div>
+  <div class="content">
+    <div class="rule"></div>
+    <h2>Meriti una cura che guardi al quadro completo.</h2>
+    <p>Non un sintomo alla volta, ma tutta te stessa.</p>
+    <p>Un approccio integrato alla perimenopausa e alla menopausa permette di costruire un percorso personalizzato, su misura per te.</p>
+    <p class="strong">Hai dei dubbi? Parlane con il tuo medico.<br>Salva questo post e condividilo con chi ne ha bisogno.</p>
+  </div>
+  <div class="dots"><i></i><i></i><i></i><i></i><i></i><i></i><i class="on"></i></div>
+</section>
+
+</body>
+</html>
