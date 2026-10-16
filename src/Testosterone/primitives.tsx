@@ -2,7 +2,6 @@ import React from "react";
 import {
   AbsoluteFill,
   Audio,
-  Img,
   interpolate,
   OffthreadVideo,
   Sequence,
@@ -11,6 +10,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import { Illo } from "./illos";
 import { colors, FPS, sans, serif } from "./theme";
 
 // Global start time (s) of each source clip inside the voice track.
@@ -417,7 +417,7 @@ export const Link: React.FC<{
 };
 
 /**
- * 3D emoji (Microsoft Fluent Emoji 3D, MIT) — no circle, pops in with
+ * Screen-print illustration (see illos.tsx) — no circle, pops in with
  * overshoot and a little wobble, then floats.
  */
 const POPS = ["pop1", "pop2", "pop3"] as const;
@@ -450,10 +450,7 @@ export const Emoji: React.FC<{
         filter: `grayscale(${grey}) drop-shadow(0 22px 26px rgba(0,0,0,${0.18 * (1 - grey * 0.5)}))`,
       }}
     >
-      <Img
-        src={staticFile(`emoji/${name}.png`)}
-        style={{ width: "100%", height: "100%" }}
-      />
+      <Illo name={name} size={size} seed={Math.round(x + y) % 50} />
       <Sfx
         at={delay}
         name={POPS[Math.abs(Math.round(x + y)) % 3]}
