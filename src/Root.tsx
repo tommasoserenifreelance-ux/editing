@@ -10,6 +10,7 @@ import {
   Slide5,
 } from "./PostPerimenopausa/Slides";
 import { SLIDE_HEIGHT, SLIDE_WIDTH } from "./PostPerimenopausa/theme";
+import * as Dolore from "./PostDolore/Slides";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -64,6 +65,28 @@ export const RemotionRoot: React.FC = () => {
           <Still
             key={i}
             id={`Perimenopausa-${i + 1}`}
+            component={component}
+            width={SLIDE_WIDTH}
+            height={SLIDE_HEIGHT}
+          />
+        ))}
+      </Folder>
+
+      <Folder name="PostDolore">
+        {[
+          Dolore.Slide1,
+          Dolore.Slide2,
+          Dolore.Slide3,
+          Dolore.Slide4,
+          Dolore.Slide5,
+          Dolore.Slide6,
+          Dolore.Slide7,
+          Dolore.Slide8,
+          Dolore.Slide9,
+        ].map((component, i) => (
+          <Still
+            key={i}
+            id={`Dolore-${i + 1}`}
             component={component}
             width={SLIDE_WIDTH}
             height={SLIDE_HEIGHT}
