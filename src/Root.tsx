@@ -8,6 +8,11 @@ import {
   PilatesOverlay,
 } from "./PilatesOverlay";
 import { PILATES_DURATION, PilatesReformer } from "./PilatesReformer";
+import {
+  Testosterone,
+  TESTO_DURATION,
+  TESTO_FPS,
+} from "./Testosterone";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -69,6 +74,14 @@ export const RemotionRoot: React.FC = () => {
         component={PilatesOverlay}
         durationInFrames={OVERLAY_DURATION}
         fps={OVERLAY_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="LongevaTestosterone"
+        component={Testosterone}
+        durationInFrames={TESTO_DURATION}
+        fps={TESTO_FPS}
         width={1080}
         height={1920}
       />

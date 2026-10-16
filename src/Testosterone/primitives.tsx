@@ -1,0 +1,374 @@
+import React from "react";
+import {
+  AbsoluteFill,
+  interpolate,
+  OffthreadVideo,
+  spring,
+  staticFile,
+  useCurrentFrame,
+  useVideoConfig,
+} from "remotion";
+import { colors, FPS, sans, serif } from "./theme";
+
+// Global start time (s) of each source clip inside the voice track.
+export const CLIP_OFFSETS = [0, 12.839, 32.017, 49.454];
+
+export const clipFor = (t: number) => {
+  let i = 0;
+  while (i < CLIP_OFFSETS.length - 1 && t >= CLIP_OFFSETS[i + 1] - 0.001) i++;
+  return i;
+};
+
+// Elastic pop used by every element that enters (reference: overshoot, no fades).
+export const usePop = (delay = 0, damping = 11) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  return spring({
+    frame: frame - delay,
+    fps,
+    config: { damping, mass: 0.55, stiffness: 170 },
+  });
+};
+
+export const Fill: React.FC<{
+  bg: string;
+  children?: React.ReactNode;
+}> = ({ bg, children }) => (
+  <AbsoluteFill style={{ backgroundColor: bg }}>{children}</AbsoluteFill>
+);
+
+/**
+ * The speaker, playing from the clip that covers the given global time.
+ * Hard cut in with a small punch, then a slow push-in.
+ */
+export const TalkingHead: React.FC<{
+  start: number;
+  punch?: number[]; // extra punch-in moments, seconds relative to scene start
+}> = ({ start, punch = [] }) => {
+  const frame = useCurrentFrame();
+  const { fps, durationInFrames } = useVideoConfig();
+  const ci = clipFor(start);
+  const settle = spring({ frame, fps, config: { damping: 20, mass: 0.5 } });
+  let scale =
+    interpolate(settle, [0, 1], [1.07, 1]) +
+    interpolate(frame, [0, durationInFrames], [0, 0.045]);
+  for (const p of punch) {
+    const f = Math.round(p * fps);
+    if (frame >= f) {
+      scale += 0.09 * spring({ frame: frame - f, fps, config: { damping: 18 } });
+    }
+  }
+  return (
+    <AbsoluteFill style={{ backgroundColor: colors.black, overflow: "hidden" }}>
+      <OffthreadVideo
+        src={staticFile(`longeva/clip${ci + 1}.mp4`)}
+        startFrom={Math.round((start - CLIP_OFFSETS[ci]) * FPS)}
+        muted
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          transform: `scale(${scale})`,
+          transformOrigin: "50% 30%",
+        }}
+      />
+    </AbsoluteFill>
+  );
+};
+
+/** Dashed perspective floor the cut-outs stand on. */
+export const GridFloor: React.FC<{
+  width?: number;
+  top: number;
+  opacity?: number;
+}> = ({ width = 900, top, opacity = 1 }) => {
+  const cells = 10;
+  const step = width / cells;
+  const lines: React.ReactNode[] = [];
+  for (let i = 0; i <= cells; i++) {
+    lines.push(
+      <line
+        key={`v${i}`}
+        x1={i * step}
+        y1={0}
+        x2={i * step}
+        y2={width}
+        stroke="#9A9AA0"
+        strokeWidth={2}
+        strokeDasharray="6 10"
+      />,
+      <line
+        key={`h${i}`}
+        x1={0}
+        y1={i * step}
+        x2={width}
+        y2={i * step}
+        stroke="#9A9AA0"
+        strokeWidth={2}
+        strokeDasharray="6 10"
+      />,
+    );
+  }
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left: (1080 - width) / 2,
+        top,
+        width,
+        height: width,
+        perspective: 900,
+        opacity,
+        WebkitMaskImage:
+          "radial-gradient(ellipse 50% 50% at 50% 30%, black 40%, transparent 75%)",
+        maskImage:
+          "radial-gradient(ellipse 50% 50% at 50% 30%, black 40%, transparent 75%)",
+      }}
+    >
+      <svg
+        width={width}
+        height={width}
+        style={{ transform: "rotateX(68deg)", transformOrigin: "50% 0%" }}
+      >
+        {lines}
+      </svg>
+    </div>
+  );
+};
+
+/**
+ * Extruded "3D" word with a glow, flying in tilted with motion blur
+ * (reference: STRATEGIA / idee diverse).
+ */
+export const Word3D: React.FC<{
+  text: string;
+  delay?: number;
+  size?: number;
+  color?: string;
+  depthColor?: string;
+  top: number;
+  rotate?: number;
+}> = ({
+  text,
+  delay = 0,
+  size = 150,
+  color = colors.blue,
+  depthColor = colors.blueDeep,
+  top,
+  rotate = -6,
+}) => {
+  const frame = useCurrentFrame();
+  const p = usePop(delay, 13);
+  const blur = interpolate(frame - delay, [0, 7], [18, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  const depth = Array.from(
+    { length: 9 },
+    (_, i) => `${i + 1}px ${i + 1}px 0 ${depthColor}`,
+  ).join(", ");
+  const wobble = Math.sin((frame - delay) / 14) * 2.5;
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left: 0,
+        right: 0,
+        top,
+        display: "flex",
+        justifyContent: "center",
+        perspective: 1200,
+        opacity: frame < delay ? 0 : 1,
+      }}
+    >
+      <div
+        style={{
+          fontFamily: sans,
+          fontWeight: 800,
+          fontSize: size,
+          letterSpacing: "-0.05em",
+          color,
+          whiteSpace: "nowrap",
+          textShadow: `${depth}, 0 0 40px ${color}88`,
+          filter: `blur(${blur}px)`,
+          transform: `translateY(${interpolate(p, [0, 1], [260, 0])}px) rotateX(${interpolate(p, [0, 1], [70, 14])}deg) rotateY(${-18 + wobble}deg) rotateZ(${rotate}deg) scale(${interpolate(p, [0, 1], [0.4, 1])})`,
+        }}
+      >
+        {text}
+      </div>
+    </div>
+  );
+};
+
+/** Hand-drawn yellow scribble that draws itself on. */
+export const Scribble: React.FC<{
+  d: string;
+  delay: number;
+  len?: number;
+  width?: number;
+  color?: string;
+  style?: React.CSSProperties;
+  viewBox?: string;
+}> = ({
+  d,
+  delay,
+  len = 1400,
+  width = 16,
+  color = colors.yellow,
+  style,
+  viewBox = "0 0 1080 400",
+}) => {
+  const frame = useCurrentFrame();
+  const drawn = interpolate(frame - delay, [0, 14], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  return (
+    <svg viewBox={viewBox} style={{ position: "absolute", ...style }}>
+      <path
+        d={d}
+        fill="none"
+        stroke={color}
+        strokeWidth={width}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeDasharray={len}
+        strokeDashoffset={len * (1 - drawn)}
+        style={{ filter: `drop-shadow(0 0 10px ${color}aa)` }}
+      />
+    </svg>
+  );
+};
+
+/** Italic serif label that types itself letter by letter, slightly tilted. */
+export const SerifLabel: React.FC<{
+  text: string;
+  delay: number;
+  size?: number;
+  color?: string;
+  style?: React.CSSProperties;
+}> = ({ text, delay, size = 54, color = colors.ink, style }) => {
+  const frame = useCurrentFrame();
+  const shown = Math.max(0, Math.floor((frame - delay) * 1.6));
+  return (
+    <div
+      style={{
+        position: "absolute",
+        fontFamily: serif,
+        fontStyle: "italic",
+        fontWeight: 500,
+        fontSize: size,
+        lineHeight: 0.92,
+        letterSpacing: "-0.03em",
+        color,
+        whiteSpace: "pre",
+        textAlign: "center",
+        ...style,
+      }}
+    >
+      {text.split("\n").map((line, li, lines) => {
+        const base = lines.slice(0, li).join("").length;
+        return (
+          <div key={li}>
+            {[...line].map((ch, j) => {
+              const i = base + j;
+              const drop = interpolate(frame - delay - i / 1.6, [0, 4], [-30, 0], {
+                extrapolateLeft: "clamp",
+                extrapolateRight: "clamp",
+              });
+              return (
+                <span
+                  key={j}
+                  style={{
+                    opacity: i < shown ? 1 : 0,
+                    display: "inline-block",
+                    whiteSpace: "pre",
+                    transform: `translateY(${drop}px) rotate(${drop / 4}deg)`,
+                  }}
+                >
+                  {ch}
+                </span>
+              );
+            })}
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+/** Pastel circle with an icon (reference avatar grid). */
+export const Bubble: React.FC<{
+  x: number;
+  y: number;
+  size: number;
+  color: string;
+  delay: number;
+  grey?: number; // 0..1 desaturation
+  children: React.ReactNode;
+}> = ({ x, y, size, color, delay, grey = 0, children }) => {
+  const p = usePop(delay);
+  const frame = useCurrentFrame();
+  const floatY = Math.sin((frame - delay) / 20 + x) * 4;
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left: x - size / 2,
+        top: y - size / 2 + floatY,
+        width: size,
+        height: size,
+        borderRadius: "50%",
+        background: color,
+        border: "6px solid #fff",
+        boxShadow: "0 18px 40px rgba(0,0,0,0.16)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        transform: `scale(${p})`,
+        opacity: frame < delay ? 0 : 1,
+        filter: `grayscale(${grey}) brightness(${1 + grey * 0.15})`,
+      }}
+    >
+      <svg viewBox="0 0 100 100" width={size * 0.56} height={size * 0.56}>
+        {children}
+      </svg>
+    </div>
+  );
+};
+
+/** Line that draws itself between two points. */
+export const Link: React.FC<{
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  delay: number;
+  color?: string;
+  dashed?: boolean;
+  width?: number;
+}> = ({ x1, y1, x2, y2, delay, color = colors.blue, dashed, width = 8 }) => {
+  const frame = useCurrentFrame();
+  const t = interpolate(frame - delay, [0, 8], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  return (
+    <svg
+      width={1080}
+      height={1920}
+      style={{ position: "absolute", left: 0, top: 0, pointerEvents: "none" }}
+    >
+      <line
+        x1={x1}
+        y1={y1}
+        x2={x1 + (x2 - x1) * t}
+        y2={y1 + (y2 - y1) * t}
+        stroke={color}
+        strokeWidth={width}
+        strokeLinecap="round"
+        strokeDasharray={dashed ? "18 22" : undefined}
+      />
+    </svg>
+  );
+};
