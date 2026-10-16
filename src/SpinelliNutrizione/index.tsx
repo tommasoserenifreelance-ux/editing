@@ -1,5 +1,6 @@
 import {
   AbsoluteFill,
+  Audio,
   interpolate,
   OffthreadVideo,
   Sequence,
@@ -50,6 +51,8 @@ type Clip = {
   punches: number[];
   lines: Line[];
   graphics: Graphic[];
+  // [source seconds, file in public/sfx, volume]
+  sounds: [number, string, number][];
 };
 
 const f = (s: number) => Math.round(s * SPINELLI_FPS);
@@ -63,6 +66,15 @@ const CLIPS: Clip[] = [
     end: 7.03,
     zoom: [1.06, 1],
     punches: [4.35, 5.8],
+    sounds: [
+      [0.55, "pop", 0.3],
+      [1.0, "heartbeat", 0.4],
+      [1.7, "pop", 0.35],
+      [3.05, "whoosh", 0.3],
+      [4.35, "wrong", 0.3],
+      [5.2, "whoosh", 0.3],
+      [5.25, "pop", 0.3],
+    ],
     graphics: [
       { from: 0.55, to: 1.7, render: (d) => <Heartbeat duration={d} /> },
       { from: 1.7, to: 2.95, render: (d) => <Plate duration={d} /> },
@@ -103,6 +115,19 @@ const CLIPS: Clip[] = [
     end: 12.16,
     zoom: [1, 1.06],
     punches: [0.85, 11.1],
+    sounds: [
+      [0.9, "pop", 0.35],
+      [2.2, "pop", 0.3],
+      [2.47, "tick", 0.4],
+      [2.93, "tick", 0.4],
+      [3.4, "tick", 0.4],
+      [3.5, "stamp", 0.45],
+      [5.1, "pop", 0.35],
+      [6.4, "pop", 0.35],
+      [7.7, "pop", 0.35],
+      [9.75, "rise", 0.25],
+      [11.1, "ding", 0.3],
+    ],
     graphics: [
       { from: 0.85, to: 2.2, render: (d) => <MedicalCross duration={d} /> },
       {
@@ -232,7 +257,7 @@ const Caption: React.FC<{ line: Line; duration: number }> = ({
                 opacity: interpolate(pop, [0, 1], [0.25, 1], {
                   extrapolateRight: "clamp",
                 }),
-                transform: `scale(${interpolate(pop, [0, 0.5, 1], [1, key ? 1.15 : 1.08, 1])})`,
+                transform: `translateY(${interpolate(pop, [0, 0.5, 1], [0, key ? -14 : -8, 0])}px) scale(${interpolate(pop, [0, 0.5, 1], [1, 1.06, 1])})`,
               }}
             >
               {w}
@@ -294,6 +319,11 @@ const ClipScene: React.FC<{ clip: Clip; entryPunch: boolean }> = ({
           </Sequence>
         );
       })}
+      {clip.sounds.map(([at, name, vol]) => (
+        <Sequence key={`${name}-${at}`} from={local(at)}>
+          <Audio src={staticFile(`sfx/${name}.wav`)} volume={vol} />
+        </Sequence>
+      ))}
       {clip.lines.map((line) => {
         const length = Math.min(f(line.to), f(clip.end)) - f(line.from);
         return (
@@ -322,6 +352,9 @@ export const SpinelliNutrizione: React.FC = () => {
       </Series>
       <Sequence from={CUT - WIPE / 2} durationInFrames={WIPE}>
         <Wipe duration={WIPE} />
+      </Sequence>
+      <Sequence from={CUT - 10}>
+        <Audio src={staticFile("sfx/whoosh.wav")} volume={0.45} />
       </Sequence>
       <ProgressBar total={SPINELLI_DURATION} />
     </AbsoluteFill>

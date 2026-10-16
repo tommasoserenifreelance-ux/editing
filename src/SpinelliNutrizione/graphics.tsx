@@ -15,6 +15,10 @@ const clamp = {
 
 const shadow = "drop-shadow(0 10px 24px rgba(0,0,0,0.25))";
 
+// Graphics sit just above the captions, below the speaker's face.
+const SLOT_BOTTOM = 1240;
+const SCALE = 0.55;
+
 const usePop = (delay = 0, damping = 12) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -24,15 +28,13 @@ const usePop = (delay = 0, damping = 12) => {
 const useDraw = (from: number, to: number) =>
   interpolate(useCurrentFrame(), [from, to], [0, 1], clamp);
 
-// Positions a graphic and handles its entrance and exit.
+// Positions a graphic in the slot and handles its entrance and exit.
 const Stage: React.FC<{
   duration: number;
-  x: number;
-  y: number;
   width: number;
   height: number;
   children: React.ReactNode;
-}> = ({ duration, x, y, width, height, children }) => {
+}> = ({ duration, width, height, children }) => {
   const frame = useCurrentFrame();
   const enter = usePop(0, 14);
   const exit = interpolate(frame, [duration - 5, duration], [1, 0], clamp);
@@ -41,12 +43,13 @@ const Stage: React.FC<{
       <div
         style={{
           position: "absolute",
-          left: x,
-          top: y,
+          left: 540 - width / 2,
+          top: SLOT_BOTTOM - height,
           width,
           height,
           opacity: Math.min(1, enter * 2) * exit,
-          transform: `scale(${interpolate(enter, [0, 1], [0.6, 1]) * interpolate(exit, [0, 1], [0.85, 1])})`,
+          transform: `scale(${SCALE * interpolate(enter, [0, 1], [0.6, 1]) * interpolate(exit, [0, 1], [0.85, 1])})`,
+          transformOrigin: "50% 100%",
           filter: shadow,
         }}
       >
@@ -86,7 +89,7 @@ export const Heartbeat: React.FC<{ duration: number }> = ({ duration }) => {
   const heart = usePop(14, 9);
   const beat = 1 + 0.08 * Math.max(0, Math.sin((frame - 14) / 4));
   return (
-    <Stage duration={duration} x={120} y={170} width={840} height={300}>
+    <Stage duration={duration} width={840} height={300}>
       <svg width={840} height={300} viewBox="0 0 840 300">
         <path
           d="M10 160 H230 L260 115 L290 200 L325 40 L365 265 L400 160 H540"
@@ -123,7 +126,7 @@ export const Plate: React.FC<{ duration: number }> = ({ duration }) => {
   const pop = usePop(0, 10);
   const ring = useDraw(2, 18);
   return (
-    <Stage duration={duration} x={290} y={130} width={500} height={380}>
+    <Stage duration={duration} width={500} height={380}>
       <svg
         width={500}
         height={380}
@@ -202,7 +205,7 @@ export const DietTags: React.FC<{ duration: number; strikeAt: number }> = ({
         interpolate(frame, [strikeAt, strikeAt + 14], [14, 0], clamp)
       : 0;
   return (
-    <Stage duration={duration} x={190} y={110} width={700} height={430}>
+    <Stage duration={duration} width={700} height={430}>
       <div
         style={{
           position: "absolute",
@@ -227,7 +230,7 @@ export const DietTags: React.FC<{ duration: number; strikeAt: number }> = ({
               style={{
                 fontFamily: sans,
                 fontWeight: 700,
-                fontSize: 50,
+                fontSize: 60,
                 padding: "14px 40px",
                 borderRadius: 60,
                 background: brand.cream,
@@ -279,7 +282,7 @@ export const Refresh: React.FC<{ duration: number }> = ({ duration }) => {
     easing: (t) => 1 - Math.pow(1 - t, 3),
   });
   return (
-    <Stage duration={duration} x={340} y={140} width={400} height={400}>
+    <Stage duration={duration} width={400} height={400}>
       <svg
         width={400}
         height={400}
@@ -331,7 +334,7 @@ export const MedicalCross: React.FC<{ duration: number }> = ({ duration }) => {
   const frame = useCurrentFrame();
   const cross = usePop(4, 9);
   return (
-    <Stage duration={duration} x={340} y={130} width={400} height={400}>
+    <Stage duration={duration} width={400} height={400}>
       <svg
         width={400}
         height={400}
@@ -389,7 +392,7 @@ export const Clipboard: React.FC<{ duration: number; stampAt: number }> = ({
     config: { damping: 9, mass: 0.5 },
   });
   return (
-    <Stage duration={duration} x={560} y={120} width={430} height={520}>
+    <Stage duration={duration} width={430} height={520}>
       <div
         style={{
           position: "absolute",
@@ -470,7 +473,7 @@ export const Clipboard: React.FC<{ duration: number; stampAt: number }> = ({
         style={{
           position: "absolute",
           left: -120,
-          bottom: 20,
+          bottom: 130,
           opacity: Math.min(1, stamp * 2),
           transform: `rotate(-10deg) scale(${interpolate(stamp, [0, 1], [2.2, 1])})`,
           fontFamily: sans,
@@ -518,7 +521,7 @@ const NEEDS = [
   { label: "Obiettivi", icon: <TargetIcon /> },
 ];
 
-// "sulle tue esigenze, sul tuo metabolismo e sui tuoi obiettivi": chips stacking up.
+// "sulle tue esigenze, sul tuo metabolismo e sui tuoi obiettivi": chips popping up in a row.
 export const NeedsStack: React.FC<{ duration: number; at: number[] }> = ({
   duration,
   at,
@@ -528,44 +531,59 @@ export const NeedsStack: React.FC<{ duration: number; at: number[] }> = ({
   const exit = interpolate(frame, [duration - 5, duration], [1, 0], clamp);
   return (
     <AbsoluteFill style={{ opacity: exit }}>
-      {NEEDS.map((n, i) => {
-        const pop = spring({
-          frame: frame - at[i],
-          fps,
-          config: { damping: 12, mass: 0.6 },
-        });
-        const active = frame >= at[i] && (i === 2 || frame < at[i + 1]);
-        return (
-          <div
-            key={n.label}
-            style={{
-              position: "absolute",
-              right: 50,
-              top: 150 + i * 150,
-              display: "flex",
-              alignItems: "center",
-              gap: 22,
-              padding: "14px 40px 14px 14px",
-              borderRadius: 70,
-              background: active ? brand.magenta : brand.cream,
-              color: active ? "#fff" : brand.ink,
-              fontFamily: sans,
-              fontWeight: 700,
-              fontSize: 46,
-              opacity: Math.min(1, pop * 2),
-              transform: `translateX(${interpolate(pop, [0, 1], [500, 0])}px) scale(${active ? 1.06 : 1})`,
-              filter: shadow,
-            }}
-          >
-            <Disc size={100} color={active ? brand.ink : brand.magenta}>
-              <svg width={60} height={60} viewBox="0 0 100 100">
-                {n.icon}
-              </svg>
-            </Disc>
-            {n.label}
-          </div>
-        );
-      })}
+      <div
+        style={{
+          position: "absolute",
+          left: 540 - 800,
+          width: 1600,
+          top: SLOT_BOTTOM - 130,
+          height: 130,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: 24,
+          transform: `scale(${SCALE})`,
+          transformOrigin: "50% 100%",
+        }}
+      >
+        {NEEDS.map((n, i) => {
+          const pop = spring({
+            frame: frame - at[i],
+            fps,
+            config: { damping: 12, mass: 0.6 },
+          });
+          const active = frame >= at[i] && (i === 2 || frame < at[i + 1]);
+          return (
+            <div
+              key={n.label}
+              style={{
+                flexShrink: 0,
+                whiteSpace: "nowrap",
+                display: "flex",
+                alignItems: "center",
+                gap: 22,
+                padding: "14px 40px 14px 14px",
+                borderRadius: 70,
+                background: active ? brand.magenta : brand.cream,
+                color: active ? "#fff" : brand.ink,
+                fontFamily: sans,
+                fontWeight: 700,
+                fontSize: 56,
+                opacity: Math.min(1, pop * 2),
+                transform: `translateY(${interpolate(pop, [0, 1], [120, 0])}px) scale(${interpolate(pop, [0, 1], [0.5, 1]) * (active ? 1.08 : 1)})`,
+                filter: shadow,
+              }}
+            >
+              <Disc size={100} color={active ? brand.ink : brand.magenta}>
+                <svg width={60} height={60} viewBox="0 0 100 100">
+                  {n.icon}
+                </svg>
+              </Disc>
+              {n.label}
+            </div>
+          );
+        })}
+      </div>
     </AbsoluteFill>
   );
 };
@@ -586,7 +604,7 @@ export const Growth: React.FC<{ duration: number; checkAt: number }> = ({
   const tick = interpolate(frame, [checkAt + 4, checkAt + 14], [0, 1], clamp);
   const burst = interpolate(frame, [checkAt, checkAt + 18], [0, 1], clamp);
   return (
-    <Stage duration={duration} x={140} y={110} width={820} height={460}>
+    <Stage duration={duration} width={820} height={460}>
       <svg width={820} height={460} viewBox="0 0 820 460">
         <path
           d="M30 410 L200 320 L300 360 L460 220 L560 260 L660 120"
