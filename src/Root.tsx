@@ -8,6 +8,11 @@ import {
   PilatesOverlay,
 } from "./PilatesOverlay";
 import { PILATES_DURATION, PilatesReformer } from "./PilatesReformer";
+import {
+  SPINELLI_DURATION,
+  SPINELLI_FPS,
+  SpinelliNutrizione,
+} from "./SpinelliNutrizione";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -69,6 +74,14 @@ export const RemotionRoot: React.FC = () => {
         component={PilatesOverlay}
         durationInFrames={OVERLAY_DURATION}
         fps={OVERLAY_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="SpinelliNutrizione"
+        component={SpinelliNutrizione}
+        durationInFrames={SPINELLI_DURATION}
+        fps={SPINELLI_FPS}
         width={1080}
         height={1920}
       />
