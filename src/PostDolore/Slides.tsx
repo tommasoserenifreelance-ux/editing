@@ -79,20 +79,12 @@ export const Slide1: React.FC = () => (
       <div style={{ marginTop: 50 }}>
         <WomanIcon color={colors.white} height={340} />
       </div>
-      <div
-        style={{
-          marginTop: 50,
-          backgroundColor: colors.plum,
-          color: colors.white,
-          borderRadius: 999,
-          padding: "18px 40px",
-          fontSize: 30,
-          fontWeight: 400,
-        }}
-      >
-        <span style={{ fontFamily: fonts.title, fontWeight: 700, letterSpacing: 1 }}>18 OTTOBRE</span>
-        {"  ·  "}Giornata mondiale della menopausa
-      </div>
+      <Title color={colors.plum} size={60} style={{ fontWeight: 700, marginTop: 50 }}>
+        18 ottobre
+      </Title>
+      <Body color={colors.white} style={{ fontSize: 38, marginTop: 4 }}>
+        Giornata mondiale della menopausa
+      </Body>
       <Body color={colors.white} style={{ fontSize: 44, marginTop: 50 }}>
         Quest’anno si parla di <span style={{ fontWeight: 600 }}>dolore…</span>
       </Body>
