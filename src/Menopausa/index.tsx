@@ -81,7 +81,7 @@ const Option: React.FC<{ letter: string; text: string }> = ({
 );
 
 const Question: React.FC = () => (
-  <Slide page={2} background={colors.cream}>
+  <Slide page={2}>
     <Label>UNA DOMANDA SCOMODA</Label>
     <Title size={100}>
       QUAL È LA
