@@ -3,7 +3,6 @@ import {
   Background,
   Body,
   Content,
-  Kicker,
   Pictogram,
   Shade,
   Step,
@@ -58,7 +57,6 @@ export const Scienza: React.FC = () => (
     <Shade from={22} />
     <Pictogram page={2} total={TOTAL} />
     <Content>
-      <Kicker>Cosa dice la scienza</Kicker>
       <Title>Ogni rampa allunga il passo alla longevità</Title>
       <div style={{ display: "flex", gap: 40, marginBottom: 30 }}>
         <Stat value="−39%" label="mortalità cardiovascolare" />
@@ -80,7 +78,6 @@ export const Protocollo: React.FC = () => (
     <Shade from={18} />
     <Pictogram page={3} total={TOTAL} />
     <Content>
-      <Kicker>Il protocollo</Kicker>
       <Title>Ripetute, non passeggiate.</Title>
       <Step n="01">
         <Strong>Riscaldati</Strong>: 5′ di camminata e 2 rampe lente
@@ -104,7 +101,6 @@ export const Progressione: React.FC = () => (
     <Shade from={18} />
     <Pictogram page={4} total={TOTAL} />
     <Content>
-      <Kicker>La mia routine</Kicker>
       <Title>
         Ormai non ne faccio{"\u00a0"}a{"\u00a0"}meno.
       </Title>
@@ -117,10 +113,6 @@ export const Progressione: React.FC = () => (
       <div
         style={{
           marginTop: 30,
-          padding: "26px 30px",
-          borderRadius: 22,
-          border: `2px solid ${colors.accent}`,
-          background: "rgba(168,199,207,0.14)",
         }}
       >
         <div
@@ -136,7 +128,7 @@ export const Progressione: React.FC = () => (
           Voi la conoscevate? La fate già?
         </div>
         <Body style={{ marginTop: 8, color: colors.ink }}>
-          Scrivetemelo nei commenti ↓
+          Scrivetemelo nei commenti
         </Body>
       </div>
       <Note>

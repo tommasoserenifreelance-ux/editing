@@ -73,28 +73,6 @@ export const Pictogram: React.FC<{ page: number; total: number }> = ({
   </AbsoluteFill>
 );
 
-export const Kicker: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => (
-  <div
-    style={{
-      display: "flex",
-      alignItems: "center",
-      gap: 18,
-      fontFamily: sans,
-      fontWeight: 600,
-      fontSize: 24,
-      letterSpacing: 6,
-      textTransform: "uppercase",
-      color: colors.accent,
-      marginBottom: 20,
-    }}
-  >
-    <div style={{ width: 48, height: 2, background: colors.accent }} />
-    {children}
-  </div>
-);
-
 export const Title: React.FC<{
   children: React.ReactNode;
   size?: number;
