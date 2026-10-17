@@ -1,4 +1,4 @@
-import { Composition, Folder } from "remotion";
+import { Composition, Folder, Still } from "remotion";
 import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
@@ -7,6 +7,7 @@ import {
   OVERLAY_FPS,
   PilatesOverlay,
 } from "./PilatesOverlay";
+import { MENOPAUSA_SLIDES } from "./Menopausa";
 import { PILATES_DURATION, PilatesReformer } from "./PilatesReformer";
 
 // Each <Composition> is an entry in the sidebar!
@@ -72,6 +73,11 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
       />
+      <Folder name="Menopausa">
+        {MENOPAUSA_SLIDES.map(({ id, component }) => (
+          <Still key={id} id={id} component={component} width={1080} height={1350} />
+        ))}
+      </Folder>
     </>
   );
 };
