@@ -86,7 +86,7 @@ export const Protocollo: React.FC = () => (
         <Strong>Riscaldati</Strong>: 5′ di camminata e 2 rampe lente
       </Step>
       <Step n="02">
-        <Strong>Sali a passo spinto</Strong> per 30–45″, fatica 7–8 su 10
+        <Strong>Sali a passo spinto</Strong> per 30–45″
       </Step>
       <Step n="03">
         <Strong>Scendi camminando</Strong>: è il tuo recupero
@@ -104,23 +104,43 @@ export const Progressione: React.FC = () => (
     <Shade from={18} />
     <Pictogram page={4} total={TOTAL} />
     <Content>
-      <Kicker>Come progredire</Kicker>
-      <Title>Ogni settimana, un gradino in più.</Title>
-      <Step n="1–2">
-        <Strong>6 ripetute</Strong> a ritmo sostenibile
-      </Step>
-      <Step n="3–4">
-        <Strong>8 ripetute</Strong>, salita più decisa
-      </Step>
-      <Step n="5+">
-        <Strong>10 ripetute</Strong> o salita a gradini alterni
-      </Step>
-      <Body style={{ marginTop: 22, color: colors.ink }}>
-        In discesa niente fretta: corrimano e passo controllato.
+      <Kicker>La mia routine</Kicker>
+      <Title>
+        Ormai non ne faccio{"\u00a0"}a{"\u00a0"}meno.
+      </Title>
+      <Body>
+        È diventata <Strong>una mia routine</Strong>: due o tre volte a
+        settimana le scale sotto casa diventano la mia palestra. Salgo spinta,
+        scendo con calma, ripeto. Pochi minuti, zero attrezzi e tanta energia
+        per tutta la giornata.
       </Body>
+      <div
+        style={{
+          marginTop: 30,
+          padding: "26px 30px",
+          borderRadius: 22,
+          border: `2px solid ${colors.accent}`,
+          background: "rgba(168,199,207,0.14)",
+        }}
+      >
+        <div
+          style={{
+            fontFamily: serif,
+            fontWeight: 700,
+            fontStyle: "italic",
+            fontSize: 46,
+            lineHeight: 1.15,
+            color: colors.accent,
+          }}
+        >
+          Voi la conoscevate? La fate già?
+        </div>
+        <Body style={{ marginTop: 8, color: colors.ink }}>
+          Scrivetemelo nei commenti ↓
+        </Body>
+      </div>
       <Note>
-        Settimane indicative. Patologie cardiache o articolari? Parlane prima
-        con il tuo medico.
+        Patologie cardiache o articolari? Parlane prima con il tuo medico.
       </Note>
     </Content>
   </AbsoluteFill>

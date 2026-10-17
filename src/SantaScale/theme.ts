@@ -31,7 +31,7 @@ Promise.all(
 export const colors = {
   ink: "#FFFFFF",
   soft: "rgba(255,255,255,0.86)",
-  accent: "#E9D8B4",
+  accent: "#A8C7CF",
   shade: "rgba(14,18,14,0.82)",
 };
 

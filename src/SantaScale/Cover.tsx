@@ -12,6 +12,10 @@ import { asset, colors, sans, serif } from "./theme";
 
 export const COVER_DURATION = 144; // 4.8 s, length of the source clip
 
+// Hand-drawn stroke: a wavy pass under the word, then a quick return flick.
+const SCRIBBLE =
+  "M8 34 C 90 22, 170 40, 260 30 S 430 20, 520 28 S 640 36, 692 22 C 600 40, 420 48, 250 46 S 110 44, 70 50";
+
 const clamp = {
   extrapolateLeft: "clamp",
   extrapolateRight: "clamp",
@@ -55,16 +59,12 @@ export const Cover: React.FC = () => {
     ...clamp,
     easing: Easing.out(Easing.cubic),
   });
-  const kicker = interpolate(frame, [6, 22], [0, 1], {
-    ...clamp,
-    easing: Easing.out(Easing.cubic),
-  });
   const punch = spring({
     frame: frame - 34,
     fps,
     config: { damping: 11, mass: 0.7 },
   });
-  const underline = interpolate(frame, [46, 66], [0, 1], {
+  const underline = interpolate(frame, [46, 74], [0, 1], {
     ...clamp,
     easing: Easing.inOut(Easing.cubic),
   });
@@ -98,26 +98,6 @@ export const Cover: React.FC = () => {
       >
         <div
           style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 18,
-            fontFamily: sans,
-            fontWeight: 600,
-            fontSize: 26,
-            letterSpacing: 7,
-            color: colors.accent,
-            marginBottom: 22,
-            opacity: kicker,
-          }}
-        >
-          <div
-            style={{ width: 64 * kicker, height: 2, background: colors.accent }}
-          />
-          RIPETUTE SULLE SCALE
-        </div>
-
-        <div
-          style={{
             fontFamily: serif,
             fontWeight: 700,
             fontStyle: "italic",
@@ -148,17 +128,30 @@ export const Cover: React.FC = () => {
             }}
           >
             Allenale.
-            <div
+            <svg
+              viewBox="0 0 700 60"
+              preserveAspectRatio="none"
               style={{
                 position: "absolute",
-                left: 6,
-                bottom: 14,
-                height: 6,
-                width: `${underline * 92}%`,
-                background: colors.accent,
-                borderRadius: 3,
+                left: -6,
+                bottom: -24,
+                width: "100%",
+                height: 56,
+                overflow: "visible",
               }}
-            />
+            >
+              <path
+                d={SCRIBBLE}
+                pathLength={1}
+                fill="none"
+                stroke={colors.accent}
+                strokeWidth={7}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeDasharray={1}
+                strokeDashoffset={1 - underline}
+              />
+            </svg>
           </div>
         </div>
 
