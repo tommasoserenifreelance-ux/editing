@@ -46,30 +46,9 @@ export const Shade: React.FC<{ from?: number }> = ({ from = 38 }) => (
   />
 );
 
-export const Pictogram: React.FC<{ page: number; total: number }> = ({
-  page,
-  total,
-}) => (
-  <AbsoluteFill
-    style={{
-      padding: "56px 64px",
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "flex-start",
-    }}
-  >
+export const Pictogram: React.FC = () => (
+  <AbsoluteFill style={{ padding: "56px 64px" }}>
     <Img src={asset("pittogramma.png")} style={{ width: 84, height: 84 }} />
-    <div
-      style={{
-        fontFamily: sans,
-        fontSize: 24,
-        letterSpacing: 4,
-        color: colors.soft,
-        marginTop: 28,
-      }}
-    >
-      {String(page).padStart(2, "0")} / {String(total).padStart(2, "0")}
-    </div>
   </AbsoluteFill>
 );
 

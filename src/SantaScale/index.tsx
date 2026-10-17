@@ -14,8 +14,6 @@ import { colors, sans, serif } from "./theme";
 export { Cover, COVER_DURATION } from "./Cover";
 export { SCALE_FPS, SCALE_HEIGHT, SCALE_WIDTH } from "./theme";
 
-const TOTAL = 4;
-
 export const SALITA_DURATION = 112; // 3.75 s, length of the source clip
 export const DISCESA_DURATION = 126; // 4.2 s: the clip is empty stairs after this
 
@@ -55,7 +53,7 @@ export const Scienza: React.FC = () => (
   <AbsoluteFill>
     <Background image="foto-salita.jpg" position="50% 30%" />
     <Shade from={22} />
-    <Pictogram page={2} total={TOTAL} />
+    <Pictogram />
     <Content>
       <Title>Ogni rampa allunga il passo alla longevità</Title>
       <div style={{ display: "flex", gap: 40, marginBottom: 30 }}>
@@ -76,7 +74,7 @@ export const Protocollo: React.FC = () => (
   <AbsoluteFill>
     <Background video="salita.mp4" position="50% 40%" zoom={[1, 1.04]} />
     <Shade from={18} />
-    <Pictogram page={3} total={TOTAL} />
+    <Pictogram />
     <Content>
       <Title>Ripetute, non passeggiate.</Title>
       <Step n="01">
@@ -99,7 +97,7 @@ export const Progressione: React.FC = () => (
   <AbsoluteFill>
     <Background video="discesa.mp4" position="50% 40%" zoom={[1.04, 1]} />
     <Shade from={18} />
-    <Pictogram page={4} total={TOTAL} />
+    <Pictogram />
     <Content>
       <Title>
         Ormai non ne faccio{"\u00a0"}a{"\u00a0"}meno.
