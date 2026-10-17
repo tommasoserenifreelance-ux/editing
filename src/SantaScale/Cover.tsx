@@ -51,7 +51,12 @@ const Word: React.FC<{ children: string; delay: number }> = ({
   );
 };
 
-export const Cover: React.FC = () => {
+// Without props it plays the video cover; with `image` it lays the same
+// design over a photo (render the still on a frame after the type lands).
+export const Cover: React.FC<{ image?: string; position?: string }> = ({
+  image,
+  position = "50% 10%",
+}) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
@@ -75,7 +80,11 @@ export const Cover: React.FC = () => {
 
   return (
     <AbsoluteFill>
-      <Background video="cover.mp4" position="50% 18%" zoom={[1, 1.06]} />
+      {image ? (
+        <Background image={image} position={position} />
+      ) : (
+        <Background video="cover.mp4" position="50% 18%" zoom={[1, 1.06]} />
+      )}
       <Shade from={34} />
 
       <AbsoluteFill style={{ alignItems: "center", paddingTop: 60 }}>

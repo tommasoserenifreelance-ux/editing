@@ -93,6 +93,22 @@ export const RemotionRoot: React.FC = () => {
           width={SCALE_WIDTH}
           height={SCALE_HEIGHT}
         />
+        {[1, 2, 3, 4, 5].map((n) => (
+          <Composition
+            key={n}
+            id={`Scale1-CoverFoto-${n}`}
+            component={Cover}
+            durationInFrames={COVER_DURATION}
+            fps={SCALE_FPS}
+            width={SCALE_WIDTH}
+            height={SCALE_HEIGHT}
+            defaultProps={{
+              image: `cover-foto-${n}.jpg`,
+              // Keep the full headroom under the logo on the front-facing shots.
+              position: n % 2 === 1 ? "50% 0%" : "50% 10%",
+            }}
+          />
+        ))}
         <Composition
           id="Scale2-Scienza"
           component={Scienza}
