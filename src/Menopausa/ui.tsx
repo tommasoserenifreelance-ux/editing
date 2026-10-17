@@ -6,12 +6,11 @@ export const MARGIN = 90;
 export const Slide: React.FC<{
   page: number;
   source?: string;
+  background?: string;
   art?: React.ReactNode;
   children: React.ReactNode;
-}> = ({ page, source, art, children }) => (
-  <AbsoluteFill
-    style={{ background: colors.bg, fontFamily: anton, color: colors.ink }}
-  >
+}> = ({ page, source, background = colors.bg, art, children }) => (
+  <AbsoluteFill style={{ background, fontFamily: anton, color: colors.ink }}>
     {art}
     <div
       style={{

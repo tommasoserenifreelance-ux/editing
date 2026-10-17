@@ -5,7 +5,6 @@ import {
   FallingHormone,
   Heart,
   HotFlush,
-  QuestionBubble,
   Waving,
 } from "./illus";
 import { colors } from "./theme";
@@ -82,14 +81,7 @@ const Option: React.FC<{ letter: string; text: string }> = ({
 );
 
 const Question: React.FC = () => (
-  <Slide
-    page={2}
-    art={
-      <Art x={810} y={160} size={180}>
-        <QuestionBubble />
-      </Art>
-    }
-  >
+  <Slide page={2} background={colors.cream}>
     <Label>UNA DOMANDA SCOMODA</Label>
     <Title size={100}>
       QUAL È LA
