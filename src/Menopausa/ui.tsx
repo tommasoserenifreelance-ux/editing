@@ -1,28 +1,53 @@
 import { AbsoluteFill } from "remotion";
-import { anton, colors } from "./theme";
+import { anton, colors, TOTAL } from "./theme";
+
+export const MARGIN = 90;
 
 export const Slide: React.FC<{
+  page: number;
   source?: string;
   art?: React.ReactNode;
   children: React.ReactNode;
-}> = ({ source, art, children }) => (
+}> = ({ page, source, art, children }) => (
   <AbsoluteFill
     style={{ background: colors.bg, fontFamily: anton, color: colors.ink }}
   >
     {art}
-    <div style={{ position: "absolute", top: 130, left: 70, right: 70 }}>
+    <div
+      style={{
+        position: "absolute",
+        top: 70,
+        left: MARGIN,
+        right: MARGIN,
+        display: "flex",
+        justifyContent: "space-between",
+        fontSize: 22,
+        letterSpacing: 4,
+        color: colors.muted,
+      }}
+    >
+      <span>GIORNATA MONDIALE DELLA MENOPAUSA</span>
+      <span>
+        <span style={{ color: colors.pink }}>
+          {String(page).padStart(2, "0")}
+        </span>{" "}
+        / {String(TOTAL).padStart(2, "0")}
+      </span>
+    </div>
+    <div
+      style={{ position: "absolute", top: 190, left: MARGIN, right: MARGIN }}
+    >
       {children}
     </div>
     {source ? (
       <div
         style={{
           position: "absolute",
-          bottom: 135,
-          left: 60,
-          right: 60,
-          textAlign: "center",
-          fontSize: 22,
-          letterSpacing: 0.5,
+          bottom: 118,
+          left: MARGIN,
+          right: MARGIN,
+          fontSize: 18,
+          letterSpacing: 1.5,
           color: colors.muted,
         }}
       >
@@ -32,25 +57,45 @@ export const Slide: React.FC<{
     <div
       style={{
         position: "absolute",
-        bottom: 42,
-        width: "100%",
-        textAlign: "center",
-        fontSize: 38,
-        color: colors.accent,
+        bottom: 56,
+        left: MARGIN,
+        right: MARGIN,
+        display: "flex",
+        alignItems: "center",
+        gap: 24,
+        fontSize: 28,
+        color: colors.blue,
       }}
     >
+      <div style={{ flex: 1, height: 2, background: colors.rule }} />
       @dr.michele.bonaccorso
+      <div style={{ flex: 1, height: 2, background: colors.rule }} />
     </div>
   </AbsoluteFill>
 );
 
-// Light accent band behind the lower half of a word, as in the 2026 template.
+export const Label: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => (
+  <div
+    style={{
+      fontSize: 26,
+      letterSpacing: 5,
+      color: colors.pink,
+      marginBottom: 28,
+    }}
+  >
+    {children}
+  </div>
+);
+
+// Soft rose band behind the lower half of a word, as in the 2026 template.
 export const Hl: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <span
     style={{
-      background: `linear-gradient(transparent 52%, ${colors.light} 52%, ${colors.light} 92%, transparent 92%)`,
-      padding: "0 8px",
-      margin: "0 -8px",
+      background: `linear-gradient(transparent 56%, ${colors.pinkSoft} 56%, ${colors.pinkSoft} 92%, transparent 92%)`,
+      padding: "0 6px",
+      margin: "0 -6px",
     }}
   >
     {children}
@@ -59,68 +104,49 @@ export const Hl: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 
 export const Title: React.FC<{ children: React.ReactNode; size?: number }> = ({
   children,
-  size = 128,
-}) => (
-  <div style={{ fontSize: size, lineHeight: 1.04, textTransform: "uppercase" }}>
-    {children}
-  </div>
+  size = 96,
+}) => <div style={{ fontSize: size, lineHeight: 1.04 }}>{children}</div>;
+
+export const Blue: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <span style={{ color: colors.blue }}>{children}</span>
 );
 
-export const Accent: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => <span style={{ color: colors.accent }}>{children}</span>;
+export const Pink: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <span style={{ color: colors.pink }}>{children}</span>
+);
 
-export const Box: React.FC<{
-  variant: "white" | "light" | "accent";
+export const Body: React.FC<{
   children: React.ReactNode;
-  height?: number;
-}> = ({ variant, children, height = 170 }) => (
+  size?: number;
+  style?: React.CSSProperties;
+}> = ({ children, size = 38, style }) => (
   <div
-    style={{
-      height,
-      border: `5px solid ${colors.ink}`,
-      borderRadius: 22,
-      padding: "0 38px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      gap: 30,
-      background:
-        variant === "white"
-          ? colors.bg
-          : variant === "light"
-            ? colors.light
-            : colors.accent,
-      color: variant === "accent" ? colors.bg : colors.ink,
-    }}
+    style={{ fontSize: size, lineHeight: 1.2, color: colors.body, ...style }}
   >
     {children}
   </div>
 );
 
-export const Row: React.FC<{
-  n: string;
-  top: string;
-  bottom: string;
-  last?: boolean;
-}> = ({ n, top, bottom, last }) => (
+export const Row: React.FC<{ n: string; top: string; bottom: string }> = ({
+  n,
+  top,
+  bottom,
+}) => (
   <div
     style={{
       display: "flex",
       alignItems: "center",
-      gap: 46,
+      gap: 40,
       padding: "18px 0",
-      borderBottom: last ? "none" : `2px solid ${colors.rule}`,
+      borderTop: `2px solid ${colors.rule}`,
     }}
   >
-    <div
-      style={{ fontSize: 108, lineHeight: 1, color: colors.accent, width: 95 }}
-    >
+    <div style={{ fontSize: 56, lineHeight: 1, color: colors.pink, width: 70 }}>
       {n}
     </div>
-    <div style={{ fontSize: 50, lineHeight: 1.08 }}>
+    <div style={{ fontSize: 40, lineHeight: 1.1 }}>
       <div>{top}</div>
-      <div style={{ color: colors.accent }}>{bottom}</div>
+      <div style={{ color: colors.blue }}>{bottom}</div>
     </div>
   </div>
 );

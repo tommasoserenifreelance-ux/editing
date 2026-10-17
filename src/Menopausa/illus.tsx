@@ -1,10 +1,10 @@
 import { colors } from "./theme";
 
-// Flat illustrations with a thick ink outline, matching the template's mascot style.
+// Spot illustrations: thin ink line, flat pastel fills, soft round backdrop.
 
 const S = {
   stroke: colors.ink,
-  strokeWidth: 7,
+  strokeWidth: 5,
   strokeLinejoin: "round" as const,
   strokeLinecap: "round" as const,
 };
@@ -25,70 +25,61 @@ export const Art: React.FC<{
   </svg>
 );
 
-const Bubbles: React.FC<{ cx: number; cy: number }> = ({ cx, cy }) => (
-  <g fill="#FFFFFF" opacity={0.85}>
-    {[
-      [-60, -50, 11],
-      [-30, -75, 7],
-      [10, -40, 9],
-      [55, -20, 12],
-      [-55, 15, 8],
-      [25, 30, 10],
-      [-15, 60, 13],
-      [60, 45, 7],
-      [-70, 55, 6],
-    ].map(([dx, dy, r], i) => (
-      <circle key={i} cx={cx + dx} cy={cy + dy} r={r} />
-    ))}
-  </g>
+const Backdrop: React.FC<{ fill: string }> = ({ fill }) => (
+  <circle cx={150} cy={150} r={140} fill={fill} />
 );
 
-// Round mascot with a hot flush: sweat drops and a little flame.
+// Round mascot from the template, with heat waves for a hot flush.
 export const HotFlush: React.FC = () => (
   <>
-    <ellipse cx={150} cy={286} rx={120} ry={12} fill={colors.light} />
-    <line x1={118} y1={230} x2={118} y2={280} {...S} />
-    <line x1={182} y1={230} x2={182} y2={280} {...S} />
-    <ellipse cx={112} cy={281} rx={18} ry={8} fill={colors.ink} />
-    <ellipse cx={188} cy={281} rx={18} ry={8} fill={colors.ink} />
-    <circle cx={150} cy={150} r={100} fill={colors.accent} {...S} />
-    <Bubbles cx={150} cy={150} />
-    <path d="M52 160 Q90 110 125 150 T200 140 T252 120" fill="none" {...S} />
+    <ellipse cx={150} cy={288} rx={90} ry={9} fill={colors.blueSoft} />
+    <line x1={125} y1={240} x2={125} y2={282} {...S} />
+    <line x1={175} y1={240} x2={175} y2={282} {...S} />
+    <path d="M110 284 h18 M172 284 h18" {...S} strokeWidth={8} />
+    <circle cx={150} cy={160} r={88} fill={colors.pink} {...S} />
+    <circle cx={112} cy={118} r={10} fill="#FFFFFF" opacity={0.8} />
+    <circle cx={134} cy={102} r={5} fill="#FFFFFF" opacity={0.8} />
+    <path d="M72 175 Q105 140 135 170 T200 160 T232 148" fill="none" {...S} />
+    {[118, 150, 182].map((x, i) => (
+      <path
+        key={x}
+        d={`M${x} ${i === 1 ? 46 : 52} q-10 -12 0 -24 t0 -24`}
+        fill="none"
+        {...S}
+        stroke={colors.pink}
+        strokeWidth={6}
+      />
+    ))}
     <path
-      d="M262 40 q-18 24 -18 36 a18 18 0 0 0 36 0 q0 -12 -18 -36z"
-      fill="#FFFFFF"
+      d="M258 96 q-14 18 -14 28 a14 14 0 0 0 28 0 q0 -10 -14 -28z"
+      fill={colors.blueSoft}
       {...S}
-      strokeWidth={5}
+      strokeWidth={4}
     />
     <path
-      d="M30 70 q-12 16 -12 24 a12 12 0 0 0 24 0 q0 -8 -12 -24z"
-      fill="#FFFFFF"
+      d="M40 120 q-10 13 -10 20 a10 10 0 0 0 20 0 q0 -7 -10 -20z"
+      fill={colors.blueSoft}
       {...S}
-      strokeWidth={5}
-    />
-    <path
-      d="M150 -10 C120 20 128 36 136 44 C126 40 118 30 120 18 C100 40 104 62 128 70 L172 70 C196 62 200 36 176 10 C176 26 170 34 162 38 C170 20 164 4 150 -10 Z"
-      fill="#FFB547"
-      {...S}
-      strokeWidth={5}
+      strokeWidth={4}
     />
   </>
 );
 
 export const QuestionBubble: React.FC = () => (
   <>
+    <Backdrop fill={colors.pinkSoft} />
     <path
-      d="M60 40 H240 a50 50 0 0 1 50 50 V150 a50 50 0 0 1 -50 50 H150 L200 260 L120 200 H60 a50 50 0 0 1 -50 -50 V90 a50 50 0 0 1 50 -50 Z"
-      fill={colors.accent}
+      d="M80 80 H220 a35 35 0 0 1 35 35 V165 a35 35 0 0 1 -35 35 H160 L190 240 L125 200 H80 a35 35 0 0 1 -35 -35 V115 a35 35 0 0 1 35 -35 Z"
+      fill="#FFFFFF"
       {...S}
     />
     <text
       x={150}
-      y={168}
+      y={182}
       textAnchor="middle"
       fontFamily="Anton"
-      fontSize={130}
-      fill="#FFFFFF"
+      fontSize={95}
+      fill={colors.pink}
     >
       ?
     </text>
@@ -97,18 +88,18 @@ export const QuestionBubble: React.FC = () => (
 
 export const Heart: React.FC = () => (
   <>
+    <Backdrop fill={colors.pinkSoft} />
     <path
-      d="M150 270 C60 200 10 150 10 95 C10 50 45 20 85 20 C115 20 138 38 150 62 C162 38 185 20 215 20 C255 20 290 50 290 95 C290 150 240 200 150 270 Z"
-      fill={colors.accent}
+      d="M150 245 C85 195 50 160 50 118 C50 85 75 62 105 62 C127 62 142 75 150 92 C158 75 173 62 195 62 C225 62 250 85 250 118 C250 160 215 195 150 245 Z"
+      fill="#FFFFFF"
       {...S}
     />
     <path
-      d="M30 140 H100 L120 100 L145 185 L170 75 L190 140 H270"
+      d="M62 150 H112 L126 122 L144 182 L162 108 L176 150 H238"
       fill="none"
-      stroke="#FFFFFF"
-      strokeWidth={12}
-      strokeLinejoin="round"
-      strokeLinecap="round"
+      {...S}
+      stroke={colors.blue}
+      strokeWidth={7}
     />
   </>
 );
@@ -122,14 +113,16 @@ export const FallingHormone: React.FC = () => {
     }).join(" ");
   return (
     <>
-      <polygon points={hex(95, 110, 55)} fill={colors.accent} {...S} />
-      <polygon points={hex(190, 110, 55)} fill={colors.light} {...S} />
-      <polygon points={hex(142, 192, 55)} fill={colors.accent} {...S} />
+      <Backdrop fill={colors.blueSoft} />
+      <polygon points={hex(105, 125, 40)} fill={colors.pink} {...S} />
+      <polygon points={hex(174, 125, 40)} fill="#FFFFFF" {...S} />
+      <polygon points={hex(140, 185, 40)} fill={colors.pinkSoft} {...S} />
       <path
-        d="M262 120 V250 M232 220 L262 255 L292 220"
+        d="M238 110 V215 M216 192 L238 218 L260 192"
         fill="none"
         {...S}
-        strokeWidth={10}
+        stroke={colors.blue}
+        strokeWidth={7}
       />
     </>
   );
@@ -139,74 +132,77 @@ export const FallingHormone: React.FC = () => {
 export const CrackedBone: React.FC = () => {
   const parts = (props: React.SVGProps<SVGGElement>) => (
     <g {...props}>
-      <circle cx={62} cy={122} r={34} />
-      <circle cx={62} cy={178} r={34} />
-      <circle cx={238} cy={122} r={34} />
-      <circle cx={238} cy={178} r={34} />
-      <rect x={60} y={122} width={180} height={56} />
+      <circle cx={82} cy={130} r={26} />
+      <circle cx={82} cy={172} r={26} />
+      <circle cx={218} cy={130} r={26} />
+      <circle cx={218} cy={172} r={26} />
+      <rect x={80} y={130} width={140} height={42} />
     </g>
   );
   return (
-    <g transform="rotate(-25 150 150)">
-      {parts({ stroke: colors.ink, strokeWidth: 14, fill: colors.ink })}
-      {parts({ fill: "#FFFFFF" })}
-      <path
-        d="M150 118 L138 138 L158 150 L140 182"
-        fill="none"
-        stroke={colors.accent}
-        strokeWidth={9}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </g>
+    <>
+      <Backdrop fill={colors.blueSoft} />
+      <g transform="rotate(-25 150 150)">
+        {parts({ stroke: colors.ink, strokeWidth: 10, fill: colors.ink })}
+        {parts({ fill: "#FFFFFF" })}
+        <path
+          d="M152 126 L142 142 L158 152 L144 176"
+          fill="none"
+          {...S}
+          stroke={colors.pink}
+          strokeWidth={6}
+        />
+      </g>
+    </>
   );
 };
 
+// Brain split in rose and blue: women vs men on the same slide.
 export const BrainArt: React.FC = () => (
   <>
+    <Backdrop fill={colors.pinkSoft} />
     <path
-      d="M150 45 C130 20 85 25 78 55 C45 55 25 85 38 112 C15 130 18 172 48 185 C45 220 80 245 112 232 C122 255 150 262 150 262 Z"
-      fill={colors.accent}
+      d="M150 70 C135 52 102 56 97 78 C73 78 58 100 68 120 C51 133 54 163 76 172 C74 198 100 216 124 206 C131 223 150 228 150 228 Z"
+      fill={colors.pink}
       {...S}
     />
     <path
-      d="M150 45 C170 20 215 25 222 55 C255 55 275 85 262 112 C285 130 282 172 252 185 C255 220 220 245 188 232 C178 255 150 262 150 262 Z"
-      fill={colors.light}
+      d="M150 70 C165 52 198 56 203 78 C227 78 242 100 232 120 C249 133 246 163 224 172 C226 198 200 216 176 206 C169 223 150 228 150 228 Z"
+      fill={colors.blueSoft}
       {...S}
     />
-    <path d="M150 45 V262" fill="none" {...S} />
     <path
-      d="M78 55 C95 70 100 90 88 110 M48 185 C70 175 90 180 100 200 M60 130 C80 135 95 150 110 140"
+      d="M97 78 C110 90 113 104 104 118 M76 172 C92 165 106 168 114 182 M86 138 C100 142 111 152 122 145"
       fill="none"
       {...S}
-      strokeWidth={5}
+      strokeWidth={3.5}
     />
     <path
-      d="M222 55 C205 70 200 90 212 110 M252 185 C230 175 210 180 200 200 M240 130 C220 135 205 150 190 140"
+      d="M203 78 C190 90 187 104 196 118 M224 172 C208 165 194 168 186 182 M214 138 C200 142 189 152 178 145"
       fill="none"
       {...S}
-      strokeWidth={5}
+      strokeWidth={3.5}
     />
   </>
 );
 
-// Mascot waving, with a heart above it.
+// Mascot waving, with a small heart above it.
 export const Waving: React.FC = () => (
   <>
-    <ellipse cx={150} cy={286} rx={110} ry={12} fill={colors.light} />
-    <line x1={120} y1={232} x2={120} y2={280} {...S} />
-    <line x1={180} y1={232} x2={180} y2={280} {...S} />
-    <ellipse cx={114} cy={281} rx={18} ry={8} fill={colors.ink} />
-    <ellipse cx={186} cy={281} rx={18} ry={8} fill={colors.ink} />
-    <path d="M238 140 L285 75" {...S} />
-    <circle cx={150} cy={160} r={90} fill={colors.accent} {...S} />
-    <Bubbles cx={150} cy={160} />
-    <path d="M70 165 Q105 125 135 160 T205 150 T235 135" fill="none" {...S} />
+    <ellipse cx={150} cy={288} rx={85} ry={9} fill={colors.pinkSoft} />
+    <line x1={125} y1={240} x2={125} y2={282} {...S} />
+    <line x1={175} y1={240} x2={175} y2={282} {...S} />
+    <path d="M110 284 h18 M172 284 h18" {...S} strokeWidth={8} />
+    <path d="M228 150 L268 92" {...S} />
+    <circle cx={150} cy={165} r={82} fill={colors.blue} {...S} />
+    <circle cx={115} cy={128} r={9} fill="#FFFFFF" opacity={0.8} />
+    <circle cx={136} cy={113} r={5} fill="#FFFFFF" opacity={0.8} />
+    <path d="M78 178 Q108 145 136 172 T196 162 T226 152" fill="none" {...S} />
     <path
-      d="M150 50 C120 30 100 10 100 -8 C100 -24 112 -34 125 -34 C137 -34 145 -26 150 -16 C155 -26 163 -34 175 -34 C188 -34 200 -24 200 -8 C200 10 180 30 150 50 Z"
-      fill={colors.light}
+      d="M150 62 C128 47 114 34 114 20 C114 9 122 2 132 2 C140 2 146 7 150 14 C154 7 160 2 168 2 C178 2 186 9 186 20 C186 34 172 47 150 62 Z"
+      fill={colors.pink}
       {...S}
-      strokeWidth={5}
+      strokeWidth={4}
     />
   </>
 );
