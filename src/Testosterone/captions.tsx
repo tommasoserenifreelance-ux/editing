@@ -3,7 +3,8 @@ import { AbsoluteFill, Sequence, useCurrentFrame } from "remotion";
 import words from "./words.json";
 import { colors, sans, sec } from "./theme";
 
-export type Word = { w: string; s: number; e: number };
+// g: keep this word in the same caption as the next one.
+export type Word = { w: string; s: number; e: number; g?: boolean };
 export const WORDS = words as Word[];
 
 /** Start time (s) of the first occurrence of `text` at or after `after`. */
@@ -37,6 +38,7 @@ const chunk = (list: Word[]): Chunk[] => {
     const chars = cur.map((c) => c.w).join(" ").length;
     const punct = /[.,?]$/.test(x.w);
     const short = x.w.length <= 3 && !punct;
+    if (x.g && next) return;
     if (!next || punct) return flush();
     if (cur.length >= 3) return flush();
     if (short) return;

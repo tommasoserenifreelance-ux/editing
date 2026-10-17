@@ -59,7 +59,7 @@ const SCENES: Scene[] = [
   { from: wt("A"), caption: "none", render: (t0) => <Grafico t0={t0} /> },
   { from: CLIP_OFFSETS[2], caption: "white", render: th(["maturità"]) },
   { from: wt("dal", 34), caption: "none", render: (t0) => <Trentacinque t0={t0} /> },
-  { from: wt("In", 36), caption: "white", render: th(["uomini"]) },
+  { from: wt("molti", 36), caption: "white", render: th(["uomini"]) },
   { from: wt("dipende"), caption: "none", render: (t0) => <Barre t0={t0} /> },
   { from: wt("Per", 41), caption: "none", render: (t0) => <Cause t0={t0} /> },
   { from: CLIP_OFFSETS[3], caption: "white", render: th() },

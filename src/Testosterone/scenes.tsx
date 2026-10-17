@@ -227,7 +227,7 @@ export const Benefits: React.FC<SceneProps> = ({ t0 }) => (
     emojiSize={225}
     labelSize={48}
     items={[
-      { word: "massa", emoji: "biceps", label: "forza\nmuscolare" },
+      { word: "massa", emoji: "biceps", label: "massa e\nforza\nmuscolare" },
       { word: "densità", emoji: "bone", label: "densità\nossea" },
       { word: "globuli", emoji: "blood", label: "globuli\nrossi" },
       {
