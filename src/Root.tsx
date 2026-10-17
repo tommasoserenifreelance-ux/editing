@@ -8,6 +8,18 @@ import {
   PilatesOverlay,
 } from "./PilatesOverlay";
 import { PILATES_DURATION, PilatesReformer } from "./PilatesReformer";
+import {
+  Cover,
+  COVER_DURATION,
+  DISCESA_DURATION,
+  Progressione,
+  Protocollo,
+  SALITA_DURATION,
+  SCALE_FPS,
+  SCALE_HEIGHT,
+  SCALE_WIDTH,
+  Scienza,
+} from "./SantaScale";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -72,6 +84,40 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
       />
+      <Folder name="SantaScale">
+        <Composition
+          id="Scale1-Cover"
+          component={Cover}
+          durationInFrames={COVER_DURATION}
+          fps={SCALE_FPS}
+          width={SCALE_WIDTH}
+          height={SCALE_HEIGHT}
+        />
+        <Composition
+          id="Scale2-Scienza"
+          component={Scienza}
+          durationInFrames={1}
+          fps={SCALE_FPS}
+          width={SCALE_WIDTH}
+          height={SCALE_HEIGHT}
+        />
+        <Composition
+          id="Scale3-Protocollo"
+          component={Protocollo}
+          durationInFrames={SALITA_DURATION}
+          fps={SCALE_FPS}
+          width={SCALE_WIDTH}
+          height={SCALE_HEIGHT}
+        />
+        <Composition
+          id="Scale4-Progressione"
+          component={Progressione}
+          durationInFrames={DISCESA_DURATION}
+          fps={SCALE_FPS}
+          width={SCALE_WIDTH}
+          height={SCALE_HEIGHT}
+        />
+      </Folder>
     </>
   );
 };
