@@ -1,12 +1,18 @@
 import { AbsoluteFill } from "remotion";
 import { anton, colors } from "./theme";
 
-export const Slide: React.FC<{ source?: string; children: React.ReactNode }> = ({
-  source,
-  children,
-}) => (
-  <AbsoluteFill style={{ background: colors.bg, fontFamily: anton, color: colors.ink }}>
-    <div style={{ position: "absolute", top: 130, left: 70, right: 70 }}>{children}</div>
+export const Slide: React.FC<{
+  source?: string;
+  art?: React.ReactNode;
+  children: React.ReactNode;
+}> = ({ source, art, children }) => (
+  <AbsoluteFill
+    style={{ background: colors.bg, fontFamily: anton, color: colors.ink }}
+  >
+    {art}
+    <div style={{ position: "absolute", top: 130, left: 70, right: 70 }}>
+      {children}
+    </div>
     {source ? (
       <div
         style={{
@@ -30,7 +36,7 @@ export const Slide: React.FC<{ source?: string; children: React.ReactNode }> = (
         width: "100%",
         textAlign: "center",
         fontSize: 38,
-        color: colors.blue,
+        color: colors.accent,
       }}
     >
       @dr.michele.bonaccorso
@@ -38,7 +44,7 @@ export const Slide: React.FC<{ source?: string; children: React.ReactNode }> = (
   </AbsoluteFill>
 );
 
-// Light-blue band behind the lower half of a word, as in the 2026 template.
+// Light accent band behind the lower half of a word, as in the 2026 template.
 export const Hl: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <span
     style={{
@@ -55,15 +61,17 @@ export const Title: React.FC<{ children: React.ReactNode; size?: number }> = ({
   children,
   size = 128,
 }) => (
-  <div style={{ fontSize: size, lineHeight: 1.04, textTransform: "uppercase" }}>{children}</div>
+  <div style={{ fontSize: size, lineHeight: 1.04, textTransform: "uppercase" }}>
+    {children}
+  </div>
 );
 
-export const Blue: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <span style={{ color: colors.blue }}>{children}</span>
-);
+export const Accent: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => <span style={{ color: colors.accent }}>{children}</span>;
 
 export const Box: React.FC<{
-  variant: "white" | "light" | "blue";
+  variant: "white" | "light" | "accent";
   children: React.ReactNode;
   height?: number;
 }> = ({ variant, children, height = 170 }) => (
@@ -77,20 +85,25 @@ export const Box: React.FC<{
       alignItems: "center",
       justifyContent: "space-between",
       gap: 30,
-      background: variant === "white" ? colors.bg : variant === "light" ? colors.light : colors.blue,
-      color: variant === "blue" ? colors.bg : colors.ink,
+      background:
+        variant === "white"
+          ? colors.bg
+          : variant === "light"
+            ? colors.light
+            : colors.accent,
+      color: variant === "accent" ? colors.bg : colors.ink,
     }}
   >
     {children}
   </div>
 );
 
-export const Row: React.FC<{ n: string; top: string; bottom: string; last?: boolean }> = ({
-  n,
-  top,
-  bottom,
-  last,
-}) => (
+export const Row: React.FC<{
+  n: string;
+  top: string;
+  bottom: string;
+  last?: boolean;
+}> = ({ n, top, bottom, last }) => (
   <div
     style={{
       display: "flex",
@@ -100,10 +113,14 @@ export const Row: React.FC<{ n: string; top: string; bottom: string; last?: bool
       borderBottom: last ? "none" : `2px solid ${colors.rule}`,
     }}
   >
-    <div style={{ fontSize: 108, lineHeight: 1, color: colors.blue, width: 95 }}>{n}</div>
+    <div
+      style={{ fontSize: 108, lineHeight: 1, color: colors.accent, width: 95 }}
+    >
+      {n}
+    </div>
     <div style={{ fontSize: 50, lineHeight: 1.08 }}>
       <div>{top}</div>
-      <div style={{ color: colors.blue }}>{bottom}</div>
+      <div style={{ color: colors.accent }}>{bottom}</div>
     </div>
   </div>
 );

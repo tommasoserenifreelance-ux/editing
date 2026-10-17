@@ -12,8 +12,9 @@ new FontFace(anton, `url(${staticFile("fonts/anton-latin-400-normal.woff2")})`)
 export const colors = {
   bg: "#FFFFFF",
   ink: "#141414",
-  blue: "#3FA7E6",
-  light: "#D3E8F8",
+  // Pink accent for the menopause campaign instead of the template blue.
+  accent: "#E5418C",
+  light: "#FBDCEA",
   muted: "#555555",
   rule: "#D9D9D9",
 };
