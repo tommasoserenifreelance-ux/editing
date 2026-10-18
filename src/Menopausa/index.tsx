@@ -15,22 +15,9 @@ import { Blue, Body, Hl, Label, Pink, Row, Slide, Title } from "./ui";
 const Cover: React.FC = () => (
   <Slide
     art={
-      <>
-        <div
-          style={{
-            position: "absolute",
-            right: -260,
-            bottom: -300,
-            width: 820,
-            height: 820,
-            borderRadius: "50%",
-            background: colors.pinkSoft,
-          }}
-        />
-        <Art x={650} y={800} size={300}>
-          <HotFlush />
-        </Art>
-      </>
+      <Art x={650} y={800} size={300}>
+        <HotFlush />
+      </Art>
     }
   >
     <Label>18 OTTOBRE · IN ITALIA</Label>
