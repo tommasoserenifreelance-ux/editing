@@ -16,30 +16,36 @@ const Cover: React.FC = () => (
   <Slide
     header={false}
     art={
-      <Art x={680} y={880} size={270}>
+      <Art x={760} y={880} size={230}>
         <HotFlush />
       </Art>
     }
   >
-    <Title size={62}>
-      <Pink>
-        18 OTTOBRE
+    <Title size={52}>
+      <Pink>18 OTTOBRE</Pink>
+    </Title>
+    <Title size={132}>
+      <Blue>
+        GIORNATA
         <br />
-        GIORNATA MONDIALE
+        MONDIALE
         <br />
-        DELLA MENOPAUSA
-      </Pink>
+        DELLA
+        <br />
+        MENOPAUSA
+      </Blue>
     </Title>
-    <Title size={200}>
-      <div style={{ marginTop: 40 }} />
-      <Blue>17 MILIONI</Blue>
-    </Title>
-    <Title size={76}>
-      DI DONNE IN MENOPAUSA.
-      <br />E NE PARLIAMO SOLO
-      <br />
-      PER LE VAMPATE.
-    </Title>
+    <div style={{ marginTop: 50 }}>
+      <Title size={96}>
+        <Pink>17 MILIONI</Pink>
+      </Title>
+      <Title size={52}>
+        DI DONNE IN MENOPAUSA.
+        <br />E NE PARLIAMO SOLO
+        <br />
+        PER LE VAMPATE.
+      </Title>
+    </div>
   </Slide>
 );
 
