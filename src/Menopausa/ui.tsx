@@ -3,6 +3,12 @@ import { anton, colors } from "./theme";
 
 export const MARGIN = 90;
 
+const AUTHORS = [
+  "DR. MICHELE BONACCORSO",
+  "SANTA LONGEVITY",
+  "DR.SSA ELEONORA PICCOLO",
+];
+
 export const Slide: React.FC<{
   source?: string;
   background?: string;
@@ -33,7 +39,7 @@ export const Slide: React.FC<{
       <div
         style={{
           position: "absolute",
-          bottom: 118,
+          bottom: 136,
           left: MARGIN,
           right: MARGIN,
           fontSize: 18,
@@ -47,19 +53,23 @@ export const Slide: React.FC<{
     <div
       style={{
         position: "absolute",
-        bottom: 56,
+        bottom: 50,
         left: MARGIN,
         right: MARGIN,
+        paddingTop: 22,
+        borderTop: `2px solid ${colors.rule}`,
         display: "flex",
-        alignItems: "center",
-        gap: 24,
-        fontSize: 28,
+        justifyContent: "space-between",
+        fontSize: 26,
+        letterSpacing: 1.5,
         color: colors.blue,
       }}
     >
-      <div style={{ flex: 1, height: 2, background: colors.rule }} />
-      @dr.michele.bonaccorso
-      <div style={{ flex: 1, height: 2, background: colors.rule }} />
+      {AUTHORS.map((name, i) => (
+        <span key={name} style={{ color: i === 1 ? colors.pink : colors.blue }}>
+          {name}
+        </span>
+      ))}
     </div>
   </AbsoluteFill>
 );
