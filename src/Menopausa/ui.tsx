@@ -1,15 +1,14 @@
 import { AbsoluteFill } from "remotion";
-import { anton, colors, TOTAL } from "./theme";
+import { anton, colors } from "./theme";
 
 export const MARGIN = 90;
 
 export const Slide: React.FC<{
-  page: number;
   source?: string;
   background?: string;
   art?: React.ReactNode;
   children: React.ReactNode;
-}> = ({ page, source, background = colors.bg, art, children }) => (
+}> = ({ source, background = colors.bg, art, children }) => (
   <AbsoluteFill style={{ background, fontFamily: anton, color: colors.ink }}>
     {art}
     <div
@@ -18,20 +17,12 @@ export const Slide: React.FC<{
         top: 70,
         left: MARGIN,
         right: MARGIN,
-        display: "flex",
-        justifyContent: "space-between",
         fontSize: 22,
         letterSpacing: 4,
         color: colors.muted,
       }}
     >
-      <span>GIORNATA MONDIALE DELLA MENOPAUSA</span>
-      <span>
-        <span style={{ color: colors.pink }}>
-          {String(page).padStart(2, "0")}
-        </span>{" "}
-        / {String(TOTAL).padStart(2, "0")}
-      </span>
+      GIORNATA MONDIALE DELLA MENOPAUSA
     </div>
     <div
       style={{ position: "absolute", top: 190, left: MARGIN, right: MARGIN }}

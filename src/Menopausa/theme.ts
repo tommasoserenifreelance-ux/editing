@@ -23,5 +23,3 @@ export const colors = {
   pink: "#E8699E",
   pinkSoft: "#FCE6EF",
 };
-
-export const TOTAL = 7;

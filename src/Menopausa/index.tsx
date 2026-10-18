@@ -14,7 +14,6 @@ import { Blue, Body, Hl, Label, Pink, Row, Slide, Title } from "./ui";
 
 const Cover: React.FC = () => (
   <Slide
-    page={1}
     art={
       <>
         <div
@@ -42,22 +41,8 @@ const Cover: React.FC = () => (
       DI DONNE IN MENOPAUSA.
       <br />E NE PARLIAMO SOLO
       <br />
-      PER LE <Hl>VAMPATE.</Hl>
+      PER LE VAMPATE.
     </Title>
-    <div
-      style={{
-        position: "absolute",
-        top: 900,
-        display: "flex",
-        alignItems: "center",
-        gap: 22,
-        fontSize: 30,
-        letterSpacing: 4,
-      }}
-    >
-      SCORRI
-      <div style={{ width: 90, height: 3, background: colors.pink }} />
-    </div>
   </Slide>
 );
 
@@ -81,7 +66,7 @@ const Option: React.FC<{ letter: string; text: string }> = ({
 );
 
 const Question: React.FC = () => (
-  <Slide page={2}>
+  <Slide>
     <Label>UNA DOMANDA SCOMODA</Label>
     <Title size={100}>
       QUAL È LA
@@ -139,7 +124,6 @@ const Bar: React.FC<{ label: string; value: number; color: string }> = ({
 
 const Answer: React.FC = () => (
   <Slide
-    page={3}
     source="FONTE: ISTAT, CAUSE DI MORTE IN ITALIA – ANNO 2023. QUOTA SUL TOTALE DEI DECESSI FEMMINILI."
     art={
       <Art x={780} y={170} size={210}>
@@ -167,7 +151,6 @@ const Answer: React.FC = () => (
 
 const Estrogens: React.FC = () => (
   <Slide
-    page={4}
     source="FONTE: AMERICAN HEART ASSOCIATION, SCIENTIFIC STATEMENT SU MENOPAUSA E RISCHIO CARDIOVASCOLARE (CIRCULATION, 2020)."
     art={
       <Art x={820} y={170} size={170}>
@@ -223,7 +206,6 @@ const Stat: React.FC<{
 
 const Bones: React.FC = () => (
   <Slide
-    page={5}
     source="FONTI: INTERNATIONAL OSTEOPOROSIS FOUNDATION; MINISTERO DELLA SALUTE."
     art={
       <Art x={800} y={170} size={190}>
@@ -281,7 +263,6 @@ const Bones: React.FC = () => (
 
 const Brain: React.FC = () => (
   <Slide
-    page={6}
     source="FONTE: ISTAT, CAUSE DI MORTE IN ITALIA – ANNO 2023. QUOTA SUL TOTALE DEI DECESSI PER SESSO."
     art={
       <Art x={790} y={170} size={200}>
@@ -367,7 +348,6 @@ const Check: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 
 const Cta: React.FC = () => (
   <Slide
-    page={7}
     art={
       <Art x={810} y={960} size={180}>
         <Waving />
