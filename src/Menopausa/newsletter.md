@@ -1,9 +1,10 @@
 OGGETTO
-Non è il tumore al seno. È il cuore.
+Giornata Mondiale della Menopausa: la prima causa di morte delle donne non è quella che pensi
 
 OGGETTI ALTERNATIVI
-- Menopausa: quello che nessuno ti dice
-- 17 milioni di donne. E ne parliamo solo per le vampate.
+- Giornata Mondiale della Menopausa: non è il tumore al seno, è il cuore
+- Giornata Mondiale della Menopausa: 17 milioni di donne, e ne parliamo solo per le vampate
+- 18 ottobre, Giornata Mondiale della Menopausa: quello che nessuno ti dice
 
 ANTEPRIMA
 Oggi è la Giornata Mondiale della Menopausa: parliamo di quello che conta davvero.
