@@ -14,14 +14,24 @@ import { Blue, Body, Hl, Label, Pink, Row, Slide, Title } from "./ui";
 
 const Cover: React.FC = () => (
   <Slide
+    header={false}
     art={
-      <Art x={650} y={800} size={300}>
+      <Art x={680} y={880} size={270}>
         <HotFlush />
       </Art>
     }
   >
-    <Label>18 OTTOBRE · IN ITALIA</Label>
+    <Title size={62}>
+      <Pink>
+        18 OTTOBRE
+        <br />
+        GIORNATA MONDIALE
+        <br />
+        DELLA MENOPAUSA
+      </Pink>
+    </Title>
     <Title size={200}>
+      <div style={{ marginTop: 40 }} />
       <Blue>17 MILIONI</Blue>
     </Title>
     <Title size={76}>

@@ -12,13 +12,16 @@ const AUTHORS = [
 export const Slide: React.FC<{
   source?: string;
   background?: string;
+  // The cover carries the day name as its headline, so it skips the header.
+  header?: boolean;
   art?: React.ReactNode;
   children: React.ReactNode;
-}> = ({ source, background = colors.bg, art, children }) => (
+}> = ({ source, background = colors.bg, header = true, art, children }) => (
   <AbsoluteFill style={{ background, fontFamily: anton, color: colors.ink }}>
     {art}
     <div
       style={{
+        display: header ? "block" : "none",
         position: "absolute",
         top: 70,
         left: MARGIN,

@@ -58,6 +58,6 @@ Studio Bonaccorso, centro di medicina innovativa
 
 ---
 
-*Fonti: ISTAT, Cause di morte in Italia – anno 2023; American Heart Association, Scientific Statement su menopausa e rischio cardiovascolare (Circulation, 2020); International Osteoporosis Foundation; Ministero della Salute.*
+_Fonti: ISTAT, Cause di morte in Italia – anno 2023; American Heart Association, Scientific Statement su menopausa e rischio cardiovascolare (Circulation, 2020); International Osteoporosis Foundation; Ministero della Salute._
 
-*Le informazioni di questa newsletter hanno scopo divulgativo e non sostituiscono il parere del medico.*
+_Le informazioni di questa newsletter hanno scopo divulgativo e non sostituiscono il parere del medico._
