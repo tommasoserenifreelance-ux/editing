@@ -1,4 +1,5 @@
 import { Composition, Folder } from "remotion";
+import { Cacao, CACAO_DURATION, CACAO_FPS } from "./Cacao";
 import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
@@ -69,6 +70,14 @@ export const RemotionRoot: React.FC = () => {
         component={PilatesOverlay}
         durationInFrames={OVERLAY_DURATION}
         fps={OVERLAY_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="Cacao"
+        component={Cacao}
+        durationInFrames={CACAO_DURATION}
+        fps={CACAO_FPS}
         width={1080}
         height={1920}
       />
