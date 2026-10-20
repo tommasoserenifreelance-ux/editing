@@ -135,16 +135,12 @@ const StudyCard: React.FC<{
   );
 };
 
-const Studies: React.FC<{ duration: number }> = ({ duration }) => {
+// Fades in over the doctor, then hard-cuts straight into the cocoa b-roll.
+const Studies: React.FC = () => {
   const frame = useCurrentFrame();
-  const fade = interpolate(
-    frame,
-    [0, 4, duration - 4, duration],
-    [0, 1, 1, 0],
-    {
-      extrapolateRight: "clamp",
-    },
-  );
+  const fade = interpolate(frame, [0, 4], [0, 1], {
+    extrapolateRight: "clamp",
+  });
   return (
     <AbsoluteFill>
       <AbsoluteFill
@@ -158,9 +154,6 @@ const Studies: React.FC<{ duration: number }> = ({ duration }) => {
           alignItems: "center",
           paddingTop: 240,
           gap: 18,
-          opacity: interpolate(frame, [duration - 4, duration], [1, 0], {
-            extrapolateLeft: "clamp",
-          }),
         }}
       >
         {STUDIES.map(([file, top, bottom], i) => (
@@ -294,7 +287,7 @@ export const Cacao: React.FC = () => {
         </Sequence>
       ))}
       <Sequence from={studiesFrom} durationInFrames={studiesTo - studiesFrom}>
-        <Studies duration={studiesTo - studiesFrom} />
+        <Studies />
       </Sequence>
       {STICKERS.map((s) => (
         <Sequence key={s.file} from={s.from} durationInFrames={s.to - s.from}>
