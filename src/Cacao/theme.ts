@@ -28,5 +28,4 @@ export const colors = {
   white: "#FFFFFF",
   blue: "#1F5FE8",
   navy: "#0A2552",
-  cyan: "#8FE1FF",
 };

@@ -8,7 +8,10 @@ import {
 import { Line, LineStyle, Phrase, phrases } from "./script";
 import { colors, sans, serif } from "./theme";
 
-const MAX_WIDTH = 940;
+// Instagram safe zone: keep clear of the side buttons and the bottom UI.
+const LEFT = 70;
+const MAX_WIDTH = 860;
+export const CAPTION_TOP = 1080;
 
 // Base font size and average glyph width (in em) per style, so long lines
 // shrink to fit the frame.
@@ -16,7 +19,7 @@ const SIZES: Record<LineStyle, [number, number]> = {
   s: [46, 0.56],
   b: [112, 0.64],
   c: [112, 0.64],
-  n: [210, 0.62],
+  n: [170, 0.62],
   x: [86, 0.5],
   i: [92, 0.5],
 };
@@ -27,12 +30,23 @@ const fitSize = (line: Line) => {
   return Math.min(size, MAX_WIDTH / (chars * em));
 };
 
-const shadow = "0 4px 18px rgba(4, 18, 48, 0.55)";
+const shadow = "0 4px 18px rgba(4, 18, 48, 0.5)";
+
+// Outlines keep white text readable on the white coat and blue on the wall.
+const outline = (color: string, width: number): React.CSSProperties => ({
+  WebkitTextStroke: `${width}px ${color}`,
+  paintOrder: "stroke fill",
+});
 
 const styleFor = (style: LineStyle, size: number): React.CSSProperties => {
   switch (style) {
     case "s":
-      return { fontFamily: sans, fontWeight: 600, color: colors.white };
+      return {
+        fontFamily: sans,
+        fontWeight: 600,
+        color: colors.white,
+        ...outline(colors.navy, 7),
+      };
     case "b":
     case "c":
     case "n":
@@ -41,7 +55,9 @@ const styleFor = (style: LineStyle, size: number): React.CSSProperties => {
         fontWeight: 800,
         letterSpacing: -size * 0.03,
         lineHeight: 0.95,
-        color: style === "b" ? colors.white : colors.cyan,
+        ...(style === "b"
+          ? { color: colors.white, ...outline(colors.navy, 12) }
+          : { color: colors.blue, ...outline(colors.white, 14) }),
       };
     case "x":
     case "i":
@@ -50,7 +66,9 @@ const styleFor = (style: LineStyle, size: number): React.CSSProperties => {
         fontStyle: "italic",
         fontWeight: 600,
         lineHeight: 1.1,
-        color: style === "x" ? colors.white : colors.cyan,
+        ...(style === "x"
+          ? { color: colors.white }
+          : { color: colors.blue, ...outline(colors.white, 12) }),
       };
   }
 };
@@ -111,7 +129,10 @@ const BoxLine: React.FC<{ line: Line; size: number }> = ({ line, size }) => {
 // Lines alternate left / right of centre to build a staggered block.
 const ALIGN = ["flex-start", "center", "flex-end"];
 
-const PhraseBlock: React.FC<{ phrase: Phrase }> = ({ phrase }) => {
+const PhraseBlock: React.FC<{ phrase: Phrase; top: number }> = ({
+  phrase,
+  top,
+}) => {
   const frame = useCurrentFrame();
   const exit = interpolate(frame, [phrase.to - 3, phrase.to], [1, 0], {
     extrapolateLeft: "clamp",
@@ -119,11 +140,12 @@ const PhraseBlock: React.FC<{ phrase: Phrase }> = ({ phrase }) => {
   });
   const n = phrase.lines.length;
   return (
-    <AbsoluteFill
-      style={{ alignItems: "center", justifyContent: "center", top: 700 }}
-    >
+    <AbsoluteFill>
       <div
         style={{
+          position: "absolute",
+          left: LEFT,
+          top,
           width: MAX_WIDTH,
           display: "flex",
           flexDirection: "column",
@@ -167,8 +189,19 @@ const PhraseBlock: React.FC<{ phrase: Phrase }> = ({ phrase }) => {
   );
 };
 
-export const Captions: React.FC = () => {
+// While an overlay needs the space below the face, captions move to its `top`.
+export type CaptionZone = { from: number; to: number; top: number };
+
+export const Captions: React.FC<{ zones: CaptionZone[] }> = ({ zones }) => {
   const frame = useCurrentFrame();
   const phrase = phrases.find((p) => frame >= p.from && frame < p.to);
-  return phrase ? <PhraseBlock key={phrase.from} phrase={phrase} /> : null;
+  if (!phrase) return null;
+  const zone = zones.find((z) => z.from < phrase.to && z.to > phrase.from);
+  return (
+    <PhraseBlock
+      key={phrase.from}
+      phrase={phrase}
+      top={zone ? zone.top : CAPTION_TOP}
+    />
+  );
 };

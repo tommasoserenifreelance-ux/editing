@@ -15,8 +15,8 @@ export const at = (clip: number, seconds: number) =>
 
 /**
  * Line styles:
- * s = small white, b = big white, c = big cyan, n = huge cyan number,
- * x = serif italic in a blue box, i = serif italic cyan.
+ * s = small white, b = big white, c = big blue, n = huge blue number,
+ * x = serif italic in a blue box, i = serif italic blue.
  */
 export type LineStyle = "s" | "b" | "c" | "n" | "x" | "i";
 
@@ -25,7 +25,7 @@ export type LineStyle = "s" | "b" | "c" | "n" | "x" | "i";
 const PHRASES: string[][][] = [
   [
     ["s:Il cacao è uno degli", "b:alimenti"],
-    ["s:con più prove", "x:scientifiche", "s:alle spalle"],
+    ["s:con più prove", "x:scientifiche alle spalle"],
     ["s:ma non tutto il", "c:cioccolato"],
     ["s:che trovi al", "i:supermercato"],
     ["s:conta allo", "x:stesso modo"],
@@ -48,7 +48,7 @@ const PHRASES: string[][][] = [
     ["b:distrugge", "s:gran parte di", "x:questi composti"],
   ],
   [
-    ["s:Una comune", "b:tavoletta", "s:di cioccolato"],
+    ["s:Una comune tavoletta di", "b:cioccolato"],
     ["s:peggio", "x:al latte"],
     ["s:contiene una", "c:frazione minima"],
     ["s:dei flavonoidi", "i:usati negli studi"],
