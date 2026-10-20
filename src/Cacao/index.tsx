@@ -178,62 +178,31 @@ const Studies: React.FC<{ duration: number }> = ({ duration }) => {
   );
 };
 
-// Cut-out PNGs shown as stickers, centred between the chin and the captions.
-// `box` is the opaque area of the 1080×1920 PNG.
+// Cut-out stickers, centred between the chin and the captions. The white
+// die-cut border is baked into the PNGs: CSS outlines are far too slow to render.
 const STICKER_TOP = 1060;
 const STICKER_HEIGHT = 240;
-const OUTLINE = 6;
 
-const Sticker: React.FC<{
-  file: string;
-  box: { x: number; y: number; w: number; h: number };
-  duration: number;
-}> = ({ file, box, duration }) => {
+const Sticker: React.FC<{ file: string; duration: number }> = ({
+  file,
+  duration,
+}) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = spring({ frame, fps, config: { damping: 9, mass: 0.7 } });
   const out = interpolate(frame, [duration - 6, duration], [1, 0], {
     extrapolateLeft: "clamp",
   });
-  const scale = STICKER_HEIGHT / box.h;
-  // A white die-cut border, then a soft shadow.
-  const border = [
-    [1, 0],
-    [-1, 0],
-    [0, 1],
-    [0, -1],
-    [0.7, 0.7],
-    [-0.7, 0.7],
-    [0.7, -0.7],
-    [-0.7, -0.7],
-  ]
-    .map(([x, y]) => `drop-shadow(${x * OUTLINE}px ${y * OUTLINE}px 0 white)`)
-    .join(" ");
   return (
     <AbsoluteFill style={{ alignItems: "center", paddingTop: STICKER_TOP }}>
-      <div
+      <Img
+        src={staticFile(`cacao/img/${file}`)}
         style={{
-          filter: `${border} drop-shadow(0 18px 24px rgba(4,18,48,0.5))`,
-          transform: `translateY(${Math.sin(frame / 10) * 5}px) scale(${interpolate(t, [0, 1], [0, 1]) * out}) rotate(${interpolate(t, [0, 1], [-25, -3])}deg)`,
+          height: STICKER_HEIGHT,
+          filter: "drop-shadow(0 14px 18px rgba(4,18,48,0.45))",
+          transform: `translateY(${Math.sin(frame / 10) * 5}px) scale(${t * out}) rotate(${interpolate(t, [0, 1], [-25, -3])}deg)`,
         }}
-      >
-        <div
-          style={{
-            width: box.w * scale,
-            height: box.h * scale,
-            overflow: "hidden",
-          }}
-        >
-          <Img
-            src={staticFile(`cacao/img/${file}`)}
-            style={{
-              width: 1080 * scale,
-              marginLeft: -box.x * scale,
-              marginTop: -box.y * scale,
-            }}
-          />
-        </div>
-      </div>
+      />
     </AbsoluteFill>
   );
 };
@@ -267,14 +236,12 @@ const BROLLS: { src: string; from: number; to: number; startFrom?: number }[] =
   ];
 const STICKERS = [
   {
-    file: "cocoa-sticker.png",
-    box: { x: 96, y: 717, w: 888, h: 486 },
+    file: "sticker-cocoa.png",
     from: 0,
     to: wordFrame(0, "ma"),
   },
   {
-    file: "milk-chocolate.png",
-    box: { x: 228, y: 606, w: 638, h: 676 },
+    file: "sticker-milk.png",
     from: wordFrame(3, "tavoletta"),
     to: wordFrame(3, "dei"),
   },
@@ -331,7 +298,7 @@ export const Cacao: React.FC = () => {
       </Sequence>
       {STICKERS.map((s) => (
         <Sequence key={s.file} from={s.from} durationInFrames={s.to - s.from}>
-          <Sticker file={s.file} box={s.box} duration={s.to - s.from} />
+          <Sticker file={s.file} duration={s.to - s.from} />
         </Sequence>
       ))}
       <Captions zones={CAPTION_ZONES} />
