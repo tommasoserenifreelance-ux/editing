@@ -1,6 +1,8 @@
 import {
   AbsoluteFill,
   Audio,
+  Freeze,
+  Img,
   interpolate,
   OffthreadVideo,
   random,
@@ -8,43 +10,40 @@ import {
   staticFile,
   useCurrentFrame,
 } from "remotion";
-import { bigFont, lyricFont, pink, pinkGlow } from "./fonts";
+import { captionFont, logoFont, yellow } from "./fonts";
 import {
   CAPTIONS,
   CLIPS,
+  COLOR_FROM,
   CUTS,
   Cut,
-  DROP,
   END_CARD,
+  END_LOGOS,
   END_TEXT,
   FLASHES,
-  LOGO_END,
   LOGO_STAMP,
   NIGHTLIFE_FPS,
+  SFX,
   SMEARS,
+  VOICE_SPAN,
 } from "./timeline";
 
 export { NIGHTLIFE_DURATION, NIGHTLIFE_FPS } from "./timeline";
 
 export type NightlifeProps = {
-  lyrics: string[];
+  captions: string[];
   endText: string;
-  logoText: string;
 };
 
 export const nightlifeDefaults: NightlifeProps = {
-  lyrics: [
-    "EL VERANO",
-    "SE ACABA",
-    "PERO LO NUESTRO SIGUE",
-    "BABY",
-    "CHIICAS",
-    "ESTA DE VUELTA",
-    "VOLVEMOS A CASA",
-    "NOS VEMOS",
+  captions: [
+    "The nights grow longer",
+    "The evenings are chosen",
+    "Few spots",
+    "One rule",
+    "Be unique",
   ],
-  endText: "SEE YOU THURSDAY",
-  logoText: "VENUS",
+  endText: "See you Friday",
 };
 
 const clamp = {
@@ -55,27 +54,35 @@ const clamp = {
 const inRange = (frame: number, ranges: [number, number, ...unknown[]][]) =>
   ranges.find(([a, b]) => frame >= a && frame < b);
 
-const Video: React.FC<{ cut: Cut; style?: React.CSSProperties }> = ({
-  cut,
-  style,
-}) => (
-  <OffthreadVideo
-    src={staticFile(CLIPS[cut.clip])}
-    trimBefore={Math.round(cut.at * NIGHTLIFE_FPS)}
-    muted
-    style={{ width: "100%", height: "100%", objectFit: "cover", ...style }}
-  />
+// Source frame for a local frame, integrating a linear speed ramp.
+const sourceFrame = (cut: Cut, local: number, length: number) => {
+  const [r0, r1] =
+    typeof cut.speed === "number"
+      ? [cut.speed, cut.speed]
+      : (cut.speed ?? [1, 1]);
+  return Math.round(r0 * local + ((r1 - r0) * local * local) / (2 * length));
+};
+
+const Video: React.FC<{ cut: Cut; frame: number }> = ({ cut, frame }) => (
+  <Freeze frame={frame}>
+    <OffthreadVideo
+      src={staticFile(CLIPS[cut.clip])}
+      trimBefore={Math.round(cut.at * NIGHTLIFE_FPS)}
+      muted
+      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+    />
+  </Freeze>
 );
 
-const Shot: React.FC<{ cut: Cut }> = ({ cut }) => {
+const Shot: React.FC<{ cut: Cut; length: number }> = ({ cut, length }) => {
   const local = useCurrentFrame();
   const frame = cut.from + local;
-  const bw = cut.from < DROP;
+  const src = sourceFrame(cut, local, length);
+  const bw = cut.from < COLOR_FROM;
   const smear = inRange(frame, SMEARS);
 
   // Punch in on every cut, then a slow drift and a little handheld shake.
-  const zoom =
-    interpolate(local, [0, 6], [1.14, 1.05], clamp) + local * 0.0008;
+  const zoom = interpolate(local, [0, 6], [1.14, 1.05], clamp) + local * 0.0008;
   const x = Math.sin(frame * 0.9) * 6 + Math.sin(frame * 2.3) * 3;
   const y = Math.cos(frame * 0.7) * 6;
   let transform = `translate(${x}px, ${y}px) scale(${zoom})`;
@@ -95,7 +102,7 @@ const Shot: React.FC<{ cut: Cut }> = ({ cut }) => {
   return (
     <AbsoluteFill>
       <AbsoluteFill style={{ transform, filter }}>
-        <Video cut={cut} />
+        <Video cut={cut} frame={src} />
       </AbsoluteFill>
       {cut.fx === "swirl" && !smear ? (
         // Rotating ghost of the same shot, like a slow-shutter spin.
@@ -107,7 +114,7 @@ const Shot: React.FC<{ cut: Cut }> = ({ cut }) => {
             opacity: 0.5,
           }}
         >
-          <Video cut={cut} />
+          <Video cut={cut} frame={src} />
         </AbsoluteFill>
       ) : null}
       {cut.fx === "rgb" && local < 6 ? (
@@ -121,7 +128,7 @@ const Shot: React.FC<{ cut: Cut }> = ({ cut }) => {
               opacity: 0.6,
             }}
           >
-            <Video cut={cut} />
+            <Video cut={cut} frame={src} />
           </AbsoluteFill>
           <AbsoluteFill
             style={{
@@ -131,13 +138,15 @@ const Shot: React.FC<{ cut: Cut }> = ({ cut }) => {
               opacity: 0.6,
             }}
           >
-            <Video cut={cut} />
+            <Video cut={cut} frame={src} />
           </AbsoluteFill>
         </>
       ) : null}
       {smear ? (
         // Keep the blown-out luminance, paint it magenta.
-        <AbsoluteFill style={{ background: "#e81cff", mixBlendMode: "color" }} />
+        <AbsoluteFill
+          style={{ background: "#e81cff", mixBlendMode: "color" }}
+        />
       ) : null}
     </AbsoluteFill>
   );
@@ -145,9 +154,10 @@ const Shot: React.FC<{ cut: Cut }> = ({ cut }) => {
 
 const Grade: React.FC = () => {
   const frame = useCurrentFrame();
+  const color = frame >= COLOR_FROM;
   return (
     <AbsoluteFill>
-      {frame >= DROP && frame < END_CARD ? (
+      {color && frame < END_CARD ? (
         <AbsoluteFill
           style={{
             background: "#c45cff",
@@ -165,7 +175,7 @@ const Grade: React.FC = () => {
       {/* Matte blacks: nothing goes darker than this, like the reference. */}
       <AbsoluteFill
         style={{
-          background: frame >= DROP ? "rgb(14, 12, 20)" : "rgb(14, 14, 14)",
+          background: color ? "rgb(14, 12, 20)" : "rgb(14, 14, 14)",
           mixBlendMode: "lighten",
         }}
       />
@@ -199,37 +209,24 @@ const Flash: React.FC = () => {
   );
 };
 
-const Caption: React.FC<{
-  text: string;
-  big?: boolean;
-  opacity: number;
-}> = ({ text, big, opacity }) => (
+const Caption: React.FC<{ text: string; opacity: number }> = ({
+  text,
+  opacity,
+}) => (
   <AbsoluteFill>
     <div
       style={{
         position: "absolute",
         top: "47.7%",
         width: "100%",
+        transform: "translateY(-50%)",
         textAlign: "center",
         opacity,
-        ...(big
-          ? {
-              fontFamily: bigFont,
-              fontSize: 190,
-              color: pink,
-              transform: "translateY(-50%) skewX(-12deg) scaleX(0.78)",
-            }
-          : {
-              fontFamily: lyricFont,
-              fontStyle: "italic",
-              fontWeight: 800,
-              fontSize: 64,
-              transform: "translateY(-50%)",
-              color: "#f4f7ff",
-              WebkitTextStroke: `3px ${pinkGlow}`,
-              paintOrder: "stroke fill",
-              textShadow: `0 0 12px rgba(230, 50, 240, 0.8)`,
-            }),
+        fontFamily: captionFont,
+        fontStyle: "italic",
+        fontSize: 66,
+        color: yellow,
+        textShadow: "0 2px 10px rgba(0, 0, 0, 0.55)",
       }}
     >
       {text}
@@ -237,73 +234,111 @@ const Caption: React.FC<{
   </AbsoluteFill>
 );
 
-const Captions: React.FC<NightlifeProps> = ({ lyrics, endText }) => {
+const Captions: React.FC<NightlifeProps> = ({ captions, endText }) => {
   const frame = useCurrentFrame();
   const caption = CAPTIONS.find((c) => frame >= c.from && frame < c.to);
   if (caption) {
     const opacity = caption.fade
       ? interpolate(frame, [caption.fade, caption.to], [1, 0.15], clamp)
       : 1;
-    return (
-      <Caption
-        text={lyrics[caption.line] ?? ""}
-        big={caption.big}
-        opacity={opacity}
-      />
-    );
+    return <Caption text={captions[caption.line] ?? ""} opacity={opacity} />;
   }
   if (frame >= END_TEXT.from && frame < END_TEXT.to) {
     return (
       <Caption
         text={endText}
-        opacity={interpolate(frame, [END_TEXT.fade, END_TEXT.to], [1, 0], clamp)}
+        opacity={interpolate(
+          frame,
+          [END_TEXT.from, END_TEXT.from + 5, END_TEXT.fade, END_TEXT.to],
+          [0, 1, 1, 0],
+          clamp,
+        )}
       />
     );
   }
   return null;
 };
 
-const Logo: React.FC<{ text: string }> = ({ text }) => {
+const VenusLogo: React.FC = () => (
+  <Img src={staticFile("nightlife/venus-logo.png")} style={{ width: 760 }} />
+);
+
+// Ring logo in the style of the reference end card.
+const YabLogo: React.FC = () => (
+  <div
+    style={{
+      width: 370,
+      height: 370,
+      borderRadius: "50%",
+      border: "30px solid white",
+      boxSizing: "border-box",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      fontFamily: logoFont,
+      fontSize: 170,
+      color: "white",
+      transform: "scaleX(0.85)",
+    }}
+  >
+    YAB
+  </div>
+);
+
+const Logos: React.FC = () => {
   const frame = useCurrentFrame();
-  const stamp = frame >= LOGO_STAMP[0] && frame < LOGO_STAMP[1];
-  const end = frame >= LOGO_END.from && frame < LOGO_END.to;
-  if (!stamp && !end) {
+  const center = { justifyContent: "center", alignItems: "center" } as const;
+  if (frame >= LOGO_STAMP[0] && frame < LOGO_STAMP[1]) {
+    // Slams in slightly oversized and settles.
+    const scale = interpolate(
+      frame,
+      [LOGO_STAMP[0], LOGO_STAMP[0] + 4, LOGO_STAMP[1]],
+      [1.25, 1, 0.96],
+      clamp,
+    );
+    return (
+      <AbsoluteFill style={{ ...center, transform: `scale(${scale})` }}>
+        <VenusLogo />
+      </AbsoluteFill>
+    );
+  }
+  const end = END_LOGOS.find((l) => frame >= l.from && frame < l.to);
+  if (!end) {
     return null;
   }
-  const opacity = stamp
-    ? 1
-    : interpolate(
-        frame,
-        [LOGO_END.from, LOGO_END.in, LOGO_END.out, LOGO_END.to],
-        [0, 1, 1, 0],
-        clamp,
-      );
+  const opacity = interpolate(
+    frame,
+    [end.from, end.in, end.out, end.to],
+    [0, 1, 1, 0],
+    clamp,
+  );
   return (
-    <AbsoluteFill
-      style={{ justifyContent: "center", alignItems: "center", opacity }}
-    >
-      <div
-        style={{
-          marginTop: -40,
-          width: 370,
-          height: 370,
-          borderRadius: "50%",
-          border: "30px solid white",
-          boxSizing: "border-box",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          fontFamily: bigFont,
-          fontSize: text.length > 3 ? 110 : 170,
-          color: "white",
-          transform: "scaleX(0.85)",
-        }}
-      >
-        {text}
-      </div>
+    <AbsoluteFill style={{ ...center, opacity }}>
+      {end.logo === "venus" ? <VenusLogo /> : <YabLogo />}
     </AbsoluteFill>
   );
 };
+
+const Sound: React.FC = () => (
+  <>
+    {/* The track already holds the pre-roll; ducked under the voice-over. */}
+    <Audio
+      src={staticFile("nightlife/music.m4a")}
+      volume={(f) =>
+        interpolate(f, [VOICE_SPAN[1] - 10, VOICE_SPAN[1] + 4], [0.5, 1], clamp)
+      }
+    />
+    <Audio src={staticFile("nightlife/voice.m4a")} />
+    {SFX.map((sfx, i) => (
+      <Sequence key={i} from={sfx.from} name={`SFX ${sfx.file}`}>
+        <Audio
+          src={staticFile(`nightlife/sfx/${sfx.file}.wav`)}
+          volume={sfx.volume}
+        />
+      </Sequence>
+    ))}
+  </>
+);
 
 export const Nightlife: React.FC<NightlifeProps> = (props) => {
   return (
@@ -317,15 +352,15 @@ export const Nightlife: React.FC<NightlifeProps> = (props) => {
             durationInFrames={to - cut.from}
             premountFor={30}
           >
-            <Shot cut={cut} />
+            <Shot cut={cut} length={to - cut.from} />
           </Sequence>
         );
       })}
       <Grade />
       <Flash />
       <Captions {...props} />
-      <Logo text={props.logoText} />
-      <Audio src={staticFile("nightlife/music.m4a")} />
+      <Logos />
+      <Sound />
     </AbsoluteFill>
   );
 };

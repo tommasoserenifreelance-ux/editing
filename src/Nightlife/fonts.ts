@@ -1,12 +1,12 @@
 import { continueRender, delayRender, staticFile } from "remotion";
 
-export const lyricFont = "Inter";
-export const bigFont = "Anton";
+export const captionFont = "Arimo";
+export const logoFont = "Anton";
 
 // Fonts are bundled in public/fonts so rendering works offline.
 const FONTS: [string, string, string, string][] = [
-  [lyricFont, "800", "italic", "inter-latin-800-italic"],
-  [bigFont, "400", "normal", "anton-latin-400-normal"],
+  [captionFont, "400", "italic", "arimo-latin-400-italic"],
+  [logoFont, "400", "normal", "anton-latin-400-normal"],
 ];
 
 const handle = delayRender("Loading nightlife fonts");
@@ -21,5 +21,5 @@ Promise.all(
   ),
 ).then(() => continueRender(handle));
 
-export const pink = "#f01cfb";
-export const pinkGlow = "#d63bd9";
+// Caption yellow from the Venus "Friday" story.
+export const yellow = "#ecd25a";
