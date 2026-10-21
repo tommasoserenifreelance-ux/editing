@@ -8,6 +8,12 @@ import {
   PilatesOverlay,
 } from "./PilatesOverlay";
 import { PILATES_DURATION, PilatesReformer } from "./PilatesReformer";
+import {
+  Nightlife,
+  NIGHTLIFE_DURATION,
+  NIGHTLIFE_FPS,
+  nightlifeDefaults,
+} from "./Nightlife";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -71,6 +77,15 @@ export const RemotionRoot: React.FC = () => {
         fps={OVERLAY_FPS}
         width={1080}
         height={1920}
+      />
+      <Composition
+        id="Nightlife"
+        component={Nightlife}
+        durationInFrames={NIGHTLIFE_DURATION}
+        fps={NIGHTLIFE_FPS}
+        width={1080}
+        height={1920}
+        defaultProps={nightlifeDefaults}
       />
     </>
   );
