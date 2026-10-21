@@ -164,16 +164,16 @@ const sfx = (file: string, at: number, peak: number, volume: number) => ({
 });
 
 export const SFX: { file: string; from: number; volume: number }[] = [
-  // Camera flash on the white flashes of the black & white intro.
-  ...[5, 23, 45, 68, 89, 158, 180, 195, 225].map((at) =>
-    sfx("camera-flash", at, 7, 0.45),
-  ),
   sfx("impact", LOGO_STAMP[0], 22, 0.5),
   // Slow swoosh into the drop smear, sub drop on the drop itself.
   sfx("swoosh-slow", 270, 41, 0.45),
   sfx("sub-drop", 270, 28, 0.4),
-  // Fast swoosh on every smear in the colour section.
-  ...SMEARS.slice(1).map(([from]) => sfx("swoosh-fast", from + 2, 12, 0.45)),
+  // Fast and slow swooshes taking turns on the smears of the colour section.
+  ...SMEARS.slice(1).map(([from], i) =>
+    i % 2 === 0
+      ? sfx("swoosh-fast", from + 2, 12, 0.45)
+      : sfx("swoosh-slow", from + 2, 41, 0.35),
+  ),
   // Shutter burst ticking over the swirl, as in the reference at 13.5 s.
   sfx("shutter-short", 405, 0, 0.7),
   // Longer burst under the rapid cuts before the end card.
