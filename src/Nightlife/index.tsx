@@ -11,6 +11,7 @@ import {
 } from "remotion";
 import { captionFont, logoFont, yellow } from "./fonts";
 import {
+  CAPTIONS,
   CLIPS,
   CUTS,
   Cut,
@@ -30,10 +31,18 @@ import {
 export { NIGHTLIFE_DURATION, NIGHTLIFE_FPS } from "./timeline";
 
 export type NightlifeProps = {
+  captions: string[];
   endText: string;
 };
 
 export const nightlifeDefaults: NightlifeProps = {
+  captions: [
+    "The nights grow longer",
+    "The evenings are chosen",
+    "Few spots",
+    "One rule",
+    "Be unique",
+  ],
   endText: "See you Friday",
 };
 
@@ -68,7 +77,7 @@ const Shot: React.FC<{ cut: Cut }> = ({ cut }) => {
 
   let filter = bw
     ? "grayscale(1) contrast(0.95) brightness(1.1)"
-    : "contrast(0.92) saturate(0.6) brightness(0.9)";
+    : "url(#venus-balance) saturate(0.72) contrast(0.98) brightness(0.86)";
   if (cut.fx === "flicker" && local < 16) {
     filter += ` brightness(${0.6 + random(`flicker${frame}`) * 0.9})`;
   }
@@ -151,13 +160,16 @@ const Grade: React.FC = () => {
             "radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.3) 100%)",
         }}
       />
-      {/* Matte blacks: nothing goes darker than this, like the reference. */}
-      <AbsoluteFill
-        style={{
-          background: color ? "rgb(14, 12, 20)" : "rgb(14, 14, 14)",
-          mixBlendMode: "lighten",
-        }}
-      />
+      {/* Matte blacks in black & white and on the end card, like the
+          reference; its colour section keeps true blacks. */}
+      {!color || frame >= END_CARD ? (
+        <AbsoluteFill
+          style={{
+            background: color ? "rgb(14, 12, 20)" : "rgb(14, 14, 14)",
+            mixBlendMode: "lighten",
+          }}
+        />
+      ) : null}
       <AbsoluteFill style={{ opacity: 0.16, mixBlendMode: "overlay" }}>
         <svg width="100%" height="100%">
           <filter id="grain">
@@ -213,8 +225,15 @@ const Caption: React.FC<{ text: string; opacity: number }> = ({
   </AbsoluteFill>
 );
 
-const EndText: React.FC<NightlifeProps> = ({ endText }) => {
+const Captions: React.FC<NightlifeProps> = ({ captions, endText }) => {
   const frame = useCurrentFrame();
+  const caption = CAPTIONS.find((c) => frame >= c.from && frame < c.to);
+  if (caption) {
+    const opacity = caption.fade
+      ? interpolate(frame, [caption.fade, caption.to], [1, 0.15], clamp)
+      : 1;
+    return <Caption text={captions[caption.line] ?? ""} opacity={opacity} />;
+  }
   if (frame >= END_TEXT.from && frame < END_TEXT.to) {
     return (
       <Caption
@@ -315,6 +334,15 @@ const Sound: React.FC = () => (
 export const Nightlife: React.FC<NightlifeProps> = (props) => {
   return (
     <AbsoluteFill style={{ background: "black" }}>
+      <svg width={0} height={0} style={{ position: "absolute" }}>
+        {/* Pull the club's purple light towards the reference's neutral mix. */}
+        <filter id="venus-balance" colorInterpolationFilters="sRGB">
+          <feColorMatrix
+            type="matrix"
+            values="0.85 0 0 0 0  0 1.08 0 0 0  0 0 0.78 0 0  0 0 0 1 0"
+          />
+        </filter>
+      </svg>
       {CUTS.map((cut, i) => {
         const to = CUTS[i + 1]?.from ?? END_CARD;
         return (
@@ -330,7 +358,7 @@ export const Nightlife: React.FC<NightlifeProps> = (props) => {
       })}
       <Grade />
       <Flash />
-      <EndText {...props} />
+      <Captions {...props} />
       <Logos />
       <Sound />
     </AbsoluteFill>

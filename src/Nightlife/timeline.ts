@@ -61,7 +61,7 @@ export const CUTS: Cut[] = [
   // Drop: colour, cuts on the beat
   { from: 277, clip: "dancer", at: 0.0, fx: "rgb" },
   { from: 294, clip: "v2", at: 5.0 },
-  { from: 312, clip: "t1", at: 9.0 },
+  { from: 312, clip: "t1", at: 13.0 },
   { from: 335, clip: "t2", at: 0.3 },
   { from: 361, clip: "dancer", at: 12.5 },
   { from: 378, clip: "t5", at: 0.0 },
@@ -71,9 +71,9 @@ export const CUTS: Cut[] = [
   { from: 422, clip: "v4", at: 11.0 },
   { from: 430, clip: "dancer", at: 22.0 },
   { from: 437, clip: "t6", at: 0.0 },
-  { from: 449, clip: "sign", at: 0.0 },
+  { from: 449, clip: "v5", at: 1.0 },
   { from: 474, clip: "dancer", at: 6.0 },
-  { from: 494, clip: "t1", at: 12.0 },
+  { from: 494, clip: "t1", at: 5.0 },
   { from: 510, clip: "v2", at: 6.5 },
   { from: 519, clip: "dancer", at: 27.0 },
   { from: 540, clip: "v1", at: 11.5 },
@@ -129,6 +129,24 @@ export const SMEARS: [number, number][] = [
 export const VOICE_FROM = 8;
 export const VOICE_TO = VOICE_FROM + 245;
 export const LOGO_STAMP: [number, number] = [120, 145];
+
+export type Caption = {
+  from: number;
+  to: number;
+  // Index into the captions prop.
+  line: number;
+  // Frame where the caption starts fading out.
+  fade?: number;
+};
+
+// One caption per voice-over phrase, "Venus" is the logo instead.
+export const CAPTIONS: Caption[] = [
+  { from: 8, to: 57, line: 0, fade: 52 },
+  { from: 61, to: 114, line: 1, fade: 108 },
+  { from: 157, to: 189, line: 2 },
+  { from: 192, to: 216, line: 3 },
+  { from: 220, to: 256, line: 4, fade: 250 },
+];
 
 export const END_TEXT = { from: 633, to: 662, fade: 655 };
 export const END_LOGOS = [

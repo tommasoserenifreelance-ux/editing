@@ -4,7 +4,8 @@
 
 Writes to public/nightlife/:
   music.m4a  the song, delayed by PREROLL with a reversed swell leading into
-             it, a low-pass sweep from LOWPASS_AT (song time), cut to LENGTH
+             it, a muffled crescendo up to BUILD_TO, a low-pass sweep from
+             LOWPASS_AT (song time), cut to LENGTH
   sfx/*.wav  synthesized whoosh, impact, riser and flash hit
 
 PREROLL and LOWPASS_AT must match MUSIC_START and END_CARD in
@@ -20,6 +21,7 @@ import numpy as np
 SR = 48000
 PREROLL = 77 / 30  # seconds before the song starts (MUSIC_START in timeline.ts)
 LOWPASS_AT = (632 - 77) / 30  # song time where the end card starts
+BUILD_TO = 6.3  # song time where the crescendo is fully open, just before the drop
 LENGTH = 24.0  # NIGHTLIFE_DURATION, the track is cut and faded here
 OUT = Path(__file__).resolve().parent.parent / "public" / "nightlife"
 
@@ -54,24 +56,37 @@ def filter_with(x, af):
     return y[: len(x)]
 
 
+def blend(steps, position):
+    """Per sample, crossfade between neighbouring entries of steps."""
+    out = steps[0].copy()
+    for i in range(len(steps) - 1):
+        w = np.clip(position - i, 0, 1)[:, None]
+        sel = position > i
+        out[sel] = (steps[i] * (1 - w) + steps[i + 1] * w)[sel]
+    return out
+
+
 def build_music(song_path):
     song = decode(song_path)
 
-    # Reversed, muffled first bar of the song swelling into its downbeat.
-    n_pre = int(round(PREROLL * SR))
-    swell = lowpass(song[:n_pre][::-1].copy(), 700)
-    swell *= (np.linspace(0, 1, n_pre) ** 2 * 0.7)[:, None]
-
-    # Low-pass sweep into the end card: crossfade through steeper filters.
-    start = int(LOWPASS_AT * SR)
+    # Muffled to open: 0 is the dry song, the last step the most filtered.
     steps = [song] + [lowpass(song, f) for f in (5000, 2200, 1000, 500, 320)]
-    sweep = int(0.9 * SR)
-    out = song.copy()
-    t = np.clip((np.arange(len(song)) - start) / sweep, 0, 1) * (len(steps) - 1)
-    for i in range(len(steps) - 1):
-        w = np.clip(t - i, 0, 1)[:, None]
-        sel = t > i
-        out[sel] = (steps[i] * (1 - w) + steps[i + 1] * w)[sel]
+    last = len(steps) - 1
+    time = np.arange(len(song)) / SR
+
+    # Crescendo: the song starts quiet and muffled and opens up into the drop,
+    # then a low-pass sweep into the end card.
+    build = np.clip(time / BUILD_TO, 0, 1)
+    closing = np.clip((time - LOWPASS_AT) / 0.9, 0, 1)
+    out = blend(steps, np.maximum(1 - build, closing) * last)
+    out *= (0.2 + 0.8 * build**1.6)[:, None]
+
+    # Reversed first bar of the song, as muffled and quiet as the song's
+    # start, swelling up into it.
+    n_pre = int(round(PREROLL * SR))
+    swell = lowpass(song[:n_pre][::-1].copy(), 320)
+    swell *= (np.linspace(0, 1, n_pre) ** 2 * 0.2)[:, None]
+
     track = np.concatenate([swell, out])[: int(LENGTH * SR)]
     fade = int(0.8 * SR)
     track[-fade:] *= np.linspace(1, 0, fade)[:, None]
