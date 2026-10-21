@@ -254,26 +254,32 @@ const VenusLogo: React.FC = () => (
   <Img src={staticFile("nightlife/venus-logo.png")} style={{ width: 760 }} />
 );
 
-// Ring logo in the style of the reference end card.
+// YAB logo redrawn from the brand mark: thin ring, tall condensed letters.
+// Drawn on the 448-unit grid of the original artwork.
 const YabLogo: React.FC = () => (
-  <div
-    style={{
-      width: 370,
-      height: 370,
-      borderRadius: "50%",
-      border: "30px solid white",
-      boxSizing: "border-box",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      fontFamily: logoFont,
-      fontSize: 170,
-      color: "white",
-      transform: "scaleX(0.85)",
-    }}
-  >
-    YAB
-  </div>
+  <svg viewBox="0 0 448 448" width={420} height={420}>
+    <circle
+      cx={225}
+      cy={225}
+      r={187}
+      fill="none"
+      stroke="white"
+      strokeWidth={20}
+    />
+    <text
+      x={230}
+      y={357}
+      textAnchor="middle"
+      fill="white"
+      fontFamily={logoFont}
+      // Anton's cap height is 0.86 em: letters span y 100-357 as in the mark.
+      fontSize={299}
+      textLength={250}
+      lengthAdjust="spacingAndGlyphs"
+    >
+      YAB
+    </text>
+  </svg>
 );
 
 const Logos: React.FC = () => {
