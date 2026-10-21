@@ -160,14 +160,11 @@ const Grade: React.FC = () => {
             "radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.3) 100%)",
         }}
       />
-      {/* Matte blacks in black & white and on the end card, like the
-          reference; its colour section keeps true blacks. */}
-      {!color || frame >= END_CARD ? (
+      {/* Matte blacks in black & white, like the reference; the colour
+          section and the end card keep true blacks. */}
+      {!color ? (
         <AbsoluteFill
-          style={{
-            background: color ? "rgb(14, 12, 20)" : "rgb(14, 14, 14)",
-            mixBlendMode: "lighten",
-          }}
+          style={{ background: "rgb(14, 14, 14)", mixBlendMode: "lighten" }}
         />
       ) : null}
       <AbsoluteFill style={{ opacity: 0.16, mixBlendMode: "overlay" }}>
