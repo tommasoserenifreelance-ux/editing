@@ -81,8 +81,8 @@ const Shot: React.FC<{ cut: Cut }> = ({ cut }) => {
   let transform = `translate(${x}px, ${y}px) scale(${zoom})`;
 
   let filter = bw
-    ? "grayscale(1) contrast(1.3) brightness(0.95)"
-    : "contrast(1.12) saturate(1.25)";
+    ? "grayscale(1) contrast(0.95) brightness(1.1)"
+    : "contrast(0.92) saturate(0.6) brightness(0.9)";
   if (cut.fx === "flicker" && local < 16) {
     filter += ` brightness(${0.6 + random(`flicker${frame}`) * 0.9})`;
   }
@@ -150,16 +150,23 @@ const Grade: React.FC = () => {
       {frame >= DROP && frame < END_CARD ? (
         <AbsoluteFill
           style={{
-            background: "#ff2bd6",
+            background: "#c45cff",
             mixBlendMode: "soft-light",
-            opacity: 0.22,
+            opacity: 0.06,
           }}
         />
       ) : null}
       <AbsoluteFill
         style={{
           background:
-            "radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.55) 100%)",
+            "radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.3) 100%)",
+        }}
+      />
+      {/* Matte blacks: nothing goes darker than this, like the reference. */}
+      <AbsoluteFill
+        style={{
+          background: frame >= DROP ? "rgb(14, 12, 20)" : "rgb(14, 14, 14)",
+          mixBlendMode: "lighten",
         }}
       />
       <AbsoluteFill style={{ opacity: 0.16, mixBlendMode: "overlay" }}>
