@@ -1,12 +1,12 @@
 """Builds the audio assets for the Nightlife reel.
 
-    python3 scripts/nightlife_audio.py SONG.mp3
+    python3 scripts/nightlife_audio.py SONG.mp3 REFERENCE.mp4
 
 Writes to public/nightlife/:
   music.m4a  the song, delayed by PREROLL with a reversed swell leading into
              it, a muffled crescendo up to BUILD_TO, a low-pass sweep from
              LOWPASS_AT (song time), cut to LENGTH
-  sfx/*.wav  synthesized whoosh, impact, riser and flash hit
+  sfx/*.wav  hits sampled from the reference reel
 
 PREROLL and LOWPASS_AT must match MUSIC_START and END_CARD in
 src/Nightlife/timeline.ts.
@@ -94,63 +94,30 @@ def build_music(song_path):
     encode(track, OUT / "music.m4a", ["-c:a", "aac", "-b:a", "256k"])
 
 
-def envelope(n, attack, release):
-    a = int(attack * SR)
-    env = np.ones(n)
-    env[:a] = np.linspace(0, 1, a)
-    env[a:] = np.exp(-np.linspace(0, release, n - a))
-    return env
+# Hits cut from the reference reel (start, end in seconds, high-pass Hz or
+# None). Its effects are mixed into its song, so these are taken where a hit
+# stands clear of the music and high-passed to drop the vocal and bass.
+SAMPLES = {
+    "hit": (4.03, 4.23, 1200),  # flash hit, frame 120 of the reference
+    "impact": (8.97, 9.27, None),  # the drop
+    "end": (20.97, 21.15, 1200),  # flash into the end card
+}
 
 
-def noise(n, seed):
-    return np.random.default_rng(seed).standard_normal(n)
-
-
-def sweep_filter(x, f0, f1):
-    """Crude band-pass that slides from f0 to f1 Hz, block by block."""
-    block = 1024
-    out = np.zeros_like(x)
-    freqs = np.fft.rfftfreq(block * 2, 1 / SR)
-    win = np.hanning(block * 2)
-    for i, s in enumerate(range(0, len(x) - block * 2, block)):
-        f = f0 * (f1 / f0) ** (s / len(x))
-        band = np.exp(-(((freqs - f) / (f * 0.6)) ** 2))
-        out[s : s + block * 2] += np.fft.irfft(np.fft.rfft(x[s : s + block * 2] * win) * band)
-    return out
-
-
-def stereo(x, gain):
-    x = x / (np.abs(x).max() + 1e-9) * gain
-    return np.stack([x, x], axis=1)
-
-
-def build_sfx():
+def build_sfx(reference_path):
     (OUT / "sfx").mkdir(exist_ok=True)
-    wav = ["-c:a", "pcm_s16le"]
-
-    n = int(0.55 * SR)
-    t = np.linspace(0, 1, n)
-    whoosh = sweep_filter(noise(n, 1), 400, 5000) * np.sin(np.pi * t) ** 2
-    encode(stereo(whoosh, 0.7), OUT / "sfx" / "whoosh.wav", wav)
-
-    n = int(1.4 * SR)
-    t = np.arange(n) / SR
-    pitch = 38 + 70 * np.exp(-t * 18)
-    boom = np.sin(2 * np.pi * np.cumsum(pitch) / SR) * envelope(n, 0.002, 6)
-    click = noise(n, 2) * envelope(n, 0.0005, 120) * 0.5
-    encode(stereo(np.tanh((boom + click) * 2), 0.9), OUT / "sfx" / "impact.wav", wav)
-
-    n = int(1.8 * SR)
-    t = np.linspace(0, 1, n)
-    rise = sweep_filter(noise(n, 3), 300, 9000) * t**2.5
-    tone = np.sin(2 * np.pi * np.cumsum(220 + 660 * t**2) / SR) * t**3 * 0.15
-    encode(stereo(rise + tone, 0.6), OUT / "sfx" / "riser.wav", wav)
-
-    n = int(0.25 * SR)
-    hit = sweep_filter(noise(n, 4), 6000, 2500) * envelope(n, 0.001, 25)
-    encode(stereo(hit, 0.5), OUT / "sfx" / "flash.wav", wav)
+    ref = decode(reference_path)
+    for name, (start, end, highpass) in SAMPLES.items():
+        x = ref[int(start * SR) : int(end * SR)].copy()
+        if highpass:
+            x = filter_with(x, f"highpass=f={highpass},highpass=f={highpass}")
+        # Keep the transient, let the music under it die away quickly.
+        attack = int(0.005 * SR)
+        x[:attack] *= np.linspace(0, 1, attack)[:, None]
+        x *= np.exp(-np.linspace(0, 5, len(x)))[:, None]
+        encode(x, OUT / "sfx" / f"{name}.wav", ["-c:a", "pcm_s16le"])
 
 
 if __name__ == "__main__":
     build_music(sys.argv[1])
-    build_sfx()
+    build_sfx(sys.argv[2])

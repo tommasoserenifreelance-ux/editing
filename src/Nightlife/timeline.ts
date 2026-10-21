@@ -48,30 +48,30 @@ export const CUTS: Cut[] = [
   { from: 14, clip: "v2", at: 0.5 },
   { from: 25, clip: "dancer", at: 3.5, fx: "flicker" },
   { from: 48, clip: "v4", at: 14.5 },
-  { from: 59, clip: "t4", at: 0.0 },
+  { from: 59, clip: "v1", at: 14.0 },
   { from: 70, clip: "dancer", at: 20.0 },
   { from: 94, clip: "v2", at: 3.0, fx: "swirl" },
   { from: 123, clip: "v1", at: 6.0 },
   { from: 145, clip: "t6", at: 3.4 },
   { from: 160, clip: "v1", at: 18.0 },
   { from: 183, clip: "dancer", at: 9.5 },
-  { from: 198, clip: "t1", at: 0.5 },
+  { from: 198, clip: "t4", at: 0.45 },
   { from: 228, clip: "v4", at: 15.0 },
   { from: 253, clip: "dancer", at: 24.0 },
   // Drop: colour, cuts on the beat
   { from: 277, clip: "dancer", at: 0.0, fx: "rgb" },
   { from: 294, clip: "v2", at: 5.0 },
   { from: 312, clip: "t1", at: 13.0 },
-  { from: 335, clip: "t2", at: 0.3 },
+  { from: 335, clip: "t5", at: 0.15 },
   { from: 361, clip: "dancer", at: 12.5 },
-  { from: 378, clip: "t5", at: 0.0 },
+  { from: 378, clip: "v4", at: 1.5 },
   { from: 392, clip: "v1", at: 15.5 },
   { from: 408, clip: "dancer", at: 17.0, fx: "swirl" },
-  { from: 415, clip: "t4", at: 0.8 },
+  { from: 415, clip: "v1", at: 4.0 },
   { from: 422, clip: "v4", at: 11.0 },
   { from: 430, clip: "dancer", at: 22.0 },
-  { from: 437, clip: "t6", at: 0.0 },
-  { from: 449, clip: "v5", at: 1.0 },
+  { from: 437, clip: "v5", at: 5.0 },
+  { from: 449, clip: "t6", at: 1.45 },
   { from: 474, clip: "dancer", at: 6.0 },
   { from: 494, clip: "t1", at: 5.0 },
   { from: 510, clip: "v2", at: 6.5 },
@@ -84,7 +84,7 @@ export const CUTS: Cut[] = [
   { from: 592, clip: "v1", at: 19.0 },
   { from: 598, clip: "t6", at: 4.5 },
   { from: 603, clip: "dancer", at: 24.5 },
-  { from: 609, clip: "sign", at: 0.5 },
+  { from: 609, clip: "v4", at: 4.0 },
   { from: 618, clip: "dancer", at: 28.5 },
 ];
 
@@ -154,15 +154,14 @@ export const END_LOGOS = [
   { logo: "yab", from: 691, in: 696, out: 712, to: 718 },
 ] as const;
 
-// Sound effects, by frame.
+// Sound effects sampled from the reference (scripts/nightlife_audio.py),
+// on the same frames as in the reference.
 export const SFX: { file: string; from: number; volume: number }[] = [
-  { file: "impact", from: LOGO_STAMP[0], volume: 0.5 },
-  { file: "riser", from: 270 - 54, volume: 0.45 },
-  { file: "impact", from: 270, volume: 0.5 },
-  ...SMEARS.slice(1).map(([from]) => ({
-    file: "whoosh",
-    from: from - 6,
-    volume: 0.4,
+  ...[19, 46, 67, 121, 144, 194, 227, 243].map((from) => ({
+    file: "hit",
+    from,
+    volume: 1,
   })),
-  { file: "impact", from: END_CARD, volume: 0.4 },
+  { file: "impact", from: 270, volume: 0.7 },
+  { file: "end", from: 630, volume: 1 },
 ];
