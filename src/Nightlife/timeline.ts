@@ -154,14 +154,6 @@ export const END_LOGOS = [
   { logo: "yab", from: 691, in: 696, out: 712, to: 718 },
 ] as const;
 
-// Sound effects sampled from the reference (scripts/nightlife_audio.py),
-// on the same frames as in the reference.
-export const SFX: { file: string; from: number; volume: number }[] = [
-  ...[19, 46, 67, 121, 144, 194, 227, 243].map((from) => ({
-    file: "hit",
-    from,
-    volume: 1,
-  })),
-  { file: "impact", from: 270, volume: 0.7 },
-  { file: "end", from: 630, volume: 1 },
-];
+// Sound effects, by frame: { file: name in public/nightlife/sfx, from, volume }.
+// None for now.
+export const SFX: { file: string; from: number; volume: number }[] = [];
