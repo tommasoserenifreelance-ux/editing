@@ -1,7 +1,6 @@
 import {
   AbsoluteFill,
   Audio,
-  Freeze,
   Img,
   interpolate,
   OffthreadVideo,
@@ -54,30 +53,18 @@ const clamp = {
 const inRange = (frame: number, ranges: [number, number, ...unknown[]][]) =>
   ranges.find(([a, b]) => frame >= a && frame < b);
 
-// Source frame for a local frame, integrating a linear speed ramp.
-const sourceFrame = (cut: Cut, local: number, length: number) => {
-  const [r0, r1] =
-    typeof cut.speed === "number"
-      ? [cut.speed, cut.speed]
-      : (cut.speed ?? [1, 1]);
-  return Math.round(r0 * local + ((r1 - r0) * local * local) / (2 * length));
-};
-
-const Video: React.FC<{ cut: Cut; frame: number }> = ({ cut, frame }) => (
-  <Freeze frame={frame}>
-    <OffthreadVideo
-      src={staticFile(CLIPS[cut.clip])}
-      trimBefore={Math.round(cut.at * NIGHTLIFE_FPS)}
-      muted
-      style={{ width: "100%", height: "100%", objectFit: "cover" }}
-    />
-  </Freeze>
+const Video: React.FC<{ cut: Cut }> = ({ cut }) => (
+  <OffthreadVideo
+    src={staticFile(CLIPS[cut.clip])}
+    trimBefore={Math.round(cut.at * NIGHTLIFE_FPS)}
+    muted
+    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+  />
 );
 
-const Shot: React.FC<{ cut: Cut; length: number }> = ({ cut, length }) => {
+const Shot: React.FC<{ cut: Cut }> = ({ cut }) => {
   const local = useCurrentFrame();
   const frame = cut.from + local;
-  const src = sourceFrame(cut, local, length);
   const bw = cut.from < COLOR_FROM;
   const smear = inRange(frame, SMEARS);
 
@@ -102,7 +89,7 @@ const Shot: React.FC<{ cut: Cut; length: number }> = ({ cut, length }) => {
   return (
     <AbsoluteFill>
       <AbsoluteFill style={{ transform, filter }}>
-        <Video cut={cut} frame={src} />
+        <Video cut={cut} />
       </AbsoluteFill>
       {cut.fx === "swirl" && !smear ? (
         // Rotating ghost of the same shot, like a slow-shutter spin.
@@ -114,7 +101,7 @@ const Shot: React.FC<{ cut: Cut; length: number }> = ({ cut, length }) => {
             opacity: 0.5,
           }}
         >
-          <Video cut={cut} frame={src} />
+          <Video cut={cut} />
         </AbsoluteFill>
       ) : null}
       {cut.fx === "rgb" && local < 6 ? (
@@ -128,7 +115,7 @@ const Shot: React.FC<{ cut: Cut; length: number }> = ({ cut, length }) => {
               opacity: 0.6,
             }}
           >
-            <Video cut={cut} frame={src} />
+            <Video cut={cut} />
           </AbsoluteFill>
           <AbsoluteFill
             style={{
@@ -138,7 +125,7 @@ const Shot: React.FC<{ cut: Cut; length: number }> = ({ cut, length }) => {
               opacity: 0.6,
             }}
           >
-            <Video cut={cut} frame={src} />
+            <Video cut={cut} />
           </AbsoluteFill>
         </>
       ) : null}
@@ -352,7 +339,7 @@ export const Nightlife: React.FC<NightlifeProps> = (props) => {
             durationInFrames={to - cut.from}
             premountFor={30}
           >
-            <Shot cut={cut} length={to - cut.from} />
+            <Shot cut={cut} />
           </Sequence>
         );
       })}

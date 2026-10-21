@@ -47,41 +47,39 @@ export type Cut = {
   clip: keyof typeof CLIPS;
   // Second of the source clip shown on the first frame of the cut.
   at: number;
-  // Playback speed, or [start, end] for a linear speed ramp across the cut.
-  speed?: number | [number, number];
   fx?: ClipFx;
 };
 
 // Each cut lasts until the next one starts.
 export const CUTS: Cut[] = [
   // Black & white voice-over intro
-  { from: 0, clip: "t1", at: 0.5, speed: 0.6 },
-  { from: 28, clip: "dancer", at: 20.0, speed: 0.7 },
+  { from: 0, clip: "t1", at: 0.5 },
+  { from: 28, clip: "dancer", at: 20.0 },
   { from: 54, clip: "t4", at: 0.0 },
   { from: 76, clip: "v1", at: 14.0 },
-  { from: 108, clip: "t5", at: 1.0, speed: 0.6 },
+  { from: 108, clip: "t5", at: 1.0 },
   { from: 149, clip: "v4", at: 15.0 },
   { from: 163, clip: "t6", at: 3.4 },
   { from: 184, clip: "dancer", at: 9.5, fx: "swirl" },
   { from: 210, clip: "t1", at: 8.0, fx: "flicker" },
-  { from: 230, clip: "v1", at: 6.0, speed: [1, 2.5] },
-  // Drop: colour, cuts on the beat, slow motion ramping back to speed
+  { from: 230, clip: "v1", at: 6.0 },
+  // Drop: colour, cuts on the beat
   { from: COLOR_FROM, clip: "t3", at: 0.0, fx: "rgb" },
   { from: beat(2), clip: "t1", at: 1.0 },
-  { from: beat(3), clip: "t6", at: 0.0, speed: [0.4, 2.2] },
+  { from: beat(3), clip: "t6", at: 0.0 },
   { from: beat(5) + 2, clip: "dancer", at: 0.0 },
   { from: beat(6), clip: "v2", at: 5.0 },
-  { from: beat(7) + 2, clip: "t5", at: 0.0, speed: [0.4, 2] },
+  { from: beat(7) + 2, clip: "t5", at: 0.0 },
   { from: beat(9) + 2, clip: "v4", at: 0.0 },
   { from: beat(10), clip: "dancer", at: 12.5 },
   { from: beat(11), clip: "t1", at: 9.0 },
   { from: beat(12) + 2, clip: "t2", at: 0.3 },
   { from: beat(13), clip: "v1", at: 9.0 },
-  { from: beat(14), clip: "dancer", at: 17.0, speed: 0.5, fx: "swirl" },
+  { from: beat(14), clip: "dancer", at: 17.0, fx: "swirl" },
   { from: beat(16) + 2, clip: "t6", at: 3.4 },
   { from: beat(17), clip: "v5", at: 5.0 },
   { from: beat(18) + 1, clip: "t4", at: 0.5 },
-  { from: beat(19), clip: "dancer", at: 22.0, speed: [1, 2] },
+  { from: beat(19), clip: "dancer", at: 22.0 },
   { from: beat(20), clip: "t1", at: 12.0 },
   { from: beat(21) + 1, clip: "v2", at: 1.5 },
   // Flash burst into the end card
