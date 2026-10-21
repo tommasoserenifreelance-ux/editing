@@ -4,7 +4,7 @@
 
 Writes to public/nightlife/:
   music.m4a  the song, delayed by PREROLL with a reversed swell leading into
-             it, and a low-pass sweep from LOWPASS_AT (song time) to the end
+             it, a low-pass sweep from LOWPASS_AT (song time), cut to LENGTH
   sfx/*.wav  synthesized whoosh, impact, riser and flash hit
 
 PREROLL and LOWPASS_AT must match MUSIC_START and END_CARD in
@@ -18,8 +18,9 @@ from pathlib import Path
 import numpy as np
 
 SR = 48000
-PREROLL = 59 / 30  # seconds of voice before the song starts
-LOWPASS_AT = 17.95  # song time where the end card starts
+PREROLL = 77 / 30  # seconds before the song starts (MUSIC_START in timeline.ts)
+LOWPASS_AT = (632 - 77) / 30  # song time where the end card starts
+LENGTH = 24.0  # NIGHTLIFE_DURATION, the track is cut and faded here
 OUT = Path(__file__).resolve().parent.parent / "public" / "nightlife"
 
 
@@ -71,10 +72,11 @@ def build_music(song_path):
         w = np.clip(t - i, 0, 1)[:, None]
         sel = t > i
         out[sel] = (steps[i] * (1 - w) + steps[i + 1] * w)[sel]
+    track = np.concatenate([swell, out])[: int(LENGTH * SR)]
     fade = int(0.8 * SR)
-    out[-fade:] *= np.linspace(1, 0, fade)[:, None]
+    track[-fade:] *= np.linspace(1, 0, fade)[:, None]
 
-    encode(np.concatenate([swell, out]), OUT / "music.m4a", ["-c:a", "aac", "-b:a", "256k"])
+    encode(track, OUT / "music.m4a", ["-c:a", "aac", "-b:a", "256k"])
 
 
 def envelope(n, attack, release):

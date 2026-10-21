@@ -11,11 +11,10 @@ import {
 } from "remotion";
 import { captionFont, logoFont, yellow } from "./fonts";
 import {
-  CAPTIONS,
   CLIPS,
-  COLOR_FROM,
   CUTS,
   Cut,
+  DROP,
   END_CARD,
   END_LOGOS,
   END_TEXT,
@@ -24,24 +23,17 @@ import {
   NIGHTLIFE_FPS,
   SFX,
   SMEARS,
-  VOICE_SPAN,
+  VOICE_FROM,
+  VOICE_TO,
 } from "./timeline";
 
 export { NIGHTLIFE_DURATION, NIGHTLIFE_FPS } from "./timeline";
 
 export type NightlifeProps = {
-  captions: string[];
   endText: string;
 };
 
 export const nightlifeDefaults: NightlifeProps = {
-  captions: [
-    "The nights grow longer",
-    "The evenings are chosen",
-    "Few spots",
-    "One rule",
-    "Be unique",
-  ],
   endText: "See you Friday",
 };
 
@@ -65,7 +57,7 @@ const Video: React.FC<{ cut: Cut }> = ({ cut }) => (
 const Shot: React.FC<{ cut: Cut }> = ({ cut }) => {
   const local = useCurrentFrame();
   const frame = cut.from + local;
-  const bw = cut.from < COLOR_FROM;
+  const bw = cut.from < DROP;
   const smear = inRange(frame, SMEARS);
 
   // Punch in on every cut, then a slow drift and a little handheld shake.
@@ -141,7 +133,7 @@ const Shot: React.FC<{ cut: Cut }> = ({ cut }) => {
 
 const Grade: React.FC = () => {
   const frame = useCurrentFrame();
-  const color = frame >= COLOR_FROM;
+  const color = frame >= DROP;
   return (
     <AbsoluteFill>
       {color && frame < END_CARD ? (
@@ -221,15 +213,8 @@ const Caption: React.FC<{ text: string; opacity: number }> = ({
   </AbsoluteFill>
 );
 
-const Captions: React.FC<NightlifeProps> = ({ captions, endText }) => {
+const EndText: React.FC<NightlifeProps> = ({ endText }) => {
   const frame = useCurrentFrame();
-  const caption = CAPTIONS.find((c) => frame >= c.from && frame < c.to);
-  if (caption) {
-    const opacity = caption.fade
-      ? interpolate(frame, [caption.fade, caption.to], [1, 0.15], clamp)
-      : 1;
-    return <Caption text={captions[caption.line] ?? ""} opacity={opacity} />;
-  }
   if (frame >= END_TEXT.from && frame < END_TEXT.to) {
     return (
       <Caption
@@ -311,11 +296,11 @@ const Sound: React.FC = () => (
     {/* The track already holds the pre-roll; ducked under the voice-over. */}
     <Audio
       src={staticFile("nightlife/music.m4a")}
-      volume={(f) =>
-        interpolate(f, [VOICE_SPAN[1] - 10, VOICE_SPAN[1] + 4], [0.5, 1], clamp)
-      }
+      volume={(f) => interpolate(f, [VOICE_TO, VOICE_TO + 14], [0.5, 1], clamp)}
     />
-    <Audio src={staticFile("nightlife/voice.m4a")} />
+    <Sequence from={VOICE_FROM} name="Voice">
+      <Audio src={staticFile("nightlife/voice.m4a")} />
+    </Sequence>
     {SFX.map((sfx, i) => (
       <Sequence key={i} from={sfx.from} name={`SFX ${sfx.file}`}>
         <Audio
@@ -345,7 +330,7 @@ export const Nightlife: React.FC<NightlifeProps> = (props) => {
       })}
       <Grade />
       <Flash />
-      <Captions {...props} />
+      <EndText {...props} />
       <Logos />
       <Sound />
     </AbsoluteFill>
