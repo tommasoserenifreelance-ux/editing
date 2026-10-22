@@ -57,6 +57,9 @@ export type SfxName =
   | "beep"
   | "rise";
 
+// Effects must read clearly over the voice; the final mix goes through a limiter.
+const SFX_GAIN = 1.5;
+
 // `t` in source seconds; `raw` means it is already on the output timeline.
 export const Sfx: React.FC<{
   t: number;
@@ -70,7 +73,10 @@ export const Sfx: React.FC<{
   const from = Math.round(raw ? t * fps : toFrame(t));
   return (
     <Sequence from={from} durationInFrames={Math.round(dur * fps)} layout="none">
-      <Audio src={staticFile(`elettromec/sfx/${name}.wav`)} volume={volume} />
+      <Audio
+        src={staticFile(`elettromec/sfx/${name}.wav`)}
+        volume={Math.min(1, volume * SFX_GAIN)}
+      />
     </Sequence>
   );
 };

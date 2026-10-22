@@ -67,7 +67,7 @@ export const ZoomVideo: React.FC<{
                 const abs = seg.from + f;
                 if (mute.some(([a, b]) => abs >= a && abs < b)) return 0;
                 // Two-frame ramps at the cuts avoid clicks.
-                return 0.9 * Math.min(1, (f + 1) / 2, (seg.dur - f) / 2);
+                return 0.7 * Math.min(1, (f + 1) / 2, (seg.dur - f) / 2);
               }}
             />
           </Sequence>
