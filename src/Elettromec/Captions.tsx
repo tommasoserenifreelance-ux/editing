@@ -19,7 +19,8 @@ const STOP = new Set(
   ),
 );
 
-const clean = (w: string) => w.replace(/(\.\.\.|[.,;:…])+$/g, "");
+// Captions carry no punctuation, like the references.
+const clean = (w: string) => w.replace(/(\.\.\.|[.,;:…?!])+$/g, "");
 
 // Yellow only for the words worth stressing: long content words, numbers, the brand.
 export const isEmphasis = (w: string) => {
@@ -36,13 +37,16 @@ export const groupWords = (words: Word[], cuts: number[] = []): Group[] => {
   words.forEach((word, i) => {
     const prev = words[i - 1];
     const chars = cur.reduce((n, x) => n + x.w.length, 0);
+    // The last word before a cut joins the current caption instead of flashing alone.
+    const next = words[i + 1];
+    const lastBeforeCut = next !== undefined && cutBetween(word.s, next.s);
+    const full = cur.length >= 3 || chars + word.w.length > 20;
     if (
       cur.length > 0 &&
-      (cur.length >= 3 ||
+      ((full && !(lastBeforeCut && cur.length < 4)) ||
         /[.,?!…;:]$/.test(prev.w) ||
         word.s - prev.e > 0.35 ||
-        cutBetween(prev.s, word.s) ||
-        chars + word.w.length > 20)
+        cutBetween(prev.s, word.s))
     ) {
       groups.push(cur);
       cur = [];

@@ -55,10 +55,13 @@ export const ElettromecVideo: React.FC<{ spec: VideoSpec }> = ({ spec }) => {
   const toSec = (t: number) => toFrame(t) / fps;
   const span = ([a, b]: [number, number]): [number, number] => [toSec(a), toSec(b)];
 
-  // A word timed a hair before a shot change belongs to the new shot.
-  const words = spec.words.map((w) => {
-    const c = spec.shots.find((x) => x > w.s && x - w.s < 0.25);
-    const start = c ?? w.s;
+  // A sentence that starts just before a shot change starts on the new shot
+  // (the audio often leads the picture); words closing a sentence stay put.
+  const words = spec.words.map((w, i) => {
+    const prev = spec.words[i - 1];
+    const opens = !prev || /[.?!]$/.test(prev.w) || w.s - prev.e > 0.3;
+    const c = spec.shots.find((x) => x > w.s && x - w.s < 0.35);
+    const start = opens && c !== undefined ? c : w.s;
     return { ...w, s: toSec(start), e: toSec(Math.max(w.e, start + 0.1)) };
   });
   const cuts = spec.shots.map(toSec);
