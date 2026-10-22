@@ -1,9 +1,9 @@
-"""Synthesise an original 128 BPM workout track for the Body Pump reel.
+"""Synthesise an original 128 BPM workout track for the Total Body reel.
 
 Everything is generated from scratch with numpy, so the music is royalty free.
-Output: public/audio/bodypump-beat.wav
+Output: public/audio/totalbody-beat.wav
 
-    python3 scripts/make-bodypump-beat.py
+    python3 scripts/make-totalbody-beat.py
 """
 
 import wave
@@ -165,7 +165,7 @@ mix *= fade
 mix /= np.max(np.abs(mix)) / 0.89
 
 stereo = np.stack([mix, mix], axis=1)
-out = Path(__file__).resolve().parent.parent / "public/audio/bodypump-beat.wav"
+out = Path(__file__).resolve().parent.parent / "public/audio/totalbody-beat.wav"
 out.parent.mkdir(parents=True, exist_ok=True)
 with wave.open(str(out), "wb") as w:
     w.setnchannels(2)

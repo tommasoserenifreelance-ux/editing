@@ -1,5 +1,5 @@
 import { Composition, Folder } from "remotion";
-import { BODYPUMP_DURATION, BODYPUMP_FPS, BodyPump } from "./BodyPump";
+import { TOTALBODY_DURATION, TOTALBODY_FPS, TotalBody } from "./TotalBody";
 import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
@@ -74,10 +74,10 @@ export const RemotionRoot: React.FC = () => {
         height={1920}
       />
       <Composition
-        id="BodyPump"
-        component={BodyPump}
-        durationInFrames={BODYPUMP_DURATION}
-        fps={BODYPUMP_FPS}
+        id="TotalBody"
+        component={TotalBody}
+        durationInFrames={TOTALBODY_DURATION}
+        fps={TOTALBODY_FPS}
         width={1080}
         height={1920}
       />

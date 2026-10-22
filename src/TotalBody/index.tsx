@@ -11,11 +11,11 @@ import {
 } from "remotion";
 import { sans } from "../PilatesReformer/theme";
 
-export const BODYPUMP_FPS = 30;
-export const BODYPUMP_DURATION = 304; // 10.1 s, length of the source clip
+export const TOTALBODY_FPS = 30;
+export const TOTALBODY_DURATION = 304; // 10.1 s, length of the source clip
 
-// public/audio/bodypump-beat.wav is 128 BPM with the drop on beat 4.
-const BEAT = (60 / 128) * BODYPUMP_FPS;
+// public/audio/totalbody-beat.wav is 128 BPM with the drop on beat 4.
+const BEAT = (60 / 128) * TOTALBODY_FPS;
 const DROP = Math.round(4 * BEAT);
 const CTA = Math.round(10 * BEAT);
 
@@ -153,7 +153,7 @@ const Hook: React.FC = () => {
             padding: "4px 30px",
           }}
         >
-          BODY PUMP
+          TOTAL BODY
         </Slam>
       </AbsoluteFill>
       <AbsoluteFill style={{ backgroundColor: "white", opacity: flash }} />
@@ -238,15 +238,15 @@ const CallToAction: React.FC = () => (
   </AbsoluteFill>
 );
 
-export const BodyPump: React.FC = () => {
+export const TotalBody: React.FC = () => {
   return (
     <AbsoluteFill style={{ backgroundColor: "black" }}>
       <OffthreadVideo
-        src={staticFile("video/bodypump.mp4")}
+        src={staticFile("video/totalbody.mp4")}
         muted
         style={{ width: "100%", height: "100%", objectFit: "cover" }}
       />
-      <Audio src={staticFile("audio/bodypump-beat.wav")} />
+      <Audio src={staticFile("audio/totalbody-beat.wav")} />
       <Sequence durationInFrames={CTA}>
         <Hook />
       </Sequence>
