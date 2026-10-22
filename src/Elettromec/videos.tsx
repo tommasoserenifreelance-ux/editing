@@ -280,7 +280,7 @@ export const video3: VideoSpec = {
 export const video4: VideoSpec = {
   src: "elettromec/raw/v4.mp4",
   keep: v4Keep as Keep,
-  shots: [5.34, 6.36, 8.82, 14.94, 19.92, 26.5, 31],
+  shots: [5.34, 6.36, 8.82, 14.94, 19.92, 25.06, 26.5, 27.92, 31],
   words: v4Words as Word[],
   captionY: 1520,
   bleep: [[29.3, 29.72]],
@@ -349,8 +349,8 @@ export const video5: VideoSpec = {
   zooms: [
     { t: 0, d: 5.4, s: 1.2, type: "push", y: 35 },
     { t: 5.5, d: 1.0, s: 1.2, y: 35 },
-    { t: 8.8, d: 4.3, s: 1.2, type: "push", y: 45 },
-    { t: 13.7, d: 1.2, s: 1.2, y: 35 },
+    // Close-ups stay still; zoom in on him working right at the cut.
+    { t: 13.32, d: 3.6, s: 1.22, y: 40 },
     { t: 17.6, d: 0.8, s: 1.2, y: 35 },
     { t: 18.4, d: 2.5, s: 1.4, y: 40 },
   ],

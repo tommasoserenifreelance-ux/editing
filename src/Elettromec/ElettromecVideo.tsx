@@ -28,12 +28,13 @@ export type VideoSpec = {
 
 const CAPTION_SFX_GAP = 7; // seconds between caption swishes
 
-// Zooms change together with the picture: one that ends or starts just short
-// of a shot change is stretched to it, one that spans it is cut there.
+// Zooms change together with the picture: one that starts just after or ends
+// just short of a shot change moves onto it, one that spans it is cut there.
 const SNAP = 0.4;
 const snapToShots = ([a, b]: [number, number], shots: number[]): [number, number] => {
   for (const c of shots) {
-    if (c > a && c < b) {
+    if (c <= a && a - c < 0.6) a = c;
+    else if (c > a && c < b) {
       if (c - a < SNAP) a = c;
       else b = c;
     } else if (c >= b && c - b < SNAP) b = c;
@@ -54,7 +55,12 @@ export const ElettromecVideo: React.FC<{ spec: VideoSpec }> = ({ spec }) => {
   const toSec = (t: number) => toFrame(t) / fps;
   const span = ([a, b]: [number, number]): [number, number] => [toSec(a), toSec(b)];
 
-  const words = spec.words.map((w) => ({ ...w, s: toSec(w.s), e: toSec(w.e) }));
+  // A word timed a hair before a shot change belongs to the new shot.
+  const words = spec.words.map((w) => {
+    const c = spec.shots.find((x) => x > w.s && x - w.s < 0.25);
+    const start = c ?? w.s;
+    return { ...w, s: toSec(start), e: toSec(Math.max(w.e, start + 0.1)) };
+  });
   const cuts = spec.shots.map(toSec);
   const bleep = spec.bleep ?? [];
   const zooms = spec.zooms.map((z) => {
