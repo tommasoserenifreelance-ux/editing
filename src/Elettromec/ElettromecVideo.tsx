@@ -18,7 +18,8 @@ export type VideoSpec = {
   keep: Keep;
   words: Word[];
   captionY: number;
-  hideCaptions?: [number, number][];
+  shots: number[]; // shot changes in the source
+
   bleep?: [number, number][];
   grayFrom?: number; // black & white from here to the end of the footage
   zooms: Zoom[];
@@ -26,6 +27,19 @@ export type VideoSpec = {
 };
 
 const CAPTION_SFX_GAP = 7; // seconds between caption swishes
+
+// Zooms change together with the picture: one that ends or starts just short
+// of a shot change is stretched to it, one that spans it is cut there.
+const SNAP = 0.4;
+const snapToShots = ([a, b]: [number, number], shots: number[]): [number, number] => {
+  for (const c of shots) {
+    if (c > a && c < b) {
+      if (c - a < SNAP) a = c;
+      else b = c;
+    } else if (c >= b && c - b < SNAP) b = c;
+  }
+  return [a, b];
+};
 
 export const durationOf = (spec: VideoSpec) =>
   buildTimeline(spec.keep, FPS).frames + END_CARD;
@@ -41,17 +55,16 @@ export const ElettromecVideo: React.FC<{ spec: VideoSpec }> = ({ spec }) => {
   const span = ([a, b]: [number, number]): [number, number] => [toSec(a), toSec(b)];
 
   const words = spec.words.map((w) => ({ ...w, s: toSec(w.s), e: toSec(w.e) }));
-  const hidden = (spec.hideCaptions ?? []).map(span);
+  const cuts = spec.shots.map(toSec);
   const bleep = spec.bleep ?? [];
   const zooms = spec.zooms.map((z) => {
-    const [t, end] = span([z.t, z.t + z.d]);
+    const [t, end] = span(snapToShots([z.t, z.t + z.d], spec.shots));
     return { ...z, t, d: end - t };
   });
 
   // A soft swish on a few yellow words only, spaced out so it stays natural.
   const captionSfx: Word[] = [];
-  groupWords(words)
-    .filter((g) => !hidden.some(([a, b]) => g.start < b && g.end > a))
+  groupWords(words, cuts)
     .map((g) => g.words[g.key])
     .filter((w) => isEmphasis(w.w))
     .forEach((w) => {
@@ -80,7 +93,7 @@ export const ElettromecVideo: React.FC<{ spec: VideoSpec }> = ({ spec }) => {
           </AbsoluteFill>
           <Watermark />
           {spec.overlays}
-          <Captions words={words} y={spec.captionY} hide={hidden} />
+          <Captions words={words} y={spec.captionY} cuts={cuts} />
           {captionSfx.map((w) => (
             <Sfx key={w.s} t={w.s - 0.03} raw name="swish" volume={0.25} />
           ))}

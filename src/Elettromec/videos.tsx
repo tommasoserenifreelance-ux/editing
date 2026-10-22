@@ -33,9 +33,6 @@ import v3Words from "./transcripts/v3.json";
 import v4Words from "./transcripts/v4.json";
 import v5Words from "./transcripts/v5.json";
 
-// Graphics never repeat words already in the captions: where a graphic
-// carries text, the captions are hidden for that stretch.
-
 // Brand mention: bolt + sparks + zap.
 const BrandHit: React.FC<{ t: number; x: number; y: number }> = ({ t, x, y }) => (
   <>
@@ -52,15 +49,9 @@ const BrandHit: React.FC<{ t: number; x: number; y: number }> = ({ t, x, y }) =>
 export const video1: VideoSpec = {
   src: "elettromec/raw/v1.mp4",
   keep: v1Keep as Keep,
+  shots: [3.52, 30.46, 40.8],
   words: v1Words as Word[],
   captionY: 1400,
-  // Title and tip cards carry these words.
-  hideCaptions: [
-    [0.2, 3.5],
-    [10.1, 11.2],
-    [30.45, 31.45],
-    [40.8, 41.75],
-  ],
   // He throws the boxes in the air: black & white.
   grayFrom: 53.2,
   zooms: [
@@ -192,13 +183,9 @@ const FocusQuestion: React.FC = () => {
 export const video2: VideoSpec = {
   src: "elettromec/raw/v2.mp4",
   keep: v2Keep as Keep,
+  shots: [2.6],
   words: v2Words as Word[],
   captionY: 1520,
-  hideCaptions: [
-    [0.4, 3.3],
-    [14.05, 18.2],
-    [20.45, 23.3],
-  ],
   zooms: [
     { t: 3.4, d: 1.0, s: 1.18, y: 30 },
     { t: 7.1, d: 1.2, s: 1.22, y: 30 },
@@ -249,14 +236,9 @@ export const video2: VideoSpec = {
 export const video3: VideoSpec = {
   src: "elettromec/raw/v3.mp4",
   keep: v3Keep as Keep,
+  shots: [2.88, 5.68, 9.14, 11.32, 15.16, 22.94, 27.14, 33.08, 36.48],
   words: v3Words as Word[],
   captionY: 1600,
-  // Product names are on the tags.
-  hideCaptions: [
-    [15.8, 17.2],
-    [23.3, 24.3],
-    [28.0, 29.1],
-  ],
   zooms: [
     // No zooms on the second speaker (2.88-5.68, 9.14-11.32, 33.08-36.48).
     { t: 2.3, d: 0.55, s: 1.2, y: 30 },
@@ -298,10 +280,9 @@ export const video3: VideoSpec = {
 export const video4: VideoSpec = {
   src: "elettromec/raw/v4.mp4",
   keep: v4Keep as Keep,
+  shots: [5.34, 6.36, 8.82, 14.94, 19.92, 26.5, 31],
   words: v4Words as Word[],
   captionY: 1520,
-  // The towns are on the pins.
-  hideCaptions: [[18.4, 27.0]],
   bleep: [[29.3, 29.72]],
   zooms: [
     { t: 0, d: 3.0, s: 1.25, type: "push", y: 35 },
@@ -362,14 +343,9 @@ export const video4: VideoSpec = {
 export const video5: VideoSpec = {
   src: "elettromec/raw/v5.mp4",
   keep: v5Keep as Keep,
+  shots: [8.7, 11.22, 13.32, 16.92],
   words: v5Words as Word[],
   captionY: 1560,
-  // List, comparison and call to action carry the words themselves.
-  hideCaptions: [
-    [0, 5.5],
-    [5.9, 8.8],
-    [13.6, 17.0],
-  ],
   zooms: [
     { t: 0, d: 5.4, s: 1.2, type: "push", y: 35 },
     { t: 5.5, d: 1.0, s: 1.2, y: 35 },
@@ -382,7 +358,7 @@ export const video5: VideoSpec = {
     <>
       <At t={0} d={5.6}>
         <Chips
-          y={1000}
+          y={880}
           icon="bolt"
           items={[
             { label: "BICI ELETTRICHE", t: 0.05 },

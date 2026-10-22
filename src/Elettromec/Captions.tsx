@@ -27,8 +27,10 @@ export const isEmphasis = (w: string) => {
   return c.length >= 7 || /\d/.test(c) || /elettromec|sos/i.test(c);
 };
 
-// Split the transcript into 1-3 word bursts, breaking on punctuation and pauses.
-export const groupWords = (words: Word[]): Group[] => {
+// Split the transcript into 1-3 word bursts, breaking on punctuation, pauses
+// and shot changes (`cuts`, seconds) so a caption never runs across a cut.
+export const groupWords = (words: Word[], cuts: number[] = []): Group[] => {
+  const cutBetween = (a: number, b: number) => cuts.some((c) => c > a && c <= b);
   const groups: Word[][] = [];
   let cur: Word[] = [];
   words.forEach((word, i) => {
@@ -39,6 +41,7 @@ export const groupWords = (words: Word[]): Group[] => {
       (cur.length >= 3 ||
         /[.,?!…;:]$/.test(prev.w) ||
         word.s - prev.e > 0.35 ||
+        cutBetween(prev.s, word.s) ||
         chars + word.w.length > 20)
     ) {
       groups.push(cur);
@@ -58,8 +61,15 @@ export const groupWords = (words: Word[]): Group[] => {
         key = k;
       }
     });
+    // Stay up until the next caption unless there's a real pause, and never past a cut.
     const next = groups[i + 1];
-    const end = Math.min(g[g.length - 1].e + 0.25, next ? next[0].s : Infinity);
+    const last = g[g.length - 1];
+    const nextCut = Math.min(...cuts.filter((c) => c > g[0].s), Infinity);
+    const end = Math.min(
+      next && next[0].s - last.e < 1 ? next[0].s : last.e + 0.6,
+      next ? next[0].s : Infinity,
+      nextCut,
+    );
     return { words: g, key, start: g[0].s, end };
   });
 };
@@ -72,17 +82,19 @@ const PopWord: React.FC<{
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const local = frame - Math.round((word.s - groupStart) * fps);
+  // Gentle settle with no bounce, so words are readable as soon as they land.
   const pop = spring({
     frame: local,
     fps,
-    config: { damping: 11, mass: 0.5, stiffness: 220 },
+    config: { damping: 200, stiffness: 260 },
+    durationInFrames: 6,
   });
   return (
     <span
       style={{
         display: "inline-block",
-        opacity: local < 0 ? 0 : 1,
-        transform: `translateY(${interpolate(pop, [0, 1], [24, 0])}px) scale(${interpolate(pop, [0, 1], [0.4, 1])})`,
+        opacity: local < 0 ? 0 : interpolate(pop, [0, 0.5], [0, 1], { extrapolateRight: "clamp" }),
+        transform: `translateY(${interpolate(pop, [0, 1], [10, 0])}px) scale(${interpolate(pop, [0, 1], [0.85, 1])})`,
         ...style,
       }}
     >
@@ -101,7 +113,7 @@ const small: React.CSSProperties = {
   ...outline,
   fontFamily: captionFont,
   fontWeight: 700,
-  fontSize: 50,
+  fontSize: 54,
   color: colors.white,
   margin: "0 8px",
 };
@@ -110,13 +122,13 @@ const GroupView: React.FC<{ group: Group }> = ({ group }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const duration = (group.end - group.start) * fps;
-  const out = interpolate(frame, [duration - 4, duration], [1, 0], {
+  const out = interpolate(frame, [duration - 2, duration], [1, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
   const key = group.words[group.key];
   const keyText = clean(key.w);
-  const keySize = Math.min(124, 1000 / (keyText.length * 0.68));
+  const keySize = Math.min(112, 1000 / (keyText.length * 0.68));
   const before = group.words.slice(0, group.key);
   const after = group.words.slice(group.key + 1);
   const line = (ws: Word[]) =>
@@ -161,16 +173,15 @@ const GroupView: React.FC<{ group: Group }> = ({ group }) => {
 export const Captions: React.FC<{
   words: Word[];
   y: number;
-  hide?: [number, number][];
-}> = ({ words, y, hide = [] }) => {
+  cuts: number[];
+}> = ({ words, y, cuts }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = frame / fps;
-  const groups = React.useMemo(() => groupWords(words), [words]);
+  const groups = React.useMemo(() => groupWords(words, cuts), [words, cuts]);
   const index = groups.findIndex((g) => t >= g.start && t < g.end);
   if (index < 0) return null;
   const group = groups[index];
-  if (hide.some(([a, b]) => group.start < b && group.end > a)) return null;
 
   return (
     <AbsoluteFill>
