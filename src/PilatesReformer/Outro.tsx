@@ -1,10 +1,4 @@
-import {
-  AbsoluteFill,
-  interpolate,
-  spring,
-  useCurrentFrame,
-  useVideoConfig,
-} from "remotion";
+import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { colors, sans, serif } from "./theme";
 
 export const Outro: React.FC = () => {
@@ -16,39 +10,11 @@ export const Outro: React.FC = () => {
   const pulse = 1 + Math.sin(Math.max(0, frame - 45) / 6) * 0.02;
 
   return (
-    <AbsoluteFill
-      style={{
-        padding: "0 100px",
-        justifyContent: "center",
-        alignItems: "center",
-        textAlign: "center",
-      }}
-    >
-      <div
-        style={{
-          opacity: a,
-          transform: `translateY(${interpolate(a, [0, 1], [50, 0])}px)`,
-          fontFamily: sans,
-          fontWeight: 500,
-          fontSize: 60,
-          color: colors.muted,
-        }}
-      >
+    <AbsoluteFill style={{ padding: "0 100px", justifyContent: "center", alignItems: "center", textAlign: "center" }}>
+      <div style={{ opacity: a, transform: `translateY(${interpolate(a, [0, 1], [50, 0])}px)`, fontFamily: sans, fontWeight: 500, fontSize: 60, color: colors.muted }}>
         Non aspettare domani.
       </div>
-      <div
-        style={{
-          opacity: b,
-          transform: `translateY(${interpolate(b, [0, 1], [50, 0])}px)`,
-          fontFamily: serif,
-          fontStyle: "italic",
-          fontWeight: 600,
-          fontSize: 210,
-          lineHeight: 1,
-          color: colors.accent,
-          marginTop: 30,
-        }}
-      >
+      <div style={{ opacity: b, transform: `translateY(${interpolate(b, [0, 1], [50, 0])}px)`, fontFamily: serif, fontStyle: "italic", fontWeight: 600, fontSize: 210, lineHeight: 1, color: colors.accent, marginTop: 30 }}>
         Inizia oggi.
       </div>
       <div
@@ -60,8 +26,7 @@ export const Outro: React.FC = () => {
           color: colors.bg,
           fontFamily: sans,
           fontWeight: 700,
-          fontSize: 44,
-          whiteSpace: "nowrap",
+          fontSize: 44, whiteSpace: "nowrap",
           letterSpacing: 2,
           transform: `scale(${btn * pulse})`,
         }}
