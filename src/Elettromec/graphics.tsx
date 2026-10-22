@@ -40,6 +40,8 @@ export const Sfx: React.FC<{ t: number; name: SfxName; volume?: number }> = ({
   name,
   volume = 0.6,
 }) => {
+  // Footage is already mixed hot, so effects sit lower to avoid clipping.
+  volume *= 0.55;
   const { fps } = useVideoConfig();
   return (
     <Sequence from={Math.round(t * fps)} durationInFrames={fps} layout="none">
