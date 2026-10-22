@@ -7,7 +7,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { colors, sans } from "./theme";
+import { captionFont, colors } from "./theme";
 
 export type Word = { w: string; s: number; e: number };
 
@@ -19,10 +19,16 @@ const STOP = new Set(
   ),
 );
 
-const clean = (w: string) => w.replace(/[.,;:…]+$/g, "").replace(/\.\.\.$/, "");
+const clean = (w: string) => w.replace(/(\.\.\.|[.,;:…])+$/g, "");
+
+// Yellow only for the words worth stressing: long content words, numbers, the brand.
+export const isEmphasis = (w: string) => {
+  const c = clean(w);
+  return c.length >= 7 || /\d/.test(c) || /elettromec|sos/i.test(c);
+};
 
 // Split the transcript into 1-3 word bursts, breaking on punctuation and pauses.
-const groupWords = (words: Word[]): Group[] => {
+export const groupWords = (words: Word[]): Group[] => {
   const groups: Word[][] = [];
   let cur: Word[] = [];
   words.forEach((word, i) => {
@@ -58,8 +64,6 @@ const groupWords = (words: Word[]): Group[] => {
   });
 };
 
-const KEY_COLORS = [colors.lime, colors.lime, colors.violet];
-
 const PopWord: React.FC<{
   word: Word;
   groupStart: number;
@@ -87,21 +91,22 @@ const PopWord: React.FC<{
   );
 };
 
-const small: React.CSSProperties = {
-  fontFamily: sans,
-  fontWeight: 800,
-  fontSize: 50,
-  color: colors.white,
-  margin: "0 9px",
-  textShadow: `0 4px 0 ${colors.navyDeep}, 0 0 18px rgba(0,0,0,0.55)`,
-  WebkitTextStroke: `2px ${colors.navyDeep}`,
+const outline: React.CSSProperties = {
+  WebkitTextStroke: "3px rgba(0,0,0,0.55)",
   paintOrder: "stroke fill",
+  textShadow: "0 4px 0 rgba(0,0,0,0.35), 0 0 24px rgba(0,0,0,0.55)",
 };
 
-const GroupView: React.FC<{ group: Group; index: number }> = ({
-  group,
-  index,
-}) => {
+const small: React.CSSProperties = {
+  ...outline,
+  fontFamily: captionFont,
+  fontWeight: 700,
+  fontSize: 50,
+  color: colors.white,
+  margin: "0 8px",
+};
+
+const GroupView: React.FC<{ group: Group }> = ({ group }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const duration = (group.end - group.start) * fps;
@@ -110,8 +115,8 @@ const GroupView: React.FC<{ group: Group; index: number }> = ({
     extrapolateRight: "clamp",
   });
   const key = group.words[group.key];
-  const keyText = clean(key.w).toUpperCase();
-  const keySize = Math.min(124, 980 / (keyText.length * 0.74));
+  const keyText = clean(key.w);
+  const keySize = Math.min(124, 1000 / (keyText.length * 0.68));
   const before = group.words.slice(0, group.key);
   const after = group.words.slice(group.key + 1);
   const line = (ws: Word[]) =>
@@ -131,24 +136,21 @@ const GroupView: React.FC<{ group: Group; index: number }> = ({
         flexDirection: "column",
         alignItems: "center",
         lineHeight: 1,
-        gap: 6,
+        gap: 4,
       }}
     >
       {line(before)}
       <PopWord
-        word={{ ...key, w: keyText }}
+        word={key}
         groupStart={group.start}
         style={{
-          fontFamily: sans,
-          fontWeight: 900,
-          fontStyle: "italic",
+          ...outline,
+          fontFamily: captionFont,
+          fontWeight: 800,
           fontSize: keySize,
-          color: KEY_COLORS[index % KEY_COLORS.length],
+          color: isEmphasis(key.w) ? colors.yellow : colors.white,
           letterSpacing: -1,
-          WebkitTextStroke: `5px ${colors.navyDeep}`,
-          paintOrder: "stroke fill",
-          textShadow: `6px 7px 0 ${colors.navyDeep}, 0 0 30px rgba(0,0,0,0.45)`,
-          padding: "0 12px",
+          padding: "0 10px",
         }}
       />
       {line(after)}
@@ -188,7 +190,7 @@ export const Captions: React.FC<{
           from={Math.round(group.start * fps)}
           layout="none"
         >
-          <GroupView group={group} index={index} />
+          <GroupView group={group} />
         </Sequence>
       </div>
     </AbsoluteFill>

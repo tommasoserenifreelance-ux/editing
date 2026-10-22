@@ -2,6 +2,7 @@ import React from "react";
 import {
   AbsoluteFill,
   Audio,
+  Img,
   interpolate,
   Sequence,
   spring,
@@ -10,41 +11,65 @@ import {
   useVideoConfig,
 } from "remotion";
 import { colors, sans, script } from "./theme";
+import { useToFrame } from "./timeline";
 
 // ---------- timing helpers ----------
 
 const DurContext = React.createContext(1);
 const useDur = () => React.useContext(DurContext);
+// Source time at which the current <At> slot starts.
+const SlotContext = React.createContext(0);
 
-// Places a graphic at `t` seconds for `d` seconds.
+// Places a graphic at `t` source seconds for `d` source seconds.
 export const At: React.FC<{ t: number; d: number; children: React.ReactNode }> = ({
   t,
   d,
   children,
 }) => {
-  const { fps } = useVideoConfig();
-  const dur = Math.round(d * fps);
+  const toFrame = useToFrame();
+  const from = Math.round(toFrame(t));
+  const dur = Math.max(1, Math.round(toFrame(t + d)) - from);
   return (
-    <Sequence from={Math.round(t * fps)} durationInFrames={dur} layout="none">
+    <Sequence from={from} durationInFrames={dur} layout="none">
       <DurContext.Provider value={dur}>
-        <AbsoluteFill>{children}</AbsoluteFill>
+        <SlotContext.Provider value={t}>
+          <AbsoluteFill>{children}</AbsoluteFill>
+        </SlotContext.Provider>
       </DurContext.Provider>
     </Sequence>
   );
 };
 
-export type SfxName = "pop" | "whoosh" | "zap" | "hit";
+// Frames from the start of the current slot to source time `t`.
+export const useSlotFrame = () => {
+  const toFrame = useToFrame();
+  const start = React.useContext(SlotContext);
+  return (t: number) => Math.round(toFrame(t) - toFrame(start));
+};
 
-export const Sfx: React.FC<{ t: number; name: SfxName; volume?: number }> = ({
-  t,
-  name,
-  volume = 0.6,
-}) => {
-  // Footage is already mixed hot, so effects sit lower to avoid clipping.
-  volume *= 0.55;
+export type SfxName =
+  | "pop"
+  | "whoosh"
+  | "swish"
+  | "zap"
+  | "hit"
+  | "ding"
+  | "beep"
+  | "rise";
+
+// `t` in source seconds; `raw` means it is already on the output timeline.
+export const Sfx: React.FC<{
+  t: number;
+  name: SfxName;
+  volume?: number;
+  raw?: boolean;
+  dur?: number; // cut the sound after this many seconds
+}> = ({ t, name, volume = 0.6, raw = false, dur = 1 }) => {
+  const toFrame = useToFrame();
   const { fps } = useVideoConfig();
+  const from = Math.round(raw ? t * fps : toFrame(t));
   return (
-    <Sequence from={Math.round(t * fps)} durationInFrames={fps} layout="none">
+    <Sequence from={from} durationInFrames={Math.round(dur * fps)} layout="none">
       <Audio src={staticFile(`elettromec/sfx/${name}.wav`)} volume={volume} />
     </Sequence>
   );
@@ -74,7 +99,7 @@ const glow = (c: string) =>
 
 export const BoltIcon: React.FC<{ size: number; color?: string }> = ({
   size,
-  color = colors.lime,
+  color = colors.yellow,
 }) => (
   <svg width={size} height={size} viewBox="0 0 64 64">
     <path
@@ -87,26 +112,11 @@ export const BoltIcon: React.FC<{ size: number; color?: string }> = ({
   </svg>
 );
 
-export const AtomIcon: React.FC<{ size: number; color?: string; spin?: number }> = ({
-  size,
-  color = colors.lime,
-  spin = 0,
-}) => (
-  <svg width={size} height={size} viewBox="-50 -50 100 100">
-    <g transform={`rotate(${spin})`} fill="none" stroke={color} strokeWidth={6}>
-      <ellipse rx={44} ry={16} />
-      <ellipse rx={44} ry={16} transform="rotate(60)" />
-      <ellipse rx={44} ry={16} transform="rotate(120)" />
-    </g>
-    <circle r={9} fill={color} />
-  </svg>
-);
-
 const PinIcon: React.FC<{ size: number }> = ({ size }) => (
   <svg width={size} height={size} viewBox="0 0 24 24">
     <path
       d="M12 2C7.6 2 4 5.4 4 9.8 4 15.5 12 22 12 22s8-6.5 8-12.2C20 5.4 16.4 2 12 2z"
-      fill={colors.lime}
+      fill={colors.yellow}
     />
     <circle cx={12} cy={10} r={3.2} fill={colors.navy} />
   </svg>
@@ -114,7 +124,7 @@ const PinIcon: React.FC<{ size: number }> = ({ size }) => (
 
 const CheckIcon: React.FC<{ size: number; color?: string }> = ({
   size,
-  color = colors.lime,
+  color = colors.yellow,
 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24">
     <circle cx={12} cy={12} r={11} fill={color} />
@@ -138,29 +148,6 @@ const CrossIcon: React.FC<{ size: number }> = ({ size }) => (
       strokeWidth={3}
       strokeLinecap="round"
     />
-  </svg>
-);
-
-const CameraIcon: React.FC<{ size: number }> = ({ size }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24">
-    <rect x={2} y={6} width={20} height={14} rx={3} fill="white" />
-    <rect x={8} y={3} width={8} height={4} rx={1.5} fill="white" />
-    <circle cx={12} cy={13} r={4.2} fill={colors.whatsapp} />
-    <circle cx={12} cy={13} r={2.2} fill="white" />
-  </svg>
-);
-
-const SnowIcon: React.FC<{ size: number }> = ({ size }) => (
-  <svg width={size} height={size} viewBox="-50 -50 100 100">
-    {[0, 60, 120].map((r) => (
-      <g key={r} transform={`rotate(${r})`} stroke="white" strokeWidth={7} strokeLinecap="round">
-        <line x1={0} y1={-44} x2={0} y2={44} />
-        <line x1={0} y1={-30} x2={-12} y2={-42} />
-        <line x1={0} y1={-30} x2={12} y2={-42} />
-        <line x1={0} y1={30} x2={-12} y2={42} />
-        <line x1={0} y1={30} x2={12} y2={42} />
-      </g>
-    ))}
   </svg>
 );
 
@@ -189,7 +176,7 @@ export const Bolt: React.FC<{ x: number; y: number; size?: number; rotate?: numb
         top: y - size / 2,
         opacity: exit * flicker,
         transform: `rotate(${rotate}deg) scale(${interpolate(enter, [0, 1], [2.2, 1])})`,
-        filter: glow(colors.lime),
+        filter: glow(colors.yellow),
       }}
     >
       <BoltIcon size={size} />
@@ -201,7 +188,7 @@ export const Bolt: React.FC<{ x: number; y: number; size?: number; rotate?: numb
 export const Sparks: React.FC<{ x: number; y: number; color?: string }> = ({
   x,
   y,
-  color = colors.lime,
+  color = colors.yellow,
 }) => {
   const { frame } = useInOut();
   const p = interpolate(frame, [0, 14], [0, 1], { extrapolateRight: "clamp" });
@@ -236,119 +223,14 @@ export const Sparks: React.FC<{ x: number; y: number; color?: string }> = ({
 
 const card: React.CSSProperties = {
   background: `linear-gradient(135deg, ${colors.navy}F2, ${colors.navyDeep}F2)`,
-  border: `4px solid ${colors.lime}`,
+  border: `4px solid ${colors.yellow}`,
   borderRadius: 28,
-  boxShadow: `8px 10px 0 ${colors.navyDeep}, 0 0 40px ${colors.lime}55`,
+  boxShadow: `8px 10px 0 ${colors.navyDeep}, 0 0 40px ${colors.yellow}55`,
   color: colors.white,
   fontFamily: sans,
 };
 
-// "CONSIGLIO #1"-style card that slides in from the left.
-export const Badge: React.FC<{
-  kicker: string;
-  title: string;
-  sub?: string;
-  y?: number;
-}> = ({ kicker, title, sub, y = 210 }) => {
-  const { enter, exit } = useInOut();
-  const subIn = useInOut(6).enter;
-  return (
-    <div
-      style={{
-        position: "absolute",
-        left: 60,
-        top: y,
-        opacity: exit,
-        transform: `translateX(${interpolate(enter, [0, 1], [-700, 0])}px) rotate(-2deg)`,
-      }}
-    >
-      <div style={{ ...card, display: "flex", alignItems: "center", gap: 22, padding: "20px 34px 20px 22px" }}>
-        <div style={{ filter: glow(colors.lime) }}>
-          <BoltIcon size={92} />
-        </div>
-        <div>
-          <div style={{ fontWeight: 800, fontSize: 34, letterSpacing: 4, color: colors.lime }}>
-            {kicker}
-          </div>
-          <div style={{ fontWeight: 900, fontStyle: "italic", fontSize: 76, lineHeight: 1 }}>
-            {title}
-          </div>
-        </div>
-      </div>
-      {sub && (
-        <div
-          style={{
-            display: "inline-block",
-            marginTop: 14,
-            marginLeft: 30,
-            padding: "10px 24px",
-            borderRadius: 16,
-            background: colors.lime,
-            color: colors.navyDeep,
-            fontFamily: sans,
-            fontWeight: 900,
-            fontSize: 38,
-            transform: `scale(${subIn})`,
-            transformOrigin: "left center",
-          }}
-        >
-          {sub}
-        </div>
-      )}
-    </div>
-  );
-};
-
-// Big centred title for hooks.
-export const HeroTitle: React.FC<{ top: string; big: string; y?: number; icon?: "snow" | "bolt" }> = ({
-  top,
-  big,
-  y = 330,
-  icon = "bolt",
-}) => {
-  const { enter, exit, frame } = useInOut();
-  const bigIn = useInOut(5).enter;
-  return (
-    <AbsoluteFill style={{ alignItems: "center", opacity: exit }}>
-      <div style={{ position: "absolute", top: y, display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <div
-          style={{
-            ...card,
-            padding: "12px 34px",
-            fontWeight: 800,
-            fontSize: 42,
-            letterSpacing: 3,
-            transform: `scale(${enter}) rotate(-3deg)`,
-          }}
-        >
-          {top}
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 10, transform: `scale(${bigIn})` }}>
-          <div
-            style={{
-              fontFamily: sans,
-              fontWeight: 900,
-              fontStyle: "italic",
-              fontSize: 128,
-              color: colors.lime,
-              WebkitTextStroke: `7px ${colors.navyDeep}`,
-              paintOrder: "stroke fill",
-              textShadow: `9px 10px 0 ${colors.navyDeep}`,
-              lineHeight: 1,
-            }}
-          >
-            {big}
-          </div>
-          <div style={{ transform: `rotate(${frame * 2}deg)`, filter: glow(colors.white) }}>
-            {icon === "snow" ? <SnowIcon size={110} /> : <BoltIcon size={120} />}
-          </div>
-        </div>
-      </div>
-    </AbsoluteFill>
-  );
-};
-
-// Battery icon that drains (red) or charges (lime) segment by segment.
+// Battery icon that drains (red) or charges (yellow) segment by segment.
 export const Battery: React.FC<{ mode: "charge" | "drain"; x: number; y: number; size?: number }> = ({
   mode,
   x,
@@ -363,7 +245,7 @@ export const Battery: React.FC<{ mode: "charge" | "drain"; x: number; y: number;
   const level = mode === "charge" ? p : 1 - p;
   const segs = 5;
   const lit = Math.ceil(level * segs - 0.001);
-  const fill = mode === "charge" ? colors.lime : level < 0.3 ? colors.red : colors.lime;
+  const fill = mode === "charge" ? colors.yellow : level < 0.3 ? colors.red : colors.yellow;
   const blink = mode === "drain" && level < 0.3 ? (Math.floor(frame / 5) % 2 ? 0.3 : 1) : 1;
   return (
     <div
@@ -401,7 +283,7 @@ export const Battery: React.FC<{ mode: "charge" | "drain"; x: number; y: number;
   );
 };
 
-// Stack of labels that pop in one after another (times relative to the slot).
+// Stack of labels that pop in one after another (item times in source seconds).
 export const Chips: React.FC<{
   items: { label: string; t: number; big?: boolean }[];
   x?: number;
@@ -410,6 +292,7 @@ export const Chips: React.FC<{
   align?: "left" | "center";
 }> = ({ items, x = 60, y, icon = "pin", align = "left" }) => {
   const { exit, frame, fps } = useInOut();
+  const slotFrame = useSlotFrame();
   const Icon = icons[icon];
   return (
     <div
@@ -427,7 +310,7 @@ export const Chips: React.FC<{
     >
       {items.map((it, i) => {
         const pop = spring({
-          frame: frame - Math.round(it.t * fps),
+          frame: frame - slotFrame(it.t),
           fps,
           config: { damping: 10, mass: 0.5, stiffness: 200 },
         });
@@ -442,8 +325,8 @@ export const Chips: React.FC<{
               padding: it.big ? "14px 30px 14px 18px" : "10px 26px 10px 16px",
               fontWeight: 900,
               fontSize: it.big ? 64 : 42,
-              border: `3px solid ${it.big ? colors.lime : "rgba(255,255,255,0.35)"}`,
-              color: it.big ? colors.lime : colors.white,
+              border: `3px solid ${it.big ? colors.yellow : "rgba(255,255,255,0.35)"}`,
+              color: it.big ? colors.yellow : colors.white,
               transform: `scale(${pop}) rotate(${i % 2 ? 1.5 : -1.5}deg)`,
               transformOrigin: "left center",
             }}
@@ -483,12 +366,12 @@ export const TimerRing: React.FC<{ value: string; unit: string; x: number; y: nu
         transform: `scale(${enter})`,
       }}
     >
-      <svg width={300} height={300} viewBox="-150 -150 300 300" style={{ position: "absolute", filter: glow(colors.lime) }}>
+      <svg width={300} height={300} viewBox="-150 -150 300 300" style={{ position: "absolute", filter: glow(colors.yellow) }}>
         <circle r={r} fill={`${colors.navyDeep}E6`} stroke="rgba(255,255,255,0.2)" strokeWidth={22} />
         <circle
           r={r}
           fill="none"
-          stroke={colors.lime}
+          stroke={colors.yellow}
           strokeWidth={22}
           strokeLinecap="round"
           strokeDasharray={c}
@@ -510,7 +393,7 @@ export const TimerRing: React.FC<{ value: string; unit: string; x: number; y: nu
         }}
       >
         <div style={{ fontWeight: 900, fontSize: 104 }}>{value}</div>
-        <div style={{ fontWeight: 800, fontSize: 36, letterSpacing: 4, color: colors.lime }}>{unit}</div>
+        <div style={{ fontWeight: 800, fontSize: 36, letterSpacing: 4, color: colors.yellow }}>{unit}</div>
       </div>
     </div>
   );
@@ -573,10 +456,10 @@ export const ProductTag: React.FC<{ name: string; sub: string; y?: number }> = (
             transform: `scale(${enter}) rotate(-2deg)`,
           }}
         >
-          <div style={{ filter: glow(colors.lime) }}>
+          <div style={{ filter: glow(colors.yellow) }}>
             <BoltIcon size={80} />
           </div>
-          <div style={{ fontWeight: 900, fontStyle: "italic", fontSize: 92, color: colors.lime, lineHeight: 1 }}>
+          <div style={{ fontWeight: 900, fontStyle: "italic", fontSize: 92, color: colors.yellow, lineHeight: 1 }}>
             {name}
           </div>
         </div>
@@ -600,40 +483,6 @@ export const ProductTag: React.FC<{ name: string; sub: string; y?: number }> = (
   );
 };
 
-// WhatsApp-style message bubble with a camera icon.
-export const ChatBubble: React.FC<{ lines: string[]; y: number }> = ({ lines, y }) => {
-  const { enter, exit } = useInOut();
-  return (
-    <AbsoluteFill style={{ alignItems: "center", opacity: exit }}>
-      <div
-        style={{
-          position: "absolute",
-          top: y,
-          display: "flex",
-          alignItems: "center",
-          gap: 22,
-          padding: "22px 34px 22px 24px",
-          borderRadius: "34px 34px 34px 6px",
-          background: colors.whatsapp,
-          boxShadow: `8px 10px 0 ${colors.navyDeep}`,
-          transform: `translateY(${interpolate(enter, [0, 1], [120, 0])}px) scale(${enter})`,
-          fontFamily: sans,
-          color: "white",
-        }}
-      >
-        <div style={{ background: "rgba(0,0,0,0.18)", borderRadius: 20, padding: 12 }}>
-          <CameraIcon size={86} />
-        </div>
-        <div style={{ fontWeight: 900, fontSize: 46, lineHeight: 1.1 }}>
-          {lines.map((l) => (
-            <div key={l}>{l}</div>
-          ))}
-        </div>
-      </div>
-    </AbsoluteFill>
-  );
-};
-
 // "Rigenerare vs ricomprare" comparison.
 export const VsCard: React.FC<{ good: string; bad: string; y: number }> = ({ good, bad, y }) => {
   const { enter, exit, frame, fps } = useInOut();
@@ -650,8 +499,8 @@ export const VsCard: React.FC<{ good: string; bad: string; y: number }> = ({ goo
         padding: "14px 34px 14px 18px",
         fontWeight: 900,
         fontSize: ok ? 70 : 50,
-        color: ok ? colors.lime : "rgba(255,255,255,0.8)",
-        border: `4px solid ${ok ? colors.lime : colors.red}`,
+        color: ok ? colors.yellow : "rgba(255,255,255,0.8)",
+        border: `4px solid ${ok ? colors.yellow : colors.red}`,
         transform: `scale(${k}) rotate(${ok ? -2 : 2}deg)`,
       }}
     >
@@ -690,7 +539,7 @@ export const Sticker: React.FC<{ text: string; x: number; y: number; color?: str
   text,
   x,
   y,
-  color = colors.lime,
+  color = colors.yellow,
   rotate = -8,
 }) => {
   const { enter, exit } = useInOut();
@@ -720,72 +569,57 @@ export const Sticker: React.FC<{ text: string; x: number; y: number; color?: str
   );
 };
 
-// Brand wordmark: "Elettr" + spinning atom + "mec", like the sweatshirt print.
-export const Logo: React.FC<{ size: number; spin: number }> = ({ size, spin }) => (
-  <div
-    style={{
-      display: "flex",
-      alignItems: "center",
-      fontFamily: script,
-      fontSize: size,
-      color: colors.lime,
-      lineHeight: 1,
-      filter: glow(colors.lime),
-    }}
-  >
-    <span>Elettr</span>
-    <span style={{ margin: `0 ${size * 0.02}px`, transform: `translateY(${size * 0.06}px)` }}>
-      <AtomIcon size={size * 0.72} spin={spin} />
-    </span>
-    <span>mec</span>
-  </div>
+// Small logo in the bottom centre of the footage.
+export const Watermark: React.FC = () => (
+  <AbsoluteFill style={{ alignItems: "center", justifyContent: "flex-end" }}>
+    <Img
+      src={staticFile("elettromec/brand/atom-white.png")}
+      style={{
+        width: 110,
+        marginBottom: 70,
+        opacity: 0.9,
+        filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.6))",
+      }}
+    />
+  </AbsoluteFill>
 );
 
-// Closing card appended after the footage.
+// Closing card appended after the footage: white logo on black.
 export const EndCard: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const enter = spring({ frame, fps, config: { damping: 10, mass: 0.7 } });
-  const tag = spring({ frame: frame - 10, fps, config: { damping: 14 } });
-  const flash = interpolate(frame, [0, 6], [0.9, 0], { extrapolateRight: "clamp" });
+  const word = spring({ frame: frame - 8, fps, config: { damping: 14 } });
+  const flash = interpolate(frame, [0, 6], [0.8, 0], {
+    extrapolateRight: "clamp",
+  });
   return (
     <AbsoluteFill
       style={{
-        background: `radial-gradient(circle at 50% 45%, ${colors.navy} 0%, ${colors.navyDeep} 70%)`,
+        backgroundColor: "black",
         alignItems: "center",
         justifyContent: "center",
       }}
     >
-      <svg width={1080} height={1920} style={{ position: "absolute", opacity: 0.25 }}>
-        {Array.from({ length: 9 }).map((_, i) => (
-          <line
-            key={i}
-            x1={-200}
-            y1={i * 260 - 300 + (frame * 6) % 260}
-            x2={1280}
-            y2={i * 260 - 700 + (frame * 6) % 260}
-            stroke={colors.lime}
-            strokeWidth={2}
-          />
-        ))}
-      </svg>
-      <div style={{ transform: `scale(${interpolate(enter, [0, 1], [0.3, 1])}) rotate(-4deg)` }}>
-        <Logo size={170} spin={frame * 4} />
-      </div>
+      <Img
+        src={staticFile("elettromec/brand/atom-white.png")}
+        style={{
+          width: 520,
+          transform: `scale(${interpolate(enter, [0, 1], [0.3, 1])}) rotate(${interpolate(enter, [0, 1], [-120, 0]) + frame * 0.4}deg)`,
+        }}
+      />
       <div
         style={{
           marginTop: 40,
-          fontFamily: sans,
-          fontWeight: 900,
-          fontStyle: "italic",
-          fontSize: 50,
-          letterSpacing: 2,
+          fontFamily: script,
+          fontSize: 150,
           color: "white",
-          opacity: tag,
-          transform: `translateY(${interpolate(tag, [0, 1], [30, 0])}px)`,
+          lineHeight: 1,
+          opacity: word,
+          transform: `translateY(${interpolate(word, [0, 1], [40, 0])}px) rotate(-4deg)`,
         }}
       >
-        SE FUNZIONA, È ELETTROMEC
+        Elettromec
       </div>
       <AbsoluteFill style={{ background: "white", opacity: flash }} />
     </AbsoluteFill>

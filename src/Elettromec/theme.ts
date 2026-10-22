@@ -1,6 +1,7 @@
 import { continueRender, delayRender, staticFile } from "remotion";
 
 export const sans = "Montserrat";
+export const captionFont = "Poppins";
 export const script = "Kaushan Script";
 
 // Fonts are bundled in public/fonts so rendering works offline.
@@ -10,6 +11,9 @@ const FONTS: [string, string, string, string][] = [
   [sans, "900", "normal", "montserrat-latin-900-normal"],
   [sans, "900", "italic", "montserrat-latin-900-italic"],
   [script, "400", "normal", "kaushan-script-latin-400-normal"],
+  [captionFont, "600", "normal", "poppins-latin-600-normal"],
+  [captionFont, "700", "normal", "poppins-latin-700-normal"],
+  [captionFont, "800", "normal", "poppins-latin-800-normal"],
 ];
 
 const handle = delayRender("Loading Elettromec fonts");
@@ -24,15 +28,13 @@ Promise.all(
   ),
 ).then(() => continueRender(handle));
 
-// Taken from the brand: lime script logo on navy sweatshirts.
+// White text, yellow only for emphasis; navy from the brand sweatshirts.
 export const colors = {
-  lime: "#D8F23C",
+  yellow: "#FFD60A",
   navy: "#1C1F6B",
   navyDeep: "#0D0F3A",
-  violet: "#A46BFF",
   white: "#FFFFFF",
   red: "#FF3B3B",
-  whatsapp: "#25D366",
 };
 
 export const FPS = 30;

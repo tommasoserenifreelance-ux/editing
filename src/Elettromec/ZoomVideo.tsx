@@ -4,10 +4,12 @@ import {
   Easing,
   interpolate,
   OffthreadVideo,
+  Sequence,
   staticFile,
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import { Segment } from "./timeline";
 
 // punch: hard cut in and out (emphasis). push: eased zoom in, eased zoom out.
 export type Zoom = {
@@ -43,17 +45,33 @@ const zoomAt = (zooms: Zoom[], t: number) => {
   return { scale: 1, origin: "50% 40%" };
 };
 
-export const ZoomVideo: React.FC<{ src: string; zooms: Zoom[] }> = ({
-  src,
-  zooms,
-}) => {
+// Plays the kept segments back to back. `mute` holds output-frame ranges (bleeps).
+export const ZoomVideo: React.FC<{
+  src: string;
+  zooms: Zoom[];
+  segments: Segment[];
+  mute: [number, number][];
+}> = ({ src, zooms, segments, mute }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const { scale, origin } = zoomAt(zooms, frame / fps);
   return (
     <AbsoluteFill style={{ backgroundColor: "black", overflow: "hidden" }}>
       <AbsoluteFill style={{ transform: `scale(${scale})`, transformOrigin: origin }}>
-        <OffthreadVideo src={staticFile(src)} />
+        {segments.map((seg) => (
+          <Sequence key={seg.from} from={seg.from} durationInFrames={seg.dur}>
+            <OffthreadVideo
+              src={staticFile(src)}
+              trimBefore={Math.round(seg.src * fps)}
+              volume={(f) => {
+                const abs = seg.from + f;
+                if (mute.some(([a, b]) => abs >= a && abs < b)) return 0;
+                // Two-frame ramps at the cuts avoid clicks.
+                return 0.9 * Math.min(1, (f + 1) / 2, (seg.dur - f) / 2);
+              }}
+            />
+          </Sequence>
+        ))}
       </AbsoluteFill>
     </AbsoluteFill>
   );
