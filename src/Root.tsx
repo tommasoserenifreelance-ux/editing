@@ -1,4 +1,5 @@
 import { Composition, Folder } from "remotion";
+import { ElettromecCompositions } from "./Elettromec";
 import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
@@ -72,6 +73,7 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
       />
+      <ElettromecCompositions />
     </>
   );
 };
