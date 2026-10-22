@@ -1,5 +1,11 @@
 import React from "react";
-import { AbsoluteFill, Sequence, useVideoConfig } from "remotion";
+import {
+  AbsoluteFill,
+  interpolate,
+  Sequence,
+  useCurrentFrame,
+  useVideoConfig,
+} from "remotion";
 import { Captions, groupWords, isEmphasis, Word } from "./Captions";
 import { EndCard, Sfx, Watermark } from "./graphics";
 import { END_CARD, FPS } from "./theme";
@@ -14,14 +20,18 @@ export type VideoSpec = {
   captionY: number;
   hideCaptions?: [number, number][];
   bleep?: [number, number][];
+  grayFrom?: number; // black & white from here to the end of the footage
   zooms: Zoom[];
   overlays: React.ReactNode;
 };
+
+const CAPTION_SFX_GAP = 7; // seconds between caption swishes
 
 export const durationOf = (spec: VideoSpec) =>
   buildTimeline(spec.keep, FPS).frames + END_CARD;
 
 export const ElettromecVideo: React.FC<{ spec: VideoSpec }> = ({ spec }) => {
+  const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const { segments, toFrame, frames } = React.useMemo(
     () => buildTimeline(spec.keep, fps),
@@ -38,34 +48,46 @@ export const ElettromecVideo: React.FC<{ spec: VideoSpec }> = ({ spec }) => {
     return { ...z, t, d: end - t };
   });
 
-  // A swish on every highlighted word, plus a pop when it's a yellow one.
-  const captionSfx = groupWords(words)
+  // A soft swish on a few yellow words only, spaced out so it stays natural.
+  const captionSfx: Word[] = [];
+  groupWords(words)
     .filter((g) => !hidden.some(([a, b]) => g.start < b && g.end > a))
-    .map((g) => g.words[g.key]);
+    .map((g) => g.words[g.key])
+    .filter((w) => isEmphasis(w.w))
+    .forEach((w) => {
+      const last = captionSfx[captionSfx.length - 1];
+      if (!last || w.s - last.s >= CAPTION_SFX_GAP) captionSfx.push(w);
+    });
+  const gray =
+    spec.grayFrom === undefined
+      ? 0
+      : interpolate(frame, [toFrame(spec.grayFrom), toFrame(spec.grayFrom) + 4], [0, 1], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+        });
 
   return (
     <TimeContext.Provider value={toFrame}>
       <AbsoluteFill style={{ backgroundColor: "black" }}>
         <Sequence durationInFrames={frames}>
-          <ZoomVideo
-            src={spec.src}
-            zooms={zooms}
-            segments={segments}
-            mute={bleep.map(([a, b]) => [toFrame(a), toFrame(b)])}
-          />
+          <AbsoluteFill style={{ filter: `grayscale(${gray})` }}>
+            <ZoomVideo
+              src={spec.src}
+              zooms={zooms}
+              segments={segments}
+              mute={bleep.map(([a, b]) => [toFrame(a), toFrame(b)])}
+            />
+          </AbsoluteFill>
           <Watermark />
           {spec.overlays}
           <Captions words={words} y={spec.captionY} hide={hidden} />
           {captionSfx.map((w) => (
-            <React.Fragment key={w.s}>
-              <Sfx t={w.s - 0.03} raw name="swish" volume={0.35} />
-              {isEmphasis(w.w) && <Sfx t={w.s} raw name="pop" volume={0.45} />}
-            </React.Fragment>
+            <Sfx key={w.s} t={w.s - 0.03} raw name="swish" volume={0.25} />
           ))}
           {zooms
             .filter((z) => z.type === "push")
             .map((z) => (
-              <Sfx key={z.t} t={z.t} raw name="whoosh" volume={0.4} />
+              <Sfx key={z.t} t={z.t} raw name="whoosh" volume={0.25} />
             ))}
           {bleep.map(([a, b]) => (
             <Sfx key={a} t={a} name="beep" volume={0.5} dur={b - a} />

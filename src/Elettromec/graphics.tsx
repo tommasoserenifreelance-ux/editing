@@ -10,7 +10,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { colors, sans, script } from "./theme";
+import { captionFont, colors, sans } from "./theme";
 import { useToFrame } from "./timeline";
 
 // ---------- timing helpers ----------
@@ -157,6 +157,30 @@ const CrossIcon: React.FC<{ size: number }> = ({ size }) => (
   </svg>
 );
 
+const CameraIcon: React.FC<{ size: number }> = ({ size }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24">
+    <rect x={2} y={6} width={20} height={14} rx={3} fill="white" />
+    <rect x={8} y={3} width={8} height={4} rx={1.5} fill="white" />
+    <circle cx={12} cy={13} r={4.2} fill={colors.whatsapp} />
+    <circle cx={12} cy={13} r={2.2} fill="white" />
+  </svg>
+);
+
+
+const SnowIcon: React.FC<{ size: number }> = ({ size }) => (
+  <svg width={size} height={size} viewBox="-50 -50 100 100">
+    {[0, 60, 120].map((r) => (
+      <g key={r} transform={`rotate(${r})`} stroke="white" strokeWidth={7} strokeLinecap="round">
+        <line x1={0} y1={-44} x2={0} y2={44} />
+        <line x1={0} y1={-30} x2={-12} y2={-42} />
+        <line x1={0} y1={-30} x2={12} y2={-42} />
+        <line x1={0} y1={30} x2={-12} y2={42} />
+        <line x1={0} y1={30} x2={12} y2={42} />
+      </g>
+    ))}
+  </svg>
+);
+
 const icons = {
   pin: PinIcon,
   check: CheckIcon,
@@ -234,6 +258,153 @@ const card: React.CSSProperties = {
   boxShadow: `8px 10px 0 ${colors.navyDeep}, 0 0 40px ${colors.yellow}55`,
   color: colors.white,
   fontFamily: sans,
+};
+
+// "CONSIGLIO #1"-style card that slides in from the left.
+
+// Big centred title for hooks.
+
+// WhatsApp-style message bubble with a camera icon.
+
+// "CONSIGLIO #1"-style card that slides in from the left.
+export const Badge: React.FC<{
+  kicker: string;
+  title: string;
+  sub?: string;
+  y?: number;
+}> = ({ kicker, title, sub, y = 210 }) => {
+  const { enter, exit } = useInOut();
+  const subIn = useInOut(6).enter;
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left: 60,
+        top: y,
+        opacity: exit,
+        transform: `translateX(${interpolate(enter, [0, 1], [-700, 0])}px) rotate(-2deg)`,
+      }}
+    >
+      <div style={{ ...card, display: "flex", alignItems: "center", gap: 22, padding: "20px 34px 20px 22px" }}>
+        <div style={{ filter: glow(colors.yellow) }}>
+          <BoltIcon size={92} />
+        </div>
+        <div>
+          <div style={{ fontWeight: 800, fontSize: 34, letterSpacing: 4, color: colors.yellow }}>
+            {kicker}
+          </div>
+          <div style={{ fontWeight: 900, fontStyle: "italic", fontSize: 76, lineHeight: 1 }}>
+            {title}
+          </div>
+        </div>
+      </div>
+      {sub && (
+        <div
+          style={{
+            display: "inline-block",
+            marginTop: 14,
+            marginLeft: 30,
+            padding: "10px 24px",
+            borderRadius: 16,
+            background: colors.yellow,
+            color: colors.navyDeep,
+            fontFamily: sans,
+            fontWeight: 900,
+            fontSize: 38,
+            transform: `scale(${subIn})`,
+            transformOrigin: "left center",
+          }}
+        >
+          {sub}
+        </div>
+      )}
+    </div>
+  );
+};
+
+
+// Big centred title for hooks.
+export const HeroTitle: React.FC<{ top: string; big: string; y?: number; icon?: "snow" | "bolt" }> = ({
+  top,
+  big,
+  y = 330,
+  icon = "bolt",
+}) => {
+  const { enter, exit, frame } = useInOut();
+  const bigIn = useInOut(5).enter;
+  return (
+    <AbsoluteFill style={{ alignItems: "center", opacity: exit }}>
+      <div style={{ position: "absolute", top: y, display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <div
+          style={{
+            ...card,
+            padding: "12px 34px",
+            fontWeight: 800,
+            fontSize: 42,
+            letterSpacing: 3,
+            transform: `scale(${enter}) rotate(-3deg)`,
+          }}
+        >
+          {top}
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 10, transform: `scale(${bigIn})` }}>
+          <div
+            style={{
+              fontFamily: sans,
+              fontWeight: 900,
+              fontStyle: "italic",
+              fontSize: 112,
+              color: colors.yellow,
+              WebkitTextStroke: `7px ${colors.navyDeep}`,
+              paintOrder: "stroke fill",
+              textShadow: `9px 10px 0 ${colors.navyDeep}`,
+              lineHeight: 1,
+            }}
+          >
+            {big}
+          </div>
+          <div style={{ transform: `rotate(${frame * 2}deg)`, filter: glow(colors.white) }}>
+            {icon === "snow" ? <SnowIcon size={110} /> : <BoltIcon size={120} />}
+          </div>
+        </div>
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+
+// WhatsApp-style message bubble with a camera icon.
+export const ChatBubble: React.FC<{ lines: string[]; y: number }> = ({ lines, y }) => {
+  const { enter, exit } = useInOut();
+  return (
+    <AbsoluteFill style={{ alignItems: "center", opacity: exit }}>
+      <div
+        style={{
+          position: "absolute",
+          top: y,
+          display: "flex",
+          alignItems: "center",
+          gap: 22,
+          padding: "22px 34px 22px 24px",
+          borderRadius: "34px 34px 34px 6px",
+          background: colors.whatsapp,
+          boxShadow: `8px 10px 0 ${colors.navyDeep}`,
+          transform: `translateY(${interpolate(enter, [0, 1], [120, 0])}px) scale(${enter})`,
+          fontFamily: sans,
+          color: "white",
+        }}
+      >
+        <div style={{ background: "rgba(0,0,0,0.18)", borderRadius: 20, padding: 12 }}>
+          <CameraIcon size={86} />
+        </div>
+        <div style={{ fontWeight: 900, fontSize: 46, lineHeight: 1.1 }}>
+          {lines.map((l) => (
+            <div key={l}>{l}</div>
+          ))}
+        </div>
+      </div>
+    </AbsoluteFill>
+  );
 };
 
 // Battery icon that drains (red) or charges (yellow) segment by segment.
@@ -590,7 +761,7 @@ export const Watermark: React.FC = () => (
   </AbsoluteFill>
 );
 
-// Closing card appended after the footage: white logo on black.
+// Closing card appended after the footage: white logo and tagline on black.
 export const EndCard: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -616,16 +787,17 @@ export const EndCard: React.FC = () => {
       />
       <div
         style={{
-          marginTop: 40,
-          fontFamily: script,
-          fontSize: 150,
+          marginTop: 50,
+          fontFamily: captionFont,
+          fontWeight: 800,
+          fontSize: 64,
           color: "white",
           lineHeight: 1,
           opacity: word,
-          transform: `translateY(${interpolate(word, [0, 1], [40, 0])}px) rotate(-4deg)`,
+          transform: `translateY(${interpolate(word, [0, 1], [40, 0])}px)`,
         }}
       >
-        Elettromec
+        Se funziona, è Elettromec
       </div>
       <AbsoluteFill style={{ background: "white", opacity: flash }} />
     </AbsoluteFill>

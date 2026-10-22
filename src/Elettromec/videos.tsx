@@ -4,9 +4,12 @@ import { Word } from "./Captions";
 import { VideoSpec } from "./ElettromecVideo";
 import {
   At,
+  Badge,
   Battery,
   Bolt,
+  ChatBubble,
   Chips,
+  HeroTitle,
   ProductTag,
   Sfx,
   SosBadge,
@@ -51,6 +54,15 @@ export const video1: VideoSpec = {
   keep: v1Keep as Keep,
   words: v1Words as Word[],
   captionY: 1400,
+  // Title and tip cards carry these words.
+  hideCaptions: [
+    [0.2, 3.5],
+    [10.1, 11.2],
+    [30.45, 31.45],
+    [40.8, 41.75],
+  ],
+  // He throws the boxes in the air: black & white.
+  grayFrom: 53.2,
   zooms: [
     { t: 0, d: 3.5, s: 1.35, type: "push", y: 45 },
     { t: 5.4, d: 2.4, s: 1.2, x: 50, y: 40 },
@@ -65,10 +77,26 @@ export const video1: VideoSpec = {
   ],
   overlays: (
     <>
-      {/* "Consiglio numero ..." */}
-      {[10.16, 30.5, 40.87].map((t) => (
-        <Sfx key={t} t={t} name="hit" volume={0.55} />
-      ))}
+      <At t={0.2} d={3.3}>
+        <HeroTitle top="BATTERIA IN INVERNO" big="3 CONSIGLI" icon="snow" />
+      </At>
+      <Sfx t={0.2} name="whoosh" volume={0.5} />
+      <Sfx t={0.45} name="hit" volume={0.5} />
+
+      <At t={10.1} d={6.6}>
+        <Badge kicker="CONSIGLIO" title="#1" sub="Non farla scaricare" />
+      </At>
+      <Sfx t={10.1} name="whoosh" volume={0.5} />
+
+      <At t={30.45} d={9.9}>
+        <Badge kicker="CONSIGLIO" title="#2" sub="Riparala dal freddo" />
+      </At>
+      <Sfx t={30.45} name="whoosh" volume={0.5} />
+
+      <At t={40.8} d={11.3}>
+        <Badge kicker="CONSIGLIO" title="#3" sub="Mantenitore di carica" />
+      </At>
+      <Sfx t={40.8} name="whoosh" volume={0.5} />
 
       <At t={42.0} d={3.2}>
         <Battery mode="charge" x={800} y={760} />
@@ -166,7 +194,11 @@ export const video2: VideoSpec = {
   keep: v2Keep as Keep,
   words: v2Words as Word[],
   captionY: 1520,
-  hideCaptions: [[0.4, 3.3]],
+  hideCaptions: [
+    [0.4, 3.3],
+    [14.05, 18.2],
+    [20.45, 23.3],
+  ],
   zooms: [
     { t: 3.4, d: 1.0, s: 1.18, y: 30 },
     { t: 7.1, d: 1.2, s: 1.22, y: 30 },
@@ -189,6 +221,25 @@ export const video2: VideoSpec = {
         <FocusQuestion />
       </At>
       <Sfx t={3.35} name="ding" volume={0.5} />
+
+      <At t={14.0} d={4.3}>
+        <ChatBubble y={1040} lines={["Mandaci una foto", "dell'etichetta"]} />
+      </At>
+      <Sfx t={14.0} name="ding" volume={0.45} />
+
+      <At t={20.4} d={3.0}>
+        <Chips
+          y={1000}
+          align="center"
+          icon="check"
+          items={[
+            { label: "FATTIBILITÀ", t: 20.5 },
+            { label: "COSTO INDICATIVO", t: 21.7 },
+          ]}
+        />
+      </At>
+      <Sfx t={20.5} name="pop" volume={0.5} />
+      <Sfx t={21.7} name="pop" volume={0.5} />
     </>
   ),
 };
@@ -207,9 +258,8 @@ export const video3: VideoSpec = {
     [28.0, 29.1],
   ],
   zooms: [
-    { t: 2.3, d: 0.8, s: 1.2, y: 30 },
-    { t: 3.1, d: 1.7, s: 1.3, y: 25 },
-    { t: 9.2, d: 1.6, s: 1.2, y: 30 },
+    // No zooms on the second speaker (2.88-5.68, 9.14-11.32, 33.08-36.48).
+    { t: 2.3, d: 0.55, s: 1.2, y: 30 },
     { t: 11.8, d: 1.4, s: 1.25, y: 30 },
     { t: 13.6, d: 1.8, s: 1.15, type: "push", y: 40 },
     { t: 15.9, d: 1.4, s: 1.2, y: 45 },
@@ -217,7 +267,6 @@ export const video3: VideoSpec = {
     { t: 25.4, d: 1.2, s: 1.25, y: 40 },
     { t: 28.0, d: 1.2, s: 1.2, y: 50 },
     { t: 31.6, d: 1.4, s: 1.3, y: 35 },
-    { t: 33.1, d: 3.2, s: 1.25, type: "push", y: 30 },
     { t: 36.7, d: 2.3, s: 1.3, y: 30 },
   ],
   overlays: (
@@ -239,7 +288,6 @@ export const video3: VideoSpec = {
       </At>
       <Sfx t={28.0} name="whoosh" volume={0.6} />
 
-      <BrandHit t={35.4} x={880} y={300} />
       <BrandHit t={38.2} x={540} y={380} />
     </>
   ),
@@ -262,9 +310,8 @@ export const video4: VideoSpec = {
     { t: 7.7, d: 1.1, s: 1.3, y: 30 },
     { t: 11.1, d: 1.6, s: 1.2, y: 30 },
     { t: 14.5, d: 3.3, s: 1.2, type: "push", y: 35 },
-    { t: 26.0, d: 1.8, s: 1.25, y: 30 },
-    { t: 28.1, d: 0.9, s: 1.2, y: 40 },
-    { t: 29.3, d: 1.6, s: 1.45, y: 40 },
+    // No zooms on the man behind the bars (26.5-31.0).
+    { t: 26.0, d: 0.45, s: 1.25, y: 30 },
     { t: 31.0, d: 2.2, s: 1.2, type: "push", y: 30 },
     { t: 33.4, d: 2.0, s: 1.3, y: 30 },
   ],

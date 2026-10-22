@@ -35,6 +35,7 @@ export const colors = {
   navyDeep: "#0D0F3A",
   white: "#FFFFFF",
   red: "#FF3B3B",
+  whatsapp: "#25D366",
 };
 
 export const FPS = 30;
