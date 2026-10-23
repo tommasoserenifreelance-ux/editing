@@ -35,12 +35,12 @@ SHOTS = [
     (72, 83, 20, 0.00, 'c', {}),                                # muffled run-up to the drop
     (84, 106, 9, 0.00, 'c', {}),
     (107, 128, 3, 0.00, 'bw', {}),                              # drop
-    (129, 151, 7, 0.00, 'c', dict(white=[129], half=[130])),
+    (129, 151, 7, 0.00, 'c', {}),
     (152, 173, 12, 0.20, 'c', dict(ramp=1.6)),                  # DJ speed ramp
-    (174, 196, 13, 0.00, 'c', dict(photos=[177, 183, 189])),    # photo burst: freeze + shutter
+    (174, 196, 13, 0.00, 'c', {}),
     (197, 219, 16, 0.30, 'c', dict(white=[197], half=[198])),
     (220, 241, 17, 0.00, 'bw', {}),
-    (242, 253, 22, 1.20, 'c', {}),                              # bartender, once
+    (242, 253, 5, 2.35, 'c', dict(crop=(1.45, 0.10))),         # kiss -> heart hands, framed tight
     (254, 276, 15, 0.10, 'c', dict(white=[254], half=[255], ramp=1.2)),
     (277, 299, 10, 0.20, 'c', dict(ramp=1.5)),
     (300, 321, 6, 0.20, 'bw', {}),
@@ -61,12 +61,13 @@ LOWPASS_FROM = 401 / FPS        # end cards
 # blacks with a hint of blue, gently desaturated so skin reads natural.
 GRADE = ("colortemperature=temperature=5200:mix=0.55:pl=1,"
          "colorbalance=rs=-0.02:bs=0.03:rm=-0.03:bm=0.02:rh=0.02:gh=0.01,"
-         "eq=contrast=0.90:saturation=0.82:gamma=1.15:brightness=0.025,"
-         "curves=r='0/0.07 0.5/0.53 1/0.96':g='0/0.07 0.5/0.52 1/0.96':b='0/0.09 0.5/0.52 1/0.95'")
-BW = "hue=s=0,eq=contrast=1.06:gamma=1.08,curves=all='0/0.06 0.5/0.52 1/0.96'"
+         "eq=contrast=1.0:saturation=0.84:gamma=1.13:brightness=0.015,"
+         "curves=r='0/0.05 0.5/0.53 1/0.97':g='0/0.05 0.5/0.52 1/0.97':b='0/0.07 0.5/0.52 1/0.96'")
+BW = "hue=s=0,eq=contrast=1.14:gamma=1.06,curves=all='0/0.04 0.5/0.52 1/0.97'"
 BW_DEEP = "hue=s=0,eq=contrast=1.18,curves=all='0/0.0 0.5/0.5 1/0.97'"  # night sky stays black
 FONT = os.path.join(HERE, '..', 'public', 'fonts', 'BarlowCondensed-SemiBoldItalic.ttf')
 TITLE = ('PIAZZA DELLA SIGNORIA', 'EVERY FRIDAY')
+TITLE_IN = 0.40      # s after the tower cut when the first title line lands
 FIT = f"scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H}"
 
 
@@ -155,6 +156,9 @@ def camera(n, fx):
         z.append('0.14*pow(max(0,1-n/6),2)')
     if fx.get('shake'):
         z.append('0.03')
+    if fx.get('crop'):  # static punch-in to reframe (zoom, vertical anchor 0=top..1=bottom)
+        zc, yf = fx['crop']
+        return f"scale=w='ceil({W}*{zc}/2)*2':h=-2,crop={W}:{H}:x='(iw-{W})/2':y='(ih-{H})*{yf}'"
     if len(z) == 1:
         return None
     sx = sy = '0'
@@ -259,14 +263,28 @@ def title_pngs(tmp):
 
 
 def add_title(g, tmp):
-    """Lines rise into place with an ease-out and fade, second line a beat later."""
+    """Line 1 slams in from 160% scale with a motion-blur ghost and a glow pulse on
+    landing; line 2 follows, opening up from 85%."""
     l1, l2 = title_pngs(tmp)
-    g.steps.append("[1:v]format=rgba,fade=in:st=0.12:d=0.22:alpha=1[t1]")
-    g.steps.append("[2:v]format=rgba,fade=in:st=0.30:d=0.30:alpha=1[t2]")
-    rise = lambda st: f"40*pow(max(0,1-(t-{st})/0.45),3)"
-    g.steps.append(f"[{g.cur}][t1]overlay=x='(W-w)/2':y='(H/2)-140+{rise(0.10)}':shortest=1[o1]")
-    g.steps.append(f"[o1][t2]overlay=x='(W-w)/2':y='(H/2)+15+{rise(0.30)}':shortest=1[o2]")
-    g.cur = 'o2'
+    land = TITLE_IN
+    st1 = land - 0.22
+    ease1 = f"pow(max(0,1-(t-{st1})/0.22),3)"           # 1 -> 0, ease-out
+    ease2 = f"pow(max(0,1-(t-{land + 0.12})/0.3),3)"
+    g.steps += [
+        f"[1:v]format=rgba,split=3[a1][b1][c1]",
+        f"[a1]fade=in:st={st1}:d=0.12:alpha=1,scale=w='iw*(1+0.6*{ease1})':h=-1:eval=frame[t1]",
+        f"[b1]gblur=sigma=14,fade=in:st={st1}:d=0.08:alpha=1,fade=out:st={land - 0.04}:d=0.12:alpha=1,"
+        f"scale=w='iw*(1+0.9*{ease1})':h=-1:eval=frame[g1]",
+        f"[c1]gblur=sigma=30,colorchannelmixer=aa=0.9,fade=in:st={land - 0.02}:d=0.03:alpha=1,"
+        f"fade=out:st={land + 0.05}:d=0.5:alpha=1[p1]",
+        f"[2:v]format=rgba,fade=in:st={land + 0.12}:d=0.2:alpha=1,"
+        f"scale=w='iw*(1-0.15*{ease2})':h=-1:eval=frame[t2]",
+        f"[{g.cur}][g1]overlay=x='(W-w)/2':y='(H/2)-90-h/2':shortest=1[o1]",
+        f"[o1][t1]overlay=x='(W-w)/2':y='(H/2)-90-h/2':shortest=1[o2]",
+        f"[o2][p1]overlay=x='(W-w)/2':y='(H/2)-90-h/2':shortest=1[o3]",
+        f"[o3][t2]overlay=x='(W-w)/2':y='(H/2)+40':shortest=1[o4]",
+    ]
+    g.cur = 'o4'
     return ['-loop', '1', '-framerate', str(FPS), '-i', l1, '-loop', '1', '-framerate', str(FPS), '-i', l2]
 
 
@@ -303,9 +321,6 @@ def render_shot(i, a, b, clip, inp, look, fx, tmp):
     return out
 
 
-TITLE_IN = 0.28      # s after the tower cut when the first title line lands
-
-
 def sound_design():
     """Fujifilm shutter on every flash and photo, swooshes on the big moves,
     title hit, sub drop on the drop, impact on the logo."""
@@ -319,15 +334,15 @@ def sound_design():
                                   fade_out=0.025, gain_db=db)
     ev, k = [], 0
     for a, b, clip, inp, look, fx in SHOTS:
-        if fx.get('white'):
+        if fx.get('white') and not fx.get('text'):
             ev.append(sfx.place(t(fx['white'][0]), click(k, -4), 0.008)); k += 5
         for p in fx.get('photos', []):       # photo burst: a click per frozen frame
             ev.append(sfx.place(t(p), click(k, -3), 0.008)); k += 1
-        if fx.get('text'):                   # title lands: short swoosh + soft sub thump
-            ev.append(sfx.place(t(a) + TITLE_IN, sfx.cut(swoosh, 0.9, 1.7, fade_in=0.15, fade_out=0.25,
-                                                         gain_db=-8), SW_PEAK - 0.9))
-            ev.append(sfx.place(t(a) + TITLE_IN, sfx.cut(sub, 0.9, 1.9, fade_in=0.005, fade_out=0.7,
-                                                         gain_db=-20), 0.915 - 0.9))
+        if fx.get('text'):                   # title slam: swoosh rushing in + impact on landing
+            ev.append(sfx.place(t(a) + TITLE_IN, sfx.cut(swoosh, 0.7, 1.45, fade_in=0.2, fade_out=0.05,
+                                                         gain_db=-9), SW_PEAK - 0.7))
+            ev.append(sfx.place(t(a) + TITLE_IN, sfx.cut(impact, 0.66, 1.9, fade_in=0.01, fade_out=0.6,
+                                                         gain_db=-8), 0.733 - 0.66))
         if 'ramp' in fx and clip == 18:      # House of Negroni: fast swoosh peaking as it slows
             rate = 1.7
             ev.append(sfx.place(t(a + 4), sfx.cut(swoosh, 0.6, 2.2, fade_in=0.05, fade_out=0.3,
