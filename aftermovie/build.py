@@ -37,7 +37,7 @@ SHOTS = [
     (107, 128, 3, 0.00, 'bw', {}),                              # drop
     (129, 151, 7, 0.00, 'c', {}),
     (152, 173, 12, 0.20, 'c', dict(ramp=1.6)),                  # DJ speed ramp
-    (174, 196, 13, 0.00, 'c', {}),
+    (174, 196, 13, 0.00, 'c', dict(white=[174], half=[175], ramp=0.76)),  # flash + speed ramp
     (197, 219, 16, 0.30, 'c', dict(white=[197], half=[198])),
     (220, 241, 17, 0.00, 'bw', {}),
     (242, 253, 5, 2.35, 'c', dict(crop=(1.45, 0.10))),         # kiss -> heart hands, framed tight
