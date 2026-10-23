@@ -205,3 +205,37 @@ def render(events, length_s):
         snd = snd[k0 - k:]
         out[k0:k0 + len(snd)] += snd[:len(out) - k0]
     return out[:int(length_s * SR)]
+
+
+# ---------------------------------------------------------------- user samples
+SAMPLES = {}
+
+
+def sample(name):
+    """Stereo float array at SR from aftermovie/sfx/<name>.mp3 (cached)."""
+    if name not in SAMPLES:
+        import librosa, os
+        y, _ = librosa.load(os.path.join(os.path.dirname(__file__), 'sfx', name + '.mp3'), sr=SR, mono=False)
+        y = np.atleast_2d(y)
+        SAMPLES[name] = (np.vstack([y, y]) if y.shape[0] == 1 else y[:2]).T.copy()
+    return SAMPLES[name]
+
+
+def cut(x, start, end=None, fade_in=0.004, fade_out=0.05, gain_db=0.0, rate=1.0):
+    """Slice [start, end) seconds with short fades; rate>1 plays faster (and higher)."""
+    if rate != 1.0:
+        n = int(len(x) / rate)
+        x = signal.resample(x, n, axis=0)
+    a, b = int(start / rate * SR), int((end / rate if end else len(x) / SR) * SR)
+    y = x[a:b].copy()
+    fi, fo = int(fade_in * SR), int(fade_out * SR)
+    if fi:
+        y[:fi] *= np.linspace(0, 1, fi)[:, None]
+    if fo:
+        y[-fo:] *= np.linspace(1, 0, fo)[:, None] ** 2
+    return y * 10 ** (gain_db / 20)
+
+
+def place(t_anchor, y, anchor_in_y):
+    """Event so that sample time `anchor_in_y` (s) lands on `t_anchor`."""
+    return (t_anchor - anchor_in_y, y, 'start')
