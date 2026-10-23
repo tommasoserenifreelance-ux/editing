@@ -43,7 +43,7 @@ SHOTS = [
     (242, 253, 5, 2.35, 'c', dict(crop=(1.45, 0.10))),         # kiss -> heart hands, framed tight
     (254, 276, 15, 0.10, 'c', dict(white=[254], half=[255], ramp=1.2)),
     (277, 299, 10, 0.20, 'c', dict(ramp=1.5)),
-    (300, 321, 6, 0.20, 'bw', {}),
+    (300, 321, 6, 0.20, 'bw', dict(white=[300], half=[301], ramp=1.0)),  # flash + speed ramp
     (322, 333, 2, 0.30, 'c', {}),
     (334, 356, 11, 0.20, 'c', dict(white=[334], half=[335])),
     (357, 367, 8, 0.30, 'bw', {}),
@@ -192,7 +192,7 @@ def photo_times(n, starts, hold=4):
     return out
 
 
-def render_remap(a, n, clip, inp, fx, out):
+def render_remap(a, n, clip, inp, look, fx, out):
     """Render a shot whose output frames map to arbitrary source times."""
     if 'ramp' in fx:
         e = ramp_times(n, fx['ramp'])
@@ -201,7 +201,7 @@ def render_remap(a, n, clip, inp, fx, out):
         spans = photo_times(n, [p - a for p in fx['photos']])
     span = spans[-1][1]
     raw = subprocess.run(['ffmpeg', '-ss', f'{inp:.3f}', '-t', f'{span + 0.15:.3f}', '-i', clip_path(clip),
-                          '-vf', f'{FIT},{GRADE}', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'],
+                          '-vf', f"{FIT},{BW if look == 'bw' else GRADE}", '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'],
                          check=True, capture_output=True).stdout
     src = np.frombuffer(raw, np.uint8).reshape(-1, H, W, 3)
     src_fps = 50
@@ -295,7 +295,7 @@ def render_shot(i, a, b, clip, inp, look, fx, tmp):
         render_logo(n, clip, out)
         return out
     if 'ramp' in fx or 'photos' in fx:
-        render_remap(a, n, clip, inp, fx, out)
+        render_remap(a, n, clip, inp, look, fx, out)
         return out
     g = Graph()
     base = []
