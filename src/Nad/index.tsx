@@ -20,6 +20,8 @@ import {
   Domanda,
   EnergiaDna,
   Flebo,
+  Framing,
+  HEAD_ANCHOR,
   Hype,
   Mattoni,
   NadPrecursori,
@@ -44,6 +46,9 @@ type Scene = {
   from: number; // seconds
   caption: CaptionMode;
   center?: boolean; // caption in the middle (text-only screens)
+  cam?: "in" | "out"; // force the camera move instead of alternating
+  quiet?: boolean; // no whoosh on the cut
+  speaker?: boolean;
   render: (t0: number) => React.ReactNode;
 };
 
@@ -57,48 +62,47 @@ const th =
     />
   );
 
-const black = () => <AbsoluteFill style={{ backgroundColor: colors.black }} />;
-
 // Each scene runs until the next one starts. Cuts land on spoken words.
 const SCENES: Scene[] = [
-  { from: 0, caption: "white", render: th("wide") },
+  { from: 0, caption: "white", speaker: true, render: th("wide") },
   { from: wt("molecole"), caption: "none", render: (t0) => <Serie t0={t0} /> },
-  { from: wt("e", 3), caption: "white", render: th("close", ["studiata"]) },
+  { from: wt("e", 3), caption: "white", speaker: true, render: th("close") },
   { from: wt("il", 5), caption: "none", render: (t0) => <NadPrecursori t0={t0} /> },
   { from: wt("Pensa"), caption: "none", render: (t0) => <BatteriaCellula t0={t0} /> },
   { from: wt("E", 12.5), caption: "white", render: (t0) => <Scarica t0={t0} /> },
   { from: wt("Cos'è"), caption: "white", center: true, render: (t0) => <Domanda t0={t0} /> },
-  { from: wt("Il", 16.5), caption: "white", render: th("wide", ["coenzima"]) },
+  { from: wt("Il", 16.5), caption: "white", speaker: true, render: th("wide", ["coenzima"]) },
   { from: wt("Serve"), caption: "none", render: (t0) => <EnergiaDna t0={t0} /> },
-  { from: wt("Due"), caption: "white", render: th("close", ["letteralmente"]) },
+  { from: wt("Due"), caption: "white", speaker: true, render: th("close", ["letteralmente"]) },
   { from: wt("la", 25.5), caption: "none", render: (t0) => <Sopravvivenza t0={t0} /> },
-  { from: wt("quindi", 27), caption: "white", render: th("wide", ["sopravvivenza"]) },
+  { from: wt("quindi", 27), caption: "white", speaker: true, render: th("wide", ["sopravvivenza"]) },
   { from: wt("Ne"), caption: "none", render: (t0) => <Flebo t0={t0} /> },
-  { from: wt("Ma", 31), caption: "white", render: th("close", ["orale"]) },
+  { from: wt("Ma", 31), caption: "white", speaker: true, render: th("close", ["orale"]) },
   { from: wt("la", 33.8), caption: "none", render: (t0) => <ViaOrale t0={t0} /> },
   { from: wt("complementare"), caption: "none", render: (t0) => <Complementare t0={t0} /> },
-  { from: wt("Ed"), caption: "white", render: th("wide", ["precursori"]) },
+  { from: wt("Ed"), caption: "white", speaker: true, render: th("wide", ["precursori"]) },
   { from: wt("che", 43), caption: "none", render: (t0) => <Mattoni t0={t0} /> },
   { from: wt("Ma", 49.5), caption: "none", render: (t0) => <Studi t0={t0} /> },
-  { from: wt("È", 51.5), caption: "white", render: th("close", ["solidità"]) },
+  { from: wt("È", 51.5), caption: "white", speaker: true, render: th("close", ["solidità"]) },
   { from: wt("Questi"), caption: "none", render: (t0) => <Aumentano t0={t0} /> },
   { from: wt("Tradurre"), caption: "none", render: (t0) => <Benefici t0={t0} /> },
-  { from: wt("E", 65), caption: "white", render: th("wide", ["onestà", "trasparenza"]) },
-  { from: wt("Il", 70.5), caption: "white", center: true, render: black },
+  { from: wt("E", 65), caption: "white", speaker: true, render: th("wide", ["onestà", "trasparenza"]) },
+  { from: wt("Il", 70.5), caption: "none", cam: "in", quiet: true, render: (t0) => <Framing t0={t0} /> },
   { from: wt("il", 73), caption: "none", render: (t0) => <Promettenti t0={t0} /> },
   { from: wt("Promettente"), caption: "none", render: (t0) => <NonDimostrato t0={t0} /> },
-  { from: wt("E", 88), caption: "white", render: th("close", ["distinzione"]) },
-  { from: wt("insegue"), caption: "white", render: (t0) => <Hype t0={t0} /> },
+  { from: wt("E", 88), caption: "white", speaker: true, render: th("close", ["distinzione"]) },
+  { from: wt("insegue"), caption: "none", render: (t0) => <Hype t0={t0} /> },
 ];
 
 /**
  * Camera move on every scene, alternating a slow zoom-in with a fast
  * zoom-out that settles.
  */
-const Cam: React.FC<{ dir: "in" | "out"; children: React.ReactNode }> = ({
-  dir,
-  children,
-}) => {
+const Cam: React.FC<{
+  dir: "in" | "out";
+  origin: string;
+  children: React.ReactNode;
+}> = ({ dir, origin, children }) => {
   const frame = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
   const scale =
@@ -111,7 +115,7 @@ const Cam: React.FC<{ dir: "in" | "out"; children: React.ReactNode }> = ({
           easing: Easing.out(Easing.cubic),
         });
   return (
-    <AbsoluteFill style={{ transform: `scale(${scale})` }}>
+    <AbsoluteFill style={{ transform: `scale(${scale})`, transformOrigin: origin }}>
       {children}
     </AbsoluteFill>
   );
@@ -140,8 +144,14 @@ export const Nad: React.FC = () => (
       const end = i < SCENES.length - 1 ? sec(SCENES[i + 1].from) : NAD_DURATION;
       return (
         <Sequence key={i} from={start} durationInFrames={end - start}>
-          <Cam dir={i % 2 === 0 ? "in" : "out"}>{s.render(s.from)}</Cam>
-          {i > 0 ? (
+          <Cam
+            dir={s.cam ?? (i % 2 === 0 ? "in" : "out")}
+            // speaker shots zoom from the top of the head, graphics from centre
+            origin={s.speaker ? HEAD_ANCHOR : "50% 50%"}
+          >
+            {s.render(s.from)}
+          </Cam>
+          {i > 0 && !s.quiet ? (
             <Sfx at={0} name={i % 2 ? "whoosh" : "swoosh"} volume={0.3} />
           ) : null}
         </Sequence>

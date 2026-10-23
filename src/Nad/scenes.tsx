@@ -61,6 +61,8 @@ const Heading: React.FC<{
 /* Speaker                                                              */
 /* ------------------------------------------------------------------ */
 
+export const HEAD_ANCHOR = "53% 6%";
+
 /**
  * The 4K source lets us alternate a wide shot and a tight close-up on the
  * face; each cut lands with a small punch, plus punches on key words.
@@ -74,7 +76,7 @@ export const TalkingHead: React.FC<{
   const { fps } = useVideoConfig();
   const settle = spring({ frame, fps, config: { damping: 20, mass: 0.5 } });
   let scale =
-    (framing === "close" ? 1.55 : 1) * interpolate(settle, [0, 1], [1.06, 1]);
+    (framing === "close" ? 1.5 : 1) * interpolate(settle, [0, 1], [1.05, 1]);
   for (const p of punch) {
     const f = Math.round(p * fps);
     if (frame >= f) {
@@ -92,11 +94,12 @@ export const TalkingHead: React.FC<{
           height: "100%",
           objectFit: "cover",
           transform: `scale(${scale})`,
-          transformOrigin: "47% 24%",
+          // anchored on the top of the head so no zoom ever crops it
+          transformOrigin: HEAD_ANCHOR,
         }}
       />
       {punch.map((p) => (
-        <Sfx key={p} at={p * fps - 2} name="swoosh" volume={0.35} />
+        <Sfx key={p} at={p * fps - 2} name="swoosh" volume={0.16} />
       ))}
     </AbsoluteFill>
   );
@@ -288,7 +291,7 @@ const Tag: React.FC<{ text: string; x: number; delay: number; bg: string }> = ({
       style={{
         position: "absolute",
         left: x - 190,
-        top: 700,
+        top: 780,
         width: 380,
         height: 150,
         borderRadius: 75,
@@ -332,8 +335,8 @@ export const NadPrecursori: React.FC<SceneProps> = ({ t0 }) => {
         color={colors.yellow}
         style={{ left: 0, right: 0, top: 580 }}
       />
-      <Link x1={600} y1={720} x2={820} y2={560} delay={dM} color={colors.yellow} dashed width={7} />
-      <Link x1={1320} y1={720} x2={1100} y2={560} delay={dR} color={colors.yellow} dashed width={7} />
+      <Link x1={800} y1={680} x2={600} y2={770} delay={dM - 6} color={colors.yellow} dashed width={7} />
+      <Link x1={1120} y1={680} x2={1320} y2={770} delay={dR - 6} color={colors.yellow} dashed width={7} />
       <Tag text="NMN" x={520} delay={dM} bg={colors.coral} />
       <Tag text="NR" x={1400} delay={dR} bg={colors.mint} />
     </Fill>
@@ -379,6 +382,7 @@ export const BatteriaCellula: React.FC<SceneProps> = ({ t0 }) => {
       >
         <Battery level={1} size={660} />
       </div>
+      <Heading text="pensa al NAD come…" top={110} color={colors.white} size={60} />
       <Sfx at={dB} name="pop2" volume={0.55} />
       <Sfx at={dC} name="draw" volume={0.45} />
       <SerifLabel text="cellula" delay={dC + 4} size={86} color={colors.white} style={{ left: 1330, top: 760 }} />
@@ -589,25 +593,26 @@ export const Studi: React.FC<SceneProps> = ({ t0 }) => (
   </Fill>
 );
 
-/* "aumentano effettivamente i livelli di NAD" — bar rises + check */
+/* "aumentano effettivamente i livelli di NAD" — the battery recharges */
 export const Aumentano: React.FC<SceneProps> = ({ t0 }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
   const d = at(t0, "aumentano");
-  const base = 860;
-  const h0 = 180;
-  const h = h0 + 420 * spring({ frame: frame - d, fps, config: { damping: 12, mass: 0.8 } });
-  const line = interpolate(frame, [0, 10], [0, 1], clamp);
+  const dOk = at(t0, "effettivamente");
+  const level = interpolate(frame, [d, dOk + 8], [0.2, 1], clamp);
+  const pulse = frame > d && frame < dOk + 8 ? 1 + Math.sin(frame / 2.2) * 0.015 : 1;
+  const bolt = usePop(d, 9);
   return (
-    <Fill bg="white">
-      <Heading text="livelli di NAD" top={110} size={58} />
-      <div style={{ position: "absolute", left: 960 - 520 * line, width: 1040 * line, top: base, height: 6, background: colors.printInk, filter: "url(#print)" }} />
-      <div style={{ position: "absolute", left: 600, width: 240, top: base - h0, height: h0, background: colors.grey, border: `6px solid ${colors.printInk}`, borderBottom: "none", borderRadius: "26px 26px 0 0", filter: "url(#print)" }} />
-      <div style={{ position: "absolute", left: 1080, width: 240, top: base - h, height: h, background: colors.brand, border: `6px solid ${colors.printInk}`, borderBottom: "none", borderRadius: "26px 26px 0 0", filter: "url(#print)" }} />
-      <SerifLabel text="prima" delay={0} size={64} style={{ left: 520, width: 400, top: base + 24 }} />
-      <SerifLabel text="con i precursori" delay={d} size={64} style={{ left: 1000, width: 400, top: base + 24 }} />
-      <Sfx at={d} name="rise" volume={0.5} />
-      <Emoji name="check" x={1460} y={280} size={200} delay={at(t0, "effettivamente")} />
+    <Fill bg="mint">
+      <Heading text="livelli di NAD" top={120} color={colors.white} size={60} />
+      <div style={{ position: "absolute", left: 960 - 380, top: 280, transform: `scale(${pulse}) rotate(-3deg)` }}>
+        <Battery level={level} size={760} />
+      </div>
+      <div style={{ position: "absolute", left: 1330, top: 220, transform: `scale(${bolt}) rotate(${-14 * bolt}deg)`, opacity: frame < d ? 0 : 1 }}>
+        <Emoji name="bolt" x={90} y={90} size={200} delay={d} />
+      </div>
+      <Sfx at={d} name="riser" volume={0.4} />
+      <Emoji name="check" x={560} y={760} size={190} delay={dOk} />
+      <SerifLabel text="aumentano" delay={dOk + 2} size={86} color={colors.white} style={{ left: 680, top: 715 }} />
     </Fill>
   );
 };
@@ -658,19 +663,43 @@ export const NonDimostrato: React.FC<SceneProps> = ({ t0 }) => {
   );
 };
 
+/* "Il framing onesto è questo:" — soft, typed on paper */
+export const Framing: React.FC<SceneProps> = ({ t0 }) => (
+  <Fill bg="white">
+    <SerifLabel text="il framing onesto" delay={at(t0, "framing")} size={150} style={{ left: 0, right: 0, top: 380 }} />
+    <div
+      style={{
+        position: "absolute",
+        top: 600,
+        width: "100%",
+        textAlign: "center",
+        fontFamily: sans,
+        fontWeight: 700,
+        fontSize: 60,
+        letterSpacing: "-0.03em",
+        color: colors.ink,
+        opacity: interpolate(useCurrentFrame(), [at(t0, "questo") - 2, at(t0, "questo") + 6], [0, 1], clamp),
+      }}
+    >
+      è questo:
+    </div>
+  </Fill>
+);
+
 /* "chi insegue ogni hype" */
 export const Hype: React.FC<SceneProps> = ({ t0 }) => {
   const d = at(t0, "hype");
   return (
     <Fill bg="coral">
-      <Word3D text="HYPE" size={300} top={200} delay={d} color={colors.white} depthColor={colors.printInk} rotate={-8} />
+      <SerifLabel text="chi insegue ogni…" delay={0} size={90} color={colors.white} style={{ left: 0, right: 0, top: 110 }} />
+      <Word3D text="HYPE" size={300} top={300} delay={d} color={colors.white} depthColor={colors.printInk} rotate={-8} />
       <Scribble
         delay={d + 8}
         viewBox="0 0 1920 1080"
         len={1600}
         width={22}
         color={colors.printInk}
-        d="M560 330 L1380 640 M600 650 L1360 300"
+        d="M560 430 L1380 740 M600 750 L1360 400"
         style={{ left: 0, top: 0, width: 1920, height: 1080 }}
       />
     </Fill>
