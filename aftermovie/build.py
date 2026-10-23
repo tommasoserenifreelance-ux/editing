@@ -25,57 +25,62 @@ SONG_DELAY = 0.28
 # fx: white/half = overexposed flash frames, dark = strobe-dark frames,
 #     black = fade-to-black frames, zoom = slow push-in, speed = playback speed,
 #     lift = brighten dark shot, ramp = source seconds covered by a fast->slow speed ramp,
+#     deep = b&w keeping true blacks, text = title overlay,
 #     punch = zoom punch-in on the hit, shake = decaying camera shake, rgb = RGB split on every frame.
 SHOTS = [
-    (0, 11, 1, 0.00, 'c', dict(zoom=1)),                        # Rivoire sign
-    (12, 28, 19, 0.00, 'bw', dict(white=[12], half=[13, 15], speed=0.75, lift=1)),
-    (29, 46, 18, 0.00, 'c', dict(white=[29], half=[30], ramp=1.3)),  # House of Negroni speed ramp
-    (47, 55, 2, 0.20, 'c', dict(dark=[50])),
-    (56, 70, 9, 0.00, 'c', {}),
-    (71, 107, 21, 0.00, 'c', dict(half=[71], zoom=1)),          # long hold into the drop
-    (108, 118, 3, 0.00, 'bw', dict(punch=1, shake=1)),                              # drop
-    (119, 133, 5, 0.00, 'c', dict(dark=[119, 121, 129])),
-    (134, 141, 7, 0.00, 'c', dict(white=[134], half=[135], punch=1)),
-    (142, 152, 22, 1.20, 'c', {}),                              # bartender, once
-    (153, 163, 10, 0.20, 'c', {}),
-    (164, 174, 11, 0.30, 'c', {}),
-    (175, 186, 14, 0.30, 'c', dict(half=[183])),
-    (187, 195, 15, 0.20, 'c', {}),
-    (196, 205, 20, 0.00, 'c', {}),
-    (206, 206, 13, 0.00, 'c', dict(rgb=1)),                              # micro-cut burst
-    (207, 209, 5, 1.00, 'c', dict(white=[207], rgb=1)),
-    (210, 210, 5, 1.15, 'c', dict(dark=[210], rgb=1)),
-    (211, 211, 13, 0.30, 'c', dict(rgb=1)),
-    (212, 214, 5, 1.30, 'c', dict(white=[213], half=[214], rgb=1)),
-    (215, 229, 16, 0.30, 'bw', dict(dark=[215], half=[216], black=[227, 228, 229])),
-    (230, 231, 12, 0.30, 'c', {}),                              # A-B-A sandwich
-    (232, 238, 21, 1.70, 'c', {}),
-    (239, 242, 12, 0.50, 'c', {}),
-    (243, 255, 6, 0.30, 'c', dict(white=[243], half=[244, 246])),
-    (256, 267, 17, 0.00, 'bw', {}),
-    (268, 281, 4, 1.00, 'c', dict(white=[268], half=[269], punch=1)),
-    (282, 292, 14, 1.60, 'c', dict(dark=[283, 285, 287, 288, 290], half=[284, 289])),
-    (293, 303, 20, 0.40, 'c', {}),
-    (304, 314, 10, 1.20, 'c', {}),
-    (315, 326, 4, 2.30, 'c', {}),
-    (327, 330, 16, 1.20, 'bw', {}),
-    (331, 341, 15, 0.70, 'c', {}),
-    (342, 351, 3, 1.50, 'bw', {}),
-    (352, 368, 12, 1.20, 'c', {}),
-    (369, 380, 8, 0.20, 'c', {}),
-    (381, 400, 5, 2.75, 'c', dict(white=[381], half=[382], punch=1)),
+    (0, 18, 1, 0.00, 'c', dict(zoom=1)),                        # Rivoire sign
+    (19, 49, 19, 0.00, 'bw', dict(white=[19], half=[20], speed=0.42, lift=1, deep=1, text=1)),  # Piazza Signoria
+    (50, 71, 18, 0.00, 'c', dict(ramp=1.3)),                    # House of Negroni speed ramp
+    (72, 83, 21, 0.00, 'c', {}),                                # muffled run-up to the drop
+    (84, 94, 9, 0.00, 'c', {}),
+    (95, 106, 20, 0.00, 'c', {}),
+    (107, 118, 3, 0.00, 'bw', {}),                              # drop
+    (119, 129, 7, 0.00, 'c', {}),
+    (130, 140, 13, 0.00, 'c', {}),
+    (141, 146, 16, 0.30, 'c', {}),
+    (147, 151, 16, 0.90, 'c', {}),
+    (152, 162, 12, 0.30, 'c', {}),
+    (163, 173, 6, 0.30, 'bw', {}),
+    (174, 185, 10, 0.30, 'c', {}),
+    (186, 196, 21, 0.60, 'c', {}),
+    (197, 202, 9, 0.40, 'c', {}),
+    (203, 208, 20, 0.45, 'c', {}),
+    (209, 219, 15, 0.30, 'c', dict(white=[209], half=[210])),
+    (220, 230, 17, 0.00, 'bw', {}),
+    (231, 241, 11, 0.40, 'c', {}),
+    (242, 253, 22, 1.20, 'c', {}),                              # bartender, once
+    (254, 259, 16, 0.00, 'c', {}),
+    (260, 264, 9, 0.62, 'c', {}),
+    (265, 270, 13, 0.45, 'c', {}),
+    (271, 276, 7, 0.50, 'c', {}),
+    (277, 287, 8, 0.20, 'bw', {}),
+    (288, 299, 16, 1.30, 'c', {}),
+    (300, 310, 2, 0.30, 'c', {}),
+    (311, 321, 12, 0.76, 'c', {}),
+    (322, 332, 10, 1.40, 'c', {}),
+    (333, 344, 3, 1.40, 'bw', {}),
+    (345, 355, 15, 0.85, 'c', {}),
+    (356, 367, 12, 1.40, 'c', {}),
+    (368, 378, 11, 0.00, 'c', {}),
+    (379, 400, 21, 1.50, 'c', dict(white=[379], half=[380])),        # end on the dancers
     (401, 446, 'yamore', 0, 'logo', {}),
     (447, 490, 'rivoire', 0, 'logo', {}),
 ]
 END = (SHOTS[-1][1] + 1) / FPS
-IMPACT_AT = 71 / FPS            # boom + muffled music until the drop
-DROP_AT = 108 / FPS
+IMPACT_AT = 72 / FPS            # swoosh + muffled music until the drop
+DROP_AT = 107 / FPS
 LOWPASS_FROM = 401 / FPS        # end cards
 
-GRADE = ("eq=contrast=1.08:saturation=1.20:gamma=1.10:brightness=0.02,"
-         "colorbalance=rs=0.06:bs=-0.05:rh=0.03:bh=-0.03,"
-         "curves=all='0/0.04 0.5/0.5 1/0.97',vignette=PI/5")
-BW = "hue=s=0,eq=contrast=1.22:gamma=1.05,curves=all='0/0.03 1/0.97',vignette=PI/5"
+# Clean pastel look: tungsten pulled towards neutral, softer contrast, lifted
+# blacks with a hint of blue, gently desaturated so skin reads natural.
+GRADE = ("colortemperature=temperature=5200:mix=0.55:pl=1,"
+         "colorbalance=rs=-0.02:bs=0.03:rm=-0.03:bm=0.02:rh=0.02:gh=0.01,"
+         "eq=contrast=0.90:saturation=0.82:gamma=1.15:brightness=0.025,"
+         "curves=r='0/0.07 0.5/0.53 1/0.96':g='0/0.07 0.5/0.52 1/0.96':b='0/0.09 0.5/0.52 1/0.95'")
+BW = "hue=s=0,eq=contrast=1.06:gamma=1.08,curves=all='0/0.06 0.5/0.52 1/0.96'"
+BW_DEEP = "hue=s=0,eq=contrast=1.18,curves=all='0/0.0 0.5/0.5 1/0.97'"  # night sky stays black
+FONT = os.path.join(HERE, '..', 'public', 'fonts', 'BarlowCondensed-SemiBoldItalic.ttf')
+TITLE = ('PIAZZA DELLA SIGNORIA', 'EVERY FRIDAY')
 FIT = f"scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H}"
 
 
@@ -132,7 +137,7 @@ def weights(first, groups):
 def finish(g, a, n, fx):
     """Halation, flash bloom, RGB split, strobe, fade - shared by every footage shot."""
     g.add('format=gbrp')
-    g.glow(28, opacity=0.32, curves='0/0 0.55/0 1/1')               # film halation
+    g.glow(28, opacity=0.18, curves='0/0 0.6/0 1/1')                # soft halation
     white, half, dark = fx.get('white', []), fx.get('half', []), fx.get('dark', [])
     if white or half:                                               # bloom instead of flat white
         k = weights(a, [(white, 1.0), (half, 0.55)])
@@ -147,7 +152,7 @@ def finish(g, a, n, fx):
     if fx.get('rgb'):
         g.add('rgbashift=rh=-12:bh=12')
     elif split:
-        g.add(f"rgbashift=rh=-14:bh=14:enable='{frames_expr(a, split)}'")
+        g.add(f"rgbashift=rh=-8:bh=8:enable='{frames_expr(a, split)}'")
     if fx.get('black'):
         k = fx['black'][0] - a
         g.add(f"fade=out:s={k - 2}:n={n - k + 2}")
@@ -222,6 +227,38 @@ def render_logo(n, name, out):
          '-loop', '1', '-i', os.path.join(LOGOS, f'{name}.png'), '-filter_complex', graph] + encode(n, out))
 
 
+def title_pngs(tmp):
+    """Two lines in the Yamorè logo style (condensed semibold italic, tracked)."""
+    from PIL import Image, ImageDraw, ImageFont
+    paths = []
+    for line, size, track in ((TITLE[0], 92, 6), (TITLE[1], 64, 14)):
+        font = ImageFont.truetype(FONT, size)
+        widths = [font.getlength(c) for c in line]
+        w = int(sum(widths) + track * (len(line) - 1)) + 40
+        im = Image.new('RGBA', (w, int(size * 1.4)), (0, 0, 0, 0))
+        d = ImageDraw.Draw(im)
+        x = 20
+        for c, cw in zip(line, widths):
+            d.text((x, 0), c, font=font, fill=(245, 245, 242, 255))
+            x += cw + track
+        p = os.path.join(tmp, f'title{len(paths)}.png')
+        im.save(p)
+        paths.append(p)
+    return paths
+
+
+def add_title(g, tmp):
+    """Lines rise into place with an ease-out and fade, second line a beat later."""
+    l1, l2 = title_pngs(tmp)
+    g.steps.append("[1:v]format=rgba,fade=in:st=0.10:d=0.30:alpha=1[t1]")
+    g.steps.append("[2:v]format=rgba,fade=in:st=0.30:d=0.30:alpha=1[t2]")
+    rise = lambda st: f"40*pow(max(0,1-(t-{st})/0.45),3)"
+    g.steps.append(f"[{g.cur}][t1]overlay=x='(W-w)/2':y='1560+{rise(0.10)}':shortest=1[o1]")
+    g.steps.append(f"[o1][t2]overlay=x='(W-w)/2':y='1680+{rise(0.30)}':shortest=1[o2]")
+    g.cur = 'o2'
+    return ['-loop', '1', '-framerate', str(FPS), '-i', l1, '-loop', '1', '-framerate', str(FPS), '-i', l2]
+
+
 def render_shot(i, a, b, clip, inp, look, fx, tmp):
     n = b - a + 1
     out = os.path.join(tmp, f'p{i:02d}.mp4')
@@ -240,50 +277,38 @@ def render_shot(i, a, b, clip, inp, look, fx, tmp):
     if cam:
         base.append(cam)
     if fx.get('lift'):  # night exterior, needs opening up
-        base.append("eq=gamma=1.8:brightness=0.05")
-    base.append(BW if look == 'bw' else GRADE)
+        base.append("eq=gamma=1.35")
+    base.append(BW_DEEP if fx.get('deep') else BW if look == 'bw' else GRADE)
     g.add(','.join(base))
     finish(g, a, n, fx)
+    extra = add_title(g, tmp) if fx.get('text') else []
     graph, last = g.build()
-    run(['ffmpeg', '-y', '-ss', f'{inp:.3f}', '-i', clip_path(clip),
-         '-filter_complex', graph, '-map', last] + encode(n, out))
+    run(['ffmpeg', '-y', '-ss', f'{inp:.3f}', '-i', clip_path(clip)] + extra +
+        ['-filter_complex', graph, '-map', last] + encode(n, out))
     return out
 
 
 def sound_design():
-    """Sparse, sample-based: shutter clicks on flashes, swooshes on transitions,
+    """Sparse: a shutter click per flash, swooshes on the two big moves,
     sub drop on the drop, impact on the logo."""
     t = lambda f: f / FPS
     shutter, swoosh = sfx.sample('shutter_burst'), sfx.sample('slow_swoosh')
     impact, sub = sfx.sample('impact'), sfx.sample('sub_drop')
-    click = lambda db: sfx.cut(shutter, 0.015, 0.105, fade_out=0.03, gain_db=db)
-    short_swoosh = lambda db: sfx.cut(swoosh, 0.95, 1.80, fade_in=0.15, fade_out=0.25, gain_db=db)
     SW_PEAK = 1.358
     ev = []
     for a, b, clip, inp, look, fx in SHOTS:
-        white = fx.get('white', [])
-        if 'ramp' in fx:                     # House of Negroni: click + fast swoosh peaking as it slows
-            ev.append(sfx.place(t(a), click(-4), 0.009))
+        if fx.get('white'):
+            ev.append(sfx.place(t(fx['white'][0]), sfx.cut(shutter, 0.015, 0.105, fade_out=0.03, gain_db=-5), 0.009))
+        if 'ramp' in fx:                     # House of Negroni: fast swoosh peaking as it slows
             rate = 1.7
             ev.append(sfx.place(t(a + 4), sfx.cut(swoosh, 0.6, 2.2, fade_in=0.05, fade_out=0.3,
-                                                  gain_db=-5, rate=rate), (SW_PEAK - 0.6) / rate))
-            continue
-        for f in white:
-            ev.append(sfx.place(t(f), click(-5 if f != a else -3), 0.009))
-        if a == 71:                          # slow swoosh into the muffled hold
-            ev.append(sfx.place(t(a), sfx.cut(swoosh, 0.3, 3.0, fade_in=0.3, fade_out=0.6, gain_db=-6), SW_PEAK - 0.3))
-        elif a == 108:                       # its hiss rises into the drop, sub lands on the cut
-            ev.append(sfx.place(t(a), sfx.cut(sub, 0.0, 2.4, fade_in=0.4, fade_out=1.2, gain_db=-9), 0.915))
-        elif a == 206:                       # photo burst over the micro-cuts
-            ev.append(sfx.place(t(a), sfx.cut(shutter, 0.015, 0.45, fade_out=0.06, gain_db=-6), 0.009))
-        elif a in (215, 342):                # into b&w
-            ev.append(sfx.place(t(a), short_swoosh(-11), SW_PEAK - 0.95))
+                                                  gain_db=-7, rate=rate), (SW_PEAK - 0.6) / rate))
+        elif a == 72:                        # slow swoosh into the muffled run-up
+            ev.append(sfx.place(t(a), sfx.cut(swoosh, 0.3, 3.0, fade_in=0.3, fade_out=0.6, gain_db=-8), SW_PEAK - 0.3))
+        elif a == 107:                       # its hiss rises into the drop, sub lands on the cut
+            ev.append(sfx.place(t(a), sfx.cut(sub, 0.0, 2.4, fade_in=0.4, fade_out=1.2, gain_db=-10), 0.915))
         elif a == 401:                       # Yamorè logo hit
-            ev.append(sfx.place(t(a), sfx.cut(impact, 0.25, None, fade_in=0.05, fade_out=0.4, gain_db=-3), 0.733 - 0.25))
-        elif a == 447:                       # Rivoire logo
-            ev.append(sfx.place(t(a), sfx.cut(swoosh, 0.5, 3.0, fade_in=0.2, fade_out=0.6, gain_db=-9), SW_PEAK - 0.5))
-        if a == 282:                         # strobe: soft clicks on the dark frames
-            ev += [sfx.place(t(f), click(-14), 0.009) for f in fx.get('dark', [])]
+            ev.append(sfx.place(t(a), sfx.cut(impact, 0.25, None, fade_in=0.05, fade_out=0.4, gain_db=-5), 0.733 - 0.25))
     return sfx.render(ev, END)
 
 
