@@ -24,7 +24,10 @@ const s = (seconds: number) => Math.round(seconds * PIATTO_FPS);
 // Cut from the intro (plate in hand) to the overhead shot.
 const OVERHEAD_AT = 6.5;
 
-const HEADLINE = ["Il tuo spuntino longevity", "potrebbe essere così"];
+const HEADLINE = [
+  "Gli alimenti ricchi di fibre",
+  "che scelgo per i miei spuntini",
+];
 
 // When each ingredient is in place, and where its label sits (centre, px).
 const LABELS: { text: string; at: number; x: number; y: number }[] = [
