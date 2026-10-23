@@ -13,6 +13,7 @@ import {
   TESTO_DURATION,
   TESTO_FPS,
 } from "./Testosterone";
+import { Nad, NAD_DURATION, NAD_FPS } from "./Nad";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -84,6 +85,14 @@ export const RemotionRoot: React.FC = () => {
         fps={TESTO_FPS}
         width={1080}
         height={1920}
+      />
+      <Composition
+        id="LongevaNad"
+        component={Nad}
+        durationInFrames={NAD_DURATION}
+        fps={NAD_FPS}
+        width={1920}
+        height={1080}
       />
     </>
   );

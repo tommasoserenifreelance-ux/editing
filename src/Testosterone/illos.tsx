@@ -183,6 +183,142 @@ const Pill = () => (
   </g>
 );
 
+
+/* ---- NAD episode ---- */
+
+const Cell = () => (
+  <g>
+    <circle cx="100" cy="100" r="84" fill={M} {...ink} />
+    <circle cx="100" cy="100" r="70" fill="#7EDDBC" />
+    <ellipse cx="112" cy="92" rx="30" ry="26" fill={C} {...ink} />
+    <circle cx="120" cy="86" r="8" fill={CD} />
+    <path d="M52 132 C60 124 70 126 74 134 M58 70 C66 66 72 70 74 76 M126 140 C134 132 146 134 148 142" {...hatch} stroke={MD} />
+    <ellipse cx="66" cy="104" rx="10" ry="6" fill={Y} {...ink} strokeWidth={4} />
+    <ellipse cx="96" cy="146" rx="9" ry="5" fill={Y} {...ink} strokeWidth={4} />
+    <path d="M44 72 C52 56 64 46 78 40" fill="none" stroke={W} strokeWidth={8} strokeLinecap="round" />
+  </g>
+);
+
+const Dna = () => (
+  <g transform="rotate(-28 100 100)">
+    <path d="M121.6 27 L78.4 27 M142.5 44 L57.5 44 M144.0 61 L56.0 61 M125.2 78 L74.8 78 M94.9 95 L105.1 95 M66.9 112 L133.1 112 M54.1 129 L145.9 129 M62.4 146 L137.6 146 M87.9 163 L112.1 163 M119.0 180 L81.0 180" stroke={K} strokeWidth={6} strokeLinecap="round" />
+    <path d="M100.0 15.0 L90.7 20.0 L81.8 25.0 L73.7 30.0 L66.6 35.0 L60.9 40.0 L56.8 45.0 L54.5 50.0 L54.1 55.0 L55.5 60.0 L58.8 65.0 L63.8 70.0 L70.3 75.0 L78.0 80.0 L86.6 85.0 L95.8 90.0 L105.1 95.0 L114.2 100.0 L122.8 105.0 L130.4 110.0 L136.7 115.0 L141.5 120.0 L144.7 125.0 L146.0 130.0 L145.4 135.0 L142.9 140.0 L138.7 145.0 L132.8 150.0 L125.6 155.0 L117.4 160.0 L108.5 165.0 L99.1 170.0 L89.9 175.0 L81.0 180.0 L73.0 185.0" fill="none" stroke={K} strokeWidth={22} strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M100.0 15.0 L90.7 20.0 L81.8 25.0 L73.7 30.0 L66.6 35.0 L60.9 40.0 L56.8 45.0 L54.5 50.0 L54.1 55.0 L55.5 60.0 L58.8 65.0 L63.8 70.0 L70.3 75.0 L78.0 80.0 L86.6 85.0 L95.8 90.0 L105.1 95.0 L114.2 100.0 L122.8 105.0 L130.4 110.0 L136.7 115.0 L141.5 120.0 L144.7 125.0 L146.0 130.0 L145.4 135.0 L142.9 140.0 L138.7 145.0 L132.8 150.0 L125.6 155.0 L117.4 160.0 L108.5 165.0 L99.1 170.0 L89.9 175.0 L81.0 180.0 L73.0 185.0" fill="none" stroke={M} strokeWidth={13} strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M100.0 15.0 L109.3 20.0 L118.2 25.0 L126.3 30.0 L133.4 35.0 L139.1 40.0 L143.2 45.0 L145.5 50.0 L145.9 55.0 L144.5 60.0 L141.2 65.0 L136.2 70.0 L129.7 75.0 L122.0 80.0 L113.4 85.0 L104.2 90.0 L94.9 95.0 L85.8 100.0 L77.2 105.0 L69.6 110.0 L63.3 115.0 L58.5 120.0 L55.3 125.0 L54.0 130.0 L54.6 135.0 L57.1 140.0 L61.3 145.0 L67.2 150.0 L74.4 155.0 L82.6 160.0 L91.5 165.0 L100.9 170.0 L110.1 175.0 L119.0 180.0 L127.0 185.0" fill="none" stroke={K} strokeWidth={22} strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M100.0 15.0 L109.3 20.0 L118.2 25.0 L126.3 30.0 L133.4 35.0 L139.1 40.0 L143.2 45.0 L145.5 50.0 L145.9 55.0 L144.5 60.0 L141.2 65.0 L136.2 70.0 L129.7 75.0 L122.0 80.0 L113.4 85.0 L104.2 90.0 L94.9 95.0 L85.8 100.0 L77.2 105.0 L69.6 110.0 L63.3 115.0 L58.5 120.0 L55.3 125.0 L54.0 130.0 L54.6 135.0 L57.1 140.0 L61.3 145.0 L67.2 150.0 L74.4 155.0 L82.6 160.0 L91.5 165.0 L100.9 170.0 L110.1 175.0 L119.0 180.0 L127.0 185.0" fill="none" stroke={C} strokeWidth={13} strokeLinecap="round" strokeLinejoin="round" />
+  </g>
+);
+
+const Flebo = () => (
+  <g>
+    <path d="M100 4 L100 22" {...ink} strokeWidth={6} />
+    <path d="M64 22 L136 22 L132 104 C132 120 120 128 100 128 C80 128 68 120 68 104 Z" fill={W} {...ink} />
+    <path d="M70 62 L130 62 L132 104 C132 120 120 128 100 128 C80 128 68 120 68 104 Z" fill={Y} {...ink} />
+    <path d="M78 36 L104 36 M78 48 L96 48" stroke={K} strokeWidth={4} strokeLinecap="round" />
+    <rect x="92" y="128" width="16" height="16" fill={C} {...ink} strokeWidth={4} />
+    <path d="M100 144 C100 170 140 160 150 190" fill="none" stroke={K} strokeWidth={5} strokeLinecap="round" />
+    <path d="M84 78 C86 92 88 104 96 112" fill="none" stroke={W} strokeWidth={7} strokeLinecap="round" />
+  </g>
+);
+
+const Tablet = () => (
+  <g>
+    <ellipse cx="100" cy="116" rx="72" ry="44" fill="#E9E4EC" {...ink} />
+    <ellipse cx="100" cy="100" rx="72" ry="44" fill={W} {...ink} />
+    <path d="M48 100 L152 100" {...hatch} strokeWidth={5} />
+    <path d="M62 82 C70 74 84 70 96 70" fill="none" stroke="#C9C2CC" strokeWidth={6} strokeLinecap="round" />
+  </g>
+);
+
+const Compressa = () => (
+  <g transform="rotate(-20 100 100)">
+    <rect x="22" y="66" width="156" height="72" rx="36" fill={M} {...ink} />
+    <path d="M100 70 L100 134" {...hatch} />
+    <path d="M44 88 C54 80 66 78 78 78" fill="none" stroke={W} strokeWidth={7} strokeLinecap="round" />
+    <path d="M120 120 L134 106 M138 124 L152 110" {...hatch} stroke={MD} />
+  </g>
+);
+
+const Brick: React.FC<{ fill: string; shade: string }> = ({ fill, shade }) => (
+  <g>
+    <path d="M30 76 L130 76 L170 56 L70 56 Z" fill={shade} {...ink} />
+    <path d="M130 76 L170 56 L170 124 L130 144 Z" fill={shade} {...ink} />
+    <rect x="30" y="76" width="100" height="68" fill={fill} {...ink} />
+    <path d="M44 128 L60 112 M58 136 L76 118" {...hatch} />
+  </g>
+);
+
+const Microscope = () => (
+  <g>
+    <rect x="36" y="166" width="128" height="18" rx="6" fill={K} />
+    <path d="M70 166 C70 130 96 110 128 112" fill="none" stroke={K} strokeWidth={14} strokeLinecap="round" />
+    <rect x="86" y="18" width="34" height="96" rx="8" transform="rotate(-28 103 66)" fill={C} {...ink} />
+    <rect x="70" y="118" width="76" height="12" rx="4" fill={M} {...ink} strokeWidth={4} />
+    <rect x="60" y="6" width="34" height="22" rx="5" transform="rotate(-28 77 17)" fill={K} />
+    <path d="M100 40 L112 62" stroke={W} strokeWidth={6} strokeLinecap="round" />
+  </g>
+);
+
+const Sparkle = () => (
+  <g>
+    <path d="M96 10 C104 64 120 82 176 92 C120 102 104 120 96 184 C88 120 72 102 18 92 C72 82 88 64 96 10 Z" fill={Y} {...ink} />
+    <path d="M160 24 C162 38 166 42 180 44 C166 46 162 50 160 64 C158 50 154 46 140 44 C154 42 158 38 160 24 Z" fill={M} {...ink} strokeWidth={4} />
+    <path d="M86 56 C84 70 80 78 72 84" fill="none" stroke={W} strokeWidth={7} strokeLinecap="round" />
+  </g>
+);
+
+const Study = () => (
+  <g>
+    <rect x="40" y="24" width="112" height="150" rx="10" fill={W} {...ink} transform="rotate(6 96 99)" />
+    <rect x="34" y="20" width="112" height="150" rx="10" fill={W} {...ink} />
+    <rect x="50" y="38" width="80" height="14" rx="4" fill={C} />
+    <path d="M50 70 H130 M50 86 H130 M50 102 H112" stroke={K} strokeWidth={5} strokeLinecap="round" />
+    <path d="M52 152 L68 134 L84 144 L104 118 L128 128" fill="none" stroke={M} strokeWidth={7} strokeLinecap="round" strokeLinejoin="round" />
+    <circle cx="146" cy="150" r="26" fill={Y} {...ink} />
+    <path d="M164 168 L186 190" {...ink} strokeWidth={10} />
+  </g>
+);
+
+const Check = () => (
+  <g>
+    <circle cx="100" cy="100" r="80" fill={M} {...ink} />
+    <path d="M58 102 L88 132 L144 72" fill="none" stroke={W} strokeWidth={20} strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M150 148 L136 134 M132 162 L118 148" {...hatch} stroke={MD} />
+  </g>
+);
+
+const Molecule = () => (
+  <g>
+    <path d="M100 100 L48 56 M100 100 L158 70 M100 100 L84 164 M158 70 L176 132" stroke={K} strokeWidth={9} strokeLinecap="round" />
+    <circle cx="100" cy="100" r="32" fill={C} {...ink} />
+    <circle cx="48" cy="56" r="22" fill={M} {...ink} />
+    <circle cx="158" cy="70" r="24" fill={Y} {...ink} />
+    <circle cx="84" cy="164" r="20" fill={M} {...ink} />
+    <circle cx="176" cy="132" r="14" fill={W} {...ink} />
+    <path d="M86 86 C90 80 96 78 102 78" fill="none" stroke={W} strokeWidth={6} strokeLinecap="round" />
+  </g>
+);
+
+const Hourglass = () => (
+  <g>
+    <rect x="44" y="14" width="112" height="18" rx="6" fill={C} {...ink} />
+    <rect x="44" y="168" width="112" height="18" rx="6" fill={C} {...ink} />
+    <path d="M58 32 L142 32 C142 70 112 86 108 100 C112 114 142 130 142 168 L58 168 C58 130 88 114 92 100 C88 86 58 70 58 32 Z" fill="#EAF7F2" {...ink} />
+    <path d="M72 52 L128 52 C122 70 108 80 100 88 C92 80 78 70 72 52 Z" fill={Y} />
+    <path d="M66 164 C72 140 90 132 100 128 C110 132 128 140 134 164 Z" fill={Y} />
+    <path d="M100 96 L100 128" stroke={Y} strokeWidth={4} />
+  </g>
+);
+
+const Attention = () => (
+  <g>
+    <path d="M100 14 L190 176 L10 176 Z" fill={Y} {...ink} strokeLinejoin="round" />
+    <rect x="90" y="66" width="20" height="62" rx="8" fill={K} />
+    <circle cx="100" cy="150" r="11" fill={K} />
+    <path d="M86 40 L58 92" stroke={W} strokeWidth={7} strokeLinecap="round" />
+  </g>
+);
+
 const ICONS: Record<string, React.ReactNode> = {
   biceps: <Biceps />,
   bone: <BoneIco />,
@@ -201,6 +337,20 @@ const ICONS: Record<string, React.ReactNode> = {
   stress: <Storm />,
   chart: <ChartDown />,
   pill: <Pill />,
+  cell: <Cell />,
+  dna: <Dna />,
+  flebo: <Flebo />,
+  tablet: <Tablet />,
+  compressa: <Compressa />,
+  brickNMN: <Brick fill={C} shade={CD} />,
+  brickNR: <Brick fill={M} shade={MD} />,
+  microscope: <Microscope />,
+  sparkle: <Sparkle />,
+  study: <Study />,
+  check: <Check />,
+  molecule: <Molecule />,
+  hourglass: <Hourglass />,
+  attention: <Attention />,
 };
 
 export const Illo: React.FC<{ name: string; size: number; seed?: number }> = ({

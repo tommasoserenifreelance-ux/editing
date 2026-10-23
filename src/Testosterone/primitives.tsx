@@ -131,6 +131,7 @@ export const Fill: React.FC<{
   bg: Paper;
   children?: React.ReactNode;
 }> = ({ bg, children }) => {
+  const { width, height } = useVideoConfig();
   const dark = bg === "black";
   const colour = bg === "coral" || bg === "mint";
   return (
@@ -151,8 +152,8 @@ export const Fill: React.FC<{
         />
       ) : null}
       <svg
-        width={1080}
-        height={1920}
+        width={width}
+        height={height}
         style={{
           position: "absolute",
           opacity: dark ? 0.06 : 0.1,
@@ -211,7 +212,10 @@ export const GridFloor: React.FC<{
   width?: number;
   top: number;
   opacity?: number;
-}> = ({ width = 900, top, opacity = 1 }) => {
+  cx?: number; // horizontal centre, defaults to the middle of the frame
+}> = ({ width = 900, top, opacity = 1, cx }) => {
+  const { width: frameW } = useVideoConfig();
+  const centre = cx ?? frameW / 2;
   const cells = 10;
   const step = width / cells;
   const lines: React.ReactNode[] = [];
@@ -243,7 +247,7 @@ export const GridFloor: React.FC<{
     <div
       style={{
         position: "absolute",
-        left: (1080 - width) / 2,
+        left: centre - width / 2,
         top,
         width,
         height: width,
@@ -484,14 +488,15 @@ export const Link: React.FC<{
   width?: number;
 }> = ({ x1, y1, x2, y2, delay, color = colors.blue, dashed, width = 8 }) => {
   const frame = useCurrentFrame();
+  const { width: W, height: H } = useVideoConfig();
   const t = interpolate(frame - delay, [0, 8], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
   return (
     <svg
-      width={1080}
-      height={1920}
+      width={W}
+      height={H}
       style={{ position: "absolute", left: 0, top: 0, pointerEvents: "none" }}
     >
       <line
