@@ -4,6 +4,7 @@ import {
   Audio,
   Easing,
   interpolate,
+  OffthreadVideo,
   Sequence,
   staticFile,
   useCurrentFrame,
@@ -169,5 +170,36 @@ export const Nad: React.FC = () => (
     ))}
     <Captions modeAt={modeAt} />
     <Audio src={staticFile("nad/voice.m4a")} volume={0.85} />
+  </AbsoluteFill>
+);
+
+/* ------------------------------------------------------------------ */
+/* YouTube cut: hook → channel intro + title → rest of episode → outro  */
+/* ------------------------------------------------------------------ */
+
+// The hook ends on "…con l'età si scarica."; the intro plays, then the
+// episode resumes on "Cos'è? Perché conta?".
+const HOOK_END = sec(15.5);
+const INTRO = sec(13.5);
+const OUTRO = sec(5.59);
+const BODY = NAD_DURATION - HOOK_END;
+export const NAD_YT_DURATION = HOOK_END + INTRO + BODY + OUTRO;
+
+export const NadYouTube: React.FC = () => (
+  <AbsoluteFill style={{ backgroundColor: colors.black }}>
+    <Sequence durationInFrames={HOOK_END}>
+      <Nad />
+    </Sequence>
+    <Sequence from={HOOK_END} durationInFrames={INTRO}>
+      <OffthreadVideo src={staticFile("nad/intro.mp4")} />
+    </Sequence>
+    <Sequence from={HOOK_END + INTRO} durationInFrames={BODY}>
+      <Sequence from={-HOOK_END}>
+        <Nad />
+      </Sequence>
+    </Sequence>
+    <Sequence from={HOOK_END + INTRO + BODY} durationInFrames={OUTRO}>
+      <OffthreadVideo src={staticFile("nad/outro.mp4")} />
+    </Sequence>
   </AbsoluteFill>
 );
