@@ -157,8 +157,8 @@ export const Piatto: React.FC = () => (
       </Sequence>
     ))}
     <Headline />
-    {/* Song from the reference reel, looped by scripts/loop-song.py */}
-    <Audio src={staticFile("piatto/song-looped.wav")} volume={0.8} />
+    {/* Original chill-out bed from scripts/make-chill-music.py */}
+    <Audio src={staticFile("music/chill.wav")} volume={0.65} />
     <Sequence from={s(OVERHEAD_AT) - 6}>
       <Audio src={staticFile("sfx/whoosh.wav")} volume={0.5} />
     </Sequence>
