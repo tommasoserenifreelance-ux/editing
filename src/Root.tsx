@@ -7,6 +7,7 @@ import {
   OVERLAY_FPS,
   PilatesOverlay,
 } from "./PilatesOverlay";
+import { PIATTO_DURATION, PIATTO_FPS, Piatto } from "./Piatto";
 import { PILATES_DURATION, PilatesReformer } from "./PilatesReformer";
 import { TRUE_FALSE_DURATION, TrueFalse } from "./TrueFalse";
 import { Cover } from "./TrueFalse/Cover";
@@ -80,6 +81,14 @@ export const RemotionRoot: React.FC = () => {
         component={TrueFalse}
         durationInFrames={TRUE_FALSE_DURATION}
         fps={TRUE_FALSE_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="PiattoLongevity"
+        component={Piatto}
+        durationInFrames={PIATTO_DURATION}
+        fps={PIATTO_FPS}
         width={1080}
         height={1920}
       />

@@ -75,7 +75,17 @@ def correct():
     return np.stack([y, y], axis=1)
 
 
+def pop():
+    """Short bubbly pop for labels appearing."""
+    n = int(SR * 0.16)
+    t = np.arange(n) / SR
+    freq = 520 + 900 * np.exp(-t * 40)
+    y = np.sin(2 * np.pi * np.cumsum(freq) / SR) * np.exp(-t * 32)
+    return np.stack([y, y], axis=1)
+
+
 OUT.mkdir(parents=True, exist_ok=True)
 save("whoosh.wav", whoosh())
 save("wrong.wav", wrong())
 save("correct.wav", correct())
+save("pop.wav", pop())
