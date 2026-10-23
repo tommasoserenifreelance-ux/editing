@@ -72,12 +72,22 @@ export const TalkingHead: React.FC<{
   start: number;
   framing: "wide" | "close";
   punch?: number[]; // seconds relative to scene start
-}> = ({ start, framing, punch = [] }) => {
+  src?: string;
+  anchor?: string;
+  closeScale?: number;
+}> = ({
+  start,
+  framing,
+  punch = [],
+  src = "nad/clip.mp4",
+  anchor = HEAD_ANCHOR,
+  closeScale = 1.5,
+}) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const settle = spring({ frame, fps, config: { damping: 20, mass: 0.5 } });
   let scale =
-    (framing === "close" ? 1.5 : 1) * interpolate(settle, [0, 1], [1.05, 1]);
+    (framing === "close" ? closeScale : 1) * interpolate(settle, [0, 1], [1.05, 1]);
   for (const p of punch) {
     const f = Math.round(p * fps);
     if (frame >= f) {
@@ -87,7 +97,7 @@ export const TalkingHead: React.FC<{
   return (
     <AbsoluteFill style={{ backgroundColor: colors.black, overflow: "hidden" }}>
       <OffthreadVideo
-        src={staticFile("nad/clip.mp4")}
+        src={staticFile(src)}
         startFrom={Math.round(start * FPS)}
         muted
         style={{
@@ -96,7 +106,7 @@ export const TalkingHead: React.FC<{
           objectFit: "cover",
           transform: `scale(${scale})`,
           // anchored on the top of the head so no zoom ever crops it
-          transformOrigin: HEAD_ANCHOR,
+          transformOrigin: anchor,
         }}
       />
       {punch.map((p) => (
@@ -110,7 +120,7 @@ export const TalkingHead: React.FC<{
 /* Battery (animated level)                                             */
 /* ------------------------------------------------------------------ */
 
-const Battery: React.FC<{
+export const Battery: React.FC<{
   level: number; // 0..1
   size: number;
   label?: string;
@@ -280,19 +290,21 @@ export const Serie: React.FC<SceneProps> = ({ t0 }) => (
 );
 
 /* "il NAD e i suoi precursori, come NMN e NR" */
-const Tag: React.FC<{ text: string; x: number; delay: number; bg: string }> = ({
-  text,
-  x,
-  delay,
-  bg,
-}) => {
+export const Tag: React.FC<{
+  text: string;
+  x: number;
+  delay: number;
+  bg: string;
+  top?: number;
+  tilt?: number;
+}> = ({ text, x, delay, bg, top = 780, tilt }) => {
   const p = usePop(delay, 10);
   return (
     <div
       style={{
         position: "absolute",
         left: x - 190,
-        top: 780,
+        top,
         width: 380,
         height: 150,
         borderRadius: 75,
@@ -306,12 +318,12 @@ const Tag: React.FC<{ text: string; x: number; delay: number; bg: string }> = ({
         fontSize: 92,
         letterSpacing: "-0.03em",
         color: colors.printInk,
-        transform: `scale(${p}) rotate(${(x < 960 ? -6 : 6) * p}deg)`,
+        transform: `scale(${p}) rotate(${(tilt ?? (x < 960 ? -6 : 6)) * p}deg)`,
         filter: "url(#sticker)",
       }}
     >
       {text}
-      <Sfx at={delay} name={x < 960 ? "pop1" : "pop2"} volume={0.5} />
+      <Sfx at={delay} name={(tilt ?? x - 960) < 0 ? "pop1" : "pop2"} volume={0.5} />
     </div>
   );
 };

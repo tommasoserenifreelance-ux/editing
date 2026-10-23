@@ -20,6 +20,7 @@ import {
   NAD_YT_DURATION,
   NadYouTube,
 } from "./Nad";
+import { NADIG_DURATION, NADIG_FPS, NadInstagram } from "./NadIG";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -107,6 +108,14 @@ export const RemotionRoot: React.FC = () => {
         fps={NAD_FPS}
         width={1920}
         height={1080}
+      />
+      <Composition
+        id="LongevaNadInstagram"
+        component={NadInstagram}
+        durationInFrames={NADIG_DURATION}
+        fps={NADIG_FPS}
+        width={1080}
+        height={1920}
       />
     </>
   );
