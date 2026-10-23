@@ -26,43 +26,29 @@ SONG_DELAY = 0.28
 #     black = fade-to-black frames, zoom = slow push-in, speed = playback speed,
 #     lift = brighten dark shot, ramp = source seconds covered by a fast->slow speed ramp,
 #     deep = b&w keeping true blacks, text = title overlay,
+#     photos = freeze-frame 'photo' moments (with shutter clicks),
 #     punch = zoom punch-in on the hit, shake = decaying camera shake, rgb = RGB split on every frame.
 SHOTS = [
     (0, 18, 1, 0.00, 'c', dict(zoom=1)),                        # Rivoire sign
     (19, 49, 19, 0.00, 'bw', dict(white=[19], half=[20], speed=0.42, lift=1, deep=1, text=1)),  # Piazza Signoria
     (50, 71, 18, 0.00, 'c', dict(ramp=1.3)),                    # House of Negroni speed ramp
-    (72, 83, 21, 0.00, 'c', {}),                                # muffled run-up to the drop
-    (84, 94, 9, 0.00, 'c', {}),
-    (95, 106, 20, 0.00, 'c', {}),
-    (107, 118, 3, 0.00, 'bw', {}),                              # drop
-    (119, 129, 7, 0.00, 'c', {}),
-    (130, 140, 13, 0.00, 'c', {}),
-    (141, 146, 16, 0.30, 'c', {}),
-    (147, 151, 16, 0.90, 'c', {}),
-    (152, 162, 12, 0.30, 'c', {}),
-    (163, 173, 6, 0.30, 'bw', {}),
-    (174, 185, 10, 0.30, 'c', {}),
-    (186, 196, 21, 0.60, 'c', {}),
-    (197, 202, 9, 0.40, 'c', {}),
-    (203, 208, 20, 0.45, 'c', {}),
-    (209, 219, 15, 0.30, 'c', dict(white=[209], half=[210])),
-    (220, 230, 17, 0.00, 'bw', {}),
-    (231, 241, 11, 0.40, 'c', {}),
+    (72, 83, 20, 0.00, 'c', {}),                                # muffled run-up to the drop
+    (84, 106, 9, 0.00, 'c', {}),
+    (107, 128, 3, 0.00, 'bw', {}),                              # drop
+    (129, 151, 7, 0.00, 'c', dict(white=[129], half=[130])),
+    (152, 173, 12, 0.20, 'c', dict(ramp=1.6)),                  # DJ speed ramp
+    (174, 196, 13, 0.00, 'c', dict(photos=[177, 183, 189])),    # photo burst: freeze + shutter
+    (197, 219, 16, 0.30, 'c', dict(white=[197], half=[198])),
+    (220, 241, 17, 0.00, 'bw', {}),
     (242, 253, 22, 1.20, 'c', {}),                              # bartender, once
-    (254, 259, 16, 0.00, 'c', {}),
-    (260, 264, 9, 0.62, 'c', {}),
-    (265, 270, 13, 0.45, 'c', {}),
-    (271, 276, 7, 0.50, 'c', {}),
-    (277, 287, 8, 0.20, 'bw', {}),
-    (288, 299, 16, 1.30, 'c', {}),
-    (300, 310, 2, 0.30, 'c', {}),
-    (311, 321, 12, 0.76, 'c', {}),
-    (322, 332, 10, 1.40, 'c', {}),
-    (333, 344, 3, 1.40, 'bw', {}),
-    (345, 355, 15, 0.85, 'c', {}),
-    (356, 367, 12, 1.40, 'c', {}),
-    (368, 378, 11, 0.00, 'c', {}),
-    (379, 400, 21, 1.50, 'c', dict(white=[379], half=[380])),        # end on the dancers
+    (254, 276, 15, 0.10, 'c', dict(white=[254], half=[255], ramp=1.2)),
+    (277, 299, 10, 0.20, 'c', dict(ramp=1.5)),
+    (300, 321, 6, 0.20, 'bw', {}),
+    (322, 333, 2, 0.30, 'c', {}),
+    (334, 356, 11, 0.20, 'c', dict(white=[334], half=[335])),
+    (357, 367, 8, 0.30, 'bw', {}),
+    (368, 378, 21, 0.00, 'c', {}),                              # dancers close it out:
+    (379, 400, 21, 1.40, 'c', dict(white=[379], half=[380])),   # jump cut on the beat
     (401, 446, 'yamore', 0, 'logo', {}),
     (447, 490, 'rivoire', 0, 'logo', {}),
 ]
@@ -138,7 +124,8 @@ def finish(g, a, n, fx):
     """Halation, flash bloom, RGB split, strobe, fade - shared by every footage shot."""
     g.add('format=gbrp')
     g.glow(28, opacity=0.18, curves='0/0 0.6/0 1/1')                # soft halation
-    white, half, dark = fx.get('white', []), fx.get('half', []), fx.get('dark', [])
+    white, half, dark = fx.get('white', []), list(fx.get('half', [])), fx.get('dark', [])
+    half += fx.get('photos', [])
     if white or half:                                               # bloom instead of flat white
         k = weights(a, [(white, 1.0), (half, 0.55)])
         g.glow(45, expr=f'A+(255-(255-A)*(255-B)/255-A)*({k})')
@@ -191,26 +178,46 @@ def encode(n, out):
             '-preset', 'medium', '-crf', '14', '-pix_fmt', 'yuv420p', out]
 
 
-def render_ramp(a, n, clip, inp, fx, out):
-    span = fx['ramp']
+def photo_times(n, starts, hold=4):
+    """Real-time playback that freezes for `hold` frames at each photo."""
+    t, out = 0.0, []
+    for k in range(n):
+        if k and not any(h < k < h + hold for h in starts):
+            t += 1 / FPS
+        out.append((t, t))
+    return out
+
+
+def render_remap(a, n, clip, inp, fx, out):
+    """Render a shot whose output frames map to arbitrary source times."""
+    if 'ramp' in fx:
+        e = ramp_times(n, fx['ramp'])
+        spans = list(zip(e[:-1], e[1:]))
+    else:
+        spans = photo_times(n, [p - a for p in fx['photos']])
+    span = spans[-1][1]
     raw = subprocess.run(['ffmpeg', '-ss', f'{inp:.3f}', '-t', f'{span + 0.15:.3f}', '-i', clip_path(clip),
                           '-vf', f'{FIT},{GRADE}', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'],
                          check=True, capture_output=True).stdout
     src = np.frombuffer(raw, np.uint8).reshape(-1, H, W, 3)
     src_fps = 50
-    edges = ramp_times(n, span)
     g = Graph()
     finish(g, a, n, fx)
     graph, last = g.build()
     p = subprocess.Popen(['ffmpeg', '-y', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', f'{W}x{H}',
                           '-r', str(FPS), '-i', '-', '-filter_complex', graph, '-map', last] + encode(n, out),
                          stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    for i in range(n):  # average the source frames each output frame sweeps over = motion blur
-        lo = min(int(edges[i] * src_fps), len(src) - 1)
-        hi = min(max(int(edges[i + 1] * src_fps), lo + 1), len(src))
+    for t0, t1 in spans:  # average the source frames each output frame sweeps over = motion blur
+        lo = min(int(t0 * src_fps), len(src) - 1)
+        hi = min(max(int(t1 * src_fps), lo + 1), len(src))
         p.stdin.write(src[lo:hi].mean(axis=0).astype(np.uint8).tobytes())
     p.stdin.close()
     assert p.wait() == 0
+
+
+def clip_len(clip):
+    return float(subprocess.run(['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0',
+                                 clip_path(clip)], check=True, capture_output=True, text=True).stdout)
 
 
 def render_logo(n, name, out):
@@ -231,16 +238,20 @@ def title_pngs(tmp):
     """Two lines in the Yamorè logo style (condensed semibold italic, tracked)."""
     from PIL import Image, ImageDraw, ImageFont
     paths = []
-    for line, size, track in ((TITLE[0], 92, 6), (TITLE[1], 64, 14)):
+    for line, size, track in ((TITLE[0], 100, 6), (TITLE[1], 72, 16)):
         font = ImageFont.truetype(FONT, size)
         widths = [font.getlength(c) for c in line]
         w = int(sum(widths) + track * (len(line) - 1)) + 40
-        im = Image.new('RGBA', (w, int(size * 1.4)), (0, 0, 0, 0))
-        d = ImageDraw.Draw(im)
+        from PIL import ImageFilter
+        im = Image.new('RGBA', (w, int(size * 1.6)), (0, 0, 0, 0))
+        sh = Image.new('RGBA', im.size, (0, 0, 0, 0))
+        d, ds = ImageDraw.Draw(im), ImageDraw.Draw(sh)
         x = 20
         for c, cw in zip(line, widths):
-            d.text((x, 0), c, font=font, fill=(245, 245, 242, 255))
+            ds.text((x + 3, 12), c, font=font, fill=(0, 0, 0, 170))
+            d.text((x, 8), c, font=font, fill=(245, 245, 242, 255))
             x += cw + track
+        im = Image.alpha_composite(sh.filter(ImageFilter.GaussianBlur(10)), im)
         p = os.path.join(tmp, f'title{len(paths)}.png')
         im.save(p)
         paths.append(p)
@@ -250,11 +261,11 @@ def title_pngs(tmp):
 def add_title(g, tmp):
     """Lines rise into place with an ease-out and fade, second line a beat later."""
     l1, l2 = title_pngs(tmp)
-    g.steps.append("[1:v]format=rgba,fade=in:st=0.10:d=0.30:alpha=1[t1]")
+    g.steps.append("[1:v]format=rgba,fade=in:st=0.12:d=0.22:alpha=1[t1]")
     g.steps.append("[2:v]format=rgba,fade=in:st=0.30:d=0.30:alpha=1[t2]")
     rise = lambda st: f"40*pow(max(0,1-(t-{st})/0.45),3)"
-    g.steps.append(f"[{g.cur}][t1]overlay=x='(W-w)/2':y='1560+{rise(0.10)}':shortest=1[o1]")
-    g.steps.append(f"[o1][t2]overlay=x='(W-w)/2':y='1680+{rise(0.30)}':shortest=1[o2]")
+    g.steps.append(f"[{g.cur}][t1]overlay=x='(W-w)/2':y='(H/2)-140+{rise(0.10)}':shortest=1[o1]")
+    g.steps.append(f"[o1][t2]overlay=x='(W-w)/2':y='(H/2)+15+{rise(0.30)}':shortest=1[o2]")
     g.cur = 'o2'
     return ['-loop', '1', '-framerate', str(FPS), '-i', l1, '-loop', '1', '-framerate', str(FPS), '-i', l2]
 
@@ -265,13 +276,17 @@ def render_shot(i, a, b, clip, inp, look, fx, tmp):
     if look == 'logo':
         render_logo(n, clip, out)
         return out
-    if 'ramp' in fx:
-        render_ramp(a, n, clip, inp, fx, out)
+    if 'ramp' in fx or 'photos' in fx:
+        render_remap(a, n, clip, inp, fx, out)
         return out
     g = Graph()
     base = []
-    if 'speed' in fx:
-        base.append(f"setpts=PTS/{fx['speed']}")
+    speed = fx.get('speed', 1.0)
+    avail = clip_len(clip) - inp - 0.04
+    if avail < n / FPS * speed:  # short clip: slow it down instead of freezing the last frame
+        speed = avail / (n / FPS)
+    if speed != 1.0:
+        base.append(f"setpts=PTS/{speed:.4f}")
     base.append(f"fps={FPS},{FIT}")
     cam = camera(n, fx)
     if cam:
@@ -288,22 +303,39 @@ def render_shot(i, a, b, clip, inp, look, fx, tmp):
     return out
 
 
+TITLE_IN = 0.28      # s after the tower cut when the first title line lands
+
+
 def sound_design():
-    """Sparse: a shutter click per flash, swooshes on the two big moves,
-    sub drop on the drop, impact on the logo."""
+    """Fujifilm shutter on every flash and photo, swooshes on the big moves,
+    title hit, sub drop on the drop, impact on the logo."""
     t = lambda f: f / FPS
     shutter, swoosh = sfx.sample('shutter_burst'), sfx.sample('slow_swoosh')
     impact, sub = sfx.sample('impact'), sfx.sample('sub_drop')
     SW_PEAK = 1.358
-    ev = []
+    # measured click onsets in the burst; take different ones so repeats don't sound cloned
+    onsets = [0.024, 0.133, 0.208, 0.272, 0.339, 0.408, 0.472, 0.541, 0.611, 0.675, 0.739, 0.808]
+    click = lambda i, db: sfx.cut(shutter, onsets[i % 12] - 0.008, onsets[i % 12] + 0.06,
+                                  fade_out=0.025, gain_db=db)
+    ev, k = [], 0
     for a, b, clip, inp, look, fx in SHOTS:
         if fx.get('white'):
-            ev.append(sfx.place(t(fx['white'][0]), sfx.cut(shutter, 0.015, 0.105, fade_out=0.03, gain_db=-5), 0.009))
-        if 'ramp' in fx:                     # House of Negroni: fast swoosh peaking as it slows
+            ev.append(sfx.place(t(fx['white'][0]), click(k, -4), 0.008)); k += 5
+        for p in fx.get('photos', []):       # photo burst: a click per frozen frame
+            ev.append(sfx.place(t(p), click(k, -3), 0.008)); k += 1
+        if fx.get('text'):                   # title lands: short swoosh + soft sub thump
+            ev.append(sfx.place(t(a) + TITLE_IN, sfx.cut(swoosh, 0.9, 1.7, fade_in=0.15, fade_out=0.25,
+                                                         gain_db=-8), SW_PEAK - 0.9))
+            ev.append(sfx.place(t(a) + TITLE_IN, sfx.cut(sub, 0.9, 1.9, fade_in=0.005, fade_out=0.7,
+                                                         gain_db=-20), 0.915 - 0.9))
+        if 'ramp' in fx and clip == 18:      # House of Negroni: fast swoosh peaking as it slows
             rate = 1.7
             ev.append(sfx.place(t(a + 4), sfx.cut(swoosh, 0.6, 2.2, fade_in=0.05, fade_out=0.3,
                                                   gain_db=-7, rate=rate), (SW_PEAK - 0.6) / rate))
-        elif a == 72:                        # slow swoosh into the muffled run-up
+        elif 'ramp' in fx:                   # other ramps: lighter, faster swish
+            ev.append(sfx.place(t(a + 3), sfx.cut(swoosh, 0.9, 1.8, fade_in=0.05, fade_out=0.2,
+                                                  gain_db=-14, rate=2.0), (SW_PEAK - 0.9) / 2.0))
+        if a == 72:                          # slow swoosh into the muffled run-up
             ev.append(sfx.place(t(a), sfx.cut(swoosh, 0.3, 3.0, fade_in=0.3, fade_out=0.6, gain_db=-8), SW_PEAK - 0.3))
         elif a == 107:                       # its hiss rises into the drop, sub lands on the cut
             ev.append(sfx.place(t(a), sfx.cut(sub, 0.0, 2.4, fade_in=0.4, fade_out=1.2, gain_db=-10), 0.915))
