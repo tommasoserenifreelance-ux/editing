@@ -157,8 +157,7 @@ export const Piatto: React.FC = () => (
       </Sequence>
     ))}
     <Headline />
-    {/* Original chill-out bed from scripts/make-chill-music.py */}
-    <Audio src={staticFile("music/chill.wav")} volume={0.65} />
+    {/* Music is added on Instagram; scripts/make-chill-music.py has a bed if needed */}
     <Sequence from={s(OVERHEAD_AT) - 6}>
       <Audio src={staticFile("sfx/whoosh.wav")} volume={0.5} />
     </Sequence>
