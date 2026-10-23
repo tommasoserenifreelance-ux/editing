@@ -1,6 +1,5 @@
 import {
   AbsoluteFill,
-  Audio,
   Img,
   interpolate,
   OffthreadVideo,
@@ -21,10 +20,7 @@ export const PIATTO_DURATION = 616; // 25.66 s, length of the source clip
 
 const s = (seconds: number) => Math.round(seconds * PIATTO_FPS);
 
-// Cut from the intro (plate in hand) to the overhead shot.
-const OVERHEAD_AT = 6.5;
-
-const HEADLINE = ["Il tuo spuntino longevity", "potrebbe essere così ✨"];
+const HEADLINE = ["Il tuo spuntino longevity", "potrebbe essere così"];
 
 // When each ingredient is in place, and where its label sits (centre, px).
 const LABELS: { text: string; at: number; x: number; y: number }[] = [
@@ -90,6 +86,15 @@ const Headline: React.FC = () => {
         paddingBottom: 330,
       }}
     >
+      <Img
+        src={staticFile("logo.png")}
+        style={{
+          width: 130,
+          marginBottom: 18,
+          opacity: enter,
+          filter: "drop-shadow(0 2px 10px rgba(0,0,0,0.45))",
+        }}
+      />
       <div
         style={{
           display: "flex",
@@ -126,23 +131,11 @@ const Headline: React.FC = () => {
   );
 };
 
-const Watermark: React.FC = () => (
-  <AbsoluteFill style={{ alignItems: "flex-end", padding: "250px 80px 0 0" }}>
-    <Img
-      src={staticFile("logo.png")}
-      style={{
-        width: 120,
-        opacity: 0.8,
-        filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.35))",
-      }}
-    />
-  </AbsoluteFill>
-);
-
 export const Piatto: React.FC = () => (
   <AbsoluteFill style={{ backgroundColor: "black" }}>
     <OffthreadVideo
-      src={staticFile("piatto/timeline_1.mp4")}
+      src={staticFile("piatto/timeline_1_graded.mp4")}
+      muted
       style={{ width: "100%", height: "100%", objectFit: "cover" }}
     />
     {LABELS.map((l, i) => (
@@ -153,13 +146,8 @@ export const Piatto: React.FC = () => (
           y={l.y}
           color={i % 2 === 0 ? YELLOW : LILAC}
         />
-        <Audio src={staticFile("sfx/pop.wav")} volume={0.35} />
       </Sequence>
     ))}
     <Headline />
-    <Watermark />
-    <Sequence from={s(OVERHEAD_AT) - 6}>
-      <Audio src={staticFile("sfx/whoosh.wav")} volume={0.5} />
-    </Sequence>
   </AbsoluteFill>
 );
