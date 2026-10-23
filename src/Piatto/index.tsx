@@ -1,5 +1,6 @@
 import {
   AbsoluteFill,
+  Audio,
   Img,
   interpolate,
   OffthreadVideo,
@@ -19,6 +20,9 @@ export const PIATTO_FPS = 24;
 export const PIATTO_DURATION = 616; // 25.66 s, length of the source clip
 
 const s = (seconds: number) => Math.round(seconds * PIATTO_FPS);
+
+// Cut from the intro (plate in hand) to the overhead shot.
+const OVERHEAD_AT = 6.5;
 
 const HEADLINE = ["Il tuo spuntino longevity", "potrebbe essere così"];
 
@@ -146,8 +150,14 @@ export const Piatto: React.FC = () => (
           y={l.y}
           color={i % 2 === 0 ? YELLOW : LILAC}
         />
+        <Audio src={staticFile("sfx/pop.wav")} volume={0.35} />
       </Sequence>
     ))}
     <Headline />
+    {/* Song from the reference reel, looped by scripts/loop-song.py */}
+    <Audio src={staticFile("piatto/song-looped.wav")} volume={0.8} />
+    <Sequence from={s(OVERHEAD_AT) - 6}>
+      <Audio src={staticFile("sfx/whoosh.wav")} volume={0.5} />
+    </Sequence>
   </AbsoluteFill>
 );
