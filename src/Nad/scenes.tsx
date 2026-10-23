@@ -19,6 +19,7 @@ import {
   usePop,
   Word3D,
 } from "../Testosterone/primitives";
+import { Illo } from "../Testosterone/illos";
 import { colors, FPS, sans, sec } from "../Testosterone/theme";
 import { wt } from "./captions";
 
@@ -666,7 +667,7 @@ export const NonDimostrato: React.FC<SceneProps> = ({ t0 }) => {
 /* "Il framing onesto è questo:" — soft, typed on paper */
 export const Framing: React.FC<SceneProps> = ({ t0 }) => (
   <Fill bg="white">
-    <SerifLabel text="il framing onesto" delay={at(t0, "framing")} size={150} style={{ left: 0, right: 0, top: 380 }} />
+    <SerifLabel text="il framing onesto" delay={0} size={150} style={{ left: 0, right: 0, top: 380 }} />
     <div
       style={{
         position: "absolute",
@@ -703,5 +704,73 @@ export const Hype: React.FC<SceneProps> = ({ t0 }) => {
         style={{ left: 0, top: 0, width: 1920, height: 1080 }}
       />
     </Fill>
+  );
+};
+
+/* ------------------------------------------------------------------ */
+/* YouTube call-to-action sticker (top right, over speaker shots)       */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Subscribe button pops in, a cursor slides in and clicks it (it turns
+ * into "Iscritto"), then bell and thumbs-up pop next to it. ~3 s.
+ */
+export const Subscribe: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { fps, durationInFrames } = useVideoConfig();
+  const click = 26;
+  const pIn = usePop(0, 11);
+  const out = interpolate(frame, [durationInFrames - 8, durationInFrames], [1, 0], clamp);
+  const press = frame >= click && frame < click + 4 ? 0.9 : 1;
+  const done = frame >= click;
+  const cur = spring({ frame: frame - 8, fps, config: { damping: 16, mass: 0.6 } });
+  const curGone = interpolate(frame, [click + 10, click + 18], [1, 0], clamp);
+  const ring = frame > click + 6 ? Math.sin((frame - click) / 1.6) * 14 * Math.exp(-(frame - click - 6) / 14) : 0;
+  return (
+    <AbsoluteFill style={{ opacity: out }}>
+      <div
+        style={{
+          position: "absolute",
+          left: 1440,
+          top: 70,
+          width: 360,
+          height: 120,
+          borderRadius: 60,
+          background: done ? "#ECE9EF" : "#E5322D",
+          border: `7px solid ${colors.printInk}`,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 14,
+          fontFamily: sans,
+          fontWeight: 700,
+          fontSize: 50,
+          letterSpacing: "-0.02em",
+          color: done ? colors.printInk : colors.white,
+          transform: `scale(${pIn * press}) rotate(${-4 * pIn}deg)`,
+          filter: "url(#sticker)",
+        }}
+      >
+        {done ? "Iscritto ✓" : "ISCRIVITI"}
+      </div>
+      <div style={{ position: "absolute", left: 0, top: 0, transform: `rotate(${ring}deg)`, transformOrigin: "1858px 95px" }}>
+        <Emoji name="bell" x={1858} y={135} size={110} delay={click + 6} volume={0.4} />
+      </div>
+      <Emoji name="thumbup" x={1370} y={150} size={110} delay={click + 12} volume={0.4} />
+      <div
+        style={{
+          position: "absolute",
+          left: interpolate(cur, [0, 1], [1940, 1640]),
+          top: interpolate(cur, [0, 1], [420, 150]),
+          opacity: curGone * (frame < 8 ? 0 : 1),
+          transform: `scale(${press})`,
+        }}
+      >
+        <Illo name="cursor" size={110} />
+      </div>
+      <Sfx at={0} name="pop1" volume={0.45} />
+      <Sfx at={click} name="tick" volume={0.7} />
+      <Sfx at={click + 6} name="ding" volume={0.3} />
+    </AbsoluteFill>
   );
 };

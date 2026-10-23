@@ -31,6 +31,7 @@ import {
   Serie,
   Sopravvivenza,
   Studi,
+  Subscribe,
   TalkingHead,
   ViaOrale,
 } from "./scenes";
@@ -87,7 +88,8 @@ const SCENES: Scene[] = [
   { from: wt("Questi"), caption: "none", render: (t0) => <Aumentano t0={t0} /> },
   { from: wt("Tradurre"), caption: "none", render: (t0) => <Benefici t0={t0} /> },
   { from: wt("E", 65), caption: "white", speaker: true, render: th("wide", ["onestà", "trasparenza"]) },
-  { from: wt("Il", 70.5), caption: "none", cam: "in", quiet: true, render: (t0) => <Framing t0={t0} /> },
+  // cut right as "differenza" ends so the speaker never starts "il framing" on camera
+  { from: 70.62, caption: "none", cam: "in", quiet: true, render: (t0) => <Framing t0={t0} /> },
   { from: wt("il", 73), caption: "none", render: (t0) => <Promettenti t0={t0} /> },
   { from: wt("Promettente"), caption: "none", render: (t0) => <NonDimostrato t0={t0} /> },
   { from: wt("E", 88), caption: "white", speaker: true, render: th("close", ["distinzione"]) },
@@ -120,6 +122,9 @@ const Cam: React.FC<{
     </AbsoluteFill>
   );
 };
+
+// Three "subscribe" call-to-actions, each over a speaker shot.
+const SUBSCRIBE_AT = [22.6, 39.4, 89.2];
 
 const sceneAt = (t: number) => {
   let i = 0;
@@ -157,6 +162,11 @@ export const Nad: React.FC = () => (
         </Sequence>
       );
     })}
+    {SUBSCRIBE_AT.map((t) => (
+      <Sequence key={t} from={sec(t)} durationInFrames={sec(3)}>
+        <Subscribe />
+      </Sequence>
+    ))}
     <Captions modeAt={modeAt} />
     <Audio src={staticFile("nad/voice.m4a")} volume={0.85} />
   </AbsoluteFill>

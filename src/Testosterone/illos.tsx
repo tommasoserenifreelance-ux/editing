@@ -319,6 +319,33 @@ const Attention = () => (
   </g>
 );
 
+/* ---- YouTube call-to-action ---- */
+
+const Bell = () => (
+  <g>
+    <path d="M100 22 C66 22 50 50 50 82 L50 118 L32 146 L168 146 L150 118 L150 82 C150 50 134 22 100 22 Z" fill={Y} {...ink} />
+    <circle cx="100" cy="18" r="10" fill={Y} {...ink} />
+    <path d="M78 150 C78 174 122 174 122 150 Z" fill={Y} {...ink} />
+    <path d="M70 70 C72 56 80 46 90 42" fill="none" stroke={W} strokeWidth={8} strokeLinecap="round" />
+    <path d="M18 60 C10 74 10 92 16 104 M182 60 C190 74 190 92 184 104" fill="none" stroke={K} strokeWidth={7} strokeLinecap="round" />
+  </g>
+);
+
+const ThumbUp = () => (
+  <g>
+    <rect x="18" y="86" width="40" height="92" rx="8" fill={C} {...ink} />
+    <path d="M58 92 L90 30 C96 18 118 22 116 40 L110 78 L162 78 C178 78 186 92 182 106 L168 160 C164 172 154 178 142 178 L58 178 Z" fill={W} {...ink} />
+    <path d="M118 106 L168 106 M114 132 L160 132" {...hatch} />
+    <path d="M90 50 C94 42 100 36 106 34" fill="none" stroke="#C9C2CC" strokeWidth={6} strokeLinecap="round" />
+  </g>
+);
+
+const Cursor = () => (
+  <g>
+    <path d="M40 16 L40 160 L76 126 L102 184 L128 172 L102 116 L150 116 Z" fill={W} {...ink} strokeWidth={7} />
+  </g>
+);
+
 const ICONS: Record<string, React.ReactNode> = {
   biceps: <Biceps />,
   bone: <BoneIco />,
@@ -351,6 +378,9 @@ const ICONS: Record<string, React.ReactNode> = {
   molecule: <Molecule />,
   hourglass: <Hourglass />,
   attention: <Attention />,
+  bell: <Bell />,
+  thumbup: <ThumbUp />,
+  cursor: <Cursor />,
 };
 
 export const Illo: React.FC<{ name: string; size: number; seed?: number }> = ({
