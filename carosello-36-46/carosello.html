@@ -42,13 +42,22 @@
   .swipe { position: absolute; left: 76px; bottom: 62px; font-size: 24px; color: var(--grey); letter-spacing: 1px; }
 
   .cream { background: var(--cream); }
-  .cover .content { top: 400px; }
+  .cover { background: #c9a98a url("cover.jpg") center top / cover no-repeat; }
+  .cover::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(40,25,15,.72) 100%); }
+  .cover > * { z-index: 1; }
+  .cover .logo { left: 70px; transform: none; top: 70px; filter: brightness(0) invert(1); }
+  .cover .content { top: auto; bottom: 150px; }
+  .cover .lead, .cover .sub, .cover h1, .cover .swipe { color: #fff; }
+  .cover h1 { font-size: 76px; }
+  .cover .sub { font-size: 34px; margin-top: 30px; }
+  .cover mark { background: linear-gradient(transparent 84%, rgba(200,176,137,.95) 84%, rgba(200,176,137,.95) 96%, transparent 96%); }
+  .cover .dots i { background: rgba(255,255,255,.5); } .cover .dots i.on { background: #fff; }
 </style>
 </head>
 <body>
 
 <!-- 1 · COVER -->
-<section class="slide cream cover" id="s1">
+<section class="slide cover" id="s1">
   <img class="logo" src="logo.png" alt="la Menopausa">
   <div class="content">
     <div class="lead">Uno studio finlandese ha scoperto che:</div>
