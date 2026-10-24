@@ -42,16 +42,19 @@
   .swipe { position: absolute; left: 76px; bottom: 62px; font-size: 24px; color: var(--grey); letter-spacing: 1px; }
 
   .cream { background: var(--cream); }
-  .cover { background: #c9a98a url("cover.jpg") center top / cover no-repeat; }
-  .cover::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(40,25,15,.72) 100%); }
+  /* Cover: foto con cielo chiaro → testo scuro in alto, logo bianco in basso sul prato */
+  .cover { background: #dcdcd6 url("cover.jpg") center top / cover no-repeat; }
+  .cover::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,.35) 0%, rgba(255,255,255,0) 45%, rgba(0,0,0,0) 75%, rgba(20,30,10,.55) 100%); }
   .cover > * { z-index: 1; }
-  .cover .logo { left: 70px; transform: none; top: 70px; filter: brightness(0) invert(1); }
-  .cover .content { top: auto; bottom: 150px; }
-  .cover .lead, .cover .sub, .cover h1, .cover .swipe { color: #fff; }
-  .cover h1 { font-size: 76px; }
-  .cover .sub { font-size: 34px; margin-top: 30px; }
-  .cover mark { background: linear-gradient(transparent 84%, rgba(200,176,137,.95) 84%, rgba(200,176,137,.95) 96%, transparent 96%); }
-  .cover .dots i { background: rgba(255,255,255,.5); } .cover .dots i.on { background: #fff; }
+  .cover .content { top: 96px; }
+  .cover .lead { font-size: 32px; color: var(--ink); margin-bottom: 22px; }
+  .cover h1 { font-size: 72px; color: var(--ink); }
+  .cover .sub { font-size: 32px; color: var(--ink); margin-top: 22px; }
+  .cover mark { background: linear-gradient(transparent 84%, var(--sand) 84%, var(--sand) 96%, transparent 96%); }
+  .cover .logo { top: auto; bottom: 60px; left: 70px; transform: none; width: 200px; filter: brightness(0) invert(1); }
+  .cover .swipe { display: none; }
+  .cover .dots { bottom: 80px; }
+  .cover .dots i { background: rgba(255,255,255,.55); } .cover .dots i.on { background: #fff; }
 </style>
 </head>
 <body>
