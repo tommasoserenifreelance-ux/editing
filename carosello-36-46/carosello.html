@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Tra i 36 e i 46 anni</title>
+<style>
+  :root {
+    --ink: #141414;
+    --grey: #6a6a6a;
+    --sand: #c8b089;
+    --sand-light: #e9dfcf;
+    --mark: #e6d5b8;
+    --bg: #ffffff;
+    --cream: #f6f1ea;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #ddd; font-family: "Inter", sans-serif; }
+  .slide { width: 1080px; height: 1350px; background: var(--bg); position: relative; overflow: hidden; margin: 0 0 40px; }
+  .logo { position: absolute; top: 80px; left: 50%; transform: translateX(-50%); width: 240px; }
+
+  .content { position: absolute; left: 76px; right: 76px; top: 420px; }
+  .kicker { font-size: 24px; font-weight: 400; letter-spacing: 3px; text-transform: uppercase; color: var(--sand); margin-bottom: 34px; }
+  .lead { font-size: 34px; line-height: 1.38; color: var(--grey); margin-bottom: 30px; }
+  h1 { font-size: 84px; line-height: 1.08; font-weight: 700; color: var(--ink); letter-spacing: -2px; }
+  h2 { font-size: 54px; line-height: 1.15; font-weight: 700; color: var(--ink); letter-spacing: -0.8px; max-width: 860px; margin-bottom: 40px; }
+  p { font-size: 33px; line-height: 1.42; color: var(--grey); max-width: 860px; margin-bottom: 28px; }
+  p.ink { color: var(--ink); }
+  b { font-weight: 700; color: var(--ink); }
+  mark { white-space: nowrap; background: linear-gradient(transparent 52%, var(--mark) 52%); color: inherit; padding: 0 4px; }
+  .sub { font-size: 40px; line-height: 1.3; color: var(--grey); margin-top: 40px; }
+  .src { position: absolute; left: 76px; bottom: 66px; font-size: 21px; color: var(--grey); max-width: 700px; line-height: 1.4; }
+
+  ul { list-style: none; margin-top: 6px; }
+  li { font-size: 36px; line-height: 1.3; color: var(--ink); padding: 22px 0 22px 0; border-bottom: 1px solid var(--sand-light); }
+  li:last-child { border-bottom: 0; }
+
+  .ages p { font-size: 40px; line-height: 1.32; margin-bottom: 44px; }
+
+  .dots { position: absolute; right: 70px; bottom: 70px; display: flex; gap: 14px; }
+  .dots i { width: 12px; height: 12px; border-radius: 50%; background: var(--sand-light); }
+  .dots i.on { background: var(--sand); width: 15px; height: 15px; margin-top: -1.5px; }
+  .swipe { position: absolute; left: 76px; bottom: 62px; font-size: 24px; color: var(--grey); letter-spacing: 1px; }
+
+  .cream { background: var(--cream); }
+  .cover .content { top: 400px; }
+</style>
+</head>
+<body>
+
+<!-- 1 · COVER -->
+<section class="slide cream cover" id="s1">
+  <img class="logo" src="logo.png" alt="la Menopausa">
+  <div class="content">
+    <div class="lead">Uno studio finlandese ha scoperto che:</div>
+    <h1>Quello che fai <mark>tra i 36 e i 46 anni</mark> influenza come invecchierai.</h1>
+    <div class="sub">E sono proprio gli anni in cui inizia la perimenopausa.</div>
+  </div>
+  <div class="swipe">Scorri →</div>
+  <div class="dots"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+</section>
+
+<!-- 2 · LO STUDIO -->
+<section class="slide" id="s2">
+  <img class="logo" src="logo.png" alt="la Menopausa">
+  <div class="content">
+    <div class="kicker">Lo studio</div>
+    <h2>Le abitudini che mantieni tra i 36 e i 46 anni…</h2>
+    <p>…come quanto ti muovi, quanto alcol bevi e se fumi…</p>
+    <p class="ink">…sono associate alla tua salute fisica e mentale dopo i 50 anni.</p>
+    <p>Chi le manteneva più a lungo mostrava un rischio metabolico più alto, più sintomi depressivi e una salute percepita peggiore.</p>
+  </div>
+  <div class="src">Fonte: Kekäläinen et al., Annals of Medicine, 2025<br>(PMID: 40273458)</div>
+  <div class="dots"><i></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+</section>
+
+<!-- 3 · IL DECENNIO -->
+<section class="slide" id="s3">
+  <img class="logo" src="logo.png" alt="la Menopausa">
+  <div class="content">
+    <div class="kicker">Perché proprio adesso</div>
+    <h2>Questo è il decennio in cui:</h2>
+    <p>la flessibilità metabolica del corpo, cioè la sua capacità di adattarsi a stress, cibo e richieste di energia…</p>
+    <p class="ink">…inizia naturalmente a diminuire.</p>
+  </div>
+  <div class="dots"><i></i><i></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div>
+</section>
+
+<!-- 4 · PERIMENOPAUSA -->
+<section class="slide" id="s4">
+  <img class="logo" src="logo.png" alt="la Menopausa">
+  <div class="content">
+    <div class="kicker">La perimenopausa</div>
+    <h2>Ed è anche il decennio in cui iniziano a cambiare gli ormoni.</h2>
+    <p>La perimenopausa può iniziare già intorno ai 40 anni, a volte prima. Gli estrogeni cominciano a oscillare anni prima dell’ultima mestruazione.</p>
+    <p class="ink">E gli estrogeni influenzano metabolismo, massa muscolare, ossa, sonno, umore e salute del cuore.</p>
+  </div>
+  <div class="dots"><i></i><i></i><i></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
+</section>
+
+<!-- 5 · IL CORPO NON COMPENSA PIÙ -->
+<section class="slide" id="s5">
+  <img class="logo" src="logo.png" alt="la Menopausa">
+  <div class="content" style="top: 390px">
+    <h2>Il tuo corpo non riesce più a compensare:</h2>
+    <ul>
+      <li>Il sonno scarso</li>
+      <li>Lo stress elevato</li>
+      <li>La mancanza di attività fisica</li>
+      <li>Gli sbalzi di zuccheri nel sangue</li>
+      <li>Un’alimentazione che svuota invece di nutrire</li>
+    </ul>
+  </div>
+  <div class="dots"><i></i><i></i><i></i><i></i><i class="on"></i><i></i><i></i><i></i></div>
+</section>
+
+<!-- 6 · 20 / 30 / ORA -->
+<section class="slide ages" id="s6">
+  <img class="logo" src="logo.png" alt="la Menopausa">
+  <div class="content" style="top: 470px">
+    <p><b>A 20 anni</b> potevi permettertelo.</p>
+    <p><b>A 30 anni</b> iniziano a vedersi i primi segnali.</p>
+    <p><b>E adesso?</b> Ogni piccola scelta pesa di più.</p>
+  </div>
+  <div class="dots"><i></i><i></i><i></i><i></i><i></i><i class="on"></i><i></i><i></i></div>
+</section>
+
+<!-- 7 · LA BUONA NOTIZIA -->
+<section class="slide" id="s7">
+  <img class="logo" src="logo.png" alt="la Menopausa">
+  <div class="content" style="top: 390px">
+    <div class="kicker">La buona notizia</div>
+    <h2>Vale anche al contrario: ogni piccola scelta conta.</h2>
+    <ul>
+      <li>Allenare la forza, non solo il cardio</li>
+      <li>Proteggere il sonno</li>
+      <li>Proteine a ogni pasto</li>
+      <li>Ridurre l’alcol, smettere di fumare</li>
+      <li>Darsi spazi reali per gestire lo stress</li>
+    </ul>
+  </div>
+  <div class="dots"><i></i><i></i><i></i><i></i><i></i><i></i><i class="on"></i><i></i></div>
+</section>
+
+<!-- 8 · CHIUSURA -->
+<section class="slide cream" id="s8">
+  <img class="logo" src="logo.png" alt="la Menopausa">
+  <div class="content">
+    <h2>La menopausa non si subisce. Si prepara.</h2>
+    <p>Quello che fai oggi è un investimento sulla donna che sarai a 50, 60, 70 anni.</p>
+    <p class="ink">Hai tra i 35 e i 50 anni e senti che qualcosa sta cambiando? Parlane con il tuo medico.<br><br>Salva il post e condividilo con un’amica.</p>
+  </div>
+  <div class="dots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="on"></i></div>
+</section>
+
+</body>
+</html>
