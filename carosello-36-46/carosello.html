@@ -15,7 +15,7 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: #ddd; font-family: "Inter", sans-serif; }
-  .slide { width: 1080px; height: 1350px; background: var(--bg); position: relative; overflow: hidden; margin: 0 0 40px; }
+  .slide { width: 1080px; height: 1350px; background: var(--bg) url("grain.png"); position: relative; overflow: hidden; margin: 0 0 40px; }
   .logo { position: absolute; top: 80px; left: 50%; transform: translateX(-50%); width: 240px; }
 
   .content { position: absolute; left: 76px; right: 76px; top: 420px; }
@@ -42,19 +42,18 @@
   .swipe { position: absolute; left: 76px; bottom: 62px; font-size: 24px; color: var(--grey); letter-spacing: 1px; }
 
   .cream { background: var(--cream); }
-  /* Cover: foto con cielo chiaro → testo scuro in alto, logo bianco in basso sul prato */
-  .cover { background: #dcdcd6 url("cover.jpg") center top / cover no-repeat; }
-  .cover::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,.35) 0%, rgba(255,255,255,0) 45%, rgba(0,0,0,0) 75%, rgba(20,30,10,.55) 100%); }
+  /* Cover: foto, testo bianco in alto, logo bianco centrato in basso */
+  .cover { background: #9aa0a0 url("cover.jpg") center top / cover no-repeat; }
+  .cover::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(25,22,18,.62) 0%, rgba(25,22,18,.38) 32%, rgba(0,0,0,0) 52%, rgba(0,0,0,0) 72%, rgba(15,22,8,.55) 100%); }
   .cover > * { z-index: 1; }
   .cover .content { top: 96px; }
-  .cover .lead { font-size: 32px; color: var(--ink); margin-bottom: 22px; }
-  .cover h1 { font-size: 72px; color: var(--ink); }
-  .cover .sub { font-size: 32px; color: var(--ink); margin-top: 22px; }
+  .cover .lead, .cover h1, .cover .sub { color: #fff; text-shadow: 0 2px 18px rgba(0,0,0,.25); }
+  .cover .lead { font-size: 32px; margin-bottom: 22px; }
+  .cover h1 { font-size: 72px; }
+  .cover .sub { font-size: 32px; margin-top: 22px; }
   .cover mark { background: linear-gradient(transparent 84%, var(--sand) 84%, var(--sand) 96%, transparent 96%); }
-  .cover .logo { top: auto; bottom: 60px; left: 70px; transform: none; width: 200px; filter: brightness(0) invert(1); }
+  .cover .logo { top: auto; bottom: 64px; left: 50%; transform: translateX(-50%); width: 220px; filter: brightness(0) invert(1); }
   .cover .swipe { display: none; }
-  .cover .dots { bottom: 80px; }
-  .cover .dots i { background: rgba(255,255,255,.55); } .cover .dots i.on { background: #fff; }
 </style>
 </head>
 <body>
@@ -68,45 +67,38 @@
     <div class="sub">E sono proprio gli anni in cui inizia la perimenopausa.</div>
   </div>
   <div class="swipe">Scorri →</div>
-  <div class="dots"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 </section>
 
 <!-- 2 · LO STUDIO -->
 <section class="slide" id="s2">
   <img class="logo" src="logo.png" alt="la Menopausa">
   <div class="content">
-    <div class="kicker">Lo studio</div>
     <h2>Le abitudini che mantieni tra i 36 e i 46 anni…</h2>
     <p>…come quanto ti muovi, quanto alcol bevi e se fumi…</p>
     <p class="ink">…sono associate alla tua salute fisica e mentale dopo i 50 anni.</p>
     <p>Chi le manteneva più a lungo mostrava un rischio metabolico più alto, più sintomi depressivi e una salute percepita peggiore.</p>
   </div>
   <div class="src">Fonte: Kekäläinen et al., Annals of Medicine, 2025<br>(PMID: 40273458)</div>
-  <div class="dots"><i></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 </section>
 
 <!-- 3 · IL DECENNIO -->
 <section class="slide" id="s3">
   <img class="logo" src="logo.png" alt="la Menopausa">
   <div class="content">
-    <div class="kicker">Perché proprio adesso</div>
     <h2>Questo è il decennio in cui:</h2>
     <p>la flessibilità metabolica del corpo, cioè la sua capacità di adattarsi a stress, cibo e richieste di energia…</p>
     <p class="ink">…inizia naturalmente a diminuire.</p>
   </div>
-  <div class="dots"><i></i><i></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div>
 </section>
 
 <!-- 4 · PERIMENOPAUSA -->
 <section class="slide" id="s4">
   <img class="logo" src="logo.png" alt="la Menopausa">
   <div class="content">
-    <div class="kicker">La perimenopausa</div>
     <h2>Ed è anche il decennio in cui iniziano a cambiare gli ormoni.</h2>
     <p>La perimenopausa può iniziare già intorno ai 40 anni, a volte prima. Gli estrogeni cominciano a oscillare anni prima dell’ultima mestruazione.</p>
     <p class="ink">E gli estrogeni influenzano metabolismo, massa muscolare, ossa, sonno, umore e salute del cuore.</p>
   </div>
-  <div class="dots"><i></i><i></i><i></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
 </section>
 
 <!-- 5 · IL CORPO NON COMPENSA PIÙ -->
@@ -122,7 +114,6 @@
       <li>Un’alimentazione che svuota invece di nutrire</li>
     </ul>
   </div>
-  <div class="dots"><i></i><i></i><i></i><i></i><i class="on"></i><i></i><i></i><i></i></div>
 </section>
 
 <!-- 6 · 20 / 30 / ORA -->
@@ -133,14 +124,12 @@
     <p><b>A 30 anni</b> iniziano a vedersi i primi segnali.</p>
     <p><b>E adesso?</b> Ogni piccola scelta pesa di più.</p>
   </div>
-  <div class="dots"><i></i><i></i><i></i><i></i><i></i><i class="on"></i><i></i><i></i></div>
 </section>
 
 <!-- 7 · LA BUONA NOTIZIA -->
 <section class="slide" id="s7">
   <img class="logo" src="logo.png" alt="la Menopausa">
   <div class="content" style="top: 390px">
-    <div class="kicker">La buona notizia</div>
     <h2>Vale anche al contrario: ogni piccola scelta conta.</h2>
     <ul>
       <li>Allenare la forza, non solo il cardio</li>
@@ -150,18 +139,16 @@
       <li>Darsi spazi reali per gestire lo stress</li>
     </ul>
   </div>
-  <div class="dots"><i></i><i></i><i></i><i></i><i></i><i></i><i class="on"></i><i></i></div>
 </section>
 
 <!-- 8 · CHIUSURA -->
-<section class="slide cream" id="s8">
+<section class="slide" id="s8">
   <img class="logo" src="logo.png" alt="la Menopausa">
   <div class="content">
     <h2>La menopausa non si subisce. Si prepara.</h2>
     <p>Quello che fai oggi è un investimento sulla donna che sarai a 50, 60, 70 anni.</p>
     <p class="ink">Hai tra i 35 e i 50 anni e senti che qualcosa sta cambiando? Parlane con il tuo medico.<br><br>Salva il post e condividilo con un’amica.</p>
   </div>
-  <div class="dots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="on"></i></div>
 </section>
 
 </body>
