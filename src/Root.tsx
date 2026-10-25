@@ -92,6 +92,24 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
       />
+      <Composition
+        id="CoverPiattoConLei"
+        component={Piatto}
+        durationInFrames={PIATTO_DURATION}
+        fps={PIATTO_FPS}
+        width={1080}
+        height={1920}
+        defaultProps={{ headlineBottom: 820, still: true }}
+      />
+      <Composition
+        id="CoverPiattoDallAlto"
+        component={Piatto}
+        durationInFrames={PIATTO_DURATION}
+        fps={PIATTO_FPS}
+        width={1080}
+        height={1920}
+        defaultProps={{ headlineBottom: 300, still: true }}
+      />
       <Still
         id="CoverProdottoInCamera"
         component={Cover}

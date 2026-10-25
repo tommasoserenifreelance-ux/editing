@@ -81,16 +81,21 @@ const Label: React.FC<{
   );
 };
 
-const Headline: React.FC = () => {
+const Headline: React.FC<{ bottom: number; still: boolean }> = ({
+  bottom,
+  still,
+}) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const enter = spring({ frame, fps, config: { damping: 12, mass: 0.6 } });
+  const enter = still
+    ? 1
+    : spring({ frame, fps, config: { damping: 12, mass: 0.6 } });
   return (
     <AbsoluteFill
       style={{
         justifyContent: "flex-end",
         alignItems: "center",
-        paddingBottom: 330,
+        paddingBottom: bottom,
       }}
     >
       <Img
@@ -138,7 +143,12 @@ const Headline: React.FC = () => {
   );
 };
 
-export const Piatto: React.FC = () => (
+// headlineBottom: distance of the title block from the bottom edge (px).
+// still: title shown without its entrance animation (for covers).
+export const Piatto: React.FC<{ headlineBottom?: number; still?: boolean }> = ({
+  headlineBottom = 330,
+  still = false,
+}) => (
   <AbsoluteFill style={{ backgroundColor: "black" }}>
     <OffthreadVideo
       src={staticFile("piatto/timeline_1_graded.mp4")}
@@ -156,7 +166,7 @@ export const Piatto: React.FC = () => (
         <Audio src={staticFile("sfx/pop.wav")} volume={0.35} />
       </Sequence>
     ))}
-    <Headline />
+    <Headline bottom={headlineBottom} still={still} />
     {/* Music is added on Instagram; scripts/make-chill-music.py has a bed if needed */}
     <Sequence from={s(OVERHEAD_AT) - 6}>
       <Audio src={staticFile("sfx/whoosh.wav")} volume={0.5} />
