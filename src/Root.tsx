@@ -1,4 +1,5 @@
 import { Composition, Folder } from "remotion";
+import { Bonsalto, BONSALTO_FPS, bonsaltoDuration } from "./Bonsalto";
 import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
@@ -72,6 +73,26 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
       />
+      <Folder name="Bonsalto">
+        <Composition
+          id="BonsaltoValdicielo"
+          component={Bonsalto}
+          durationInFrames={bonsaltoDuration("valdicielo")}
+          fps={BONSALTO_FPS}
+          width={1080}
+          height={1920}
+          defaultProps={{ wine: "valdicielo" as const }}
+        />
+        <Composition
+          id="BonsaltoBernesco"
+          component={Bonsalto}
+          durationInFrames={bonsaltoDuration("bernesco")}
+          fps={BONSALTO_FPS}
+          width={1080}
+          height={1920}
+          defaultProps={{ wine: "bernesco" as const }}
+        />
+      </Folder>
     </>
   );
 };
