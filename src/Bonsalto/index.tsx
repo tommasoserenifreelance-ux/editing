@@ -29,6 +29,8 @@ Promise.all(
 ).then(() => continueRender(fontHandle));
 
 // A cutaway laid over the interview: the interview audio keeps running.
+// In frames (24 fps) so edges can sit exactly on the interview's own cuts,
+// otherwise a few frames of the outgoing shot flash before the cut.
 type Broll = { at: number; to: number; src: string; from?: number };
 
 type Edit = {
@@ -47,23 +49,25 @@ const EDITS = {
     main: "valdicielo",
     duration: 26.83,
     subs: VALDICIELO_SUBS,
+    // Interview cuts at frames 210, 377, 503.
     broll: [
-      { at: 5.18, to: 8.56, src: "broll5-paesaggio" },
-      { at: 10.96, to: 13.24, src: "broll4-grappoli", from: 0.5 },
-      { at: 13.34, to: 15.7, src: "broll3-grappolo-mano", from: 0.4 },
-      { at: 18.46, to: 20.9, src: "broll2-bottiglia-valdicielo" },
-      { at: 20.96, to: 23.3, src: "broll1-sole", from: 0.3 },
+      { at: 129, to: 210, src: "broll5-paesaggio" },
+      { at: 263, to: 320, src: "broll4-grappoli-stab", from: 12 },
+      { at: 320, to: 377, src: "broll3-grappolo-mano", from: 10 },
+      { at: 444, to: 503, src: "broll2-bottiglia-valdicielo-stab" },
+      { at: 503, to: 559, src: "broll1-sole", from: 7 },
+      // Stabilised copy of the interview from frame 503 (bottle on the vine).
+      { at: 559, to: 644, src: "valdicielo-finale-stab", from: 56 },
     ],
   },
   bernesco: {
     main: "bernesco",
     duration: 35.41,
     subs: BERNESCO_SUBS,
+    // Interview cuts at frames 247, 500, 604, 720.
     broll: [
-      { at: 6.2, to: 9.56, src: "broll5-paesaggio" },
-      { at: 10.38, to: 12.7, src: "broll6-vite-antica" },
-      { at: 15.4, to: 18.5, src: "broll8-ceppo", from: 0.3 },
-      { at: 27.38, to: 29.75, src: "broll7-bottiglia-bernesco" },
+      { at: 370, to: 444, src: "broll8-ceppo-stab", from: 7 },
+      { at: 663, to: 720, src: "broll7-bottiglia-bernesco" },
     ],
   },
 } satisfies Record<string, Edit>;
@@ -102,17 +106,12 @@ const Subtitles: React.FC<{ subs: Sub[] }> = ({ subs }) => {
 
 export const Bonsalto: React.FC<{ wine: BonsaltoWine }> = ({ wine }) => {
   const { main, subs, broll } = EDITS[wine];
-  const f = (s: number) => Math.round(s * BONSALTO_FPS);
   return (
     <AbsoluteFill style={{ backgroundColor: "black" }}>
       <OffthreadVideo src={clip(main)} />
       {broll.map(({ at, to, src, from = 0 }) => (
-        <Sequence
-          key={`${src}-${at}`}
-          from={f(at)}
-          durationInFrames={f(to) - f(at)}
-        >
-          <OffthreadVideo src={clip(src)} startFrom={f(from)} muted />
+        <Sequence key={`${src}-${at}`} from={at} durationInFrames={to - at}>
+          <OffthreadVideo src={clip(src)} startFrom={from} muted />
         </Sequence>
       ))}
       <Subtitles subs={subs} />
