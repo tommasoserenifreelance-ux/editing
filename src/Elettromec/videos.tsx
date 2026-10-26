@@ -11,9 +11,7 @@ import {
   Chips,
   Flash,
   Glint,
-  HeroName,
   HeroTitle,
-  Letterbox,
   ProductTag,
   Sfx,
   Snowfall,
@@ -505,13 +503,6 @@ export const video7: VideoSpec = {
         <Glint x={410} y={450} />
         <Glint x={660} y={440} size={160} delay={3} />
         <Flash />
-      </At>
-      <At t={37.3} d={1.52}>
-        <HeroName name="ALE" y={1150} />
-      </At>
-      {/* Bars last, so the speed lines never run over them. */}
-      <At t={36.28} d={2.54}>
-        <Letterbox />
       </At>
     </>
   ),
