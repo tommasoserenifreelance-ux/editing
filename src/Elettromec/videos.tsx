@@ -12,6 +12,7 @@ import {
   HeroTitle,
   ProductTag,
   Sfx,
+  Snowfall,
   SosBadge,
   Sparks,
   Sticker,
@@ -27,11 +28,13 @@ import v2Keep from "./cuts/v2.json";
 import v3Keep from "./cuts/v3.json";
 import v4Keep from "./cuts/v4.json";
 import v5Keep from "./cuts/v5.json";
+import v6Keep from "./cuts/v6.json";
 import v1Words from "./transcripts/v1.json";
 import v2Words from "./transcripts/v2.json";
 import v3Words from "./transcripts/v3.json";
 import v4Words from "./transcripts/v4.json";
 import v5Words from "./transcripts/v5.json";
+import v6Words from "./transcripts/v6.json";
 
 // Brand mention: bolt + sparks + zap.
 const BrandHit: React.FC<{ t: number; x: number; y: number }> = ({ t, x, y }) => (
@@ -394,6 +397,64 @@ export const video5: VideoSpec = {
       <Sfx t={15.3} name="pop" volume={0.7} />
 
       <Sfx t={18.9} name="hit" volume={0.6} />
+    </>
+  ),
+};
+
+// ---------- Video 6: check batteria gratuito per il freddo ----------
+
+export const video6: VideoSpec = {
+  src: "elettromec/raw/v6.mp4",
+  keep: v6Keep as Keep,
+  shots: [2.36, 12.32, 17.74, 30.14],
+  words: v6Words as Word[],
+  captionY: 1450,
+  // Yellow words sit on a hi-vis jacket here.
+  heavyCaptions: true,
+  zooms: [
+    { t: 0, d: 2.3, s: 1.25, type: "push", y: 35 },
+    { t: 3.44, d: 1.0, s: 1.2, y: 35 },
+    { t: 5.52, d: 1.1, s: 1.25, y: 35 },
+    { t: 7.68, d: 1.2, s: 1.2, y: 35 },
+    { t: 10.16, d: 2.1, s: 1.15, type: "push", y: 35 },
+    { t: 12.4, d: 1.6, s: 1.25, y: 35 },
+    { t: 14.5, d: 3.0, s: 1.15, type: "push", y: 35 },
+    // No zooms on the man in the fur coat (17.74-30.14).
+    { t: 30.27, d: 1.0, s: 1.2, y: 35 },
+    { t: 31.23, d: 1.85, s: 1.3, y: 35 },
+  ],
+  overlays: (
+    <>
+      <At t={0} d={2.4}>
+        <Snowfall />
+      </At>
+      <Sfx t={0.05} name="whoosh" volume={0.5} />
+
+      <At t={4.8} d={2.2}>
+        <Battery mode="drain" x={800} y={700} />
+      </At>
+      <Sfx t={4.8} name="pop" volume={0.5} />
+
+      <BrandHit t={7.68} x={880} y={300} />
+
+      <At t={12.4} d={5.1}>
+        <Badge kicker="CHECK BATTERIA" title="GRATIS" sub="Prima che arrivi il freddo" />
+      </At>
+      <Sfx t={12.4} name="whoosh" volume={0.5} />
+
+      <At t={15.1} d={2.6}>
+        <Snowfall count={50} />
+      </At>
+
+      <At t={21.9} d={2.4}>
+        <Snowfall count={50} />
+      </At>
+      <At t={22.5} d={1.6}>
+        <Sticker text="BRRR!" x={760} y={330} color={colors.white} rotate={8} />
+      </At>
+      <Sfx t={22.5} name="pop" volume={0.6} />
+
+      <BrandHit t={32.2} x={540} y={380} />
     </>
   ),
 };

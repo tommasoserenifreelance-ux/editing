@@ -711,6 +711,49 @@ export const VsCard: React.FC<{ good: string; bad: string; y: number }> = ({ goo
   );
 };
 
+// Falling snow over the whole frame, fading in and out with the slot.
+export const Snowfall: React.FC<{ count?: number }> = ({ count = 70 }) => {
+  const { frame, fps } = useInOut();
+  const dur = useDur();
+  const fade = interpolate(frame, [0, 8, dur - 10, dur], [0, 1, 1, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  // Deterministic pseudo-random so every render matches.
+  const rnd = (i: number, k: number) => {
+    const x = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453;
+    return x - Math.floor(x);
+  };
+  const t = frame / fps;
+  return (
+    <AbsoluteFill style={{ opacity: fade, pointerEvents: "none" }}>
+      {Array.from({ length: count }).map((_, i) => {
+        const size = 6 + rnd(i, 1) * 16;
+        const speed = 160 + rnd(i, 2) * 260; // px per second
+        const y = ((rnd(i, 3) * 2200 + t * speed) % 2200) - 140;
+        const x = rnd(i, 4) * 1080 + Math.sin(t * (0.8 + rnd(i, 5)) + i) * 40;
+        return (
+          <div
+            key={i}
+            style={{
+              position: "absolute",
+              left: x,
+              top: y,
+              width: size,
+              height: size,
+              borderRadius: "50%",
+              background: "white",
+              opacity: 0.55 + rnd(i, 6) * 0.45,
+              filter: size > 16 ? "blur(2px)" : undefined,
+              boxShadow: "0 0 8px rgba(255,255,255,0.6)",
+            }}
+          />
+        );
+      })}
+    </AbsoluteFill>
+  );
+};
+
 // Small tilted sticker for comic beats.
 export const Sticker: React.FC<{ text: string; x: number; y: number; color?: string; rotate?: number }> = ({
   text,

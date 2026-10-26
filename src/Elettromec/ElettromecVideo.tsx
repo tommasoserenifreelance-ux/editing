@@ -18,6 +18,7 @@ export type VideoSpec = {
   keep: Keep;
   words: Word[];
   captionY: number;
+  heavyCaptions?: boolean; // thicker outline over bright clothes
   shots: number[]; // shot changes in the source
 
   bleep?: [number, number][];
@@ -102,7 +103,12 @@ export const ElettromecVideo: React.FC<{ spec: VideoSpec }> = ({ spec }) => {
           </AbsoluteFill>
           <Watermark />
           {spec.overlays}
-          <Captions words={words} y={spec.captionY} cuts={cuts} />
+          <Captions
+            words={words}
+            y={spec.captionY}
+            cuts={cuts}
+            heavy={spec.heavyCaptions}
+          />
           {captionSfx.map((w) => (
             <Sfx key={w.s} t={w.s - 0.03} raw name="swish" volume={0.25} />
           ))}

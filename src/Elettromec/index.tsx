@@ -2,7 +2,7 @@ import React from "react";
 import { Composition, Folder } from "remotion";
 import { durationOf, ElettromecVideo, VideoSpec } from "./ElettromecVideo";
 import { FPS } from "./theme";
-import { video1, video2, video3, video4, video5 } from "./videos";
+import { video1, video2, video3, video4, video5, video6 } from "./videos";
 
 // Specs hold React overlays, which can't go through serialisable props,
 // so each video gets its own prop-less component.
@@ -17,6 +17,7 @@ const VIDEOS: [string, [VideoSpec, React.FC]][] = [
   ["Elettromec3-Avviatori", make(video3)],
   ["Elettromec4-ServizioSOS", make(video4)],
   ["Elettromec5-Rigenerazione", make(video5)],
+  ["Elettromec6-CheckFreddo", make(video6)],
 ];
 
 export const ElettromecCompositions: React.FC = () => (

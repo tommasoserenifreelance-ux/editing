@@ -107,22 +107,25 @@ const PopWord: React.FC<{
   );
 };
 
-const outline: React.CSSProperties = {
-  WebkitTextStroke: "3px rgba(0,0,0,0.55)",
+// `heavy` thickens the outline for footage where yellow sits on a bright background.
+const outlineFor = (heavy: boolean): React.CSSProperties => ({
+  WebkitTextStroke: heavy ? "7px #000000" : "3px rgba(0,0,0,0.55)",
   paintOrder: "stroke fill",
-  textShadow: "0 4px 0 rgba(0,0,0,0.35), 0 0 24px rgba(0,0,0,0.55)",
-};
+  textShadow: heavy
+    ? "0 5px 0 rgba(0,0,0,0.6), 0 0 28px rgba(0,0,0,0.75)"
+    : "0 4px 0 rgba(0,0,0,0.35), 0 0 24px rgba(0,0,0,0.55)",
+});
 
-const small: React.CSSProperties = {
-  ...outline,
-  fontFamily: captionFont,
-  fontWeight: 700,
-  fontSize: 54,
-  color: colors.white,
-  margin: "0 8px",
-};
-
-const GroupView: React.FC<{ group: Group }> = ({ group }) => {
+const GroupView: React.FC<{ group: Group; heavy: boolean }> = ({ group, heavy }) => {
+  const outline = outlineFor(heavy);
+  const small: React.CSSProperties = {
+    ...outline,
+    fontFamily: captionFont,
+    fontWeight: 700,
+    fontSize: 54,
+    color: colors.white,
+    margin: "0 8px",
+  };
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const duration = (group.end - group.start) * fps;
@@ -178,7 +181,8 @@ export const Captions: React.FC<{
   words: Word[];
   y: number;
   cuts: number[];
-}> = ({ words, y, cuts }) => {
+  heavy?: boolean;
+}> = ({ words, y, cuts, heavy = false }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = frame / fps;
@@ -205,7 +209,7 @@ export const Captions: React.FC<{
           from={Math.round(group.start * fps)}
           layout="none"
         >
-          <GroupView group={group} />
+          <GroupView group={group} heavy={heavy} />
         </Sequence>
       </div>
     </AbsoluteFill>
