@@ -1,5 +1,6 @@
 import {
   AbsoluteFill,
+  Audio,
   continueRender,
   delayRender,
   OffthreadVideo,
@@ -35,6 +36,8 @@ type Broll = { at: number; to: number; src: string; from?: number };
 
 type Edit = {
   main: string;
+  // Music bed, pre-mixed under the voice (see public/bonsalto/music).
+  music: string;
   duration: number;
   subs: Sub[];
   broll: Broll[];
@@ -47,6 +50,7 @@ const clip = (name: string) => staticFile(`bonsalto/graded/${name}.mp4`);
 const EDITS = {
   valdicielo: {
     main: "valdicielo",
+    music: "valdicielo-holocene",
     duration: 26.83,
     subs: VALDICIELO_SUBS,
     // Interview cuts at frames 210, 377, 503.
@@ -63,6 +67,7 @@ const EDITS = {
   },
   bernesco: {
     main: "bernesco",
+    music: "bernesco-mr-brightside",
     duration: 35.41,
     subs: BERNESCO_SUBS,
     // Interview cuts at frames 247, 500, 604, 720.
@@ -106,10 +111,11 @@ const Subtitles: React.FC<{ subs: Sub[] }> = ({ subs }) => {
 };
 
 export const Bonsalto: React.FC<{ wine: BonsaltoWine }> = ({ wine }) => {
-  const { main, subs, broll } = EDITS[wine];
+  const { main, music, subs, broll } = EDITS[wine];
   return (
     <AbsoluteFill style={{ backgroundColor: "black" }}>
       <OffthreadVideo src={clip(main)} />
+      <Audio src={staticFile(`bonsalto/music/${music}.m4a`)} />
       {broll.map(({ at, to, src, from = 0 }) => (
         <Sequence key={`${src}-${at}`} from={at} durationInFrames={to - at}>
           <OffthreadVideo src={clip(src)} startFrom={from} muted />
