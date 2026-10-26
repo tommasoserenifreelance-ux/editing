@@ -9,12 +9,17 @@ import {
   Bolt,
   ChatBubble,
   Chips,
+  Flash,
+  Glint,
+  HeroName,
   HeroTitle,
+  Letterbox,
   ProductTag,
   Sfx,
   Snowfall,
   SosBadge,
   Sparks,
+  SpeedLines,
   Sticker,
   TimerRing,
   useInOut,
@@ -35,6 +40,7 @@ import v3Words from "./transcripts/v3.json";
 import v4Words from "./transcripts/v4.json";
 import v5Words from "./transcripts/v5.json";
 import v6Words from "./transcripts/v6.json";
+import v7Words from "./transcripts/v7.json";
 
 // Brand mention: bolt + sparks + zap.
 const BrandHit: React.FC<{ t: number; x: number; y: number }> = ({ t, x, y }) => (
@@ -455,6 +461,69 @@ export const video6: VideoSpec = {
       <Sfx t={22.5} name="pop" volume={0.6} />
 
       <BrandHit t={32.2} x={540} y={380} />
+    </>
+  ),
+};
+
+// ---------- Video 7: SOS intervento (cinematic) ----------
+
+// Sunglasses go on at this source second: the hero hit.
+const HERO = 36.9;
+
+export const video7: VideoSpec = {
+  src: "elettromec/raw/v7.mp4",
+  // Full length, with the sunglasses moment at half speed.
+  keep: [
+    [0, 36.28],
+    [36.28, 37.3, 0.5],
+    [37.3, 50.68],
+  ],
+  shots: [2.32, 3.52, 5.02, 8.02, 9.18, 10.32, 12.98, 15.2, 32.38, 36.28, 38.82, 39.96, 45.72, 49.54, 50.18],
+  words: v7Words as Word[],
+  captionY: 1450,
+  music: { src: "elettromec/music/v7-music.wav", volume: 0.55 },
+  grades: [{ t: 36.28, d: 2.54, filter: "contrast(1.18) saturate(1.3) brightness(1.04)" }],
+  shakes: [{ t: HERO, d: 0.45, px: 16 }],
+  zooms: [
+    { t: 22.4, d: 7.4, s: 1.08, type: "push", y: 40 },
+    { t: HERO, d: 1.9, s: 1.12, type: "push", y: 35 },
+  ],
+  overlays: (
+    <>
+      {/* The car won't start. */}
+      <Sfx t={5.5} name="fail" volume={0.45} />
+      <Sfx t={6.9} name="fail" volume={0.45} />
+      <Sfx t={9.2} name="hit" volume={0.4} />
+      <Sfx t={10.35} name="pop" volume={0.35} />
+
+      {/* The call. */}
+      <Sfx t={13.3} name="ring" volume={0.35} />
+      <Sfx t={15.25} name="ring" volume={0.45} />
+
+      {/* Hero: sunglasses on. */}
+      <At t={36.28} d={2.54}>
+        <Letterbox />
+      </At>
+      <At t={HERO} d={1.92}>
+        <SpeedLines x={540} y={560} />
+      </At>
+      <At t={HERO} d={0.4}>
+        <Glint x={410} y={450} />
+        <Glint x={660} y={440} size={160} delay={3} />
+        <Flash />
+      </At>
+      <Sfx t={HERO} name="hit" volume={0.7} />
+      <Sfx t={HERO} name="shimmer" volume={0.55} />
+      <Sfx t={HERO} name="zap" volume={0.3} />
+      <At t={37.3} d={1.52}>
+        <HeroName name="ALE" role="SOS BATTERIA" y={1150} />
+      </At>
+      <Sfx t={37.3} name="whoosh" volume={0.5} />
+
+      {/* On his way, then the battery swap. */}
+      <Sfx t={43.6} name="vroom" volume={0.6} />
+      <Sfx t={45.9} name="hit" volume={0.4} />
+      <Sfx t={49.6} name="hit" volume={0.35} />
     </>
   ),
 };

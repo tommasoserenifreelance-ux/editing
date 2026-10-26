@@ -1,8 +1,10 @@
 import React from "react";
 import {
   AbsoluteFill,
+  Audio,
   interpolate,
   Sequence,
+  staticFile,
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
@@ -10,7 +12,7 @@ import { Captions, groupWords, isEmphasis, Word } from "./Captions";
 import { EndCard, Sfx, Watermark } from "./graphics";
 import { END_CARD, FPS } from "./theme";
 import { buildTimeline, Keep, TimeContext } from "./timeline";
-import { Zoom, ZoomVideo } from "./ZoomVideo";
+import { Shake, Zoom, ZoomVideo } from "./ZoomVideo";
 
 // All times are in source seconds; silences listed outside `keep` are cut.
 export type VideoSpec = {
@@ -23,6 +25,11 @@ export type VideoSpec = {
 
   bleep?: [number, number][];
   grayFrom?: number; // black & white from here to the end of the footage
+  // Colour grade over a stretch, e.g. punchier contrast for a hero moment.
+  grades?: { t: number; d: number; filter: string }[];
+  shakes?: Shake[];
+  // Music bed timed to the output timeline, end card included.
+  music?: { src: string; volume: number };
   zooms: Zoom[];
   overlays: React.ReactNode;
 };
@@ -81,6 +88,13 @@ export const ElettromecVideo: React.FC<{ spec: VideoSpec }> = ({ spec }) => {
       const last = captionSfx[captionSfx.length - 1];
       if (!last || w.s - last.s >= CAPTION_SFX_GAP) captionSfx.push(w);
     });
+  const grade = (spec.grades ?? []).find(
+    (g) => frame >= toFrame(g.t) && frame < toFrame(g.t + g.d),
+  );
+  const shakes = (spec.shakes ?? []).map((sh) => {
+    const [t, end] = span([sh.t, sh.t + sh.d]);
+    return { ...sh, t, d: end - t };
+  });
   const gray =
     spec.grayFrom === undefined
       ? 0
@@ -93,12 +107,15 @@ export const ElettromecVideo: React.FC<{ spec: VideoSpec }> = ({ spec }) => {
     <TimeContext.Provider value={toFrame}>
       <AbsoluteFill style={{ backgroundColor: "black" }}>
         <Sequence durationInFrames={frames}>
-          <AbsoluteFill style={{ filter: `grayscale(${gray})` }}>
+          <AbsoluteFill
+            style={{ filter: `grayscale(${gray}) ${grade ? grade.filter : ""}` }}
+          >
             <ZoomVideo
               src={spec.src}
               zooms={zooms}
               segments={segments}
               mute={bleep.map(([a, b]) => [toFrame(a), toFrame(b)])}
+              shakes={shakes}
             />
           </AbsoluteFill>
           <Watermark />
@@ -122,6 +139,9 @@ export const ElettromecVideo: React.FC<{ spec: VideoSpec }> = ({ spec }) => {
           ))}
           <Sfx t={frames / fps - 0.75} raw name="rise" volume={0.35} />
         </Sequence>
+        {spec.music && (
+          <Audio src={staticFile(spec.music.src)} volume={spec.music.volume} />
+        )}
         <Sequence from={frames}>
           <EndCard />
           <Sfx t={0} raw name="hit" volume={0.7} />

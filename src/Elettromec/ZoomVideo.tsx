@@ -45,26 +45,50 @@ const zoomAt = (zooms: Zoom[], t: number) => {
   return { scale: 1, origin: "50% 40%" };
 };
 
+// Camera shake: a decaying jitter for impacts. `t` and `d` in output seconds.
+export type Shake = { t: number; d: number; px?: number };
+
+const shakeAt = (shakes: Shake[], frame: number, fps: number) => {
+  const t = frame / fps;
+  for (const sh of shakes) {
+    if (t < sh.t || t > sh.t + sh.d) continue;
+    const k = 1 - (t - sh.t) / sh.d;
+    const px = (sh.px ?? 14) * k;
+    return { x: Math.sin(frame * 12.9898) * px, y: Math.cos(frame * 78.233) * px };
+  }
+  return { x: 0, y: 0 };
+};
+
 // Plays the kept segments back to back. `mute` holds output-frame ranges (bleeps).
+// Slow-motion segments play silent: the music carries them.
 export const ZoomVideo: React.FC<{
   src: string;
   zooms: Zoom[];
   segments: Segment[];
   mute: [number, number][];
-}> = ({ src, zooms, segments, mute }) => {
+  shakes?: Shake[];
+}> = ({ src, zooms, segments, mute, shakes = [] }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const { scale, origin } = zoomAt(zooms, frame / fps);
+  const shake = shakeAt(shakes, frame, fps);
   return (
     <AbsoluteFill style={{ backgroundColor: "black", overflow: "hidden" }}>
-      <AbsoluteFill style={{ transform: `scale(${scale})`, transformOrigin: origin }}>
+      <AbsoluteFill
+        style={{
+          transform: `translate(${shake.x}px, ${shake.y}px) scale(${scale})`,
+          transformOrigin: origin,
+        }}
+      >
         {segments.map((seg) => (
           <Sequence key={seg.from} from={seg.from} durationInFrames={seg.dur}>
             <OffthreadVideo
               src={staticFile(src)}
               trimBefore={Math.round(seg.src * fps)}
+              playbackRate={seg.rate}
               volume={(f) => {
                 const abs = seg.from + f;
+                if (seg.rate !== 1) return 0;
                 if (mute.some(([a, b]) => abs >= a && abs < b)) return 0;
                 // Two-frame ramps at the cuts avoid clicks.
                 return 0.7 * Math.min(1, (f + 1) / 2, (seg.dur - f) / 2);

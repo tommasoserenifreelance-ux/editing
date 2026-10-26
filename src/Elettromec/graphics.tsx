@@ -55,7 +55,11 @@ export type SfxName =
   | "hit"
   | "ding"
   | "beep"
-  | "rise";
+  | "rise"
+  | "fail"
+  | "ring"
+  | "shimmer"
+  | "vroom";
 
 // Effects must read clearly over the voice; the final mix goes through a limiter.
 const SFX_GAIN = 1.5;
@@ -751,6 +755,140 @@ export const Snowfall: React.FC<{ count?: number }> = ({ count = 70 }) => {
         );
       })}
     </AbsoluteFill>
+  );
+};
+
+// ---------- hero moment ----------
+
+// White flash that burns out in a few frames.
+export const Flash: React.FC<{ frames?: number }> = ({ frames = 9 }) => {
+  const frame = useCurrentFrame();
+  const o = interpolate(frame, [0, frames], [1, 0], { extrapolateRight: "clamp" });
+  return <AbsoluteFill style={{ background: "white", opacity: o }} />;
+};
+
+// Cinema bars sliding in from the top and bottom.
+export const Letterbox: React.FC<{ size?: number }> = ({ size = 150 }) => {
+  const { frame } = useInOut();
+  const dur = useDur();
+  const k = interpolate(frame, [0, 10, dur - 10, dur], [0, 1, 1, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  const bar: React.CSSProperties = { position: "absolute", left: 0, right: 0, height: size * k, background: "black" };
+  return (
+    <AbsoluteFill>
+      <div style={{ ...bar, top: 0 }} />
+      <div style={{ ...bar, bottom: 0 }} />
+    </AbsoluteFill>
+  );
+};
+
+// Comic-style speed lines radiating from a point, leaving the centre clear.
+export const SpeedLines: React.FC<{ x: number; y: number }> = ({ x, y }) => {
+  const { frame, exit } = useInOut();
+  const appear = interpolate(frame, [0, 6], [0, 1], { extrapolateRight: "clamp" });
+  return (
+    <svg
+      width={1080}
+      height={1920}
+      style={{ position: "absolute", left: 0, top: 0, opacity: appear * exit * 0.85 }}
+    >
+      {Array.from({ length: 48 }).map((_, i) => {
+        const a = (i / 48) * Math.PI * 2 + frame * 0.004;
+        const jitter = ((i * 37) % 11) / 11;
+        const r1 = 430 + jitter * 160 + Math.sin(frame * 0.9 + i) * 30;
+        const r2 = 1500;
+        const w = 4 + (i % 3) * 4;
+        return (
+          <line
+            key={i}
+            x1={x + Math.cos(a) * r1}
+            y1={y + Math.sin(a) * r1}
+            x2={x + Math.cos(a) * r2}
+            y2={y + Math.sin(a) * r2}
+            stroke={i % 4 === 0 ? colors.yellow : "white"}
+            strokeWidth={w}
+            strokeLinecap="round"
+            opacity={0.55 + jitter * 0.45}
+          />
+        );
+      })}
+    </svg>
+  );
+};
+
+// Four-point star glint, like light catching the lenses.
+export const Glint: React.FC<{ x: number; y: number; size?: number; delay?: number }> = ({
+  x,
+  y,
+  size = 220,
+  delay = 0,
+}) => {
+  const frame = useCurrentFrame() - delay;
+  const k = interpolate(frame, [0, 5, 14], [0, 1, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="-50 -50 100 100"
+      style={{
+        position: "absolute",
+        left: x - size / 2,
+        top: y - size / 2,
+        transform: `scale(${k}) rotate(${frame * 6}deg)`,
+        filter: glow(colors.yellow),
+      }}
+    >
+      <path d="M0 -50 L7 -7 L50 0 L7 7 L0 50 L-7 7 L-50 0 L-7 -7 Z" fill="white" />
+      <circle r={8} fill="white" />
+    </svg>
+  );
+};
+
+// Film-style name card for the hero.
+export const HeroName: React.FC<{ name: string; role: string; y: number }> = ({ name, role, y }) => {
+  const { frame, fps, exit } = useInOut();
+  const line = spring({ frame, fps, config: { damping: 20 } });
+  const nameIn = spring({ frame: frame - 4, fps, config: { damping: 14, mass: 0.6 } });
+  const roleIn = spring({ frame: frame - 9, fps, config: { damping: 16 } });
+  return (
+    <div style={{ position: "absolute", left: 90, top: y, opacity: exit }}>
+      <div style={{ width: 520 * line, height: 8, background: colors.yellow, boxShadow: `0 0 20px ${colors.yellow}` }} />
+      <div
+        style={{
+          marginTop: 18,
+          fontFamily: captionFont,
+          fontWeight: 800,
+          fontSize: 190,
+          lineHeight: 0.95,
+          color: "white",
+          letterSpacing: interpolate(nameIn, [0, 1], [40, 4]),
+          opacity: nameIn,
+          transform: `translateX(${interpolate(nameIn, [0, 1], [-120, 0])}px)`,
+          textShadow: "0 8px 30px rgba(0,0,0,0.6)",
+        }}
+      >
+        {name}
+      </div>
+      <div
+        style={{
+          marginTop: 10,
+          fontFamily: captionFont,
+          fontWeight: 800,
+          fontSize: 54,
+          letterSpacing: interpolate(roleIn, [0, 1], [30, 10]),
+          color: colors.yellow,
+          opacity: roleIn,
+          textShadow: "0 4px 18px rgba(0,0,0,0.7)",
+        }}
+      >
+        {role}
+      </div>
+    </div>
   );
 };
 
