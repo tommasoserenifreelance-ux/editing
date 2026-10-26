@@ -482,7 +482,9 @@ export const video7: VideoSpec = {
   words: v7Words as Word[],
   captionY: 1450,
   softCaptions: true,
-  music: { src: "elettromec/music/v7-music.wav", volume: 0.55 },
+  music: { src: "elettromec/music/v7-music.wav", volume: 0.32 },
+  // The shop phone keeps ringing after he has picked up: cut that tail.
+  mute: [[16.42, 16.78]],
   grades: [{ t: 36.28, d: 2.54, filter: "contrast(1.18) saturate(1.3) brightness(1.04)" }],
   shakes: [{ t: HERO, d: 0.45, px: 16 }],
   zooms: [
@@ -496,9 +498,6 @@ export const video7: VideoSpec = {
       <Sfx t={14.55} name="ring" volume={0.4} dur={15.2 - 14.55} />
 
       {/* Hero: sunglasses on. */}
-      <At t={36.28} d={2.54}>
-        <Letterbox />
-      </At>
       <At t={HERO} d={1.92}>
         <SpeedLines x={540} y={560} />
       </At>
@@ -509,6 +508,10 @@ export const video7: VideoSpec = {
       </At>
       <At t={37.3} d={1.52}>
         <HeroName name="ALE" y={1150} />
+      </At>
+      {/* Bars last, so the speed lines never run over them. */}
+      <At t={36.28} d={2.54}>
+        <Letterbox />
       </At>
     </>
   ),

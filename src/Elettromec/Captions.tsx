@@ -64,6 +64,26 @@ export const groupWords = (
   });
   if (cur.length) groups.push(cur);
 
+  // Soft phrases never end on a dangling little word ("…un recapito e le"):
+  // those move to the start of the next phrase.
+  if (soft) {
+    const TRAIL = new Set(
+      "e ed o le la lo il i gli un una uno di da a al in su per con che ma se mi ti ci vi si non".split(
+        " ",
+      ),
+    );
+    for (let i = 0; i < groups.length - 1; i++) {
+      const g = groups[i];
+      while (
+        g.length > 1 &&
+        !stop.test(g[g.length - 1].w) &&
+        TRAIL.has(clean(g[g.length - 1].w).toLowerCase())
+      ) {
+        groups[i + 1].unshift(g.pop() as Word);
+      }
+    }
+  }
+
   return groups.map((g, i) => {
     let key = g.length - 1;
     let best = 0;
@@ -206,8 +226,9 @@ const SoftGroupView: React.FC<{ group: Group }> = ({ group }) => {
       style={{
         opacity: o,
         transform: `translateY(${interpolate(o, [0, 1], [8, 0])}px)`,
-        maxWidth: 900,
+        maxWidth: 1000,
         textAlign: "center",
+        textWrap: "balance",
         fontFamily: captionFont,
         fontWeight: 700,
         fontSize: 54,

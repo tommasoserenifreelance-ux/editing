@@ -25,6 +25,7 @@ export type VideoSpec = {
   shots: number[]; // shot changes in the source
 
   bleep?: [number, number][];
+  mute?: [number, number][]; // silence the footage here, without a beep
   grayFrom?: number; // black & white from here to the end of the footage
   // Colour grade over a stretch, e.g. punchier contrast for a hero moment.
   grades?: { t: number; d: number; filter: string }[];
@@ -129,7 +130,10 @@ export const ElettromecVideo: React.FC<{ spec: VideoSpec }> = ({ spec }) => {
               src={spec.src}
               zooms={zooms}
               segments={segments}
-              mute={bleep.map(([a, b]) => [toFrame(a), toFrame(b)])}
+              mute={[...bleep, ...(spec.mute ?? [])].map(([a, b]) => [
+                toFrame(a),
+                toFrame(b),
+              ])}
               shakes={shakes}
             />
           </AbsoluteFill>
