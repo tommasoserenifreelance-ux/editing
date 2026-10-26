@@ -438,7 +438,7 @@ export const video6: VideoSpec = {
       <BrandHit t={7.68} x={880} y={300} />
 
       <At t={12.4} d={5.1}>
-        <Badge kicker="CHECK BATTERIA" title="GRATIS" sub="Prima che arrivi il freddo" />
+        <Badge kicker="CHECK BATTERIA" title="GRATIS" sub="Prima che arrivi il freddo" y={1070} />
       </At>
       <Sfx t={12.4} name="whoosh" volume={0.5} />
 
