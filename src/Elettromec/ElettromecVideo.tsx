@@ -21,6 +21,7 @@ export type VideoSpec = {
   words: Word[];
   captionY: number;
   heavyCaptions?: boolean; // thicker outline over bright clothes
+  softCaptions?: boolean; // whole phrases, no word-by-word rhythm, no caption swishes
   shots: number[]; // shot changes in the source
 
   bleep?: [number, number][];
@@ -39,7 +40,10 @@ const CAPTION_SFX_GAP = 7; // seconds between caption swishes
 // Zooms change together with the picture: one that starts just after or ends
 // just short of a shot change moves onto it, one that spans it is cut there.
 const SNAP = 0.4;
-const snapToShots = ([a, b]: [number, number], shots: number[]): [number, number] => {
+const snapToShots = (
+  [a, b]: [number, number],
+  shots: number[],
+): [number, number] => {
   for (const c of shots) {
     if (c <= a && a - c < 0.6) a = c;
     else if (c > a && c < b) {
@@ -61,7 +65,10 @@ export const ElettromecVideo: React.FC<{ spec: VideoSpec }> = ({ spec }) => {
     [spec.keep, fps],
   );
   const toSec = (t: number) => toFrame(t) / fps;
-  const span = ([a, b]: [number, number]): [number, number] => [toSec(a), toSec(b)];
+  const span = ([a, b]: [number, number]): [number, number] => [
+    toSec(a),
+    toSec(b),
+  ];
 
   // A sentence that starts just before a shot change starts on the new shot
   // (the audio often leads the picture); words closing a sentence stay put.
@@ -81,13 +88,14 @@ export const ElettromecVideo: React.FC<{ spec: VideoSpec }> = ({ spec }) => {
 
   // A soft swish on a few yellow words only, spaced out so it stays natural.
   const captionSfx: Word[] = [];
-  groupWords(words, cuts)
-    .map((g) => g.words[g.key])
-    .filter((w) => isEmphasis(w.w))
-    .forEach((w) => {
-      const last = captionSfx[captionSfx.length - 1];
-      if (!last || w.s - last.s >= CAPTION_SFX_GAP) captionSfx.push(w);
-    });
+  if (!spec.softCaptions)
+    groupWords(words, cuts)
+      .map((g) => g.words[g.key])
+      .filter((w) => isEmphasis(w.w))
+      .forEach((w) => {
+        const last = captionSfx[captionSfx.length - 1];
+        if (!last || w.s - last.s >= CAPTION_SFX_GAP) captionSfx.push(w);
+      });
   const grade = (spec.grades ?? []).find(
     (g) => frame >= toFrame(g.t) && frame < toFrame(g.t + g.d),
   );
@@ -98,17 +106,24 @@ export const ElettromecVideo: React.FC<{ spec: VideoSpec }> = ({ spec }) => {
   const gray =
     spec.grayFrom === undefined
       ? 0
-      : interpolate(frame, [toFrame(spec.grayFrom), toFrame(spec.grayFrom) + 4], [0, 1], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-        });
+      : interpolate(
+          frame,
+          [toFrame(spec.grayFrom), toFrame(spec.grayFrom) + 4],
+          [0, 1],
+          {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          },
+        );
 
   return (
     <TimeContext.Provider value={toFrame}>
       <AbsoluteFill style={{ backgroundColor: "black" }}>
         <Sequence durationInFrames={frames}>
           <AbsoluteFill
-            style={{ filter: `grayscale(${gray}) ${grade ? grade.filter : ""}` }}
+            style={{
+              filter: `grayscale(${gray}) ${grade ? grade.filter : ""}`,
+            }}
           >
             <ZoomVideo
               src={spec.src}
@@ -125,12 +140,13 @@ export const ElettromecVideo: React.FC<{ spec: VideoSpec }> = ({ spec }) => {
             y={spec.captionY}
             cuts={cuts}
             heavy={spec.heavyCaptions}
+            soft={spec.softCaptions}
           />
           {captionSfx.map((w) => (
             <Sfx key={w.s} t={w.s - 0.03} raw name="swish" volume={0.25} />
           ))}
           {zooms
-            .filter((z) => z.type === "push")
+            .filter((z) => z.type === "push" && !spec.softCaptions)
             .map((z) => (
               <Sfx key={z.t} t={z.t} raw name="whoosh" volume={0.25} />
             ))}

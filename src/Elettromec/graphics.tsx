@@ -850,8 +850,14 @@ export const Glint: React.FC<{ x: number; y: number; size?: number; delay?: numb
 };
 
 // Film-style name card for the hero.
-export const HeroName: React.FC<{ name: string; role: string; y: number }> = ({ name, role, y }) => {
-  const { frame, fps, exit } = useInOut();
+export const HeroName: React.FC<{ name: string; role?: string; y: number }> = ({ name, role, y }) => {
+  const { frame, fps } = useInOut();
+  const dur = useDur();
+  // Leaves together with the cinema bars (same 10-frame exit as Letterbox).
+  const exit = interpolate(frame, [dur - 10, dur], [1, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
   const line = spring({ frame, fps, config: { damping: 20 } });
   const nameIn = spring({ frame: frame - 4, fps, config: { damping: 14, mass: 0.6 } });
   const roleIn = spring({ frame: frame - 9, fps, config: { damping: 16 } });
@@ -874,7 +880,7 @@ export const HeroName: React.FC<{ name: string; role: string; y: number }> = ({ 
       >
         {name}
       </div>
-      <div
+      {role && <div
         style={{
           marginTop: 10,
           fontFamily: captionFont,
@@ -887,7 +893,7 @@ export const HeroName: React.FC<{ name: string; role: string; y: number }> = ({ 
         }}
       >
         {role}
-      </div>
+      </div>}
     </div>
   );
 };

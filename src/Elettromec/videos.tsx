@@ -481,6 +481,7 @@ export const video7: VideoSpec = {
   shots: [2.32, 3.52, 5.02, 8.02, 9.18, 10.32, 12.98, 15.2, 32.38, 36.28, 38.82, 39.96, 45.72, 49.54, 50.18],
   words: v7Words as Word[],
   captionY: 1450,
+  softCaptions: true,
   music: { src: "elettromec/music/v7-music.wav", volume: 0.55 },
   grades: [{ t: 36.28, d: 2.54, filter: "contrast(1.18) saturate(1.3) brightness(1.04)" }],
   shakes: [{ t: HERO, d: 0.45, px: 16 }],
@@ -490,15 +491,9 @@ export const video7: VideoSpec = {
   ],
   overlays: (
     <>
-      {/* The car won't start. */}
-      <Sfx t={5.5} name="fail" volume={0.45} />
-      <Sfx t={6.9} name="fail" volume={0.45} />
-      <Sfx t={9.2} name="hit" volume={0.4} />
-      <Sfx t={10.35} name="pop" volume={0.35} />
-
-      {/* The call. */}
-      <Sfx t={13.3} name="ring" volume={0.35} />
-      <Sfx t={15.25} name="ring" volume={0.45} />
+      {/* The only effect: the caller's ringback, until the shop phone rings (15.2). */}
+      <Sfx t={13.15} name="ring" volume={0.4} />
+      <Sfx t={14.55} name="ring" volume={0.4} dur={15.2 - 14.55} />
 
       {/* Hero: sunglasses on. */}
       <At t={36.28} d={2.54}>
@@ -512,18 +507,9 @@ export const video7: VideoSpec = {
         <Glint x={660} y={440} size={160} delay={3} />
         <Flash />
       </At>
-      <Sfx t={HERO} name="hit" volume={0.7} />
-      <Sfx t={HERO} name="shimmer" volume={0.55} />
-      <Sfx t={HERO} name="zap" volume={0.3} />
       <At t={37.3} d={1.52}>
-        <HeroName name="ALE" role="SOS BATTERIA" y={1150} />
+        <HeroName name="ALE" y={1150} />
       </At>
-      <Sfx t={37.3} name="whoosh" volume={0.5} />
-
-      {/* On his way, then the battery swap. */}
-      <Sfx t={43.6} name="vroom" volume={0.6} />
-      <Sfx t={45.9} name="hit" volume={0.4} />
-      <Sfx t={49.6} name="hit" volume={0.35} />
     </>
   ),
 };

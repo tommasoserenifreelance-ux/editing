@@ -30,8 +30,17 @@ export const isEmphasis = (w: string) => {
 
 // Split the transcript into 1-3 word bursts, breaking on punctuation, pauses
 // and shot changes (`cuts`, seconds) so a caption never runs across a cut.
-export const groupWords = (words: Word[], cuts: number[] = []): Group[] => {
-  const cutBetween = (a: number, b: number) => cuts.some((c) => c > a && c <= b);
+// `soft` makes whole phrases (up to ~7 words), broken only on sentence ends and pauses.
+export const groupWords = (
+  words: Word[],
+  cuts: number[] = [],
+  soft = false,
+): Group[] => {
+  const cutBetween = (a: number, b: number) =>
+    cuts.some((c) => c > a && c <= b);
+  const maxWords = soft ? 7 : 3;
+  const maxChars = soft ? 34 : 20;
+  const stop = soft ? /[.?!…]$/ : /[.,?!…;:]$/;
   const groups: Word[][] = [];
   let cur: Word[] = [];
   words.forEach((word, i) => {
@@ -40,12 +49,12 @@ export const groupWords = (words: Word[], cuts: number[] = []): Group[] => {
     // The last word before a cut joins the current caption instead of flashing alone.
     const next = words[i + 1];
     const lastBeforeCut = next !== undefined && cutBetween(word.s, next.s);
-    const full = cur.length >= 3 || chars + word.w.length > 20;
+    const full = cur.length >= maxWords || chars + word.w.length > maxChars;
     if (
       cur.length > 0 &&
       ((full && !(lastBeforeCut && cur.length < 4)) ||
-        /[.,?!…;:]$/.test(prev.w) ||
-        word.s - prev.e > 0.35 ||
+        stop.test(prev.w) ||
+        word.s - prev.e > (soft ? 0.6 : 0.35) ||
         cutBetween(prev.s, word.s))
     ) {
       groups.push(cur);
@@ -97,7 +106,10 @@ const PopWord: React.FC<{
     <span
       style={{
         display: "inline-block",
-        opacity: local < 0 ? 0 : interpolate(pop, [0, 0.5], [0, 1], { extrapolateRight: "clamp" }),
+        opacity:
+          local < 0
+            ? 0
+            : interpolate(pop, [0, 0.5], [0, 1], { extrapolateRight: "clamp" }),
         transform: `translateY(${interpolate(pop, [0, 1], [10, 0])}px) scale(${interpolate(pop, [0, 1], [0.85, 1])})`,
         ...style,
       }}
@@ -116,7 +128,10 @@ const outlineFor = (heavy: boolean): React.CSSProperties => ({
     : "0 4px 0 rgba(0,0,0,0.35), 0 0 24px rgba(0,0,0,0.55)",
 });
 
-const GroupView: React.FC<{ group: Group; heavy: boolean }> = ({ group, heavy }) => {
+const GroupView: React.FC<{ group: Group; heavy: boolean }> = ({
+  group,
+  heavy,
+}) => {
   const outline = outlineFor(heavy);
   const small: React.CSSProperties = {
     ...outline,
@@ -177,16 +192,49 @@ const GroupView: React.FC<{ group: Group; heavy: boolean }> = ({ group, heavy })
   );
 };
 
+// Calm captions for cinematic pieces: the whole phrase fades in, plain white.
+const SoftGroupView: React.FC<{ group: Group }> = ({ group }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const duration = (group.end - group.start) * fps;
+  const o = interpolate(frame, [0, 6, duration - 5, duration], [0, 1, 1, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  return (
+    <div
+      style={{
+        opacity: o,
+        transform: `translateY(${interpolate(o, [0, 1], [8, 0])}px)`,
+        maxWidth: 900,
+        textAlign: "center",
+        fontFamily: captionFont,
+        fontWeight: 700,
+        fontSize: 54,
+        lineHeight: 1.25,
+        color: colors.white,
+        textShadow: "0 3px 12px rgba(0,0,0,0.75), 0 0 2px rgba(0,0,0,0.9)",
+      }}
+    >
+      {group.words.map((w) => clean(w.w)).join(" ")}
+    </div>
+  );
+};
+
 export const Captions: React.FC<{
   words: Word[];
   y: number;
   cuts: number[];
   heavy?: boolean;
-}> = ({ words, y, cuts, heavy = false }) => {
+  soft?: boolean;
+}> = ({ words, y, cuts, heavy = false, soft = false }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = frame / fps;
-  const groups = React.useMemo(() => groupWords(words, cuts), [words, cuts]);
+  const groups = React.useMemo(
+    () => groupWords(words, cuts, soft),
+    [words, cuts, soft],
+  );
   const index = groups.findIndex((g) => t >= g.start && t < g.end);
   if (index < 0) return null;
   const group = groups[index];
@@ -209,7 +257,11 @@ export const Captions: React.FC<{
           from={Math.round(group.start * fps)}
           layout="none"
         >
-          <GroupView group={group} heavy={heavy} />
+          {soft ? (
+            <SoftGroupView group={group} />
+          ) : (
+            <GroupView group={group} heavy={heavy} />
+          )}
         </Sequence>
       </div>
     </AbsoluteFill>
