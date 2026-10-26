@@ -52,7 +52,8 @@ const EDITS = {
     // Interview cuts at frames 210, 377, 503.
     broll: [
       { at: 129, to: 210, src: "broll5-paesaggio" },
-      { at: 263, to: 320, src: "broll4-grappoli-stab", from: 12 },
+      // Stabilised, then slowed to 0.5x with motion interpolation.
+      { at: 263, to: 320, src: "broll4-grappoli-slow" },
       { at: 320, to: 377, src: "broll3-grappolo-mano", from: 10 },
       { at: 444, to: 503, src: "broll2-bottiglia-valdicielo-stab" },
       { at: 503, to: 559, src: "broll1-sole", from: 7 },
