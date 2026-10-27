@@ -10,7 +10,8 @@ import {
 
 export const OLIO_FPS = 25;
 // C9186 from 6.4 s to 14.3 s, shot at 50 fps and played at half speed,
-// straightened by 7° and graded (public/olio/graded/versata-slow.mp4).
+// straightened by 7° and graded; the saturated yellows (the oil alone) are
+// then pushed greener (public/olio/graded/versata-slow-verde.mp4).
 export const OLIO_DURATION = 395;
 
 // The bottle enters the frame at 4.2 s: the title is gone by then.
@@ -153,7 +154,7 @@ const Title: React.FC<{ hook: OlioHook }> = ({ hook }) => {
 
 export const OlioNuovo: React.FC<{ hook: number }> = ({ hook }) => (
   <AbsoluteFill style={{ backgroundColor: "black" }}>
-    <OffthreadVideo src={staticFile("olio/graded/versata-slow.mp4")} />
+    <OffthreadVideo src={staticFile("olio/graded/versata-slow-verde.mp4")} />
     <Title hook={OLIO_HOOKS[hook]} />
   </AbsoluteFill>
 );
