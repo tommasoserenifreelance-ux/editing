@@ -1,6 +1,7 @@
 import { Composition, Folder } from "remotion";
 import { Bonsalto, BONSALTO_FPS, bonsaltoDuration } from "./Bonsalto";
 import { HelloWorld } from "./HelloWorld";
+import { OLIO_DURATION, OLIO_FPS, OLIO_HOOKS, OlioNuovo } from "./OlioNuovo";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
 import {
@@ -92,6 +93,20 @@ export const RemotionRoot: React.FC = () => {
           height={1920}
           defaultProps={{ wine: "bernesco" as const }}
         />
+      </Folder>
+      <Folder name="OlioNuovo">
+        {OLIO_HOOKS.map((_, i) => (
+          <Composition
+            key={i}
+            id={`OlioNuovoHook${i + 1}`}
+            component={OlioNuovo}
+            durationInFrames={OLIO_DURATION}
+            fps={OLIO_FPS}
+            width={1080}
+            height={1920}
+            defaultProps={{ hook: i }}
+          />
+        ))}
       </Folder>
     </>
   );
