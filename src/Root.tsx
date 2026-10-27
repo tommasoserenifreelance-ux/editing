@@ -8,6 +8,7 @@ import {
   PilatesOverlay,
 } from "./PilatesOverlay";
 import { PILATES_DURATION, PilatesReformer } from "./PilatesReformer";
+import { RAMATEX_DURATION, RAMATEX_FPS, RamatexVideo } from "./Ramatex";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -69,6 +70,14 @@ export const RemotionRoot: React.FC = () => {
         component={PilatesOverlay}
         durationInFrames={OVERLAY_DURATION}
         fps={OVERLAY_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="Ramatex"
+        component={RamatexVideo}
+        durationInFrames={RAMATEX_DURATION}
+        fps={RAMATEX_FPS}
         width={1080}
         height={1920}
       />
