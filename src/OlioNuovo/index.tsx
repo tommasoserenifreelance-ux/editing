@@ -1,5 +1,6 @@
 import {
   AbsoluteFill,
+  Audio,
   continueRender,
   delayRender,
   interpolate,
@@ -156,6 +157,8 @@ const Title: React.FC<{ hook: OlioHook }> = ({ hook }) => {
 export const OlioNuovo: React.FC<{ hook: number }> = ({ hook }) => (
   <AbsoluteFill style={{ backgroundColor: "black" }}>
     <OffthreadVideo src={staticFile("olio/graded/versata-slow-verde.mp4")} />
+    {/* Bach, Prelude in C (see public/olio/music/README.md). */}
+    <Audio src={staticFile("olio/music/bach-preludio-do.m4a")} />
     <Title hook={OLIO_HOOKS[hook]} />
   </AbsoluteFill>
 );
