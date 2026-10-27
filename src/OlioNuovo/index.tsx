@@ -37,13 +37,12 @@ Promise.all(
   ),
 ).then(() => continueRender(fontHandle));
 
-export type OlioHook = { top: string; main: string; sub: string };
+export type OlioHook = { top: string; main: string; sub?: string };
 
 export const OLIO_HOOKS: OlioHook[] = [
   {
     top: "È arrivato",
     main: "l’Olio Nuovo",
-    sub: "Fattoria Bonsalto · Raccolta 2026",
   },
   {
     top: "Olio Nuovo",
@@ -133,20 +132,22 @@ const Title: React.FC<{ hook: OlioHook }> = ({ hook }) => {
         >
           {hook.main}
         </div>
-        <div
-          style={{
-            ...reveal(frame, 28),
-            fontFamily: sans,
-            fontWeight: 500,
-            fontSize: 30,
-            letterSpacing: 10,
-            textTransform: "uppercase",
-            textAlign: "center",
-            marginTop: 52,
-          }}
-        >
-          {hook.sub}
-        </div>
+        {hook.sub ? (
+          <div
+            style={{
+              ...reveal(frame, 28),
+              fontFamily: sans,
+              fontWeight: 500,
+              fontSize: 30,
+              letterSpacing: 10,
+              textTransform: "uppercase",
+              textAlign: "center",
+              marginTop: 52,
+            }}
+          >
+            {hook.sub}
+          </div>
+        ) : null}
       </div>
     </AbsoluteFill>
   );
