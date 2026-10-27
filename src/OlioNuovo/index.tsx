@@ -3,6 +3,7 @@ import {
   Audio,
   continueRender,
   delayRender,
+  Img,
   interpolate,
   OffthreadVideo,
   staticFile,
@@ -10,10 +11,13 @@ import {
 } from "remotion";
 
 export const OLIO_FPS = 25;
-// C9186 from 6.4 s to 14.3 s, shot at 50 fps and played at half speed,
+// C9186 from 6.4 s to 15.8 s, shot at 50 fps and played at half speed,
 // straightened by 7° and graded; the saturated yellows (the oil alone) are
 // then pushed greener (public/olio/graded/versata-slow-verde.mp4).
-export const OLIO_DURATION = 395;
+export const OLIO_DURATION = 470;
+
+// End logo comes in with the closing piano chord (16.05 s).
+const LOGO_IN = 400;
 
 // The bottle enters the frame at 4.2 s: the title is gone by then.
 const TITLE_OUT = 105;
@@ -154,11 +158,42 @@ const Title: React.FC<{ hook: OlioHook }> = ({ hook }) => {
   );
 };
 
+// Fattoria Bonsalto logo, traced to vector from the white PNG.
+const EndLogo: React.FC = () => {
+  const frame = useCurrentFrame();
+  const p = interpolate(frame, [LOGO_IN, LOGO_IN + 30], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  return (
+    <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
+      <AbsoluteFill
+        style={{
+          opacity: p,
+          background:
+            "radial-gradient(ellipse 80% 50% at 50% 46%, rgba(20,12,4,0.66), rgba(20,12,4,0.3) 80%)",
+        }}
+      />
+      <Img
+        src={staticFile("olio/logo-bonsalto.svg")}
+        style={{
+          width: 520,
+          marginTop: -120,
+          opacity: p,
+          filter: `blur(${(1 - p) * 8}px) drop-shadow(0 4px 24px rgba(0,0,0,0.35))`,
+          transform: `scale(${0.96 + 0.04 * p})`,
+        }}
+      />
+    </AbsoluteFill>
+  );
+};
+
 export const OlioNuovo: React.FC<{ hook: number }> = ({ hook }) => (
   <AbsoluteFill style={{ backgroundColor: "black" }}>
     <OffthreadVideo src={staticFile("olio/graded/versata-slow-verde.mp4")} />
-    {/* Bach, Prelude in C (see public/olio/music/README.md). */}
-    <Audio src={staticFile("olio/music/bach-preludio-do.m4a")} />
+    {/* Satie, Gymnopédie n. 1 (see public/olio/music/README.md). */}
+    <Audio src={staticFile("olio/music/satie-gymnopedie-1.m4a")} />
     <Title hook={OLIO_HOOKS[hook]} />
+    <EndLogo />
   </AbsoluteFill>
 );
