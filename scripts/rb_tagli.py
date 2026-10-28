@@ -7,7 +7,8 @@ netto (o con una dissolvenza in entrata di N secondi) in un unico file a
 Con velocità 0.5 ogni fotogramma a 50 fps viene tenuto: ralenti pulito.
 
 Prima del taglio, dove serve, il girato intero viene stabilizzato (vidstab,
-due passate) e messo in cache. Poi a tutto si applica la color calda delle
+due passate) e messo in cache, e dove le luci sfarfallano passa per
+scripts/rb_deflicker.py. Poi a tutto si applica la color calda delle
 reference di agosto (RB – Agosto 3, 10, 12).
 
 Uso: python3 scripts/rb_tagli.py <cartella girati> [rb01 rb02 ...]
@@ -46,15 +47,6 @@ GRADE = (
     "curves=all='0/0.012 0.5/0.505 1/0.99',eq=saturation=1.03"
 )
 
-# The tablecloth in video 4 pulses at ~11 Hz (lights). Swap the frame's
-# soft brightness for a 5-frame average of it, keeping the sharp detail, so
-# the flicker goes without smearing the hand.
-DEFLICKER = (
-    "format=yuv444p,split=3[a][b0][c0];[b0]gblur=sigma=24[b];"
-    "[c0]tmix=frames=5,gblur=sigma=24[c];[b][c]blend=all_expr='A-B+128'[d];"
-    "[a][d]blend=all_expr='A-B+128'"
-)
-
 EDITS = {
     # Filetto alla brace: già montato. Il sale cade fino alla fine della
     # ripresa, quindi tengo fermo l'ultimo fotogramma per il logo.
@@ -75,28 +67,29 @@ EDITS = {
             (25.08, 29.0, 1),
         ],
     },
-    # Pasta: stabilizzata; il tartufo finito entra in dissolvenza.
+    # Pasta: senza stabilizzazione (deformava), tutto al ralenti per un
+    # tono più cinematografico; il tartufo finito entra in dissolvenza.
     "rb03": {
-        "stab": True,
         "cuts": [
-            (0.5, 3.5, 1),
-            (41.3, 44.9, 1),
-            (48.4, 51.8, 1),
-            (56.6, 60.4, 1),
-            (63.4, 65.0, 1),
-            (68.4, 70.34, 1),
-            (70.4, 75.4, 1, 0.8),
+            (1.0, 3.0, 0.5),
+            (41.5, 44.0, 0.5),
+            (48.6, 51.4, 0.5),
+            (57.0, 59.6, 0.5),
+            (63.5, 64.8, 0.5),
+            (68.4, 70.34, 0.5),
+            (70.4, 73.4, 0.5, 1.0),
         ],
     },
-    # Tartare servita: al ralenti, senza flickering.
-    "rb04": {"deflicker": True, "cuts": [(0.0, 4.8, 0.5)]},
+    # Tartare servita: al ralenti; le luci pulsano a 11.4 Hz sulla tovaglia.
+    "rb04": {"deflicker": 11.41, "cuts": [(0.0, 4.8, 0.5)]},
     # Tartufo sul filetto, al ralenti, stabilizzato.
     "rb05": {"stab": True, "cuts": [(0.0, 5.2, 0.5)]},
-    # Libri: niente tagli, le pagine scorrono vere; stabilizzati.
-    "rb06": {"stab": True, "cuts": [(0.0, 36.4, 1)]},
+    # Libri: niente tagli, le pagine scorrono vere; stabilizzati e senza
+    # lo sfarfallio delle luci (11.35 Hz).
+    "rb06": {"stab": True, "deflicker": 11.35, "cuts": [(0.0, 36.4, 1)]},
     # Si vede anche la mano che prende gli occhiali.
-    "rb07": {"stab": True, "cuts": [(0.0, 46.88, 1)]},
-    "rb08": {"stab": True, "cuts": [(0.0, 37.96, 1)]},
+    "rb07": {"stab": True, "deflicker": 11.35, "cuts": [(0.0, 46.88, 1)]},
+    "rb08": {"stab": True, "deflicker": 11.35, "cuts": [(0.0, 37.96, 1)]},
     # Campari Spritz: piano sequenza di 62 s, via i tempi morti.
     "rb09": {
         "cuts": [
@@ -149,20 +142,30 @@ def stabilised(name: str, src: str) -> str:
     return out
 
 
+def deflickered(name: str, src: str, hz: float) -> str:
+    out = os.path.join(CACHE, f"{name}_defl.mp4")
+    if not os.path.exists(out):
+        subprocess.run(
+            [sys.executable, os.path.join(ROOT, "scripts", "rb_deflicker.py"),
+             src, out, str(hz)], check=True)
+    return out
+
+
 def build(name: str, src_dir: str) -> int:
     edit = EDITS[name]
     src = os.path.join(src_dir, SOURCES[name])
     if edit.get("stab"):
         src = stabilised(name, src)
+    if edit.get("deflicker"):
+        src = deflickered(name, src, edit["deflicker"])
     look = GRADE + (f",eq=gamma={edit['gamma']}" if "gamma" in edit else "")
 
     # One seeked input per segment, so only that stretch gets decoded.
     inputs, parts, lengths, fades = [], [], [], []
     for i, (start, end, speed, *fade) in enumerate(edit["cuts"]):
         inputs += ["-ss", str(start), "-t", f"{end - start:.3f}", "-i", src]
-        pre = f"{DEFLICKER}," if edit.get("deflicker") else ""
         parts.append(
-            f"[{i}:v]{pre}setpts=(PTS-STARTPTS)/{speed},fps={FPS},{look},"
+            f"[{i}:v]setpts=(PTS-STARTPTS)/{speed},fps={FPS},{look},"
             f"format=yuv420p[v{i}]"
         )
         lengths.append((end - start) / speed)

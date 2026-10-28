@@ -2,8 +2,8 @@
 export const RB_DURATIONS: Record<string, number> = {
   "rb01": 324,
   "rb02": 401,
-  "rb03": 539,
-  "rb04": 239,
+  "rb03": 782,
+  "rb04": 240,
   "rb05": 260,
   "rb06": 910,
   "rb07": 1172,
