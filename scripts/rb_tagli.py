@@ -63,16 +63,14 @@ EDITS = {
         "hold": 2.6,
         "cuts": [(0.3, 2.26, 1), (2.26, 3.28, 1), (3.28, 5.46, 1), (5.46, 10.6, 1)],
     },
-    # Tagliata: due tagli di coltello, via lo scatto mosso con la manica
-    # bianca (16.3-16.9) e le mani che sistemano il piatto; stabilizzato.
+    # Tagliata: i tagli della prima versione (piaciuti di più), con la
+    # color nuova: due tagli di coltello, via le mani che sistemano il piatto.
     "rb02": {
         "gamma": 1.05,
-        "stab": True,
         "cuts": [
             (1.0, 4.5, 1),
             (10.3, 12.5, 1),
-            (15.0, 16.3, 1),
-            (16.9, 20.4, 1),
+            (15.0, 20.4, 1),
             (22.6, 23.6, 1),
             (25.08, 29.0, 1),
         ],

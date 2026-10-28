@@ -40,7 +40,10 @@ type Hook = { top: string; main: string };
 const videos = {
   // The logo waits for the last of the salt (9.7 s).
   rb01: { hook: { top: "Dalla brace", main: "al piatto" }, logoAt: 243 },
-  rb02: { hook: { top: "La tagliata", main: "della Regina" } },
+  rb02: {
+    hook: { top: "La tagliata", main: "della Regina" },
+    fadeToBlack: true,
+  },
   rb03: { hook: { top: "Tagliolini", main: "al tartufo" } },
   rb04: { hook: { top: "La nostra", main: "Tartare" } },
   rb05: { hook: { top: "Filetto", main: "al tartufo" } },
@@ -52,7 +55,7 @@ const videos = {
   rb11: { hook: { top: "Dolci", main: "della casa" } },
 } satisfies Record<string, RbEdit>;
 
-type RbEdit = { hook: Hook; logoAt?: number };
+type RbEdit = { hook: Hook; logoAt?: number; fadeToBlack?: boolean };
 
 export type RbVideo = keyof typeof videos;
 
@@ -161,6 +164,19 @@ const EndLogo: React.FC<{ at?: number }> = ({ at }) => {
   );
 };
 
+// Picture and logo go down to black over the last 0.8 s.
+const FadeToBlack: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { durationInFrames } = useVideoConfig();
+  const opacity = interpolate(
+    frame,
+    [durationInFrames - 20, durationInFrames - 1],
+    [0, 1],
+    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+  );
+  return <AbsoluteFill style={{ backgroundColor: "black", opacity }} />;
+};
+
 export const ReginaBistecca: React.FC<{ video: RbVideo }> = ({ video }) => (
   <AbsoluteFill style={{ backgroundColor: "black" }}>
     <OffthreadVideo src={staticFile(`rb/edit/${video}.mp4`)} muted />
@@ -168,5 +184,6 @@ export const ReginaBistecca: React.FC<{ video: RbVideo }> = ({ video }) => (
     <Audio src={staticFile(`rb/music/${video}.m4a`)} />
     <Title hook={RB_VIDEOS[video].hook} />
     <EndLogo at={RB_VIDEOS[video].logoAt} />
+    {RB_VIDEOS[video].fadeToBlack ? <FadeToBlack /> : null}
   </AbsoluteFill>
 );
