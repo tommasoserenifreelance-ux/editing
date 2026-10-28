@@ -114,13 +114,14 @@ export const PrintDefs: React.FC = () => (
   </svg>
 );
 
-export type Paper = "white" | "black" | "coral" | "mint";
+export type Paper = "white" | "black" | "coral" | "mint" | "grey";
 
 const PAPER_BG: Record<Paper, string> = {
   white: colors.white,
   black: colors.black,
   coral: colors.coral,
   mint: colors.mint,
+  grey: "#DEDEE2",
 };
 
 /**
@@ -143,6 +144,14 @@ export const Fill: React.FC<{
           } 0 3px, transparent 3px 11px)`,
         }}
       />
+      {bg === "grey" ? (
+        <AbsoluteFill
+          style={{
+            background:
+              "radial-gradient(ellipse 70% 55% at 50% 50%, rgba(255,255,255,0.8), rgba(255,255,255,0.2) 60%, rgba(0,0,0,0.16))",
+          }}
+        />
+      ) : null}
       {colour ? (
         <AbsoluteFill
           style={{

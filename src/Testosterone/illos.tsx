@@ -346,6 +346,54 @@ const Cursor = () => (
   </g>
 );
 
+/* ---- Estrogens episode ---- */
+
+const Shield = () => (
+  <g>
+    <path d="M100 10 L172 38 C172 110 146 158 100 190 C54 158 28 110 28 38 Z" fill={M} {...ink} />
+    <path d="M100 26 L158 48 C156 108 136 146 100 172 Z" fill={MD} />
+    <path d="M100 64 C100 64 92 52 80 54 C66 56 62 72 70 84 L100 116 L130 84 C138 72 134 56 120 54 C108 52 100 64 100 64 Z" fill={C} {...ink} strokeWidth={4} />
+    <path d="M52 52 C54 90 64 120 84 146" fill="none" stroke={W} strokeWidth={8} strokeLinecap="round" />
+  </g>
+);
+
+const HeartPulse = () => (
+  <g>
+    <path d="M100 176 C40 132 18 104 22 70 C26 40 52 24 76 30 C88 33 96 42 100 50 C104 42 112 33 124 30 C148 24 174 40 178 70 C182 104 160 132 100 176 Z" fill={C} {...ink} />
+    <path d="M24 98 L70 98 L84 70 L102 130 L118 84 L128 98 L176 98" fill="none" stroke={W} strokeWidth={10} strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M48 60 C54 48 64 42 74 42" fill="none" stroke={W} strokeWidth={7} strokeLinecap="round" />
+  </g>
+);
+
+const Flame = () => (
+  <g>
+    <path d="M100 8 C120 48 160 70 160 122 C160 160 132 188 100 188 C68 188 40 160 40 122 C40 92 58 76 70 56 C74 80 84 90 92 94 C88 64 92 34 100 8 Z" fill={C} {...ink} />
+    <path d="M100 82 C110 108 132 120 132 146 C132 166 118 180 100 180 C82 180 68 166 68 146 C68 128 80 118 86 104 C90 118 96 122 100 124 Z" fill={Y} {...ink} strokeWidth={4} />
+    <path d="M60 116 C60 100 66 88 74 80" fill="none" stroke={W} strokeWidth={7} strokeLinecap="round" />
+  </g>
+);
+
+const WaterDrop = () => (
+  <g>
+    <path d="M100 14 C128 58 160 94 160 128 C160 162 134 186 100 186 C66 186 40 162 40 128 C40 94 72 58 100 14 Z" fill="#7FD3F0" {...ink} />
+    <path d="M100 30 C124 70 150 100 150 128 C150 156 128 176 100 178 C124 160 132 128 100 30 Z" fill="#45AFD6" />
+    <path d="M66 128 C66 108 76 94 86 82" fill="none" stroke={W} strokeWidth={9} strokeLinecap="round" />
+  </g>
+);
+
+const Thinker = () => (
+  <g>
+    <path d="M58 92 C48 34 76 16 100 16 C128 16 152 34 142 96 L134 132 L66 132 Z" fill={K} />
+    <path d="M28 196 C28 150 58 128 100 128 C142 128 172 150 172 196 Z" fill={M} {...ink} />
+    <path d="M84 116 L84 136 C92 144 108 144 116 136 L116 116 Z" fill={S} {...ink} />
+    <ellipse cx="100" cy="76" rx="34" ry="42" fill={S} {...ink} />
+    <path d="M66 70 C70 46 88 36 104 38 C122 40 134 52 134 70 C118 58 96 54 80 50 C76 58 72 64 66 70 Z" fill={K} />
+    <path d="M86 80 L86 82 M114 80 L114 82" stroke={K} strokeWidth={7} strokeLinecap="round" />
+    <path d="M92 98 C98 96 104 96 110 98" fill="none" {...ink} strokeWidth={4} />
+    <path d="M56 168 L72 152 M128 168 L144 152" {...hatch} stroke={MD} />
+  </g>
+);
+
 const ICONS: Record<string, React.ReactNode> = {
   biceps: <Biceps />,
   bone: <BoneIco />,
@@ -381,6 +429,11 @@ const ICONS: Record<string, React.ReactNode> = {
   bell: <Bell />,
   thumbup: <ThumbUp />,
   cursor: <Cursor />,
+  shield: <Shield />,
+  heartpulse: <HeartPulse />,
+  flame: <Flame />,
+  waterdrop: <WaterDrop />,
+  thinker: <Thinker />,
 };
 
 export const Illo: React.FC<{ name: string; size: number; seed?: number }> = ({

@@ -21,6 +21,7 @@ import {
   NadYouTube,
 } from "./Nad";
 import { NADIG_DURATION, NADIG_FPS, NadInstagram } from "./NadIG";
+import { ESTRO_DURATION, ESTRO_FPS, Estrogeni } from "./Estrogeni";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -114,6 +115,14 @@ export const RemotionRoot: React.FC = () => {
         component={NadInstagram}
         durationInFrames={NADIG_DURATION}
         fps={NADIG_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="LongevaEstrogeni"
+        component={Estrogeni}
+        durationInFrames={ESTRO_DURATION}
+        fps={ESTRO_FPS}
         width={1080}
         height={1920}
       />
