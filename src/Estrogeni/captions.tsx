@@ -72,7 +72,7 @@ const CaptionText: React.FC<{
       style={{
         alignItems: "center",
         justifyContent: split ? "flex-start" : "center",
-        paddingTop: split ? 820 : 0,
+        paddingTop: split ? 960 : 0,
       }}
     >
       <div

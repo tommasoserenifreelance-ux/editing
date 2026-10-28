@@ -49,11 +49,14 @@ export const Sfx: React.FC<{ at: number; name: SfxName; volume?: number }> = ({
   at,
   name,
   volume = 0.5,
-}) => (
-  <Sequence from={Math.max(0, Math.round(at))} layout="none">
-    <Audio src={staticFile(`sfx/${name}.wav`)} volume={volume * SFX_GAIN} />
-  </Sequence>
-);
+}) =>
+  // Well before the sequence start = an element that is already on screen
+  // (e.g. icons carried over into a new shot): stay silent.
+  at < -15 ? null : (
+    <Sequence from={Math.max(0, Math.round(at))} layout="none">
+      <Audio src={staticFile(`sfx/${name}.wav`)} volume={volume * SFX_GAIN} />
+    </Sequence>
+  );
 
 // Elastic pop used by every element that enters (reference: overshoot, no fades).
 export const usePop = (delay = 0, damping = 11) => {

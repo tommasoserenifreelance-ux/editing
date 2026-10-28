@@ -42,7 +42,9 @@ const clamp = {
 
 const SRC = "estrogeni/clip.mp4";
 export const HEAD_ANCHOR_E = "50% 2%";
-const HALF = 960;
+// Speaker panel height: tall enough to keep the chin above the seam.
+const TOP = 1100;
+const PANEL = 1920 - TOP;
 
 /* ------------------------------------------------------------------ */
 /* Speaker                                                              */
@@ -63,11 +65,11 @@ const SpeakerPanel: React.FC<{ t0: number; punch?: number[] }> = ({
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  let scale = 1 + interpolate(frame, [0, 600], [0, 0.06], clamp);
+  let scale = 1 + interpolate(frame, [0, 600], [0, 0.03], clamp);
   for (const p of punch) {
     const f = Math.round(p * fps);
     if (frame >= f) {
-      scale += 0.08 * spring({ frame: frame - f, fps, config: { damping: 18 } });
+      scale += 0.05 * spring({ frame: frame - f, fps, config: { damping: 18 } });
     }
   }
   return (
@@ -77,7 +79,7 @@ const SpeakerPanel: React.FC<{ t0: number; punch?: number[] }> = ({
         left: 0,
         top: 0,
         width: 1080,
-        height: HALF,
+        height: TOP,
         overflow: "hidden",
         backgroundColor: colors.black,
       }}
@@ -113,9 +115,9 @@ const GraphicPanel: React.FC<{ bg: Paper; children: React.ReactNode }> = ({
       style={{
         position: "absolute",
         left: 0,
-        top: HALF + (1 - slide) * 220,
+        top: TOP + (1 - slide) * 220,
         width: 1080,
-        height: HALF,
+        height: PANEL,
         overflow: "hidden",
         boxShadow: "0 -14px 30px rgba(0,0,0,0.35)",
       }}
@@ -209,14 +211,15 @@ const StackGrid: React.FC<{
   size: number;
   labelColor?: string;
   grey?: number;
-}> = ({ t0, items, cols, top, rowH, size, labelColor = colors.ink, grey = 0 }) => {
+  since?: number; // look words up from here (items may have been named in an earlier shot)
+}> = ({ t0, items, cols, top, rowH, size, labelColor = colors.ink, grey = 0, since = t0 }) => {
   const colW = 1080 / cols;
   return (
     <>
       {items.map((it, i) => {
         const cx = colW * ((i % cols) + 0.5);
         const cy = top + Math.floor(i / cols) * rowH;
-        const d = at(t0, it.word);
+        const d = sec(wt(it.word, since) - t0);
         return (
           <React.Fragment key={it.label}>
             <Emoji name={it.emoji} x={cx} y={cy} size={size} delay={d} grey={grey} />
@@ -246,13 +249,13 @@ export const Tappe: React.FC<SceneProps> = ({ t0 }) => {
   const stops = [160, 413, 666, 920];
   return (
     <Split t0={t0}>
-      <svg width={1080} height={HALF} style={{ position: "absolute", filter: "url(#print)" }}>
-        <line x1={140} y1={520} x2={140 + 800 * line} y2={520} stroke={colors.printInk} strokeWidth={10} strokeLinecap="round" />
+      <svg width={1080} height={PANEL} style={{ position: "absolute", filter: "url(#print)" }}>
+        <line x1={140} y1={470} x2={140 + 800 * line} y2={470} stroke={colors.printInk} strokeWidth={10} strokeLinecap="round" />
         {stops.map((x, i) => {
           const k = interpolate(frame, [d + i * 4, d + i * 4 + 6], [0, 1], clamp);
-          return <circle key={x} cx={x} cy={520} r={34 * k} fill={[colors.mint, colors.brand, colors.coral, colors.mint][i]} stroke={colors.printInk} strokeWidth={7} />;
+          return <circle key={x} cx={x} cy={470} r={34 * k} fill={[colors.mint, colors.brand, colors.coral, colors.mint][i]} stroke={colors.printInk} strokeWidth={7} />;
         })}
-        <g transform="translate(540 250)" opacity={interpolate(frame, [0, 6], [0, 1], clamp)}>
+        <g transform="translate(540 220)" opacity={interpolate(frame, [0, 6], [0, 1], clamp)}>
           <circle cx={0} cy={-30} r={78} fill="none" stroke={colors.coral} strokeWidth={22} />
           <path d="M0 48 V170 M-56 112 H56" stroke={colors.coral} strokeWidth={22} strokeLinecap="round" />
         </g>
@@ -260,7 +263,7 @@ export const Tappe: React.FC<SceneProps> = ({ t0 }) => {
       {stops.map((_, i) => (
         <Sfx key={i} at={d + i * 4} name="tick" volume={0.5} />
       ))}
-      <SerifLabel text="le tappe della vita femminile" delay={d + 4} size={64} style={{ left: 0, right: 0, top: 640 }} />
+      <SerifLabel text="le tappe della vita femminile" delay={d + 4} size={64} style={{ left: 0, right: 0, top: 580 }} />
     </Split>
   );
 };
@@ -268,9 +271,9 @@ export const Tappe: React.FC<SceneProps> = ({ t0 }) => {
 /* "in chiave prevenzione, chiaramente a lungo termine" */
 export const Prevenzione: React.FC<SceneProps> = ({ t0 }) => (
   <Split t0={t0} bg="mint">
-    <Pill text="prevenzione" delay={at(t0, "prevenzione")} top={170} size={86} />
-    <Emoji name="hourglass" x={380} y={600} size={260} delay={at(t0, "lungo")} />
-    <SerifLabel text={"a lungo\ntermine"} delay={at(t0, "lungo") + 2} size={78} color={colors.white} style={{ left: 540, top: 520, textAlign: "left" }} />
+    <Pill text="prevenzione" delay={at(t0, "prevenzione")} top={130} size={86} />
+    <Emoji name="hourglass" x={380} y={520} size={250} delay={at(t0, "lungo")} />
+    <SerifLabel text={"a lungo\ntermine"} delay={at(t0, "lungo") + 2} size={78} color={colors.white} style={{ left: 540, top: 440, textAlign: "left" }} />
   </Split>
 );
 
@@ -315,30 +318,27 @@ export const Estradiolo: React.FC<SceneProps> = ({ t0 }) => {
 /* "sono dei grandi protettori" */
 export const Protettori: React.FC<SceneProps> = ({ t0 }) => (
   <Split t0={t0} bg="mint">
-    <Emoji name="shield" x={540} y={400} size={430} delay={at(t0, "protettori") - 4} />
-    <Emoji name="sparkle" x={780} y={210} size={150} delay={at(t0, "protettori") + 4} volume={0.3} />
-    <SerifLabel text="grandi protettori" delay={at(t0, "protettori")} size={80} color={colors.white} style={{ left: 0, right: 0, top: 690 }} />
+    <Emoji name="shield" x={540} y={330} size={380} delay={at(t0, "protettori") - 4} />
+    <Emoji name="sparkle" x={760} y={160} size={140} delay={at(t0, "protettori") + 4} volume={0.3} />
+    <SerifLabel text="grandi protettori" delay={at(t0, "protettori")} size={80} color={colors.white} style={{ left: 0, right: 0, top: 600 }} />
   </Split>
 );
 
-/* What they protect — six icons stacking up in a grid */
-export const Benefici: React.FC<SceneProps> = ({ t0 }) => (
-  <Split t0={t0} punch={["robusto", "cardiovascolare", "memoria"]}>
-    <StackGrid
-      t0={t0}
-      cols={3}
-      top={200}
-      rowH={420}
-      size={190}
-      items={[
-        { word: "l'osso", emoji: "bone", label: "osso" },
-        { word: "vasi", emoji: "heartpulse", label: "vasi e cuore" },
-        { word: "umore", emoji: "smile", label: "umore" },
-        { word: "sonno", emoji: "yawn", label: "sonno" },
-        { word: "memoria", emoji: "brain", label: "memoria" },
-        { word: "pelle", emoji: "waterdrop", label: "pelle e mucose" },
-      ]}
-    />
+/* What they protect — six icons stacking up in a grid. The same grid comes
+   back in several short split shots: icons named earlier are already there,
+   the new ones pop in, and the shot returns to the speaker in between. */
+export const BENEFITS: StackItem[] = [
+  { word: "l'osso", emoji: "bone", label: "osso" },
+  { word: "vasi", emoji: "heartpulse", label: "vasi e cuore" },
+  { word: "umore", emoji: "smile", label: "umore" },
+  { word: "sonno", emoji: "yawn", label: "sonno" },
+  { word: "memoria", emoji: "brain", label: "memoria" },
+  { word: "pelle", emoji: "waterdrop", label: "pelle e mucose" },
+];
+
+export const Benefici: React.FC<SceneProps & { upTo: number }> = ({ t0, upTo }) => (
+  <Split t0={t0}>
+    <StackGrid t0={t0} since={18} cols={3} top={170} rowH={360} size={170} items={BENEFITS.slice(0, upTo)} />
   </Split>
 );
 
@@ -378,15 +378,15 @@ export const ScudoGiu: React.FC<SceneProps> = ({ t0 }) => {
   const arrow = usePop(dC, 10);
   return (
     <Split t0={t0}>
-      <div style={{ position: "absolute", left: 0, top: 0, width: 1080, height: HALF, transform: `translateY(${drop * 260}px) rotate(${drop * 8}deg)`, transformOrigin: "540px 380px" }}>
-        <Emoji name="shield" x={540} y={380} size={400} delay={0} grey={grey} />
+      <div style={{ position: "absolute", left: 0, top: 0, width: 1080, height: PANEL, transform: `translateY(${drop * 260}px) rotate(${drop * 8}deg)`, transformOrigin: "540px 330px" }}>
+        <Emoji name="shield" x={540} y={330} size={380} delay={0} grey={grey} />
       </div>
-      <div style={{ position: "absolute", left: 790, top: 230, transform: `scale(${arrow})`, opacity: frame < dC ? 0 : 1 }}>
+      <div style={{ position: "absolute", left: 790, top: 180, transform: `scale(${arrow})`, opacity: frame < dC ? 0 : 1 }}>
         <svg width={140} height={200} viewBox="0 0 140 200" style={{ filter: "url(#print)" }}>
           <path d="M70 12 V170 M22 120 L70 180 L118 120" fill="none" stroke={colors.coral} strokeWidth={26} strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
-      <SerifLabel text="estrogeni" delay={dC} size={62} color={colors.coral} style={{ left: 730, top: 450 }} />
+      <SerifLabel text="estrogeni" delay={dC} size={62} color={colors.coral} style={{ left: 730, top: 400 }} />
       <Sfx at={dC} name="whoosh_down" volume={0.4} />
       <Sfx at={dA} name="powerdown" volume={0.45} />
     </Split>
@@ -399,15 +399,15 @@ export const Conseguenze: React.FC<SceneProps> = ({ t0 }) => (
     <StackGrid
       t0={t0}
       cols={2}
-      top={210}
-      rowH={430}
-      size={200}
+      top={170}
+      rowH={380}
+      size={180}
       labelColor={colors.white}
       items={[
         { word: "densità", emoji: "bone", label: "densità ossea" },
-        { word: "profilo", emoji: "heartpulse", label: "profilo cardio" },
+        { word: "profilo", emoji: "heartpulse", label: "profilo\ncardiovascolare" },
         { word: "vampate", emoji: "flame", label: "vampate" },
-        { word: "sonno", emoji: "yawn", label: "disturbi del sonno" },
+        { word: "disturbi", emoji: "yawn", label: "disturbi\ndel sonno" },
       ]}
     />
   </Split>
@@ -437,26 +437,27 @@ export const Fisiologico: React.FC<SceneProps> = ({ t0 }) => {
 /* "E le terapie ormonali?" */
 export const Terapie: React.FC<SceneProps> = () => (
   <Fill bg="grey">
-    <Emoji name="thinker" x={540} y={900} size={520} delay={0} />
-    <Word3D text="?" size={260} top={480} delay={10} color={colors.coral} depthColor="#8E2236" rotate={12} />
+    <Emoji name="thinker" x={540} y={860} size={500} delay={0} />
+    <Word3D text="?" size={240} top={440} delay={8} color={colors.coral} depthColor="#8E2236" rotate={12} />
+    <SerifLabel text={"e le terapie\normonali?"} delay={2} size={110} style={{ left: 0, right: 0, top: 1180 }} />
   </Fill>
 );
 
 /* "uno strumento fondamentale per gestire … i sintomi" */
 export const Strumento: React.FC<SceneProps> = ({ t0 }) => (
   <Split t0={t0} bg="mint">
-    <Emoji name="pill" x={420} y={360} size={330} delay={2} />
-    <Emoji name="check" x={720} y={250} size={170} delay={at(t0, "esistono")} volume={0.3} />
-    <SerifLabel text={"strumento\nfondamentale"} delay={at(t0, "fondamentale")} size={84} color={colors.white} style={{ left: 0, right: 0, top: 600 }} />
+    <Emoji name="pill" x={420} y={300} size={310} delay={2} />
+    <Emoji name="check" x={720} y={200} size={160} delay={at(t0, "esistono")} volume={0.3} />
+    <SerifLabel text={"strumento\nfondamentale"} delay={at(t0, "fondamentale")} size={84} color={colors.white} style={{ left: 0, right: 0, top: 520 }} />
   </Split>
 );
 
 /* "ma per prevenire patologie correlate" */
 export const Prevenire: React.FC<SceneProps> = ({ t0 }) => (
   <Split t0={t0}>
-    <Emoji name="shield" x={540} y={370} size={380} delay={at(t0, "prevenire")} />
-    <Pill text="prevenire" delay={at(t0, "prevenire") + 4} top={620} size={70} bg={colors.mint} color={colors.printInk} />
-    <SerifLabel text="le patologie correlate" delay={at(t0, "patologie")} size={58} style={{ left: 0, right: 0, top: 800 }} />
+    <Emoji name="shield" x={540} y={290} size={330} delay={at(t0, "prevenire")} />
+    <Pill text="prevenire" delay={at(t0, "prevenire") + 4} top={500} size={70} bg={colors.mint} color={colors.printInk} />
+    <SerifLabel text="le patologie correlate" delay={at(t0, "patologie")} size={58} style={{ left: 0, right: 0, top: 660 }} />
   </Split>
 );
 
