@@ -337,7 +337,7 @@ export const BENEFITS: StackItem[] = [
 ];
 
 export const Benefici: React.FC<SceneProps & { upTo: number }> = ({ t0, upTo }) => (
-  <Split t0={t0}>
+  <Split t0={t0} punch={upTo === 6 ? ["cardiovascolare", "memoria"] : []}>
     <StackGrid t0={t0} since={18} cols={3} top={170} rowH={360} size={170} items={BENEFITS.slice(0, upTo)} />
   </Split>
 );
