@@ -179,7 +179,7 @@ def build(name: str, src_dir: str) -> int:
             )
             total += lengths[i] - fades[i]
         else:
-            parts.append(f"[{cur}][v{i}]concat=n=2:v=1:a=0[{nxt}]")
+            parts.append(f"[{cur}][v{i}]concat=n=2:v=1:a=0,settb=1/{FPS}[{nxt}]")
             total += lengths[i]
         cur = nxt
 
