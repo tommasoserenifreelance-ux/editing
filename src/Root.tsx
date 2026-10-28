@@ -8,6 +8,7 @@ import {
   PilatesOverlay,
 } from "./PilatesOverlay";
 import { PILATES_DURATION, PilatesReformer } from "./PilatesReformer";
+import { RB_FPS, RB_VIDEOS, RbVideo, ReginaBistecca } from "./ReginaBistecca";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -72,6 +73,20 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
       />
+      <Folder name="ReginaBistecca">
+        {(Object.keys(RB_VIDEOS) as RbVideo[]).map((video) => (
+          <Composition
+            key={video}
+            id={`RB-${video}`}
+            component={ReginaBistecca}
+            durationInFrames={RB_VIDEOS[video].duration}
+            fps={RB_FPS}
+            width={1080}
+            height={1920}
+            defaultProps={{ video }}
+          />
+        ))}
+      </Folder>
     </>
   );
 };
