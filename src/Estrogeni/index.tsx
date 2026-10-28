@@ -68,11 +68,8 @@ const SCENES: Scene[] = [
   { from: wt("Aiutano"), caption: "white", kind: "speaker", render: th("wide", ["robusto"]) },
   { from: wt("robusto"), caption: "white", kind: "split", render: (t0) => <Benefici t0={t0} upTo={1} /> },
   { from: wt("tenere"), caption: "white", kind: "speaker", render: th("close", ["l'osteoporosi"]) },
-  { from: wt("l'elasticità"), caption: "white", kind: "split", render: (t0) => <Benefici t0={t0} upTo={2} /> },
-  { from: wt("e", 26.2), caption: "white", kind: "speaker", render: th("wide", ["cardiovascolare"]) },
-  { from: wt("sostengono"), caption: "white", kind: "split", render: (t0) => <Benefici t0={t0} upTo={5} /> },
-  { from: wt("e", 31.9), caption: "white", kind: "speaker", render: th("close") },
-  { from: wt("pelle"), caption: "white", kind: "split", render: (t0) => <Benefici t0={t0} upTo={6} /> },
+  // from "vasi" the grid stays up until every item has been named
+  { from: wt("l'elasticità"), caption: "white", kind: "split", render: (t0) => <Benefici t0={t0} upTo={6} /> },
   { from: wt("In", 35), caption: "white", kind: "speaker", render: th("wide") },
   { from: wt("sorta"), caption: "none", kind: "graphic", render: (t0) => <Scudo t0={t0} /> },
   { from: wt("Il", 41), caption: "white", kind: "speaker", render: th("close", ["svolta"]) },
