@@ -2,16 +2,21 @@ import {
   AbsoluteFill,
   continueRender,
   delayRender,
+  Img,
   interpolate,
   OffthreadVideo,
   staticFile,
   useCurrentFrame,
+  useVideoConfig,
 } from "remotion";
 
 export const RB_FPS = 25;
 
 // The title is gone after 4.2 s, as in the Bonsalto Olio Nuovo reel.
 const TITLE_OUT = 105;
+
+// The end logo holds over the last 2.8 s, fading in over the first 1.2 s.
+const LOGO_HOLD = 70;
 
 const script = "Pinyon Script";
 
@@ -117,9 +122,42 @@ const Title: React.FC<{ hook: Hook }> = ({ hook }) => {
   );
 };
 
+// Regina Bistecca al Duomo logo, white on transparent.
+const EndLogo: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { durationInFrames } = useVideoConfig();
+  const start = durationInFrames - LOGO_HOLD;
+  const p = interpolate(frame, [start, start + 30], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  return (
+    <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
+      <AbsoluteFill
+        style={{
+          opacity: p,
+          background:
+            "radial-gradient(ellipse 80% 50% at 50% 46%, rgba(20,12,4,0.66), rgba(20,12,4,0.3) 80%)",
+        }}
+      />
+      <Img
+        src={staticFile("rb/logo-regina-bistecca.png")}
+        style={{
+          width: 860,
+          marginTop: -120,
+          opacity: p,
+          filter: `blur(${(1 - p) * 8}px) drop-shadow(0 4px 24px rgba(0,0,0,0.35))`,
+          transform: `scale(${0.96 + 0.04 * p})`,
+        }}
+      />
+    </AbsoluteFill>
+  );
+};
+
 export const ReginaBistecca: React.FC<{ video: RbVideo }> = ({ video }) => (
   <AbsoluteFill style={{ backgroundColor: "black" }}>
     <OffthreadVideo src={staticFile(`rb/edit/${video}.mp4`)} muted />
     <Title hook={RB_VIDEOS[video].hook} />
+    <EndLogo />
   </AbsoluteFill>
 );
