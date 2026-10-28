@@ -11,9 +11,9 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { Captions } from "./Captions";
+import { Captions } from "../Bonaccorso/Captions";
 import { CLIPS, FPS, phrases, wordFrame } from "./script";
-import { colors } from "./theme";
+import { colors } from "../Bonaccorso/theme";
 
 export { DURATION as CACAO_DURATION, FPS as CACAO_FPS } from "./script";
 
@@ -294,7 +294,7 @@ export const Cacao: React.FC = () => {
           <Sticker file={s.file} duration={s.to - s.from} />
         </Sequence>
       ))}
-      <Captions zones={CAPTION_ZONES} />
+      <Captions phrases={phrases} zones={CAPTION_ZONES} />
       {SOUNDS.map((s, i) => (
         <Sfx key={i} {...s} />
       ))}

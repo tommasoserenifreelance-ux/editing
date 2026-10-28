@@ -5,7 +5,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { Line, LineStyle, Phrase, phrases } from "./script";
+import { Line, LineStyle, Phrase } from "./phrases";
 import { colors, sans, serif } from "./theme";
 
 // Instagram safe zone: keep clear of the side buttons and the bottom UI.
@@ -192,7 +192,10 @@ const PhraseBlock: React.FC<{ phrase: Phrase; top: number }> = ({
 // While an overlay needs the space below the face, captions move to its `top`.
 export type CaptionZone = { from: number; to: number; top: number };
 
-export const Captions: React.FC<{ zones: CaptionZone[] }> = ({ zones }) => {
+export const Captions: React.FC<{
+  phrases: Phrase[];
+  zones: CaptionZone[];
+}> = ({ phrases, zones }) => {
   const frame = useCurrentFrame();
   const phrase = phrases.find((p) => frame >= p.from && frame < p.to);
   if (!phrase) return null;

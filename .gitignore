@@ -9,3 +9,6 @@ out
 # 4K takes for the Cacao video are too big for git: download them from the
 # "clip-cacao" release into public/cacao/doctor/ (cacao-1.mp4 … cacao-6.mp4).
 public/cacao/doctor/
+# Same for the prebiotici take: download it from the "prebiotici" release into
+# public/prebiotici/doctor/prebiotici.mp4.
+public/prebiotici/doctor/

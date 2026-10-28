@@ -1,5 +1,6 @@
 import { Composition, Folder } from "remotion";
 import { Cacao, CACAO_DURATION, CACAO_FPS } from "./Cacao";
+import { Prebiotici, PREBIOTICI_DURATION, PREBIOTICI_FPS } from "./Prebiotici";
 import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
@@ -78,6 +79,14 @@ export const RemotionRoot: React.FC = () => {
         component={Cacao}
         durationInFrames={CACAO_DURATION}
         fps={CACAO_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="Prebiotici"
+        component={Prebiotici}
+        durationInFrames={PREBIOTICI_DURATION}
+        fps={PREBIOTICI_FPS}
         width={1080}
         height={1920}
       />
