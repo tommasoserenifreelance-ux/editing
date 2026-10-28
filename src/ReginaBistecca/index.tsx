@@ -1,5 +1,6 @@
 import {
   AbsoluteFill,
+  Audio,
   continueRender,
   delayRender,
   Img,
@@ -15,7 +16,8 @@ export const RB_FPS = 25;
 // The title is gone after 4.2 s, as in the Bonsalto Olio Nuovo reel.
 const TITLE_OUT = 105;
 
-// The end logo holds over the last 2.8 s, fading in over the first 1.2 s.
+// Unless a video says otherwise, the end logo holds over the last 2.8 s,
+// fading in over the first 1.2 s.
 const LOGO_HOLD = 70;
 
 const script = "Pinyon Script";
@@ -33,23 +35,28 @@ new FontFace(
 
 type Hook = { top: string; main: string };
 
-// Clips in public/rb/edit are cut by scripts/rb_tagli.py; durations are their
-// frame counts at 25 fps.
-export const RB_VIDEOS = {
-  rb01: { duration: 226, hook: { top: "Dalla brace", main: "al piatto" } },
-  rb02: { duration: 401, hook: { top: "La tagliata", main: "della Regina" } },
-  rb03: { duration: 538, hook: { top: "Tagliolini", main: "al tartufo" } },
-  rb04: { duration: 240, hook: { top: "La nostra", main: "Tartare" } },
-  rb05: { duration: 260, hook: { top: "Filetto", main: "al tartufo" } },
-  rb06: { duration: 296, hook: { top: "Tra i libri", main: "della Regina" } },
-  rb07: { duration: 375, hook: { top: "Inverno", main: "in Toscana" } },
-  rb08: { duration: 396, hook: { top: "Pagine", main: "di carne" } },
-  rb09: { duration: 676, hook: { top: "Campari", main: "Spritz" } },
-  rb10: { duration: 598, hook: { top: "Il drink", main: "in rosa" } },
-  rb11: { duration: 310, hook: { top: "Dolci", main: "della casa" } },
-} satisfies Record<string, { duration: number; hook: Hook }>;
+// Clips in public/rb/edit are cut and graded by scripts/rb_tagli.py, which
+// also writes their frame counts to durations.ts.
+const videos = {
+  // The logo waits for the last of the salt (9.7 s).
+  rb01: { hook: { top: "Dalla brace", main: "al piatto" }, logoAt: 243 },
+  rb02: { hook: { top: "La tagliata", main: "della Regina" } },
+  rb03: { hook: { top: "Tagliolini", main: "al tartufo" } },
+  rb04: { hook: { top: "La nostra", main: "Tartare" } },
+  rb05: { hook: { top: "Filetto", main: "al tartufo" } },
+  rb06: { hook: { top: "Tra i libri", main: "della Regina" } },
+  rb07: { hook: { top: "Inverno", main: "in Toscana" } },
+  rb08: { hook: { top: "Pagine", main: "di carne" } },
+  rb09: { hook: { top: "Campari", main: "Spritz" } },
+  rb10: { hook: { top: "Il drink", main: "in rosa" } },
+  rb11: { hook: { top: "Dolci", main: "della casa" } },
+} satisfies Record<string, RbEdit>;
 
-export type RbVideo = keyof typeof RB_VIDEOS;
+type RbEdit = { hook: Hook; logoAt?: number };
+
+export type RbVideo = keyof typeof videos;
+
+export const RB_VIDEOS: Record<RbVideo, RbEdit> = videos;
 
 // Each line drifts up out of a soft blur, one after the other.
 const reveal = (frame: number, start: number) => {
@@ -123,10 +130,10 @@ const Title: React.FC<{ hook: Hook }> = ({ hook }) => {
 };
 
 // Regina Bistecca al Duomo logo, white on transparent.
-const EndLogo: React.FC = () => {
+const EndLogo: React.FC<{ at?: number }> = ({ at }) => {
   const frame = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
-  const start = durationInFrames - LOGO_HOLD;
+  const start = at ?? durationInFrames - LOGO_HOLD;
   const p = interpolate(frame, [start, start + 30], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
@@ -157,7 +164,9 @@ const EndLogo: React.FC = () => {
 export const ReginaBistecca: React.FC<{ video: RbVideo }> = ({ video }) => (
   <AbsoluteFill style={{ backgroundColor: "black" }}>
     <OffthreadVideo src={staticFile(`rb/edit/${video}.mp4`)} muted />
+    {/* A different classical piano piece per reel (public/rb/music). */}
+    <Audio src={staticFile(`rb/music/${video}.m4a`)} />
     <Title hook={RB_VIDEOS[video].hook} />
-    <EndLogo />
+    <EndLogo at={RB_VIDEOS[video].logoAt} />
   </AbsoluteFill>
 );

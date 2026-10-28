@@ -25,7 +25,7 @@ SR = 48000
 # piece, quarter-note bpm, first measure, seconds (= the reel's length),
 # loudness of each part from the top (the melody sings, inner voices recede).
 PIECES = {
-    "rb01": ("bach/bwv846.mxl", 66, 1, 10.3, [0.75, 0.6]),
+    "rb01": ("bach/bwv846.mxl", 66, 1, 12.96, [0.75, 0.6]),
     "rb02": ("schumann_robert/dichterliebe_no2.xml", 58, 1, 15.4, [0.9, 0.55, 0.5]),
     "rb03": ("schubert/Lindenbaum.xml", 84, 1, 21.5, [0.9, 0.6, 0.5]),
     "rb04": ("mozart/k458/movement3.mxl", 46, 1, 9.6, [0.9, 0.5, 0.5, 0.6]),

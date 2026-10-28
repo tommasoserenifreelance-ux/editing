@@ -56,9 +56,11 @@ DEFLICKER = (
 )
 
 EDITS = {
-    # Filetto alla brace: già montato; tengo la coda per il logo dopo il sale.
+    # Filetto alla brace: già montato. Il sale cade fino alla fine della
+    # ripresa, quindi tengo fermo l'ultimo fotogramma per il logo.
     "rb01": {
         "gamma": 1.05,
+        "hold": 2.6,
         "cuts": [(0.3, 2.26, 1), (2.26, 3.28, 1), (3.28, 5.46, 1), (5.46, 10.6, 1)],
     },
     # Tagliata: due tagli di coltello, via lo scatto mosso con la manica
@@ -182,6 +184,10 @@ def build(name: str, src_dir: str) -> int:
             parts.append(f"[{cur}][v{i}]concat=n=2:v=1:a=0,settb=1/{FPS}[{nxt}]")
             total += lengths[i]
         cur = nxt
+
+    if edit.get("hold"):
+        parts.append(f"[{cur}]tpad=stop_mode=clone:stop_duration={edit['hold']}[held]")
+        cur = "held"
 
     os.makedirs(OUT, exist_ok=True)
     out = os.path.join(OUT, f"{name}.mp4")
