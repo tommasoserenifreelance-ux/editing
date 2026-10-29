@@ -80,16 +80,32 @@ EDITS = {
             (70.4, 73.4, 0.5, 1.0),
         ],
     },
-    # Tartare servita: al ralenti; le luci pulsano a 11.4 Hz sulla tovaglia.
-    "rb04": {"deflicker": 11.41, "cuts": [(0.0, 4.8, 0.5)]},
+    # Tartare servita: al ralenti; le luci pulsano a 11.4 Hz sulla tovaglia
+    # e la grana del sensore bolle sul bianco: deflicker più denoise.
+    "rb04": {"deflicker": 11.41, "denoise": True, "cuts": [(0.0, 4.8, 0.5)]},
     # Tartufo sul filetto, al ralenti, stabilizzato.
     "rb05": {"stab": True, "cuts": [(0.0, 5.2, 0.5)]},
-    # Libri: niente tagli, le pagine scorrono vere; stabilizzati e senza
-    # lo sfarfallio delle luci (11.35 Hz).
-    "rb06": {"stab": True, "deflicker": 11.35, "cuts": [(0.0, 36.4, 1)]},
+    # Libri: niente tagli, le pagine scorrono vere; stabilizzati, senza lo
+    # sfarfallio delle luci (11.35 Hz) e senza la grana che bolle sul tavolo.
+    "rb06": {
+        "stab": True,
+        "deflicker": 11.35,
+        "denoise": True,
+        "cuts": [(0.0, 36.4, 1)],
+    },
     # Si vede anche la mano che prende gli occhiali.
-    "rb07": {"stab": True, "deflicker": 11.35, "cuts": [(0.0, 46.88, 1)]},
-    "rb08": {"stab": True, "deflicker": 11.35, "cuts": [(0.0, 37.96, 1)]},
+    "rb07": {
+        "stab": True,
+        "deflicker": 11.35,
+        "denoise": True,
+        "cuts": [(0.0, 46.88, 1)],
+    },
+    "rb08": {
+        "stab": True,
+        "deflicker": 11.35,
+        "denoise": True,
+        "cuts": [(0.0, 37.96, 1)],
+    },
     # Campari Spritz: piano sequenza di 62 s, via i tempi morti.
     "rb09": {
         "cuts": [
@@ -159,13 +175,16 @@ def build(name: str, src_dir: str) -> int:
     if edit.get("deflicker"):
         src = deflickered(name, src, edit["deflicker"])
     look = GRADE + (f",eq=gamma={edit['gamma']}" if "gamma" in edit else "")
+    # Temporal-only denoise: stills the grain boiling on flat light surfaces
+    # (tablecloth, table, pages) without smearing hands or turning pages.
+    pre = "hqdn3d=1:1:8:8," if edit.get("denoise") else ""
 
     # One seeked input per segment, so only that stretch gets decoded.
     inputs, parts, lengths, fades = [], [], [], []
     for i, (start, end, speed, *fade) in enumerate(edit["cuts"]):
         inputs += ["-ss", str(start), "-t", f"{end - start:.3f}", "-i", src]
         parts.append(
-            f"[{i}:v]setpts=(PTS-STARTPTS)/{speed},fps={FPS},{look},"
+            f"[{i}:v]{pre}setpts=(PTS-STARTPTS)/{speed},fps={FPS},{look},"
             f"format=yuv420p[v{i}]"
         )
         lengths.append((end - start) / speed)
@@ -193,7 +212,7 @@ def build(name: str, src_dir: str) -> int:
     os.makedirs(OUT, exist_ok=True)
     out = os.path.join(OUT, f"{name}.mp4")
     run([*inputs, "-filter_complex", ";".join(parts), "-map", f"[{cur}]",
-         "-c:v", "libx264", "-preset", "slow", "-crf", "18",
+         "-c:v", "libx264", "-preset", "slow", "-crf", "15",
          "-pix_fmt", "yuv420p", "-r", str(FPS), "-an", out])
     frames = subprocess.run(
         ["ffprobe", "-v", "error", "-count_frames", "-select_streams", "v",
