@@ -1,0 +1,357 @@
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Regina Bistecca al Duomo · shooting foto e video del 21 ottobre 2026 · a cura di VTA"><meta property="og:title" content="Regina Bistecca · Shooting 21.10"><meta property="og:image" content="c/n32.jpg"><link rel="icon" href="avatar.png"><title>Regina Bistecca 21.10</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Jost:wght@300;400;500&display=swap">
+<style>
+/* Layout: one dark dining room — a full-bleed video opener, then a reel strip, photo rooms by theme, swipeable IG posts, download. */
+:root {
+  --bg: #15100e;          /* espresso wood */
+  --surface: #201916;     /* table in shadow */
+  --fg: #f3ece4;          /* tablecloth */
+  --muted: #a3968b;
+  --line: rgba(243,236,228,.14);
+  --red: #d2382f;         /* the plate rim */
+  --ig-bg: #ffffff; --ig-fg: #111111; --ig-muted: #737373; --ig-line: #dbdbdb; --ig-blue: #0095f6; --ig-tag: #00376b;
+  --display: "Bodoni Moda", "Didot", "Bodoni 72", Georgia, serif;
+  --body: "Jost", "Futura", "Avenir Next", system-ui, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--body); font-weight: 300; font-size: 17px; line-height: 1.55; }
+img, video { max-width: 100%; display: block; }
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+.label { font-family: var(--body); font-weight: 500; font-size: 12px; letter-spacing: .32em; text-transform: uppercase; color: var(--muted); }
+h2 { font-family: var(--display); font-weight: 400; font-size: clamp(34px, 5vw, 56px); line-height: 1.05; margin: 10px 0 0; text-wrap: balance; }
+h2 em { font-style: italic; color: var(--red); }
+section.block { padding-block: clamp(64px, 9vw, 120px); border-top: 1px solid var(--line); }
+.head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 32px; margin-bottom: 36px; }
+.head p { margin: 0; max-width: 44ch; color: var(--muted); }
+
+/* Hero */
+.hero { position: relative; min-height: min(92vh, 900px); display: grid; place-items: center; overflow: hidden; isolation: isolate; }
+.hero video, .hero .poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+.hero::after { content: ""; position: absolute; inset: 0; z-index: -1;
+  background: radial-gradient(ellipse at center, rgba(21,16,14,.45) 0%, rgba(21,16,14,.82) 70%), linear-gradient(to bottom, rgba(21,16,14,0) 60%, var(--bg)); }
+.hero-in { text-align: center; padding: 120px max(20px, env(safe-area-inset-right, 0px)) 90px max(20px, env(safe-area-inset-left, 0px)); }
+.hero-in .logo { width: min(760px, 86vw); margin: 0 auto; filter: drop-shadow(0 6px 30px rgba(0,0,0,.45)); }
+.hero-in .when { margin-top: 44px; }
+.hero-in .when b { display: block; font-family: var(--display); font-style: italic; font-weight: 400; font-size: clamp(22px, 3vw, 30px); letter-spacing: 0; text-transform: none; color: var(--fg); margin-top: 10px; }
+nav.jump { margin-top: 44px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+nav.jump a { text-decoration: none; padding: 10px 20px; border: 1px solid var(--line); border-radius: 40px; font-size: 14px; letter-spacing: .12em; text-transform: uppercase; background: rgba(21,16,14,.35); backdrop-filter: blur(6px); }
+nav.jump a:hover { border-color: var(--fg); }
+.sound { position: absolute; right: max(20px, env(safe-area-inset-right, 0px)); bottom: 28px; padding: 8px 14px; border-radius: 30px; border: 1px solid var(--line); background: rgba(21,16,14,.5); cursor: pointer; font-size: 13px; letter-spacing: .1em; }
+
+/* Reels */
+.reels { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(200px, 23%); gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 18px; scrollbar-color: var(--line) transparent; }
+.reel { scroll-snap-align: start; cursor: pointer; text-align: left; background: none; border: 0; padding: 0; }
+.reel .frame { position: relative; aspect-ratio: 9 / 16; max-width: 100%; border-radius: 6px; overflow: hidden; background: var(--surface); }
+.reel .frame img, .reel .frame video { width: 100%; height: 100%; object-fit: cover; }
+.reel .frame video { position: absolute; inset: 0; opacity: 0; transition: opacity .3s; }
+.reel:hover .frame video.live { opacity: 1; }
+.reel .num { position: absolute; left: 12px; top: 10px; font-family: var(--display); font-size: 30px; line-height: 1; text-shadow: 0 2px 12px rgba(0,0,0,.6); }
+.reel .dur { position: absolute; right: 10px; bottom: 10px; font-size: 12px; padding: 3px 8px; border-radius: 4px; background: rgba(0,0,0,.55); font-variant-numeric: tabular-nums; }
+.reel .play { position: absolute; left: 50%; top: 50%; width: 58px; height: 58px; margin: -29px 0 0 -29px; border-radius: 50%; background: rgba(243,236,228,.9); }
+.reel .play::after { content: ""; position: absolute; left: 23px; top: 17px; border-left: 18px solid #15100e; border-top: 12px solid transparent; border-bottom: 12px solid transparent; }
+.reel b { display: block; margin-top: 12px; font-weight: 400; font-size: 16px; }
+.reel small { color: var(--muted); font-size: 13px; }
+.strip-nav { display: flex; gap: 8px; }
+.strip-nav button { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: none; cursor: pointer; font-size: 18px; }
+.strip-nav button:hover { border-color: var(--fg); }
+
+/* Photos */
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 30px; }
+.tabs button { padding: 9px 18px; border-radius: 30px; border: 1px solid var(--line); background: none; cursor: pointer; font-size: 14px; letter-spacing: .06em; }
+.tabs button[aria-selected="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.tabs button span { color: var(--muted); margin-left: 6px; font-variant-numeric: tabular-nums; }
+.tabs button[aria-selected="true"] span { color: var(--bg); opacity: .6; }
+.photos { columns: 3 280px; column-gap: 18px; }
+.photos button { display: block; width: 100%; margin: 0 0 18px; padding: 0; border: 0; background: var(--surface); cursor: zoom-in; break-inside: avoid; border-radius: 4px; overflow: hidden; }
+.photos img { width: 100%; height: auto; transition: transform .6s ease; }
+.photos button:hover img { transform: scale(1.025); }
+
+/* IG carousels */
+.posts { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; align-items: start; }
+.post { background: var(--ig-bg); color: var(--ig-fg); border: 1px solid var(--ig-line); border-radius: 10px; overflow: hidden; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-weight: 400; font-size: 14px; line-height: 1.45; min-width: 0; }
+.post .ph { display: flex; align-items: center; gap: 10px; padding: 10px 12px; }
+.post .ph img { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--ig-line); }
+.post .ph b { display: block; font-weight: 600; font-size: 14px; line-height: 1.2; }
+.post .ph small { color: var(--ig-muted); font-size: 12px; }
+.post .ph .more { margin-left: auto; letter-spacing: 2px; }
+.post .media { position: relative; }
+.post .track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; aspect-ratio: 4 / 5; max-width: 100%; }
+.post .track::-webkit-scrollbar { display: none; }
+.post .track img { flex: 0 0 100%; width: 100%; height: 100%; object-fit: cover; scroll-snap-align: start; }
+.post .count { position: absolute; top: 12px; right: 12px; background: rgba(18,18,18,.7); color: #fff; font-size: 12px; padding: 3px 9px; border-radius: 12px; font-variant-numeric: tabular-nums; }
+.post .arrow { position: absolute; top: 50%; width: 28px; height: 28px; margin-top: -14px; border-radius: 50%; border: 0; background: rgba(255,255,255,.85); color: #111; cursor: pointer; font-size: 14px; line-height: 28px; padding: 0; box-shadow: 0 1px 4px rgba(0,0,0,.2); }
+.post .arrow.prev { left: 10px; } .post .arrow.next { right: 10px; }
+.post .arrow[hidden] { display: none !important; }
+.post .bar { display: flex; align-items: center; padding: 10px 12px 4px; }
+.post .bar svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; margin-right: 14px; }
+.post .bar .l, .post .bar .r { flex: 1; display: flex; } .post .bar .r { justify-content: flex-end; } .post .bar .r svg { margin: 0; }
+.post .dots { display: flex; gap: 4px; }
+.post .dots i { width: 6px; height: 6px; border-radius: 50%; background: #c7c7c7; transition: background .2s; }
+.post .dots i.on { background: var(--ig-blue); }
+.post .cap { padding: 4px 12px 16px; }
+.post .cap b { font-weight: 600; }
+.post .cap em { font-style: normal; color: var(--ig-tag); }
+.post-title { font-family: var(--display); font-size: 22px; margin: 0 0 12px; }
+
+/* Download */
+.dl { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: center; }
+.dl ul { list-style: none; padding: 0; margin: 24px 0 0; display: grid; gap: 12px; }
+.dl li { display: flex; justify-content: space-between; gap: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.dl li span:last-child { color: var(--muted); font-variant-numeric: tabular-nums; }
+.btn { display: inline-flex; align-items: center; gap: 12px; padding: 18px 30px; border-radius: 50px; background: var(--fg); color: var(--bg); text-decoration: none; font-weight: 500; letter-spacing: .06em; }
+.btn:hover { background: var(--red); color: var(--fg); }
+.dl .note { margin-top: 18px; color: var(--muted); font-size: 14px; max-width: 46ch; }
+footer.foot { padding-block: 60px; border-top: 1px solid var(--line); text-align: center; }
+footer.foot img { width: 120px; margin: 14px auto 0; }
+
+/* Lightbox */
+.lb { position: fixed; inset: 0; z-index: 50; background: rgba(10,8,7,.94); display: grid; grid-template-columns: 64px 1fr 64px; align-items: center;
+  padding: max(16px, env(safe-area-inset-top, 0px)) max(8px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); }
+.lb .stage { height: 100%; display: grid; place-items: center; min-width: 0; }
+.lb .stage img, .lb .stage video { max-height: calc(100vh - 110px); max-width: 100%; object-fit: contain; border-radius: 4px; }
+.lb .side { width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--line); background: none; cursor: pointer; font-size: 20px; justify-self: center; }
+.lb .close { position: absolute; top: max(14px, env(safe-area-inset-top, 0px)); right: max(14px, env(safe-area-inset-right, 0px)); width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: var(--bg); cursor: pointer; font-size: 20px; }
+.lb .info { position: absolute; left: 0; right: 0; bottom: max(14px, env(safe-area-inset-bottom, 0px)); text-align: center; font-size: 14px; color: var(--muted); }
+
+@media (max-width: 720px) {
+  .reels { grid-auto-columns: 64%; }
+  .dl { grid-template-columns: 1fr; }
+  .lb { grid-template-columns: 44px 1fr 44px; }
+  .lb .side { width: 38px; height: 38px; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .photos img { transition: none; } }
+</style></head><body>
+
+<header class="hero">
+  <img class="poster" src="v/RB_01_Filetto_brace.jpg" alt="">
+  <video id="heroVid" src="v/RB_01_Filetto_brace.mp4" poster="v/RB_01_Filetto_brace.jpg" muted loop playsinline autoplay preload="metadata"></video>
+  <div class="hero-in">
+    <img class="logo" src="rb-white.svg" alt="Regina Bistecca al Duomo">
+    <div class="when label">Shooting foto e video<b>21 ottobre 2026 · Firenze</b></div>
+    <nav class="jump" aria-label="Sezioni">
+      <a href="#video">11 reel</a><a href="#foto">34 foto</a><a href="#caroselli">7 caroselli</a><a href="#originali">Originali</a>
+    </nav>
+  </div>
+  <button class="sound" id="heroSound" type="button">Audio off</button>
+</header>
+
+<main>
+  <section class="block" id="video">
+    <div class="wrap">
+      <div class="head">
+        <div><span class="label">Video · 9:16</span><h2>Undici reel, <em>dal fuoco</em> al dolce</h2></div>
+        <div class="strip-nav"><button type="button" data-scroll="-1" aria-label="Reel precedenti">&larr;</button><button type="button" data-scroll="1" aria-label="Reel successivi">&rarr;</button></div>
+      </div>
+      <div class="reels" id="reels"></div>
+    </div>
+  </section>
+
+  <section class="block" id="foto">
+    <div class="wrap">
+      <div class="head">
+        <div><span class="label">Foto</span><h2>La sala, la tavola, <em>la libreria</em></h2></div>
+        <p>Trentaquattro scatti divisi per tema. Tocca una foto per vederla a schermo intero.</p>
+      </div>
+      <div class="tabs" id="tabs" role="tablist" aria-label="Temi"></div>
+      <div class="photos" id="photos"></div>
+    </div>
+  </section>
+
+  <section class="block" id="caroselli">
+    <div class="wrap">
+      <div class="head">
+        <div><span class="label">Instagram · 4:5</span><h2>Sette caroselli <em>pronti</em> da pubblicare</h2></div>
+        <p>Scorri le slide come nel feed. Le didascalie sono proposte da approvare.</p>
+      </div>
+      <div class="posts" id="posts"></div>
+    </div>
+  </section>
+
+  <section class="block" id="originali">
+    <div class="wrap dl">
+      <div>
+        <span class="label">Originali</span>
+        <h2>Tutti i file in <em>alta qualità</em></h2>
+        <ul>
+          <li><span>Reel verticali 1080×1920, MP4</span><span>11</span></li>
+          <li><span>Foto JPG</span><span>22</span></li>
+          <li><span>Durata totale video</span><span id="totDur"></span></li>
+        </ul>
+      </div>
+      <div>
+        <a class="btn" href="https://github.com/tommasoserenifreelance-ux/editing/releases/tag/regina-bistecca-21-10">Apri la cartella su GitHub &rarr;</a>
+        <p class="note">I video in questa pagina sono compressi per la visione online. Gli originali si scaricano dalla cartella GitHub.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot"><span class="label">a cura di</span><img src="vta-white.png" alt="VTA"></footer>
+
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Visualizzatore">
+  <button class="side" id="lbPrev" type="button" aria-label="Precedente">&larr;</button>
+  <div class="stage" id="lbStage"></div>
+  <button class="side" id="lbNext" type="button" aria-label="Successivo">&rarr;</button>
+  <button class="close" id="lbClose" type="button" aria-label="Chiudi">&times;</button>
+  <div class="info" id="lbInfo"></div>
+</div>
+
+<script>
+const VIDEOS = [
+  ['RB_01_Filetto_brace', 'Filetto alla brace', 14.2],
+  ['RB_02_Tagliata', 'Tagliata', 17.2],
+  ['RB_03_Tagliolini_tartufo', 'Tagliolini al tartufo', 32.5],
+  ['RB_04_Tartare', 'Tartare', 10.8],
+  ['RB_05_Filetto_tartufo', 'Filetto al tartufo', 11.6],
+  ['RB_06_Libro_carne', 'Il libro della carne', 37.6],
+  ['RB_07_Libro_Winter_in_Tuscany', 'Winter in Tuscany', 48.1],
+  ['RB_08_Libro_PRIME', 'PRIME, The Beef Cookbook', 35.5],
+  ['RB_09_Drink_Campari_Spritz', 'Campari Spritz', 25.5],
+  ['RB_10_Drink_rosa', 'Drink rosa', 23.7],
+  ['RB_11_Dolci', 'I dolci', 35.8],
+];
+const THEMES = [
+  ['Il locale', ['n18', 'n30', 'o2', 'o11', 'n23', 'o9']],
+  ['In tavola', ['n32', 'n13', 'n20', 'n21', 'n22', 'o14', 'o8']],
+  ['La libreria', ['n31', 'n15', 'n14', 'n19', 'n16', 'o6']],
+  ['Letture e dettagli', ['o5', 'o4', 'o3', 'n17', 'n12', 'n24']],
+  ['La cantina', ['n28', 'n29', 'n26', 'n25', 'n27', 'n33', 'o10', 'o13', 'o7']],
+];
+const CAROUSELS = [
+  ['Il locale', ['n18', 'n30', 'o2', 'o11', 'n23', 'o9'], 'Quadri alle pareti, tovaglie bianche e una Firenze in miniatura appesa al muro. Benvenuti al Duomo.', '#reginabistecca #firenze #ristorantifirenze #duomodifirenze'],
+  ['In tavola', ['n32', 'n13', 'n20', 'n22', 'n21', 'o14'], 'Filetto al tartufo, tagliolini, tartare con capperi. Il piatto bordato di rosso è quello giusto.', '#reginabistecca #tartufo #filetto #tartare #firenzefood'],
+  ['La libreria', ['n31', 'n15', 'n14', 'n19', 'n16', 'o6'], 'Una biblioteca dedicata alla carne: PRIME, Beef, Ripailles e molto altro. Da sfogliare tra una portata e l’altra.', '#reginabistecca #cookbook #beef #libridicucina'],
+  ['Letture d’inverno', ['o5', 'o4', 'o3', 'n17'], 'Winter in Tuscany, crostini e ricettari aperti sul tavolo. La stagione giusta per restare a tavola.', '#reginabistecca #wintervibes #toscana #cucinatoscana'],
+  ['Sassicaia al Duomo', ['n28', 'n29', 'n25'], 'Dal servizio in sala ai vicoli sotto il Campanile: Sassicaia, a due passi dal Duomo.', '#reginabistecca #sassicaia #vinotoscano #firenze'],
+  ['In cantina', ['n26', 'n27', 'n33', 'o10', 'o13', 'o7'], '50&50, L’Apparita, Ormanni, Brolio Bettino, Gorgona. La Toscana in bottiglia.', '#reginabistecca #winelist #chianticlassico #vinoitaliano'],
+  ['I dettagli', ['n12', 'n24', 'o8'], 'Gli occhiali da lettura sul tavolo, la loro cassetta fatta a mano, il servizio completo.', '#reginabistecca #dettagli #firenze'],
+];
+const ICON = {
+  heart: '<path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.7 4.5c2.1 0 3.6 1.2 4.3 2.4.7-1.2 2.2-2.4 4.3-2.4 3.7 0 5.8 3.9 4.3 7.3C19.5 16.4 12 21 12 21z"/>',
+  comment: '<path d="M20.7 16.5A9 9 0 1 0 17 20l4 1z"/>',
+  send: '<path d="M22 3 9.2 10.1M22 3l-6.5 18-4.2-8.5L3 8.3z"/>',
+  save: '<path d="M19 21l-7-5-7 5V3h14z"/>',
+};
+const svg = n => `<svg viewBox="0 0 24 24" aria-hidden="true">${ICON[n]}</svg>`;
+const mmss = s => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`;
+const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+
+/* Hero sound */
+const heroVid = document.getElementById('heroVid'), heroSound = document.getElementById('heroSound');
+heroSound.addEventListener('click', () => {
+  heroVid.muted = !heroVid.muted; heroSound.textContent = heroVid.muted ? 'Audio off' : 'Audio on';
+  if (heroVid.paused) heroVid.play().catch(() => {});
+});
+if (matchMedia('(prefers-reduced-motion: reduce)').matches) { heroVid.removeAttribute('autoplay'); heroVid.pause(); }
+
+/* Lightbox: list of {type, src, poster, label} */
+const lb = document.getElementById('lb'), stage = document.getElementById('lbStage'), info = document.getElementById('lbInfo');
+let lbList = [], lbIdx = 0, lastFocus = null;
+function lbShow() {
+  const it = lbList[lbIdx];
+  stage.innerHTML = '';
+  if (it.type === 'video') {
+    const v = el('video'); v.src = it.src; v.poster = it.poster; v.controls = true; v.playsInline = true; v.autoplay = true;
+    stage.append(v); v.play().catch(() => {});
+  } else {
+    const i = el('img'); i.src = it.src; i.alt = it.label; stage.append(i);
+  }
+  info.textContent = `${it.label} · ${lbIdx + 1} / ${lbList.length}`;
+}
+function lbOpen(list, i) { lastFocus = document.activeElement; lbList = list; lbIdx = i; lb.hidden = false; heroVid.pause(); lbShow(); document.getElementById('lbClose').focus(); }
+function lbClose() { stage.innerHTML = ''; lb.hidden = true; if (heroVid.muted && !matchMedia('(prefers-reduced-motion: reduce)').matches) heroVid.play().catch(() => {}); lastFocus?.focus(); }
+const lbStep = d => { lbIdx = (lbIdx + d + lbList.length) % lbList.length; lbShow(); };
+document.getElementById('lbClose').onclick = lbClose;
+document.getElementById('lbPrev').onclick = () => lbStep(-1);
+document.getElementById('lbNext').onclick = () => lbStep(1);
+lb.addEventListener('click', e => { if (e.target === lb || e.target === stage) lbClose(); });
+addEventListener('keydown', e => {
+  if (lb.hidden) return;
+  if (e.key === 'Escape') lbClose(); else if (e.key === 'ArrowLeft') lbStep(-1); else if (e.key === 'ArrowRight') lbStep(1);
+});
+
+/* Reels */
+const reels = document.getElementById('reels');
+const videoList = VIDEOS.map(([f, t]) => ({ type: 'video', src: `v/${f}.mp4`, poster: `v/${f}.jpg`, label: t }));
+VIDEOS.forEach(([f, t, d], i) => {
+  const b = el('button', 'reel');
+  b.type = 'button'; b.setAttribute('aria-label', `Guarda ${t}`);
+  b.innerHTML = `<div class="frame"><img src="v/${f}.jpg" alt="" loading="lazy"><span class="num">${String(i + 1).padStart(2, '0')}</span><span class="play"></span><span class="dur">${mmss(d)}</span></div><b>${t}</b><small>Reel · ${mmss(d)}</small>`;
+  b.onclick = () => lbOpen(videoList, i);
+  // muted preview on hover (desktop only)
+  b.addEventListener('mouseenter', () => {
+    if (matchMedia('(hover: none), (prefers-reduced-motion: reduce)').matches) return;
+    let v = b.querySelector('video');
+    if (!v) { v = el('video'); v.src = `v/${f}.mp4`; v.muted = true; v.loop = true; v.playsInline = true; v.preload = 'auto'; b.querySelector('.frame').append(v); }
+    v.classList.add('live'); v.play().catch(() => {});
+  });
+  b.addEventListener('mouseleave', () => { const v = b.querySelector('video'); if (v) { v.pause(); v.classList.remove('live'); } });
+  reels.append(b);
+});
+document.querySelectorAll('[data-scroll]').forEach(btn => btn.onclick = () =>
+  reels.scrollBy({ left: Number(btn.dataset.scroll) * reels.clientWidth * .8, behavior: 'smooth' }));
+document.getElementById('totDur').textContent = mmss(VIDEOS.reduce((a, v) => a + v[2], 0));
+
+/* Photos by theme */
+const tabs = document.getElementById('tabs'), photos = document.getElementById('photos');
+const ALL = ['Tutte', THEMES.flatMap(t => t[1])];
+let theme = 0;
+try { theme = Number(localStorage.getItem('rb-theme')) || 0; } catch (e) {}
+function renderPhotos() {
+  const [name, keys] = theme === 0 ? ALL : THEMES[theme - 1];
+  photos.innerHTML = '';
+  const list = keys.map(k => ({ type: 'img', src: `p/${k}.jpg`, label: name === 'Tutte' ? 'Regina Bistecca' : name }));
+  keys.forEach((k, i) => {
+    const b = el('button'); b.type = 'button'; b.setAttribute('aria-label', 'Apri foto');
+    b.innerHTML = `<img src="p/${k}.jpg" alt="" loading="lazy">`;
+    b.onclick = () => lbOpen(list, i);
+    photos.append(b);
+  });
+  [...tabs.children].forEach((t, i) => t.setAttribute('aria-selected', String(i === theme)));
+}
+[ALL, ...THEMES].forEach(([name, keys], i) => {
+  const t = el('button', '', `${name}<span>${keys.length}</span>`);
+  t.type = 'button'; t.setAttribute('role', 'tab');
+  t.onclick = () => { theme = i; try { localStorage.setItem('rb-theme', i); } catch (e) {} renderPhotos(); };
+  tabs.append(t);
+});
+renderPhotos();
+
+/* IG carousels */
+const posts = document.getElementById('posts');
+CAROUSELS.forEach(([title, keys, cap, tags], n) => {
+  const wrap = el('div');
+  wrap.append(el('p', 'post-title', `${String(n + 1).padStart(2, '0')} · ${title}`));
+  const p = el('article', 'post');
+  p.innerHTML = `
+    <div class="ph"><img src="avatar.png" alt=""><div><b>reginabistecca</b><small>Firenze</small></div><span class="more">•••</span></div>
+    <div class="media">
+      <div class="track" tabindex="0" aria-label="Slide del carosello ${title}">${keys.map(k => `<img src="c/${k}.jpg" alt="" loading="lazy">`).join('')}</div>
+      <span class="count">1/${keys.length}</span>
+      <button class="arrow prev" type="button" aria-label="Slide precedente" hidden>&lsaquo;</button>
+      <button class="arrow next" type="button" aria-label="Slide successiva">&rsaquo;</button>
+    </div>
+    <div class="bar"><span class="l">${svg('heart')}${svg('comment')}${svg('send')}</span><span class="dots">${keys.map((_, i) => `<i${i ? '' : ' class="on"'}></i>`).join('')}</span><span class="r">${svg('save')}</span></div>
+    <div class="cap"><b>reginabistecca</b> ${cap} <em>${tags}</em></div>`;
+  const track = p.querySelector('.track'), count = p.querySelector('.count'), dots = p.querySelectorAll('.dots i');
+  const prev = p.querySelector('.prev'), next = p.querySelector('.next');
+  const update = () => {
+    const i = Math.round(track.scrollLeft / track.clientWidth);
+    count.textContent = `${i + 1}/${keys.length}`;
+    dots.forEach((d, j) => d.classList.toggle('on', j === i));
+    prev.hidden = i === 0; next.hidden = i === keys.length - 1;
+  };
+  track.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
+  prev.onclick = () => track.scrollBy({ left: -track.clientWidth, behavior: 'smooth' });
+  next.onclick = () => track.scrollBy({ left: track.clientWidth, behavior: 'smooth' });
+  wrap.append(p); posts.append(wrap);
+});
+</script>
+</body></html>
