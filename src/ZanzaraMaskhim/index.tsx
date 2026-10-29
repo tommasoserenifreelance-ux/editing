@@ -11,7 +11,7 @@ import {
 import { sans } from "../PilatesReformer/theme";
 
 export const ZANZARA_FPS = 30;
-export const ZANZARA_DURATION = 2390; // 79.67 s, length of the source clip
+export const ZANZARA_DURATION = 766; // 25.53 s, length of the short cut
 export const ZANZARA_WIDTH = 1920;
 export const ZANZARA_HEIGHT = 1036;
 
@@ -95,7 +95,7 @@ export const ZanzaraMaskhim: React.FC = () => {
   return (
     <AbsoluteFill style={{ backgroundColor: "black" }}>
       <OffthreadVideo
-        src={staticFile("zanzara/zanzara.mov")}
+        src={staticFile("zanzara/zanzara-short.mov")}
         style={{ width: "100%", height: "100%", objectFit: "cover" }}
       />
       <Logo />
