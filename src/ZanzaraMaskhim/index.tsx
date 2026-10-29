@@ -3,7 +3,6 @@ import {
   Img,
   interpolate,
   OffthreadVideo,
-  Sequence,
   spring,
   staticFile,
   useCurrentFrame,
@@ -16,8 +15,6 @@ export const ZANZARA_DURATION = 2390; // 79.67 s, length of the source clip
 export const ZANZARA_WIDTH = 1920;
 export const ZANZARA_HEIGHT = 1036;
 
-const HOOK = 150; // 5 s
-
 const boxed: React.CSSProperties = {
   display: "inline-block",
   padding: "4px 26px 8px",
@@ -29,10 +26,6 @@ const Hook: React.FC = () => {
   const { fps } = useVideoConfig();
   const pop = (delay: number) =>
     spring({ frame: frame - delay, fps, config: { damping: 12, mass: 0.6 } });
-  const exit = interpolate(frame, [HOOK - 8, HOOK], [1, 0], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
   const line = (delay: number): React.CSSProperties => ({
     opacity: Math.min(1, pop(delay) * 2),
     transform: `scale(${interpolate(pop(delay), [0, 1], [0.6, 1])}) rotate(${interpolate(pop(delay), [0, 1], [-4, -2])}deg)`,
@@ -42,30 +35,29 @@ const Hook: React.FC = () => {
     <AbsoluteFill
       style={{
         alignItems: "center",
-        paddingTop: 60,
-        opacity: exit,
+        paddingTop: 28,
         fontFamily: sans,
         fontWeight: 700,
         textAlign: "center",
         filter: "drop-shadow(0 10px 24px rgba(0,0,0,0.45))",
       }}
     >
-      <div style={{ ...line(0), fontSize: 64, lineHeight: 1.25 }}>
+      <div style={{ ...line(0), fontSize: 48, lineHeight: 1.25 }}>
         <span style={{ ...boxed, background: "#000", color: "#fff" }}>
-          ALLA ZANZARA È ARRIVATO
+          ALLA ZANZARA È ARRIVATO QUALCOSA DI MAI VISTO
         </span>
       </div>
       <div
         style={{
           ...line(6),
-          fontSize: 88,
+          fontSize: 72,
           lineHeight: 1.2,
           letterSpacing: 1,
-          marginTop: 10,
+          marginTop: 8,
         }}
       >
         <span style={{ ...boxed, background: "#fff", color: "#000" }}>
-          QUALCOSA DI MAI VISTO
+          ...SIAMO NOI DI MASKHIM
         </span>
       </div>
     </AbsoluteFill>
@@ -107,9 +99,7 @@ export const ZanzaraMaskhim: React.FC = () => {
         style={{ width: "100%", height: "100%", objectFit: "cover" }}
       />
       <Logo />
-      <Sequence durationInFrames={HOOK}>
-        <Hook />
-      </Sequence>
+      <Hook />
     </AbsoluteFill>
   );
 };
