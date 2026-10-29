@@ -44,7 +44,7 @@ const Hook: React.FC = () => {
     >
       <div style={{ ...line(0), fontSize: 48, lineHeight: 1.25 }}>
         <span style={{ ...boxed, background: "#000", color: "#fff" }}>
-          ALLA ZANZARA È ARRIVATO QUALCOSA DI MAI VISTO
+          LA MASCHERA MASKHIM
         </span>
       </div>
       <div
@@ -57,7 +57,7 @@ const Hook: React.FC = () => {
         }}
       >
         <span style={{ ...boxed, background: "#fff", color: "#000" }}>
-          ...LA MASCHERA MASKHIM
+          È ARRIVATA ALLA ZANZARA
         </span>
       </div>
     </AbsoluteFill>
