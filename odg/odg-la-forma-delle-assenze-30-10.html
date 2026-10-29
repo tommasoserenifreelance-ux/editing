@@ -1,0 +1,413 @@
+<title>OdG La forma delle assenze</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=Courier+Prime:wght@400;700&display=swap">
+<style>
+/* Layout: foglio di produzione. Banda-titolo, griglia dei dati chiave, timeline proporzionale della giornata, poi tabelle e shotlist per set. */
+:root{
+  --paper:#F3F4F2; --sheet:#FFFFFF; --ink:#15191D; --muted:#5E6870; --rule:#D5D9DC;
+  --sea:#2D5B70; --sea-soft:#E1EAEE; --sand:#B79C77; --sand-soft:#F1EBE2; --alert:#B3392E;
+  --display:"Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --body:"IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --script:"Courier Prime", "Courier New", Courier, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0E1113; --sheet:#161B1F; --ink:#E8EBEC; --muted:#99A3AA; --rule:#2A3237;
+  --sea:#7FB0C6; --sea-soft:#1B2A31; --sand:#CDB591; --sand-soft:#2A251E; --alert:#E0786D; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0E1113; --sheet:#161B1F; --ink:#E8EBEC; --muted:#99A3AA; --rule:#2A3237;
+  --sea:#7FB0C6; --sea-soft:#1B2A31; --sand:#CDB591; --sand-soft:#2A251E; --alert:#E0786D; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font:400 14px/1.45 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 48px}
+.wrap{max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+a{color:var(--sea)}
+h2{font:400 30px/1.05 var(--display);margin:0;text-wrap:balance}
+.eyebrow{font:600 11px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.mono{font-family:var(--script)}
+.tab{font-variant-numeric:tabular-nums}
+
+/* Testata */
+.head{background:var(--ink);color:var(--paper);border-radius:4px;overflow:hidden;position:relative}
+.head-in{padding:30px 30px 26px;display:grid;grid-template-columns:1fr auto;gap:18px 28px;align-items:end}
+.head .eyebrow{color:color-mix(in srgb,var(--paper) 62%,transparent)}
+.title{font:400 clamp(44px,8vw,86px)/.92 var(--display);margin:8px 0 10px;letter-spacing:-.01em}
+.title em{font-style:italic;color:var(--sand)}
+.credits{font-size:13px;color:color-mix(in srgb,var(--paper) 78%,transparent)}
+.credits b{color:var(--paper);font-weight:600}
+.date{text-align:right}
+.date .d{font:400 64px/.9 var(--display)}
+.date .m{font:600 12px/1.3 var(--body);letter-spacing:.16em;text-transform:uppercase}
+.slate{height:14px;background:repeating-linear-gradient(135deg,var(--paper) 0 18px,var(--ink) 18px 36px);opacity:.9}
+
+/* Dati chiave */
+.keys{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.key{background:var(--sheet);padding:12px 14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.key .v{font:400 30px/1 var(--display)}
+.key .s{font-size:12px;color:var(--muted)}
+.key.hl{background:var(--sea);color:var(--sheet)}
+.key.hl .eyebrow,.key.hl .s{color:color-mix(in srgb,var(--sheet) 75%,transparent)}
+
+/* Sezioni */
+.card{background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:20px 22px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--rule);padding-bottom:10px}
+
+/* Timeline */
+.tl{display:flex;height:46px;border-radius:3px;overflow:hidden;gap:2px}
+.tl div{display:flex;align-items:center;justify-content:center;font:600 10px/1.1 var(--body);letter-spacing:.04em;text-transform:uppercase;text-align:center;padding:0 3px;overflow:hidden;min-width:0}
+.t-a{background:var(--sea);color:var(--sheet)}
+.t-b{background:var(--sand);color:var(--ink)}
+.t-n{background:var(--ink);color:var(--paper)}
+.t-p{background:var(--rule);color:var(--muted)}
+.tl-scale{display:flex;justify-content:space-between;font:12px var(--script);color:var(--muted)}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+
+/* Location */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.loc{border-top:4px solid var(--sea)}
+.loc.b{border-top-color:var(--sand)}
+.loc .tag{font:700 12px var(--script);letter-spacing:.06em}
+.loc h3{font:400 26px/1.1 var(--display);margin:2px 0 0}
+.dl{display:grid;grid-template-columns:120px 1fr;gap:6px 14px;margin:0;font-size:13px}
+.dl dt{color:var(--muted)}
+.dl dd{margin:0;min-width:0}
+
+/* Tabelle */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font:600 10.5px/1.2 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1.5px solid var(--ink);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.c,th.c{text-align:center}
+td.tab{white-space:nowrap}
+.role{font-weight:600}
+.char{font:700 13px var(--script);text-transform:uppercase;letter-spacing:.02em}
+.tbd{color:var(--alert);font-weight:600}
+.phone{font-variant-numeric:tabular-nums;white-space:nowrap}
+.pill{display:inline-block;font:600 10.5px/1 var(--body);letter-spacing:.06em;padding:4px 7px;border-radius:99px;white-space:nowrap}
+.p-a{background:var(--sea-soft);color:var(--sea)}
+.p-b{background:var(--sand-soft);color:color-mix(in srgb,var(--sand) 60%,var(--ink))}
+
+/* Spoglio scene */
+.scn{font:700 20px/1 var(--script);white-space:nowrap}
+.slug{font:700 12.5px var(--script);text-transform:uppercase;display:block;margin-bottom:3px}
+.syn{color:var(--muted)}
+
+/* Shotlist */
+.set-band{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:4px;color:var(--sheet);background:var(--sea)}
+.set-band.b{background:var(--sand);color:var(--ink)}
+.set-band .big{font:400 28px/1 var(--display)}
+.set-band .meta{font-size:12.5px;opacity:.85}
+.scene{display:flex;flex-direction:column;gap:10px}
+.scene-h{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center}
+.scene-num{font:700 34px/1 var(--script);color:var(--sea)}
+.scene.b .scene-num{color:color-mix(in srgb,var(--sand) 70%,var(--ink))}
+.scene-h .slug{font-size:15px;margin:0}
+.scene-h .who{font-size:12.5px;color:var(--muted)}
+.scene-h .when{font:700 15px var(--script);text-align:right;white-space:nowrap}
+.shot td:first-child{font:700 14px var(--script);white-space:nowrap}
+.shot .sz{font-weight:600;white-space:nowrap}
+.shot .lens{font:13px var(--script);white-space:nowrap}
+.shot .mv{white-space:nowrap}
+.note{font-size:12.5px;color:var(--muted);border-left:3px solid var(--rule);padding:2px 0 2px 12px}
+
+/* Fabbisogni + note */
+.need{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.need h4{margin:0 0 8px;font:600 11px var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.need ul,.rules{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px}
+.rules li::marker{color:var(--alert)}
+.foot{text-align:center;font:700 12px var(--script);letter-spacing:.08em;color:var(--alert);text-transform:uppercase;padding-top:6px}
+
+@media screen and (max-width:860px){
+  .keys{grid-template-columns:repeat(3,1fr)}
+  .grid2,.need{grid-template-columns:1fr}
+  .head-in{grid-template-columns:1fr}
+  .date{text-align:left}
+  .tl{height:auto;flex-wrap:wrap}
+  .tl div{flex:1 1 30% !important;height:40px}
+}
+@media screen and (max-width:480px){
+  .keys{grid-template-columns:repeat(2,1fr)}
+  .dl{grid-template-columns:96px 1fr}
+  .card{padding:16px}
+  .head-in{padding:22px 18px}
+  .scene-h{grid-template-columns:auto 1fr}
+  .scene-h .when{grid-column:1/-1;text-align:left}
+}
+@media print{
+  @page{size:A4;margin:10mm}
+  body{padding:0;font-size:11.5px;background:#fff}
+  .wrap{gap:12px;max-width:none}
+  .keys,.head,.set-band,.loc,tr{break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .set-band{break-after:avoid}
+  .set-band.b{break-before:page}
+  .card{padding:14px 16px;gap:10px}
+  td{padding:6px 8px} th{padding:6px 8px}
+  .title{font-size:64px}
+  .tl div,.key.hl,.slate{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .foot,.rules{break-before:avoid;break-inside:avoid}
+  .tl div{font-size:8px;letter-spacing:0}
+  .scene-h{break-after:avoid}
+}
+</style>
+
+<div class="wrap">
+
+  <header class="head">
+    <div class="head-in">
+      <div>
+        <div class="eyebrow">Ordine del giorno · Cortometraggio</div>
+        <h1 class="title">La forma <em>delle</em> assenze</h1>
+        <div class="credits">Regia di <b>Tommaso Sereni</b> · Scritto da <b>Luigi Maria Mennella</b> · DoP <b>Francesco Squillantini</b></div>
+      </div>
+      <div class="date">
+        <div class="d tab">30</div>
+        <div class="m">Venerdì · Ottobre 2026</div>
+      </div>
+    </div>
+    <div class="slate" aria-hidden="true"></div>
+  </header>
+
+  <section class="keys" aria-label="Dati chiave della giornata">
+    <div class="key hl"><span class="eyebrow">Convocazione</span><span class="v tab">08:30</span><span class="s">Viale Belfiore 10</span></div>
+    <div class="key"><span class="eyebrow">Pronti a girare</span><span class="v tab">09:15</span><span class="s">Sc. 3 · Studio psicologa</span></div>
+    <div class="key"><span class="eyebrow">Pausa pranzo</span><span class="v tab">14:10</span><span class="s">a Limite, fino 14:50</span></div>
+    <div class="key"><span class="eyebrow">Fine riprese</span><span class="v tab">20:00</span><span class="s">Wrap 20:30</span></div>
+    <div class="key"><span class="eyebrow">Alba / Tramonto</span><span class="v tab">06:47 · 17:10</span><span class="s">Firenze</span></div>
+    <div class="key"><span class="eyebrow">Meteo</span><span class="v">Nuvoloso</span><span class="s">Aria più fredda da NE</span></div>
+  </section>
+
+  <section class="card" aria-label="Timeline della giornata">
+    <div class="sec-h"><h2>La giornata</h2><span class="eyebrow">08:30 → 20:30 · in scala</span></div>
+    <div class="tl">
+      <div class="t-p" style="flex:45">Prep</div>
+      <div class="t-a" style="flex:225">Sc. 3 · Studio psicologa</div>
+      <div class="t-p" style="flex:30">Smont.</div>
+      <div class="t-n" style="flex:40">Viaggio</div>
+      <div class="t-p" style="flex:40">Pranzo</div>
+      <div class="t-p" style="flex:30">Prep</div>
+      <div class="t-b" style="flex:105">Sc. 1 · 2</div>
+      <div class="t-p" style="flex:25">Cambio</div>
+      <div class="t-b" style="flex:150">Sc. 9 · 12 (sera)</div>
+      <div class="t-n" style="flex:30">Wrap</div>
+    </div>
+    <div class="tl-scale tab"><span>08:30</span><span>11:30</span><span>14:30</span><span>17:30</span><span>20:30</span></div>
+    <div class="legend"><span><i style="background:var(--sea)"></i>Set A · Uffici Belfiore 10</span><span><i style="background:var(--sand)"></i>Set B · Abitazione, Limite sull'Arno</span><span><i style="background:var(--ink)"></i>Spostamento / chiusura</span></div>
+  </section>
+
+  <div class="grid2">
+    <section class="card loc">
+      <span class="tag" style="color:var(--sea)">SET A · MATTINA</span>
+      <h3>Studio della psicologa</h3>
+      <dl class="dl">
+        <dt>Location</dt><dd>Uffici Belfiore10<br>Viale Belfiore 10, 50144 Firenze</dd>
+        <dt>Mappa</dt><dd><a href="https://www.google.com/maps/search/?api=1&query=Viale+Belfiore+10+50144+Firenze" target="_blank" rel="noopener">Apri in Google Maps</a></dd>
+        <dt>Come arrivare</dt><dd>A 2 min a piedi dalla stazione Firenze Porta al Prato</dd>
+        <dt>Scene</dt><dd>3 (+ wild audio sc. 4)</dd>
+        <dt>Pronto soccorso</dt><dd>Osp. Santa Maria Nuova, Piazza S. Maria Nuova 1, Firenze</dd>
+      </dl>
+    </section>
+    <section class="card loc b">
+      <span class="tag" style="color:color-mix(in srgb,var(--sand) 65%,var(--ink))">SET B · POMERIGGIO / SERA</span>
+      <h3>Casa dell'Uomo e della Donna</h3>
+      <dl class="dl">
+        <dt>Location</dt><dd>Via Achille Grandi 53, interno C<br>50050 Limite sull'Arno (FI)</dd>
+        <dt>Mappa</dt><dd><a href="https://www.google.com/maps/search/?api=1&query=Via+Achille+Grandi+53+Limite+sull%27Arno" target="_blank" rel="noopener">Apri in Google Maps</a></dd>
+        <dt>Spostamento</dt><dd>Partenza 13:30 da Belfiore, circa 40 min (FI-PI-LI)</dd>
+        <dt>Scene</dt><dd>1 · 2 · 9 · 12</dd>
+        <dt>Pronto soccorso</dt><dd>Osp. San Giuseppe, Viale Boccaccio 16, Empoli</dd>
+      </dl>
+    </section>
+  </div>
+
+  <section class="card">
+    <div class="sec-h"><h2>Convocazione troupe</h2><span class="eyebrow">Ritrovo Viale Belfiore 10</span></div>
+    <div class="tw"><table>
+      <thead><tr><th>Ruolo</th><th>Nome</th><th>Telefono</th><th class="c">Conv.</th><th class="c">Sul set</th></tr></thead>
+      <tbody>
+        <tr><td class="role">Regista</td><td>Tommaso Sereni</td><td class="phone tbd">da inserire</td><td class="c tab">08:30</td><td class="c tab">08:30</td></tr>
+        <tr><td class="role">DoP</td><td>Francesco Squillantini</td><td class="phone">+39 370 966 27 <span class="tbd">(incompleto, verificare)</span></td><td class="c tab">08:30</td><td class="c tab">08:30</td></tr>
+        <tr><td class="role">Fonico</td><td>Luigi Maria Mennella</td><td class="phone"><a href="tel:+393333613756">+39 333 361 3756</a></td><td class="c tab">08:30</td><td class="c tab">08:30</td></tr>
+        <tr><td class="role">Operatrice n°2</td><td>Sanaa Ghallab</td><td class="phone"><a href="tel:+393479367489">+39 347 936 7489</a></td><td class="c tbd">TBC</td><td class="c tbd">TBC</td></tr>
+        <tr><td class="role">Operatrice n°3</td><td>Giulia Verniani</td><td class="phone"><a href="tel:+393339387721">+39 333 938 7721</a></td><td class="c tbd">TBC</td><td class="c tbd">TBC</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section class="card">
+    <div class="sec-h"><h2>Convocazione cast</h2><span class="eyebrow">Trucco e costume a cura degli attori</span></div>
+    <div class="tw"><table>
+      <thead><tr><th>Personaggio</th><th>Interprete</th><th>Telefono</th><th class="c">Conv.</th><th class="c">Trucco</th><th class="c">Sul set</th><th>Scene</th></tr></thead>
+      <tbody>
+        <tr><td class="char">Uomo</td><td>Ivan Izzo</td><td class="phone"><a href="tel:+393312954522">+39 331 295 4522</a></td><td class="c tab">08:30</td><td class="c tab">08:40</td><td class="c tab">09:15</td><td>3 · 1 · 2 · 9 · 12</td></tr>
+        <tr><td class="char">Psicologa</td><td>Eleonora</td><td class="phone"><a href="tel:+393398673517">+39 339 867 3517</a></td><td class="c tab">08:30</td><td class="c tab">08:50</td><td class="c tab">09:15</td><td>3 · (4 O.S.)</td></tr>
+        <tr><td class="char">Donna</td><td>Silvia Picchiani</td><td class="phone"><a href="tel:+393923672722">+39 392 367 2722</a></td><td class="c tab">11:30</td><td class="c tab">14:50</td><td class="c tab">15:20</td><td>1 · 2 · 9 · 12</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">Silvia è convocata in tarda mattinata a Viale Belfiore 10 per partire con la troupe alle 13:30. Se raggiunge direttamente Limite sull'Arno, l'orario diventa 14:30.</p>
+  </section>
+
+  <section class="card">
+    <div class="sec-h"><h2>Spoglio scene</h2><span class="eyebrow">Sceneggiatura · seconda revisione, 20.09.2026</span></div>
+    <div class="tw"><table>
+      <thead><tr><th>Scena</th><th>Set</th><th class="c">I/E</th><th class="c">G/N</th><th>Set / Sinossi</th><th>Cast</th><th class="c">Pag.</th><th class="c">Orario</th></tr></thead>
+      <tbody>
+        <tr><td class="scn">3</td><td><span class="pill p-a">A</span></td><td class="c">I</td><td class="c">G</td><td><span class="slug">Studio della psicologa</span><span class="syn">L'Uomo riapre gli occhi sulla poltrona di pelle. Racconta il litigio; la Psicologa lo incalza su gelosia, tempo e dialogo. Accenna ad alzarsi, si riaccascia.</span></td><td>Uomo, Psicologa</td><td class="c tab">2–4</td><td class="c tab">09:15–12:45</td></tr>
+        <tr><td class="scn">4<small>w</small></td><td><span class="pill p-a">A</span></td><td class="c">—</td><td class="c">—</td><td><span class="slug">Wild audio · Spiaggia (O.S.)</span><span class="syn">Battute fuori campo da registrare in studio: «Per forza d'inerzia?» e risposta dell'Uomo. Room tone.</span></td><td>Uomo, Psicologa</td><td class="c tab">4</td><td class="c tab">12:45–13:00</td></tr>
+        <tr><td class="scn">1</td><td><span class="pill p-b">B</span></td><td class="c">I</td><td class="c">G</td><td><span class="slug">Ingresso di casa</span><span class="syn">Borsa sportiva a terra. Litigio ritmico e concitato tra l'Uomo sudato in tuta e la Donna in vestaglia. Lui apre la porta e si volta.</span></td><td>Uomo, Donna</td><td class="c tab">1</td><td class="c tab">15:20–16:20</td></tr>
+        <tr><td class="scn">2</td><td><span class="pill p-b">B</span></td><td class="c">I</td><td class="c">G</td><td><span class="slug">Atrio palazzo</span><span class="syn">Lei si affaccia e gli tira la borsa. Lui la raccoglie, si allontana, si arresta e socchiude gli occhi. Fade to black.</span></td><td>Uomo, Donna</td><td class="c tab">1–2</td><td class="c tab">16:20–17:05</td></tr>
+        <tr><td class="scn">9</td><td><span class="pill p-b">B</span></td><td class="c">I</td><td class="c">N</td><td><span class="slug">Salotto di casa · sera</span><span class="syn">Seduti sul divano, senza fare nulla. «Com'è andata oggi?» «Come al solito.» V.O.: «Mi manchi.» Lei attende una risposta.</span></td><td>Uomo, Donna</td><td class="c tab">8</td><td class="c tab">17:30–18:30</td></tr>
+        <tr><td class="scn">12</td><td><span class="pill p-b">B</span></td><td class="c">I</td><td class="c">N</td><td><span class="slug">Camera da letto · sera · flashback</span><span class="syn">A letto, lei dorme di spalle, lui l'abbraccia e la osserva. V.O.: «Mi manchi tu? O mi manca l'abitudine che avevo di te?»</span></td><td>Uomo, Donna</td><td class="c tab">9</td><td class="c tab">18:50–19:50</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <div class="set-band">
+    <span class="big">Shotlist · Set A</span>
+    <span class="meta">Uffici Belfiore 10 · 09:15–13:00</span>
+  </div>
+
+  <section class="card scene">
+    <div class="scene-h">
+      <span class="scene-num">3</span>
+      <div><span class="slug">INT. GIORNO. STUDIO DELLA PSICOLOGA</span><span class="who">Uomo · Psicologa — pag. 2–4</span></div>
+      <span class="when tab">09:15–12:45</span>
+    </div>
+    <div class="tw"><table class="shot">
+      <thead><tr><th>Shot</th><th>Piano</th><th>Ottica</th><th>Movimento</th><th>Descrizione</th><th class="c">Orario</th></tr></thead>
+      <tbody>
+        <tr><td>3-1</td><td class="sz">PPP</td><td class="lens">85mm</td><td class="mv">Fisso</td><td>L'Uomo riapre gli occhi su «Tutto bene?» (O.S.). Raccordo di sguardo con 2-5.</td><td class="c tab">09:15–09:35</td></tr>
+        <tr><td>3-2</td><td class="sz">Totale</td><td class="lens">24/35mm</td><td class="mv">Cavalletto</td><td>Master di tutta la scena: poltrona di pelle, Psicologa di quinta. Copre l'intero dialogo.</td><td class="c tab">09:35–10:20</td></tr>
+        <tr><td>3-3</td><td class="sz">MP</td><td class="lens">50mm</td><td class="mv">Cavalletto</td><td>Uomo, over-shoulder Psicologa. Tutto il dialogo.</td><td class="c tab">10:20–11:00</td></tr>
+        <tr><td>3-4</td><td class="sz">MP</td><td class="lens">50mm</td><td class="mv">Cavalletto</td><td>Psicologa, over-shoulder Uomo. Tutto il dialogo, asse invertito.</td><td class="c tab">11:00–11:35</td></tr>
+        <tr><td>3-5</td><td class="sz">PP</td><td class="lens">85mm</td><td class="mv">Fisso</td><td>Uomo su battute chiave: «Almeno davanti a lei» (sottovoce), «Dialogo… una volta su tre!».</td><td class="c tab">11:35–11:55</td></tr>
+        <tr><td>3-6</td><td class="sz">PP</td><td class="lens">85mm</td><td class="mv">Fisso</td><td>Psicologa: «Potremmo quindi asserire che… ha fatto l'unica cosa giusta?»</td><td class="c tab">11:55–12:10</td></tr>
+        <tr><td>3-7</td><td class="sz">CM laterale</td><td class="lens">35mm</td><td class="mv">Slider</td><td>L'Uomo accenna ad alzarsi e si riaccascia sulla poltrona.</td><td class="c tab">12:10–12:25</td></tr>
+        <tr><td>3-8</td><td class="sz">Inserti</td><td class="lens">50mm macro</td><td class="mv">Mano / fisso</td><td>Mani sui braccioli di pelle, taccuino e penna della Psicologa.</td><td class="c tab">12:25–12:35</td></tr>
+        <tr><td>3-9</td><td class="sz">PP → PPP</td><td class="lens">50mm</td><td class="mv">Push-in lento</td><td>«…non so come dire…» Stacco sul mare della sc. 4.</td><td class="c tab">12:35–12:45</td></tr>
+        <tr><td>W-4</td><td class="sz">Solo audio</td><td class="lens">—</td><td class="mv">—</td><td>Wild track sc. 4: Psicologa «Per forza d'inerzia?», Uomo «Sì. Ecco!…». Room tone 1 min.</td><td class="c tab">12:45–13:00</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <div class="set-band b">
+    <span class="big">Shotlist · Set B</span>
+    <span class="meta">Via Achille Grandi 53, Limite sull'Arno · 15:20–20:00</span>
+  </div>
+
+  <section class="card scene b">
+    <div class="scene-h">
+      <span class="scene-num">1</span>
+      <div><span class="slug">INT. GIORNO. INGRESSO DI CASA</span><span class="who">Uomo · Donna — pag. 1</span></div>
+      <span class="when tab">15:20–16:20</span>
+    </div>
+    <div class="tw"><table class="shot">
+      <thead><tr><th>Shot</th><th>Piano</th><th>Ottica</th><th>Movimento</th><th>Descrizione</th><th class="c">Orario</th></tr></thead>
+      <tbody>
+        <tr><td>1-1</td><td class="sz">Dettaglio</td><td class="lens">35mm</td><td class="mv">Fisso</td><td>Borsa sportiva adagiata sul pavimento. Prima immagine del film.</td><td class="c tab">15:20–15:30</td></tr>
+        <tr><td>1-2</td><td class="sz">Totale</td><td class="lens">24mm</td><td class="mv">Camera a mano</td><td>Master del litigio, ritmo concitato. Tutte le battute.</td><td class="c tab">15:30–15:50</td></tr>
+        <tr><td>1-3</td><td class="sz">MP</td><td class="lens">35mm</td><td class="mv">Camera a mano</td><td>Uomo: «Sono solo andato al parco a correre…» fino a «sitcom di quart'ordine».</td><td class="c tab">15:50–16:00</td></tr>
+        <tr><td>1-4</td><td class="sz">MP</td><td class="lens">35mm</td><td class="mv">Camera a mano</td><td>Donna, le interruzioni furenti: «Il movimento extra!», «Di quarto ordine saranno le pischelle…».</td><td class="c tab">16:00–16:10</td></tr>
+        <tr><td>1-5</td><td class="sz">PA</td><td class="lens">35mm</td><td class="mv">Fisso, da fuori porta</td><td>L'Uomo apre la porta e si volta: «Guarda… semmai è il contrario…».</td><td class="c tab">16:10–16:20</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">Audio: la scena può essere montata in M.O.S. sotto musica. Registrare comunque una traccia guida pulita.</p>
+  </section>
+
+  <section class="card scene b">
+    <div class="scene-h">
+      <span class="scene-num">2</span>
+      <div><span class="slug">INT. GIORNO. ATRIO PALAZZO</span><span class="who">Uomo · Donna — pag. 1–2</span></div>
+      <span class="when tab">16:20–17:05</span>
+    </div>
+    <div class="tw"><table class="shot">
+      <thead><tr><th>Shot</th><th>Piano</th><th>Ottica</th><th>Movimento</th><th>Descrizione</th><th class="c">Orario</th></tr></thead>
+      <tbody>
+        <tr><td>2-1</td><td class="sz">CM</td><td class="lens">24mm</td><td class="mv">Fisso, dall'atrio</td><td>L'Uomo si allontana, porta aperta alle spalle. La Donna si affaccia: «Che cosa hai detto?!»</td><td class="c tab">16:20–16:35</td></tr>
+        <tr><td>2-2</td><td class="sz">MP</td><td class="lens">35mm</td><td class="mv">Camera a mano</td><td>Donna sull'uscio lancia la borsa: «…vedi di andare affanculo!»</td><td class="c tab">16:35–16:45</td></tr>
+        <tr><td>2-3</td><td class="sz">Figura intera</td><td class="lens">35mm</td><td class="mv">Panoramica</td><td>L'Uomo incassa senza scomporsi, raccoglie la borsa, pochi passi borbottando.</td><td class="c tab">16:45–16:52</td></tr>
+        <tr><td>2-4</td><td class="sz">Dettaglio</td><td class="lens">50mm</td><td class="mv">Fisso</td><td>Lei si gira di scatto, la porta sbatte.</td><td class="c tab">16:52–16:57</td></tr>
+        <tr><td>2-5</td><td class="sz">PP → PPP</td><td class="lens">85mm</td><td class="mv">Push-in lento</td><td>L'Uomo si arresta e socchiude gli occhi. Raccordo con 3-1. Fade to black.</td><td class="c tab">16:57–17:05</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">Luce naturale fino al tramonto (17:10). Avvisare i condomini per l'uso dell'atrio e il rumore della porta.</p>
+  </section>
+
+  <section class="card scene b">
+    <div class="scene-h">
+      <span class="scene-num">9</span>
+      <div><span class="slug">INT. SERA. SALOTTO DI CASA</span><span class="who">Uomo · Donna — pag. 8</span></div>
+      <span class="when tab">17:30–18:30</span>
+    </div>
+    <div class="tw"><table class="shot">
+      <thead><tr><th>Shot</th><th>Piano</th><th>Ottica</th><th>Movimento</th><th>Descrizione</th><th class="c">Orario</th></tr></thead>
+      <tbody>
+        <tr><td>9-1</td><td class="sz">Totale frontale</td><td class="lens">24/35mm</td><td class="mv">Cavalletto</td><td>Uomo e Donna sul divano, distanti. Inquadratura statica e simmetrica, tutta la scena.</td><td class="c tab">17:30–17:45</td></tr>
+        <tr><td>9-2</td><td class="sz">Dettaglio</td><td class="lens">50mm</td><td class="mv">Fisso</td><td>Mani della Donna che sistemano i cuscini.</td><td class="c tab">17:45–17:50</td></tr>
+        <tr><td>9-3</td><td class="sz">MP</td><td class="lens">50mm</td><td class="mv">Cavalletto</td><td>Donna: «Allora? Com'è andata oggi? Tutto bene, sì?»</td><td class="c tab">17:50–18:05</td></tr>
+        <tr><td>9-4</td><td class="sz">MP</td><td class="lens">50mm</td><td class="mv">Cavalletto</td><td>Uomo cerca una posizione: «Sì. Come al solito.»</td><td class="c tab">18:05–18:15</td></tr>
+        <tr><td>9-5</td><td class="sz">PP</td><td class="lens">85mm</td><td class="mv">Fisso</td><td>L'Uomo la fissa. Reazione lunga per la V.O. «Mi manchi… Mi manchi?»</td><td class="c tab">18:15–18:22</td></tr>
+        <tr><td>9-6</td><td class="sz">PP</td><td class="lens">85mm</td><td class="mv">Fisso</td><td>La Donna attende e inclina la testa. Tenere almeno 10 secondi.</td><td class="c tab">18:22–18:30</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section class="card scene b">
+    <div class="scene-h">
+      <span class="scene-num">12</span>
+      <div><span class="slug">INT. SERA. CAMERA DA LETTO — FLASHBACK</span><span class="who">Uomo · Donna — pag. 9</span></div>
+      <span class="when tab">18:50–19:50</span>
+    </div>
+    <div class="tw"><table class="shot">
+      <thead><tr><th>Shot</th><th>Piano</th><th>Ottica</th><th>Movimento</th><th>Descrizione</th><th class="c">Orario</th></tr></thead>
+      <tbody>
+        <tr><td>12-1</td><td class="sz">Plongée / zenitale</td><td class="lens">24mm</td><td class="mv">Fisso, dall'alto</td><td>La coppia a letto: lei di spalle, lui la avvolge in un abbraccio.</td><td class="c tab">18:50–19:10</td></tr>
+        <tr><td>12-2</td><td class="sz">Piano a due</td><td class="lens">50mm</td><td class="mv">Slider laterale</td><td>Profilo dei due, lui la osserva mentre dorme.</td><td class="c tab">19:10–19:25</td></tr>
+        <tr><td>12-3</td><td class="sz">PP</td><td class="lens">85mm</td><td class="mv">Fisso</td><td>Il volto dell'Uomo che la guarda, per la V.O. «C'è una cosa che ancora non sono riuscito a capire…»</td><td class="c tab">19:25–19:35</td></tr>
+        <tr><td>12-4</td><td class="sz">PP</td><td class="lens">85mm</td><td class="mv">Fisso</td><td>La Donna dorme: nuca, capelli, respiro.</td><td class="c tab">19:35–19:42</td></tr>
+        <tr><td>12-5</td><td class="sz">Dettaglio</td><td class="lens">50mm</td><td class="mv">Fisso</td><td>La mano di lui sul fianco di lei. Richiama la carezza nell'aria della sc. 14.</td><td class="c tab">19:42–19:50</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">Luce calda e bassa, da abat-jour. Le V.O. delle sc. 9 e 12 si registrano in post. Sul set serve solo il room tone della stanza.</p>
+  </section>
+
+  <section class="card">
+    <div class="sec-h"><h2>Fabbisogni</h2><span class="eyebrow">Da controllare prima di partire</span></div>
+    <div class="need">
+      <div><h4>Props</h4><ul>
+        <li>Borsa sportiva (sc. 1–2)</li>
+        <li>Poltrona in pelle (sc. 3)</li>
+        <li>Taccuino e penna della Psicologa</li>
+        <li>Cuscini del divano (sc. 9)</li>
+        <li>Abat-jour e biancheria da letto (sc. 12)</li>
+      </ul></div>
+      <div><h4>Costumi e trucco</h4><ul>
+        <li>Uomo: tuta da allenamento e capelli sudati con spray d'acqua (sc. 1–2), abito seduta (sc. 3), casa sera (sc. 9), notte (sc. 12)</li>
+        <li>Donna: struccata, vestaglia (sc. 1–2), casa sera (sc. 9), notte (sc. 12)</li>
+        <li>Psicologa: abito professionale (sc. 3)</li>
+      </ul></div>
+      <div><h4>Materiale tecnico</h4><ul>
+        <li>Cavalletto, slider, setup per camera a mano</li>
+        <li>Ottiche 24 · 35 · 50 · 85mm</li>
+        <li>Luci con gelatine calde per gli interni sera</li>
+        <li>Boom, radiomicrofoni, cuffie</li>
+        <li>Batterie e schede cariche per tutta la giornata</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="sec-h"><h2>Note</h2></div>
+    <ul class="rules">
+      <li>Cellulari spenti o in silenzioso durante le riprese.</li>
+      <li>Non pubblicare foto del set senza consenso.</li>
+      <li>Per assenze o ritardi avvisare la sera prima, o la mattina entro le 8:00.</li>
+      <li>Non si fuma durante le ore di set.</li>
+      <li>Nell'appartamento di Limite sull'Arno si lavora in silenzio, nel rispetto dei vicini.</li>
+    </ul>
+    <div class="foot">A fine set si smonta e si rimette l'attrezzatura nei rispettivi posti</div>
+  </section>
+
+</div>
