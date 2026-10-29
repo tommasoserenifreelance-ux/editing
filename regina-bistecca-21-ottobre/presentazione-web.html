@@ -137,7 +137,7 @@ footer.foot img { width: 120px; margin: 14px auto 0; }
     <img class="logo" src="rb-white.svg" alt="Regina Bistecca al Duomo">
     <div class="when label">Shooting foto e video<b>21 ottobre 2026 · Firenze</b></div>
     <nav class="jump" aria-label="Sezioni">
-      <a href="#video">11 reel</a><a href="#foto">34 foto</a><a href="#caroselli">7 caroselli</a><a href="#originali">Originali</a>
+      <a href="#video">11 reel</a><a href="#foto">34 foto</a><a href="#caroselli">7 caroselli</a>
     </nav>
   </div>
   <button class="sound" id="heroSound" type="button">Audio off</button>
@@ -175,23 +175,6 @@ footer.foot img { width: 120px; margin: 14px auto 0; }
     </div>
   </section>
 
-  <section class="block" id="originali">
-    <div class="wrap dl">
-      <div>
-        <span class="label">Originali</span>
-        <h2>Tutti i file in <em>alta qualità</em></h2>
-        <ul>
-          <li><span>Reel verticali 1080×1920, MP4</span><span>11</span></li>
-          <li><span>Foto JPG</span><span>22</span></li>
-          <li><span>Durata totale video</span><span id="totDur"></span></li>
-        </ul>
-      </div>
-      <div>
-        <a class="btn" href="https://github.com/tommasoserenifreelance-ux/editing/releases/tag/regina-bistecca-21-10">Apri la cartella su GitHub &rarr;</a>
-        <p class="note">I video in questa pagina sono compressi per la visione online. Gli originali si scaricano dalla cartella GitHub.</p>
-      </div>
-    </div>
-  </section>
 </main>
 
 <footer class="foot"><span class="label">a cura di</span><img src="vta-white.png" alt="VTA"></footer>
@@ -298,7 +281,6 @@ VIDEOS.forEach(([f, t, d], i) => {
 });
 document.querySelectorAll('[data-scroll]').forEach(btn => btn.onclick = () =>
   reels.scrollBy({ left: Number(btn.dataset.scroll) * reels.clientWidth * .8, behavior: 'smooth' }));
-document.getElementById('totDur').textContent = mmss(VIDEOS.reduce((a, v) => a + v[2], 0));
 
 /* Photos by theme */
 const tabs = document.getElementById('tabs'), photos = document.getElementById('photos');
