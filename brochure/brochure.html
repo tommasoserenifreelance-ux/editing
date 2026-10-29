@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Brochure Studio Bonaccorso</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4; margin: 0; }
+  :root {
+    --blu: #12395b;
+    --blu-2: #1d5a85;
+    --acqua: #3fa7a3;
+    --sabbia: #f4efe7;
+    --oro: #c9a46a;
+    --testo: #23303b;
+    --grigio: #6b7783;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #d9dde1; }
+  body { font-family: "Inter", "Helvetica Neue", Arial, sans-serif; color: var(--testo); font-size: 10.5pt; line-height: 1.5; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page { width: 210mm; height: 297mm; margin: 10mm auto; background: #fff; position: relative; overflow: hidden; page-break-after: always; break-after: page; }
+  @media print { html, body { background: #fff; } .page { margin: 0; } }
+  .serif { font-family: "Cormorant Garamond", Georgia, serif; }
+
+  /* ---------- COPERTINA ---------- */
+  .cover { background: var(--blu); color: #fff; }
+  .cover .arco { position: absolute; right: -60mm; top: -40mm; width: 200mm; height: 200mm; border-radius: 50%; background: radial-gradient(circle at 30% 70%, var(--blu-2), var(--blu) 70%); }
+  .cover .arco2 { position: absolute; right: -20mm; top: 30mm; width: 120mm; height: 120mm; border-radius: 50%; border: 0.6mm solid rgba(201,164,106,.55); }
+  .cover .foto { position: absolute; left: 0; right: 0; bottom: 0; height: 120mm; background: linear-gradient(180deg, rgba(18,57,91,0) 0%, rgba(18,57,91,.85) 100%), repeating-linear-gradient(135deg, #2a6d8f 0 6mm, #2f7698 6mm 12mm); display:flex; align-items:center; justify-content:center; }
+  .cover .foto span { font-size: 9pt; letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.6); border: 1px dashed rgba(255,255,255,.5); padding: 4mm 8mm; }
+  .cover .top { position: absolute; left: 22mm; top: 24mm; right: 22mm; }
+  .logo { display:flex; align-items:center; gap: 5mm; }
+  .logo .marchio { width: 16mm; height: 16mm; border-radius: 50%; border: .6mm solid var(--oro); display:flex; align-items:center; justify-content:center; font-family: "Cormorant Garamond", serif; font-size: 22pt; font-weight: 700; color: var(--oro); }
+  .logo .nome { font-size: 9pt; letter-spacing: .32em; text-transform: uppercase; }
+  .cover h1 { margin-top: 48mm; font-family: "Cormorant Garamond", serif; font-weight: 600; font-size: 54pt; line-height: 1; }
+  .cover h1 em { color: var(--oro); font-style: italic; font-weight: 500; }
+  .cover .sub { margin-top: 8mm; max-width: 120mm; font-size: 12.5pt; font-weight: 300; color: rgba(255,255,255,.85); }
+  .cover .linea { width: 24mm; height: .7mm; background: var(--oro); margin-top: 10mm; }
+  .cover .dott { margin-top: 6mm; font-size: 10pt; letter-spacing: .14em; text-transform: uppercase; }
+  .cover .bottom { position: absolute; left: 22mm; right: 22mm; bottom: 16mm; display:flex; justify-content: space-between; font-size: 9pt; color: rgba(255,255,255,.85); }
+
+  /* ---------- PAGINE INTERNE ---------- */
+  .inner { padding: 22mm 20mm 26mm; }
+  .kicker { font-size: 8pt; letter-spacing: .3em; text-transform: uppercase; color: var(--acqua); font-weight: 600; }
+  h2 { font-family: "Cormorant Garamond", serif; font-weight: 600; font-size: 32pt; line-height: 1.05; color: var(--blu); margin-top: 3mm; }
+  h2 em { color: var(--oro); font-weight: 500; }
+  .lead { margin-top: 6mm; font-size: 11.5pt; color: var(--grigio); max-width: 150mm; }
+  .footer { position: absolute; left: 20mm; right: 20mm; bottom: 12mm; display:flex; justify-content: space-between; font-size: 8pt; color: var(--grigio); border-top: .3mm solid #e3e6ea; padding-top: 3mm; }
+
+  /* pag 2 */
+  .intro { display: grid; grid-template-columns: 1fr 70mm; gap: 12mm; margin-top: 10mm; }
+  .ritratto { height: 88mm; border-radius: 40mm 40mm 4mm 4mm; background: repeating-linear-gradient(135deg, #e7ecef 0 5mm, #eef2f4 5mm 10mm); display:flex; align-items:flex-end; justify-content:center; padding-bottom: 8mm; font-size: 8pt; letter-spacing:.16em; text-transform: uppercase; color: var(--grigio); }
+  .intro p + p { margin-top: 4mm; }
+  .firma { margin-top: 6mm; font-family: "Cormorant Garamond", serif; font-size: 18pt; color: var(--blu); font-style: italic; }
+  .firma small { display:block; font-family: "Inter", sans-serif; font-style: normal; font-size: 8.5pt; color: var(--grigio); letter-spacing: .1em; text-transform: uppercase; }
+  .valori { margin-top: 14mm; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6mm; }
+  .valore { background: var(--sabbia); border-radius: 3mm; padding: 7mm 6mm; }
+  .valore .n { font-family: "Cormorant Garamond", serif; font-size: 26pt; color: var(--oro); line-height: 1; }
+  .valore h4 { margin-top: 3mm; font-size: 10.5pt; color: var(--blu); }
+  .valore p { margin-top: 2mm; font-size: 9pt; color: var(--grigio); }
+  .citazione { margin-top: 14mm; padding: 8mm 10mm; border-left: 1mm solid var(--acqua); background: #f7fafb; font-family: "Cormorant Garamond", serif; font-size: 17pt; color: var(--blu); font-style: italic; line-height: 1.3; }
+
+  /* pag 3 servizi */
+  .servizi { margin-top: 10mm; display: grid; grid-template-columns: 1fr 1fr; gap: 5mm 6mm; }
+  .serv { display:flex; gap: 4.5mm; padding: 5mm; border: .3mm solid #e3e6ea; border-radius: 3mm; }
+  .serv.evid { background: var(--blu); border-color: var(--blu); color: #fff; }
+  .serv.evid h4 { color: #fff; } .serv.evid p { color: rgba(255,255,255,.8); }
+  .icon { flex: none; width: 11mm; height: 11mm; border-radius: 50%; background: var(--sabbia); display:flex; align-items:center; justify-content:center; }
+  .serv.evid .icon { background: rgba(255,255,255,.12); }
+  .icon svg { width: 6mm; height: 6mm; stroke: var(--acqua); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .serv.evid .icon svg { stroke: var(--oro); }
+  .serv h4 { font-size: 10.5pt; color: var(--blu); line-height: 1.25; }
+  .serv p { font-size: 8.8pt; color: var(--grigio); margin-top: 1mm; line-height: 1.45; }
+  .tag { display:inline-block; margin-top: 2mm; font-size: 7pt; letter-spacing: .14em; text-transform: uppercase; color: var(--oro); font-weight: 600; }
+
+  /* pag 4 contatti */
+  .contatti { background: var(--sabbia); }
+  .box-blu { margin-top: 10mm; background: var(--blu); color: #fff; border-radius: 4mm; padding: 10mm; display: grid; grid-template-columns: 1fr 1fr; gap: 8mm; }
+  .box-blu h3 { font-family: "Cormorant Garamond", serif; font-size: 20pt; font-weight: 600; color: var(--oro); }
+  .riga { display:flex; gap: 4mm; margin-top: 5mm; align-items: flex-start; }
+  .riga svg { flex:none; width: 5.5mm; height: 5.5mm; stroke: var(--oro); fill:none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; margin-top: .6mm; }
+  .riga b { display:block; font-size: 7.5pt; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.6); font-weight: 500; }
+  .orari { width: 100%; border-collapse: collapse; margin-top: 4mm; font-size: 9.5pt; }
+  .orari td { padding: 2.2mm 0; border-bottom: .3mm solid rgba(255,255,255,.15); }
+  .orari td:last-child { text-align: right; color: rgba(255,255,255,.85); }
+  .come { margin-top: 10mm; display:grid; grid-template-columns: repeat(3,1fr); gap: 6mm; }
+  .step { background:#fff; border-radius: 3mm; padding: 6mm; }
+  .step .n { width: 9mm; height: 9mm; border-radius: 50%; background: var(--acqua); color:#fff; display:flex; align-items:center; justify-content:center; font-weight: 600; font-size: 10pt; }
+  .step h4 { margin-top: 3mm; color: var(--blu); font-size: 10.5pt; }
+  .step p { margin-top: 1.5mm; font-size: 9pt; color: var(--grigio); }
+  .mappa { margin-top: 10mm; height: 48mm; border-radius: 4mm; background: repeating-linear-gradient(0deg, #e6e1d7 0 .3mm, transparent .3mm 8mm), repeating-linear-gradient(90deg, #e6e1d7 0 .3mm, transparent .3mm 8mm), #efe9df; display:flex; align-items:center; justify-content:center; gap: 10mm; }
+  .qr { width: 30mm; height: 30mm; background: #fff; border: .3mm dashed var(--grigio); display:flex; align-items:center; justify-content:center; font-size: 7pt; color: var(--grigio); text-align:center; letter-spacing: .1em; }
+  .mappa .txt { font-size: 9pt; color: var(--grigio); max-width: 80mm; }
+  .mappa .txt strong { display:block; color: var(--blu); font-size: 11pt; }
+</style>
+</head>
+<body>
+
+<!-- ========== PAGINA 1 · COPERTINA ========== -->
+<section class="page cover">
+  <div class="arco"></div><div class="arco2"></div>
+  <div class="top">
+    <div class="logo"><div class="marchio">B</div><div class="nome">Studio Bonaccorso</div></div>
+    <h1>La tua salute,<br><em>in buone mani.</em></h1>
+    <p class="sub">Visite specialistiche, diagnostica e analisi del sangue in un unico studio, con attenzione alla persona.</p>
+    <div class="linea"></div>
+    <p class="dott">Dr. Michele Bonaccorso</p>
+  </div>
+  <div class="foto"><span>Foto dello studio</span></div>
+  <div class="bottom"><span>[Indirizzo dello studio]</span><span>[Telefono] · [Sito web]</span></div>
+</section>
+
+<!-- ========== PAGINA 2 · CHI SIAMO ========== -->
+<section class="page inner">
+  <p class="kicker">Chi siamo</p>
+  <h2>Un punto di riferimento<br>per <em>la tua salute</em></h2>
+  <div class="intro">
+    <div>
+      <p>Lo Studio Bonaccorso nasce per offrire un'assistenza medica completa e vicina al paziente: dalla prima visita agli esami, fino al controllo dei risultati, nello stesso posto.</p>
+      <p>Il nostro obiettivo è ascoltare, spiegare con chiarezza e accompagnare ogni paziente in un percorso di cura personalizzato, con tempi di attesa ridotti e un ambiente accogliente.</p>
+      <p>[Breve biografia del Dr. Bonaccorso: specializzazione, anni di esperienza, formazione.]</p>
+      <p class="firma">Michele Bonaccorso<small>Medico · Direttore sanitario</small></p>
+    </div>
+    <div class="ritratto">Foto del Dottore</div>
+  </div>
+  <div class="valori">
+    <div class="valore"><div class="n">01</div><h4>Ascolto</h4><p>Il tempo giusto per ogni visita e risposte chiare a ogni domanda.</p></div>
+    <div class="valore"><div class="n">02</div><h4>Tutto in un posto</h4><p>Visite, ecografie e prelievi senza spostarti da una struttura all'altra.</p></div>
+    <div class="valore"><div class="n">03</div><h4>Tempi rapidi</h4><p>Appuntamenti in tempi brevi e referti consegnati velocemente.</p></div>
+  </div>
+  <div class="citazione">«Curare significa prima di tutto prendersi cura della persona.»</div>
+  <div class="footer"><span>Studio Bonaccorso</span><span>02</span></div>
+</section>
+
+<!-- ========== PAGINA 3 · SERVIZI ========== -->
+<section class="page inner">
+  <p class="kicker">I nostri servizi</p>
+  <h2>Prestazioni <em>specialistiche</em></h2>
+  <p class="lead">Un'offerta completa per la prevenzione, la diagnosi e il monitoraggio della salute di tutta la famiglia.</p>
+  <div class="servizi">
+    <div class="serv evid">
+      <div class="icon"><svg viewBox="0 0 24 24"><path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/></svg></div>
+      <div><h4>Analisi del sangue</h4><p>Prelievi in studio per esami ematochimici, check-up completi, profili ormonali e tiroidei.</p><span class="tag">Prelievi su appuntamento</span></div>
+    </div>
+    <div class="serv evid">
+      <div class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="5"/><path d="M12 13v8M9 18h6"/></svg></div>
+      <div><h4>Visita ginecologica</h4><p>Controlli periodici, Pap test, HPV test, contraccezione e salute della donna in ogni età.</p><span class="tag">Prevenzione donna</span></div>
+    </div>
+    <div class="serv">
+      <div class="icon"><svg viewBox="0 0 24 24"><path d="M5 12a7 7 0 1 1 14 0c0 4-3 7-7 7"/><circle cx="12" cy="12" r="2.5"/></svg></div>
+      <div><h4>Ecografia ostetrica e ginecologica</h4><p>Monitoraggio della gravidanza ed ecografie pelviche e transvaginali.</p></div>
+    </div>
+    <div class="serv">
+      <div class="icon"><svg viewBox="0 0 24 24"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg></div>
+      <div><h4>Visita cardiologica ed ECG</h4><p>Valutazione cardiologica, elettrocardiogramma e controllo della pressione.</p></div>
+    </div>
+    <div class="serv">
+      <div class="icon"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="12" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+      <div><h4>Ecografie internistiche</h4><p>Addome completo, tiroide, mammella, tessuti molli e apparato urinario.</p></div>
+    </div>
+    <div class="serv">
+      <div class="icon"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="9"/></svg></div>
+      <div><h4>Medicina generale e check-up</h4><p>Visite di controllo, certificati e percorsi di prevenzione personalizzati.</p></div>
+    </div>
+    <div class="serv">
+      <div class="icon"><svg viewBox="0 0 24 24"><path d="M7 4c-2 3-2 6 0 9s5 4 5 7M17 4c2 3 2 6 0 9s-5 4-5 7"/></svg></div>
+      <div><h4>Endocrinologia</h4><p>Tiroide, metabolismo, diabete e disturbi ormonali.</p></div>
+    </div>
+    <div class="serv">
+      <div class="icon"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/></svg></div>
+      <div><h4>Nutrizione</h4><p>Piani alimentari personalizzati, anche in gravidanza e allattamento.</p></div>
+    </div>
+    <div class="serv">
+      <div class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg></div>
+      <div><h4>Altre specialità</h4><p>[Dermatologia, urologia, ortopedia: da confermare con lo studio.]</p></div>
+    </div>
+    <div class="serv">
+      <div class="icon"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><rect x="4" y="4" width="16" height="16" rx="3"/></svg></div>
+      <div><h4>Pacchetti prevenzione</h4><p>Check-up donna, uomo e over 50 con visita, esami e referto in un'unica giornata.</p></div>
+    </div>
+  </div>
+  <div class="footer"><span>Studio Bonaccorso</span><span>03</span></div>
+</section>
+
+<!-- ========== PAGINA 4 · CONTATTI ========== -->
+<section class="page inner contatti">
+  <p class="kicker">Prenota la tua visita</p>
+  <h2>Siamo qui <em>per te</em></h2>
+  <div class="come">
+    <div class="step"><div class="n">1</div><h4>Contattaci</h4><p>Chiama o scrivi su WhatsApp per scegliere data e orario.</p></div>
+    <div class="step"><div class="n">2</div><h4>Vieni in studio</h4><p>Porta con te documento, tessera sanitaria ed esami precedenti.</p></div>
+    <div class="step"><div class="n">3</div><h4>Ricevi il referto</h4><p>Risultati spiegati dal medico, anche via email.</p></div>
+  </div>
+  <div class="box-blu">
+    <div>
+      <h3>Contatti</h3>
+      <div class="riga"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><div><b>Indirizzo</b>[Via, numero civico, CAP, città]</div></div>
+      <div class="riga"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg><div><b>Telefono / WhatsApp</b>[000 000 0000]</div></div>
+      <div class="riga"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><div><b>Email</b>[info@studiobonaccorso.it]</div></div>
+      <div class="riga"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><div><b>Web e social</b>[sito web] · [@instagram]</div></div>
+    </div>
+    <div>
+      <h3>Orari</h3>
+      <table class="orari">
+        <tr><td>Lunedì</td><td>[09:00 – 19:00]</td></tr>
+        <tr><td>Martedì</td><td>[09:00 – 19:00]</td></tr>
+        <tr><td>Mercoledì</td><td>[09:00 – 19:00]</td></tr>
+        <tr><td>Giovedì</td><td>[09:00 – 19:00]</td></tr>
+        <tr><td>Venerdì</td><td>[09:00 – 19:00]</td></tr>
+        <tr><td>Sabato</td><td>[09:00 – 13:00]</td></tr>
+        <tr><td>Prelievi</td><td>[07:30 – 10:00]</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="mappa">
+    <div class="qr">QR CODE<br>prenotazione</div>
+    <div class="txt"><strong>Inquadra e prenota</strong>Scansiona il codice per raggiungere lo studio con Google Maps o prenotare online.</div>
+  </div>
+  <div class="footer"><span>Studio Bonaccorso · Dr. Michele Bonaccorso</span><span>04</span></div>
+</section>
+
+</body>
+</html>
