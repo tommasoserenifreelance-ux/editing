@@ -36,9 +36,9 @@ PIECES = {
     "rb05": ("haydn/opus74no1/movement2.mxl", 50, 1, 10.4, [0.9, 0.5, 0.5, 0.6]),
     "rb06": ("mozart/k545/movement1_exposition.mxl", 78, 1, 36.4, [0.8, 0.5]),
     "rb07": ("mozart/k155/movement2.mxl", 60, 1, 46.9, [0.9, 0.5, 0.5, 0.6]),
-    "rb08": ("schumann_robert/opus41no1/movement4.mxl", 60, 1, 38.0, [0.9, 0.5, 0.5, 0.6]),
-    "rb09": ("schumann_clara/opus17/movement3.xml", 56, 1, 27.1, [0.0, 0.0, 0.85, 0.6]),
-    "rb10": ("mozart/k80/movement1.mxl", 60, 1, 24.0, [0.9, 0.5, 0.5, 0.6]),
+    "rb08": ("schumann_robert/opus41no1/movement4.mxl", 60, 1, 34.3, [0.9, 0.5, 0.5, 0.6]),
+    "rb09": ("schumann_clara/opus17/movement3.xml", 56, 1, 24.2, [0.0, 0.0, 0.85, 0.6]),
+    "rb10": ("mozart/k80/movement1.mxl", 60, 1, 22.45, [0.9, 0.5, 0.5, 0.6]),
     "rb11": ("mozart/k156/movement2.mxl", 54, 1, 34.6, [0.9, 0.5, 0.5, 0.6]),
 }
 

@@ -7,8 +7,8 @@ export const RB_DURATIONS: Record<string, number> = {
   "rb05": 260,
   "rb06": 910,
   "rb07": 1172,
-  "rb08": 949,
-  "rb09": 676,
-  "rb10": 598,
+  "rb08": 858,
+  "rb09": 606,
+  "rb10": 562,
   "rb11": 866
 };

@@ -100,11 +100,12 @@ EDITS = {
         "denoise": True,
         "cuts": [(0.0, 46.88, 1)],
     },
+    # Finisce prima che il libro si chiuda (lì la camera si muove).
     "rb08": {
         "stab": True,
         "deflicker": 11.35,
         "denoise": True,
-        "cuts": [(0.0, 37.96, 1)],
+        "cuts": [(0.0, 34.3, 1)],
     },
     # Campari Spritz: piano sequenza di 62 s, via i tempi morti.
     "rb09": {
@@ -118,7 +119,8 @@ EDITS = {
             (43.0, 45.2, 1),
             (49.4, 52.2, 1),
             (55.0, 56.8, 1),
-            (57.4, 62.2, 1),
+            # Si chiude prima che la mano faccia ondeggiare il bicchiere.
+            (57.4, 59.4, 1),
         ],
     },
     # Long drink rosa: piano sequenza di 44 s, stessa logica.
@@ -129,7 +131,8 @@ EDITS = {
             (11.2, 14.0, 1),
             (19.0, 21.4, 1),
             (25.0, 29.4, 1),
-            (30.3, 32.9, 1),
+            # Solo il secondo tentativo, quando la cannuccia centra il bicchiere.
+            (32.35, 33.5, 1),
             (34.0, 36.8, 1),
             (39.8, 43.7, 1),
         ],
