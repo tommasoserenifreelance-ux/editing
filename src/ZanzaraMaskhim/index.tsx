@@ -57,7 +57,7 @@ const Hook: React.FC = () => {
         }}
       >
         <span style={{ ...boxed, background: "#fff", color: "#000" }}>
-          ...SIAMO NOI DI MASKHIM
+          ...LA MASCHERA MASKHIM
         </span>
       </div>
     </AbsoluteFill>
