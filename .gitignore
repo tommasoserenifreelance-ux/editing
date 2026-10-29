@@ -5,3 +5,7 @@ dist
 
 # Ignore the output video from Git but not videos you import into src/.
 out
+
+# Large source footage lives in GitHub release drafts, not in git.
+public/zanzara/*.mov
+public/zanzara/*.mp4

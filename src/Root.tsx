@@ -8,6 +8,13 @@ import {
   PilatesOverlay,
 } from "./PilatesOverlay";
 import { PILATES_DURATION, PilatesReformer } from "./PilatesReformer";
+import {
+  ZANZARA_DURATION,
+  ZANZARA_FPS,
+  ZANZARA_HEIGHT,
+  ZANZARA_WIDTH,
+  ZanzaraMaskhim,
+} from "./ZanzaraMaskhim";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -71,6 +78,14 @@ export const RemotionRoot: React.FC = () => {
         fps={OVERLAY_FPS}
         width={1080}
         height={1920}
+      />
+      <Composition
+        id="ZanzaraMaskhim"
+        component={ZanzaraMaskhim}
+        durationInFrames={ZANZARA_DURATION}
+        fps={ZANZARA_FPS}
+        width={ZANZARA_WIDTH}
+        height={ZANZARA_HEIGHT}
       />
     </>
   );
