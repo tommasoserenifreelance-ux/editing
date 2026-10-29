@@ -22,7 +22,11 @@ ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 OUT = os.path.join(ROOT, "public", "rb", "music")
 SR = 48000
 
-# piece, quarter-note bpm, first measure, seconds (= the reel's length),
+# Every reel ends with the logo alone on black for 1.2 s (RB_OUTRO): the
+# music plays on under it and fades out with it.
+OUTRO = 1.2
+
+# piece, quarter-note bpm, first measure, seconds (= the clip's length),
 # loudness of each part from the top (the melody sings, inner voices recede).
 PIECES = {
     "rb01": ("bach/bwv846.mxl", 66, 1, 12.96, [0.75, 0.6]),
@@ -148,6 +152,7 @@ def main():
     os.makedirs(OUT, exist_ok=True)
     for name in names:
         path, bpm, first, seconds, weights = PIECES[name]
+        seconds += OUTRO
         audio = render(events(path, bpm, first, seconds, weights), seconds, layers)
         wav = os.path.join(OUT, f"{name}.wav")
         sf.write(wav, audio / max(1e-6, np.abs(audio).max()) * 0.8, SR)

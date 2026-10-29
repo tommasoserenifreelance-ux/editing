@@ -16,9 +16,12 @@ export const RB_FPS = 25;
 // The title is gone after 4.2 s, as in the Bonsalto Olio Nuovo reel.
 const TITLE_OUT = 105;
 
-// Unless a video says otherwise, the end logo holds over the last 2.8 s,
-// fading in over the first 1.2 s.
-const LOGO_HOLD = 70;
+// Every reel ends the same way: the logo fades in over the picture, the
+// picture goes down to black under it over the clip's last second, then the
+// logo holds alone on black for RB_OUTRO frames after the clip.
+export const RB_OUTRO = 30;
+const LOGO_LEAD = 45;
+const BLACK_LEN = 25;
 
 const script = "Pinyon Script";
 
@@ -40,10 +43,7 @@ type Hook = { top: string; main: string };
 const videos = {
   // The logo waits for the last of the salt (9.7 s).
   rb01: { hook: { top: "Dalla brace", main: "al piatto" }, logoAt: 243 },
-  rb02: {
-    hook: { top: "La tagliata", main: "della Regina" },
-    fadeToBlack: true,
-  },
+  rb02: { hook: { top: "La tagliata", main: "della Regina" } },
   rb03: { hook: { top: "Tagliolini", main: "al tartufo" } },
   rb04: { hook: { top: "La nostra", main: "Tartare" } },
   rb05: { hook: { top: "Filetto", main: "al tartufo" } },
@@ -55,7 +55,7 @@ const videos = {
   rb11: { hook: { top: "Dolci", main: "della casa" } },
 } satisfies Record<string, RbEdit>;
 
-type RbEdit = { hook: Hook; logoAt?: number; fadeToBlack?: boolean };
+type RbEdit = { hook: Hook; logoAt?: number };
 
 export type RbVideo = keyof typeof videos;
 
@@ -136,7 +136,8 @@ const Title: React.FC<{ hook: Hook }> = ({ hook }) => {
 const EndLogo: React.FC<{ at?: number }> = ({ at }) => {
   const frame = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
-  const start = at ?? durationInFrames - LOGO_HOLD;
+  const clipEnd = durationInFrames - RB_OUTRO;
+  const start = at ?? clipEnd - LOGO_LEAD;
   const p = interpolate(frame, [start, start + 30], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
@@ -164,16 +165,15 @@ const EndLogo: React.FC<{ at?: number }> = ({ at }) => {
   );
 };
 
-// Picture and logo go down to black over the last 0.8 s.
+// The picture (not the logo) goes down to black as the clip ends.
 const FadeToBlack: React.FC = () => {
   const frame = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
-  const opacity = interpolate(
-    frame,
-    [durationInFrames - 20, durationInFrames - 1],
-    [0, 1],
-    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
-  );
+  const clipEnd = durationInFrames - RB_OUTRO;
+  const opacity = interpolate(frame, [clipEnd - BLACK_LEN, clipEnd], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
   return <AbsoluteFill style={{ backgroundColor: "black", opacity }} />;
 };
 
@@ -183,7 +183,7 @@ export const ReginaBistecca: React.FC<{ video: RbVideo }> = ({ video }) => (
     {/* A different classical piano piece per reel (public/rb/music). */}
     <Audio src={staticFile(`rb/music/${video}.m4a`)} />
     <Title hook={RB_VIDEOS[video].hook} />
+    <FadeToBlack />
     <EndLogo at={RB_VIDEOS[video].logoAt} />
-    {RB_VIDEOS[video].fadeToBlack ? <FadeToBlack /> : null}
   </AbsoluteFill>
 );
