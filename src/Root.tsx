@@ -1,4 +1,5 @@
 import { Composition, Folder } from "remotion";
+import { CIBO_DURATION, CIBO_FPS, CiboMedicina } from "./CiboMedicina";
 import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
@@ -69,6 +70,14 @@ export const RemotionRoot: React.FC = () => {
         component={PilatesOverlay}
         durationInFrames={OVERLAY_DURATION}
         fps={OVERLAY_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="CiboMedicina"
+        component={CiboMedicina}
+        durationInFrames={CIBO_DURATION}
+        fps={CIBO_FPS}
         width={1080}
         height={1920}
       />
