@@ -1,4 +1,4 @@
-import { Composition, Folder } from "remotion";
+import { Composition, Folder, Still } from "remotion";
 import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
@@ -15,6 +15,11 @@ import {
   ZANZARA_WIDTH,
   ZanzaraMaskhim,
 } from "./ZanzaraMaskhim";
+import {
+  COVER_HEIGHT,
+  COVER_WIDTH,
+  ZanzaraCover,
+} from "./ZanzaraMaskhim/Cover";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -86,6 +91,12 @@ export const RemotionRoot: React.FC = () => {
         fps={ZANZARA_FPS}
         width={ZANZARA_WIDTH}
         height={ZANZARA_HEIGHT}
+      />
+      <Still
+        id="ZanzaraCover"
+        component={ZanzaraCover}
+        width={COVER_WIDTH}
+        height={COVER_HEIGHT}
       />
     </>
   );
