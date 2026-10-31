@@ -1,31 +1,14 @@
 import {
   AbsoluteFill,
-  continueRender,
-  delayRender,
   interpolate,
   OffthreadVideo,
   staticFile,
   useCurrentFrame,
 } from "remotion";
+import { serif, Signature } from "../EleonoraPiccolo/brand";
 
 export const CIBO_FPS = 30;
 export const CIBO_DURATION = 450; // 15 s, length of the background clip
-
-const serif = "Cormorant Garamond";
-
-// Fonts are bundled in public/fonts so rendering works offline.
-const handle = delayRender("Loading fonts");
-Promise.all(
-  ["500", "600"].map((weight) =>
-    new FontFace(
-      serif,
-      `url(${staticFile(`fonts/cormorant-garamond-latin-${weight}-normal.woff2`)})`,
-      { weight },
-    )
-      .load()
-      .then((font) => document.fonts.add(font)),
-  ),
-).then(() => continueRender(handle));
 
 const FOODS: [string, string, string][] = [
   ["Semi di lino", "🥄", "aiutano a bilanciare gli estrogeni"],
@@ -92,22 +75,7 @@ export const CiboMedicina: React.FC = () => {
           ))}
         </div>
       </AbsoluteFill>
-      <AbsoluteFill
-        style={{
-          opacity,
-          justifyContent: "flex-end",
-          alignItems: "center",
-          paddingBottom: 170,
-          color: "#fff",
-          fontFamily: serif,
-          fontWeight: 600,
-          fontSize: 44,
-          letterSpacing: 2,
-          textShadow: shadow,
-        }}
-      >
-        Dr.ssa Eleonora Piccolo
-      </AbsoluteFill>
+      <Signature color="#fff" shadow={shadow} opacity={opacity} />
     </AbsoluteFill>
   );
 };

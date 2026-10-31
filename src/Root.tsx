@@ -8,6 +8,11 @@ import {
   OVERLAY_FPS,
   PilatesOverlay,
 } from "./PilatesOverlay";
+import {
+  SINTOMI_DURATION,
+  SINTOMI_FPS,
+  SintomiPerimenopausa,
+} from "./SintomiPerimenopausa";
 import { PILATES_DURATION, PilatesReformer } from "./PilatesReformer";
 
 // Each <Composition> is an entry in the sidebar!
@@ -78,6 +83,14 @@ export const RemotionRoot: React.FC = () => {
         component={CiboMedicina}
         durationInFrames={CIBO_DURATION}
         fps={CIBO_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="SintomiPerimenopausa"
+        component={SintomiPerimenopausa}
+        durationInFrames={SINTOMI_DURATION}
+        fps={SINTOMI_FPS}
         width={1080}
         height={1920}
       />
