@@ -34,10 +34,9 @@
   /* ---------- 1 · COPERTINA ---------- */
   .cover { background: var(--powder); }
   .cover .img { position: absolute; inset: 0 0 auto 0; height: 190mm; }
-  .cover .img::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(169,188,212,.55) 0%, rgba(169,188,212,.15) 45%, rgba(229,237,248,1) 100%); }
-  .cover .top { position: absolute; top: 16mm; left: 18mm; right: 18mm; display: flex; justify-content: space-between; align-items: flex-start; color: #fff; }
-  .cover .top .wm { font-size: 24pt; text-shadow: 0 0 6mm rgba(58,88,129,.45); }
-  .cover .top .wm small { font-weight: 400; }
+  .cover .img img { object-position: 50% 100%; }
+    .cover .top { position: absolute; top: 16mm; left: 18mm; right: 18mm; display: flex; justify-content: space-between; align-items: flex-start; color: #fff; }
+  .cover .top .logo { width: 82mm; height: auto; }
   .cover .top .citta { font-size: 8pt; letter-spacing: .3em; text-transform: uppercase; margin-top: 2mm; }
   .cover .testo { position: absolute; left: 18mm; right: 18mm; top: 178mm; }
   .cover h1 { font-weight: 500; text-transform: uppercase; font-size: 25pt; line-height: 1.2; color: var(--navy); letter-spacing: .02em; }
@@ -48,8 +47,9 @@
   .cover .base { position: absolute; left: 0; right: 0; bottom: 0; height: 22mm; background: var(--navy); color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 18mm; font-size: 8.5pt; letter-spacing: .08em; }
 
   /* ---------- 2 · STUDIO + DOTTORE ---------- */
-  .p2 .alto { display: grid; grid-template-columns: 1fr 1fr; min-height: 128mm; }
-  .p2 .alto .txt { background: var(--powder); padding: 18mm 12mm 10mm 18mm; }
+  .p2 .alto { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 100%; height: 128mm; }
+  .p2 .alto > div { min-height: 0; overflow: hidden; }
+  .p2 .alto .txt { background: var(--powder); padding: 15mm 12mm 8mm 18mm; }
   .p2 .alto .txt p { margin-top: 3.5mm; font-size: 9.6pt; }
   .p2 h2 { font-size: 20pt; margin-top: 2.5mm; }
   .p2 .metodo { display: grid; grid-template-columns: repeat(5, 1fr); margin: 0 18mm; border-bottom: .3mm solid var(--powder); }
@@ -95,6 +95,7 @@
   .p4 h2 { font-size: 20pt; margin-top: 2mm; }
   .team { margin-top: 10mm; display: grid; grid-template-columns: repeat(3, 1fr); gap: 9mm 6mm; }
   .membro { display: grid; grid-template-columns: 25mm 1fr; gap: 3mm; align-items: center; }
+  .membro .f img { object-position: 50% 12%; }
   .membro .f { width: 25mm; height: 25mm; border-radius: 50%; overflow: hidden; background: var(--cielo); }
   .membro b { display: block; font-weight: 500; color: var(--navy); font-size: 9.2pt; line-height: 1.25; }
   .membro span { display: block; font-size: 8pt; color: var(--slate); line-height: 1.3; margin-top: .6mm; }
@@ -108,17 +109,30 @@
   .contatti .cta .btn { border: .3mm solid #fff; padding: 3mm 6mm; font-size: 8pt; letter-spacing: .24em; text-transform: uppercase; }
   .contatti .social { display: flex; gap: 4mm; align-items: center; font-size: 8.5pt; color: rgba(255,255,255,.85); }
   .contatti .social svg { width: 4.5mm; height: 4.5mm; fill: #fff; }
-  .contatti .wm { position: absolute; left: 18mm; bottom: 14mm; font-size: 17pt; }
+  .contatti .logo { position: absolute; left: 18mm; bottom: 13mm; width: 62mm; height: auto; }
   .contatti .legal { position: absolute; right: 18mm; bottom: 14mm; font-size: 7.5pt; color: rgba(255,255,255,.6); }
+
+  /* ---------- VERSIONE STAMPA: abbondanza 3 mm per lato (216 × 303 mm) ---------- */
+  html.bleed, html.bleed body { background: #fff; }
+  html.bleed .sheet { width: 216mm; height: 303mm; padding: 3mm; overflow: hidden; break-after: page; background: #fff; }
+  html.bleed .sheet.s-cover { background: var(--powder); }
+  html.bleed .page { margin: 0; overflow: visible; break-after: auto; background: transparent; }
+  html.bleed .cover .img { inset: -3mm -3mm auto -3mm; height: 193mm; }
+  html.bleed .cover .base { left: -3mm; right: -3mm; bottom: -3mm; height: 25mm; padding: 0 21mm 3mm; }
+  html.bleed .p2 .alto { margin: -3mm -3mm 0; height: 131mm; }
+  html.bleed .p2 .alto .txt { padding: 18mm 12mm 8mm 21mm; }
+  html.bleed .contatti { left: -3mm; right: -3mm; bottom: -3mm; height: 127mm; padding: 14mm 21mm 0; }
+  html.bleed .contatti .logo { left: 21mm; bottom: 16mm; }
+  html.bleed .contatti .legal { right: 21mm; bottom: 16mm; }
 </style>
 </head>
 <body>
 
 <!-- ========== 1 · COPERTINA ========== -->
 <section class="page cover">
-  <div class="img"><img src="img/ormoni.jpg" alt=""></div>
+  <div class="img"><img src="img/cover.jpg" alt=""></div>
   <div class="top">
-    <div class="wm">Studio Bonaccorso<small>centro di medicina innovativa</small></div>
+    <img class="logo" src="img/logo-bianco.png" alt="Studio Bonaccorso – centro di medicina innovativa">
     <div class="citta">Milano · Roma</div>
   </div>
   <div class="testo">
@@ -140,7 +154,7 @@
       <p>La clinica si distingue per l'applicazione dei principi della medicina funzionale e antiaging, con un focus su prevenzione, stimolazione dei processi naturali di rigenerazione cellulare e rallentamento dell'invecchiamento.</p>
       <p>A supporto di questa missione opera un team di professionisti altamente qualificati, che si impegna a migliorare la qualità della vita dei pazienti.</p>
     </div>
-    <div><img src="img/ozono.jpg" alt=""></div>
+    <div><img src="img/ozono_flebo.jpg" alt="" style="object-position: 50% 35%"></div>
   </div>
   <div class="metodo">
     <div><b>01</b>Cellulare</div>
@@ -176,7 +190,7 @@
 
   <div class="evid">
     <div class="card-ev">
-      <div><img src="img/prp.jpg" alt="" style="object-position: 60% 50%"></div>
+      <div><img src="img/analisi.jpg" alt="" style="object-position: 55% 50%"></div>
       <div class="t">
         <h4>Analisi del sangue</h4>
         <p>Prelievi ed esami ematochimici in studio per check-up personalizzati, profilo ormonale e test dello stress ossidativo.</p>
@@ -206,10 +220,10 @@
     <div class="serv"><h5>Terapia del dolore</h5><p>Percorsi su misura per il dolore acuto e cronico.</p></div>
   </div>
   <div class="grid-foto">
-    <img src="img/ozono.jpg" alt="" style="object-position: 50% 30%">
-    <img src="img/flebo.jpg" alt="">
-    <img src="img/viso.jpg" alt="" style="object-position: 30% 50%">
-    <img src="img/dolore.jpg" alt="">
+    <img src="img/ozono.jpg" alt="" style="object-position: 60% 40%">
+    <img src="img/flebo.jpg" alt="" style="object-position: 50% 30%">
+    <img src="img/dephura.jpg" alt="" style="object-position: 30% 50%">
+    <img src="img/prp.jpg" alt="" style="object-position: 50% 45%">
   </div>
 
   <div class="sez"><span class="h">Estetica &amp; nutrizione</span></div>
@@ -265,7 +279,7 @@
         <span>Seguici sui social</span>
       </div>
     </div>
-    <div class="wm">Studio Bonaccorso<small>centro di medicina innovativa</small></div>
+    <img class="logo" src="img/logo-bianco.png" alt="Studio Bonaccorso – centro di medicina innovativa">
     <div class="legal">studiobonaccorso.it/prenota-visita</div>
   </div>
 </section>
