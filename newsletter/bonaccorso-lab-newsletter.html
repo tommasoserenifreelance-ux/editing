@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Bonaccorso Lab – Newsletter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4; margin: 0; }
+  :root { --navy: #3a5881; --slate: #7f97ba; --mid: #a9bcd4; --powder: #e5edf8; --testo: #3a4f6e; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #cfd6df; }
+  body { font-family: "Jost", "Futura", "Helvetica Neue", Arial, sans-serif; color: var(--testo); font-size: 10.4pt; line-height: 1.6; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page { width: 210mm; height: 297mm; margin: 10mm auto; background: #fff; position: relative; overflow: hidden; break-after: page; }
+  @media print { html, body { background: #fff; } .page { margin: 0; } }
+  img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .in { padding: 0 20mm; }
+  .kicker { text-transform: uppercase; letter-spacing: .3em; font-size: 7.5pt; color: var(--slate); font-weight: 500; }
+  h2 { text-transform: uppercase; color: var(--navy); font-weight: 500; font-size: 17pt; line-height: 1.2; letter-spacing: .02em; margin-top: 2mm; }
+  h3 { text-transform: uppercase; color: var(--navy); font-weight: 500; font-size: 11pt; letter-spacing: .05em; }
+  p + p { margin-top: 3mm; }
+  strong { font-weight: 500; color: var(--navy); }
+  .footer { position: absolute; left: 20mm; right: 20mm; bottom: 10mm; display: flex; justify-content: space-between; font-size: 7.5pt; letter-spacing: .2em; text-transform: uppercase; color: var(--slate); border-top: .3mm solid var(--powder); padding-top: 3mm; }
+
+  /* pagina 1 */
+  .testata { background: var(--navy); height: 30mm; display: flex; align-items: center; justify-content: space-between; padding: 0 20mm; color: #fff; }
+  .testata img { width: 68mm; height: auto; }
+  .testata span { font-size: 7.5pt; letter-spacing: .3em; text-transform: uppercase; color: var(--mid); }
+  .hero { height: 86mm; position: relative; }
+  .hero .badge { position: absolute; left: 20mm; bottom: -9mm; background: #fff; padding: 6mm 8mm 5mm; width: 120mm; }
+  .hero .badge h1 { text-transform: uppercase; color: var(--navy); font-weight: 500; font-size: 25pt; line-height: 1.1; letter-spacing: .02em; margin-top: 2mm; }
+  .lead { margin-top: 16mm; font-size: 11.5pt; line-height: 1.65; }
+  .box { margin-top: 7mm; background: var(--powder); padding: 7mm 8mm; }
+  .box h3 { margin-bottom: 2mm; }
+  .tre { margin-top: 7mm; display: grid; grid-template-columns: repeat(3, 1fr); gap: 5mm; }
+  .tre div { border-top: .5mm solid var(--navy); padding-top: 3mm; font-size: 9pt; line-height: 1.5; }
+  .tre b { display: block; font-weight: 500; color: var(--navy); text-transform: uppercase; letter-spacing: .05em; font-size: 8.6pt; margin-bottom: 1mm; }
+
+  /* pagina 2 */
+  .p2 { padding-top: 18mm; }
+  .servizio { display: grid; grid-template-columns: 12mm 1fr; gap: 5mm; margin-top: 7mm; padding-bottom: 6mm; border-bottom: .3mm solid var(--powder); }
+  .servizio:last-of-type { border-bottom: 0; }
+  .num { width: 12mm; height: 12mm; border-radius: 50%; background: var(--navy); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 500; font-size: 10pt; }
+  .servizio p { margin-top: 1.5mm; font-size: 9.8pt; }
+  .esempi { margin-top: 2.5mm; display: flex; flex-wrap: wrap; gap: 1.8mm; }
+  .esempi span { background: var(--powder); color: var(--navy); font-size: 7.8pt; padding: .9mm 2.6mm; letter-spacing: .02em; }
+  .nota { margin-top: 5mm; font-size: 8.4pt; color: var(--slate); font-style: italic; }
+
+  /* pagina 3 */
+  .p3 { padding-top: 18mm; }
+  .passi { margin-top: 6mm; display: grid; grid-template-columns: repeat(3, 1fr); gap: 5mm; }
+  .passo { background: var(--powder); padding: 6mm 5mm; }
+  .passo .num { width: 9mm; height: 9mm; font-size: 9pt; }
+  .passo h3 { margin-top: 3mm; font-size: 9.6pt; }
+  .passo p { margin-top: 1.5mm; font-size: 8.8pt; line-height: 1.5; }
+  .faq { margin-top: 9mm; }
+  .faq dl { margin-top: 3mm; }
+  .faq dt { font-weight: 500; color: var(--navy); margin-top: 3.5mm; font-size: 10pt; }
+  .faq dd { font-size: 9.4pt; margin-top: .6mm; }
+  .firma { margin-top: 9mm; display: grid; grid-template-columns: 22mm 1fr; gap: 5mm; align-items: center; }
+  .firma .f { width: 22mm; height: 22mm; border-radius: 50%; overflow: hidden; background: #009ecd; }
+  .firma .f img { object-position: 50% 12%; }
+  .firma p { font-size: 10pt; line-height: 1.45; }
+  .firma span { display: block; font-size: 8.6pt; color: var(--slate); }
+  .cta { position: absolute; left: 0; right: 0; bottom: 0; height: 58mm; background: var(--navy); color: #fff; padding: 10mm 20mm 0; }
+  .cta .riga { display: flex; justify-content: space-between; align-items: center; }
+  .cta .btn { border: .3mm solid #fff; padding: 3.2mm 7mm; font-size: 8.4pt; letter-spacing: .24em; text-transform: uppercase; }
+  .cta .tel { font-size: 11pt; text-align: right; line-height: 1.5; }
+  .cta .tel small { display: block; font-size: 7.5pt; letter-spacing: .24em; text-transform: uppercase; color: var(--mid); }
+  .cta .sedi { margin-top: 8mm; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6mm; font-size: 8.6pt; line-height: 1.55; color: rgba(255,255,255,.9); border-top: .3mm solid rgba(255,255,255,.25); padding-top: 5mm; }
+  .cta .sedi b { display: block; font-weight: 500; font-size: 7.5pt; letter-spacing: .24em; text-transform: uppercase; color: var(--mid); margin-bottom: 1mm; }
+</style>
+</head>
+<body>
+
+<!-- ========== PAGINA 1 ========== -->
+<section class="page">
+  <div class="testata"><img src="../brochure/img/logo-bianco.png" alt="Studio Bonaccorso – centro di medicina innovativa"><span>Newsletter · Novità in studio</span></div>
+  <div class="hero">
+    <img src="../brochure/img/analisi.jpg" alt="" style="object-position: 50% 45%">
+    <div class="badge"><p class="kicker">Nuovo servizio</p><h1>È attivo<br>Bonaccorso Lab</h1></div>
+  </div>
+  <div class="in">
+    <p class="lead">Gentile paziente,<br>siamo felici di annunciarti che da oggi allo Studio Bonaccorso è attivo <strong>Bonaccorso Lab</strong>, il nostro laboratorio analisi. Puoi fare <strong>prelievi e analisi del sangue direttamente in studio</strong>, nello stesso luogo in cui segui il tuo percorso di cura, senza doverti spostare da una struttura all'altra.</p>
+    <p style="margin-top:3mm">Con Bonaccorso Lab abbiamo voluto unire in un unico posto tre momenti che di solito restano separati: <strong>l'esame</strong>, <strong>il risultato</strong> e <strong>la sua lettura insieme al medico</strong>. Ogni valore diventa così un'informazione utile per costruire, passo dopo passo, un percorso davvero su misura per te.</p>
+
+    <div class="box">
+      <h3>Perché gli esami del sangue sono così importanti</h3>
+      <p>In medicina funzionale gli esami del sangue sono il punto di partenza. Il sintomo non è un problema isolato, ma un segnale: per capirne le cause dobbiamo guardare a come funziona l'organismo nel suo insieme. Molti squilibri, come un'infiammazione cronica di basso grado, un'alterazione del metabolismo o un aumento del rischio cardiovascolare, possono restare silenziosi per anni. Misurarli per tempo ci permette di <strong>intervenire prima</strong>, con strategie mirate di prevenzione, nutrizione e terapia.</p>
+    </div>
+
+    <div class="tre">
+      <div><b>Tutto in un posto</b>Prelievo, risultati e visita nello stesso studio, con il team che già ti conosce.</div>
+      <div><b>Esami mirati</b>Non solo esami di routine, ma pannelli scelti in base alla tua storia e ai tuoi obiettivi.</div>
+      <div><b>Lettura con il medico</b>I risultati vengono spiegati e integrati nel tuo percorso personalizzato.</div>
+    </div>
+  </div>
+  <div class="footer"><span>Studio Bonaccorso · Bonaccorso Lab</span><span>01</span></div>
+</section>
+
+<!-- ========== PAGINA 2 ========== -->
+<section class="page">
+  <div class="in p2">
+    <p class="kicker">I servizi di Bonaccorso Lab</p>
+    <h2>Cosa puoi fare in studio</h2>
+    <p style="margin-top:3mm">Bonaccorso Lab offre sia gli esami di base per il controllo periodico della salute, sia pannelli più avanzati dedicati alla longevità e alla prevenzione. Ecco nel dettaglio le quattro aree principali.</p>
+
+    <div class="servizio">
+      <div class="num">1</div>
+      <div>
+        <h3>Prelievi e analisi del sangue</h3>
+        <p>Gli esami ematochimici sono la base di ogni check-up: ci dicono come stanno funzionando gli organi principali, il metabolismo e il sistema ormonale. In studio puoi eseguire gli esami di routine e i check-up completi, oltre ai profili ormonali e tiroidei, fondamentali per chi segue percorsi con ormoni bioidentici o di nutrizione ormonale.</p>
+        <div class="esempi"><span>Emocromo</span><span>Glicemia e metabolismo</span><span>Funzionalità epatica e renale</span><span>Profilo ormonale</span><span>Tiroide</span><span>Vitamine e minerali</span></div>
+      </div>
+    </div>
+
+    <div class="servizio">
+      <div class="num">2</div>
+      <div>
+        <h3>Prelievi della longevità</h3>
+        <p>La longevità non significa solo vivere più a lungo, ma vivere più a lungo <strong>in salute</strong>. I prelievi della longevità sono pannelli avanzati che valutano i marcatori legati ai processi di invecchiamento cellulare, organico, cerebrale, muscolo-scheletrico e cutaneo. Ci aiutano a capire a che punto è il tuo organismo e quali aree hanno bisogno di attenzione, per impostare un piano di prevenzione personalizzato.</p>
+        <div class="esempi"><span>Metabolismo e insulina</span><span>Stress ossidativo</span><span>Equilibrio ormonale</span><span>Micronutrienti</span></div>
+      </div>
+    </div>
+
+    <div class="servizio">
+      <div class="num">3</div>
+      <div>
+        <h3>Infiammazione e citochine infiammatorie</h3>
+        <p>L'infiammazione è una difesa naturale dell'organismo; quando però diventa cronica e silenziosa, la cosiddetta <em>low-grade inflammation</em>, può contribuire nel tempo all'invecchiamento e a molti disturbi. Le citochine sono le molecole con cui le cellule del sistema immunitario comunicano tra loro: dosarle, insieme agli altri marcatori dell'infiammazione, permette di individuare uno stato infiammatorio anche quando non dà ancora sintomi evidenti.</p>
+        <div class="esempi"><span>Citochine infiammatorie</span><span>Marcatori dell'infiammazione</span><span>Infiammazione cronica di basso grado</span></div>
+      </div>
+    </div>
+
+    <div class="servizio">
+      <div class="num">4</div>
+      <div>
+        <h3>Valutazione cardiovascolare</h3>
+        <p>La salute del cuore e dei vasi sanguigni si protegge soprattutto con la prevenzione. Oltre al colesterolo totale, un profilo lipidico avanzato e i marcatori del rischio cardiovascolare offrono un quadro molto più preciso, utile per intervenire con alimentazione, stile di vita e, se necessario, terapie mirate.</p>
+        <div class="esempi"><span>Profilo lipidico avanzato</span><span>Marcatori del rischio cardiovascolare</span></div>
+      </div>
+    </div>
+
+    <p class="nota">Gli esami da eseguire vengono sempre scelti dal medico in base alla storia clinica e agli obiettivi di ciascun paziente.</p>
+  </div>
+  <div class="footer"><span>Studio Bonaccorso · Bonaccorso Lab</span><span>02</span></div>
+</section>
+
+<!-- ========== PAGINA 3 ========== -->
+<section class="page">
+  <div class="in p3">
+    <p class="kicker">Come funziona</p>
+    <h2>Tre semplici passi</h2>
+    <div class="passi">
+      <div class="passo"><div class="num">1</div><h3>Prenota</h3><p>Prenota il prelievo online o per telefono. Al momento della prenotazione ti spieghiamo come prepararti.</p></div>
+      <div class="passo"><div class="num">2</div><h3>Vieni in studio</h3><p>Il prelievo si svolge in studio, in un ambiente riservato e accogliente, con personale qualificato.</p></div>
+      <div class="passo"><div class="num">3</div><h3>Leggi i risultati</h3><p>Il medico ti spiega i risultati e li integra nel tuo percorso di prevenzione e cura.</p></div>
+    </div>
+
+    <div class="faq">
+      <p class="kicker">Domande frequenti</p>
+      <dl>
+        <dt>Devo essere a digiuno?</dt>
+        <dd>Per molti esami del sangue è richiesto il digiuno. Al momento della prenotazione ti indichiamo con precisione come prepararti in base agli esami previsti.</dd>
+        <dt>Posso fare gli esami anche se non sono già paziente dello studio?</dt>
+        <dd>Certo. Bonaccorso Lab è aperto a tutti: contattaci e ti aiutiamo a scegliere gli esami più adatti a te.</dd>
+        <dt>Posso abbinare il prelievo a una visita?</dt>
+        <dd>Sì. Puoi programmare il prelievo prima della visita: così il medico avrà già a disposizione i risultati e potrà impostare subito il tuo percorso.</dd>
+        <dt>Quando arrivano i risultati?</dt>
+        <dd>I tempi dipendono dal tipo di esame. Ti comunichiamo i tempi previsti al momento del prelievo e, quando i risultati sono pronti, puoi leggerli insieme al medico.</dd>
+      </dl>
+    </div>
+
+    <div class="firma">
+      <div class="f"><img src="../brochure/img/team_bonaccorso.jpg" alt="Dott. Michele Bonaccorso"></div>
+      <p>«Conoscere i propri valori è il primo passo per prendersi cura di sé nel tempo. Con Bonaccorso Lab possiamo farlo insieme, in un unico luogo.»<br><strong>Dott. Michele Bonaccorso</strong><span>Medico funzionale e della longevità</span></p>
+    </div>
+  </div>
+
+  <div class="cta">
+    <div class="riga">
+      <span class="btn">Prenota il tuo prelievo</span>
+      <div class="tel"><small>Chiamaci</small>02 91766 535 · 345 7245102</div>
+    </div>
+    <div class="sedi">
+      <div><b>Milano</b>Via Luigi Settembrini 54<br>20124 Milano</div>
+      <div><b>Roma</b>Via Flaminia 489 (Ponte Milvio)<br>00191 Roma</div>
+      <div><b>Orari</b>Lun – Ven 11:00 – 19:00<br>Sabato 10:00 – 17:00<br>studiobonaccorso.it</div>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>
