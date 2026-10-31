@@ -22,6 +22,15 @@ import {
 } from "./Nad";
 import { NADIG_DURATION, NADIG_FPS, NadInstagram } from "./NadIG";
 import { ESTRO_DURATION, ESTRO_FPS, Estrogeni } from "./Estrogeni";
+import {
+  IV_DURATION,
+  IV_FPS,
+  IV_V_DURATION,
+  IV_YT_DURATION,
+  IvTherapy,
+  IvTherapyInstagram,
+  IvTherapyYouTube,
+} from "./IvTherapy";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -126,6 +135,9 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
       />
+      <Composition id="LongevaIvTherapy" component={IvTherapy} durationInFrames={IV_DURATION} fps={IV_FPS} width={1920} height={1080} />
+      <Composition id="LongevaIvTherapyYouTube" component={IvTherapyYouTube} durationInFrames={IV_YT_DURATION} fps={IV_FPS} width={1920} height={1080} />
+      <Composition id="LongevaIvTherapyInstagram" component={IvTherapyInstagram} durationInFrames={IV_V_DURATION} fps={IV_FPS} width={1080} height={1920} />
     </>
   );
 };

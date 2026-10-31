@@ -39,7 +39,11 @@ export type SfxName =
   | "draw"
   | "ding"
   | "rise"
-  | "powerdown";
+  | "powerdown"
+  | "glitch"
+  | "typewriter"
+  | "smoke"
+  | "tvon";
 
 // Master level for all effects, under the voice.
 const SFX_GAIN = 0.7;
