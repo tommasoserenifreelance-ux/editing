@@ -310,7 +310,8 @@ export const CrtMonitor: React.FC<{
   big: string;
   small?: string;
   smallAt?: number;
-}> = ({ big, small, smallAt = 12 }) => {
+  bigAt?: number; // frame at which the big word decodes (sync it to the voice)
+}> = ({ big, small, smallAt = 12, bigAt = 4 }) => {
   const frame = useCurrentFrame();
   const { width, height } = useVideoConfig();
   const zoom = interpolate(frame, [0, 90], [1, 1.08], clamp);
@@ -323,7 +324,7 @@ export const CrtMonitor: React.FC<{
         <div style={{ position: "absolute", left: W * 0.07, top: W * 0.06, right: W * 0.07, bottom: W * 0.12, borderRadius: W * 0.04, background: "#06140A", overflow: "hidden", boxShadow: "inset 0 0 60px rgba(0,0,0,0.9)" }}>
           <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", flexDirection: "column", gap: W * 0.02 }}>
             <div style={{ fontFamily: mont, fontWeight: 900, fontStyle: "italic", fontSize: W * 0.12, color: ref.crt, letterSpacing: "0.02em", textShadow: `0 0 ${W * 0.02}px ${ref.crt}, 0 0 ${W * 0.05}px ${ref.crt}88` }}>
-              {decode(big, frame, 4, 12)}
+              {decode(big, frame, bigAt, 12)}
             </div>
             {small ? (
               <div style={{ fontFamily: mont, fontWeight: 700, fontSize: W * 0.04, color: ref.crt, textAlign: "center", lineHeight: 1.15, whiteSpace: "pre-line", textShadow: `0 0 ${W * 0.012}px ${ref.crt}` }}>
@@ -334,7 +335,7 @@ export const CrtMonitor: React.FC<{
           <ScreenFx />
         </div>
       </div>
-      <Sfx at={4} name="typewriter" volume={0.35} />
+      <Sfx at={Math.min(bigAt, smallAt)} name="typewriter" volume={0.35} />
     </Room>
   );
 };
