@@ -3,6 +3,7 @@ import { continueRender, delayRender, staticFile } from "remotion";
 // Shared look for Dr.ssa Eleonora Piccolo's reels.
 export const serif = "Cormorant Garamond";
 export const sans = "Montserrat";
+export const inter = "Inter";
 
 // Fonts are bundled in public/fonts so rendering works offline.
 const FONTS: [string, string, string][] = [
@@ -11,6 +12,10 @@ const FONTS: [string, string, string][] = [
   [sans, "400", "montserrat-latin-400-normal"],
   [sans, "500", "montserrat-latin-500-normal"],
   [sans, "700", "montserrat-latin-700-normal"],
+  [inter, "400", "inter-latin-400-normal"],
+  [inter, "500", "inter-latin-500-normal"],
+  [inter, "600", "inter-latin-600-normal"],
+  [inter, "700", "inter-latin-700-normal"],
 ];
 
 const handle = delayRender("Loading fonts");
@@ -37,7 +42,8 @@ export const Signature: React.FC<{
   color: string;
   shadow?: string;
   opacity?: number;
-}> = ({ color, shadow, opacity = 1 }) => (
+  fontFamily?: string;
+}> = ({ color, shadow, opacity = 1, fontFamily = serif }) => (
   <div
     style={{
       position: "absolute",
@@ -47,10 +53,10 @@ export const Signature: React.FC<{
       opacity,
       textAlign: "center",
       color,
-      fontFamily: serif,
+      fontFamily,
       fontWeight: 600,
-      fontSize: 44,
-      letterSpacing: 2,
+      fontSize: fontFamily === serif ? 44 : 36,
+      letterSpacing: fontFamily === serif ? 2 : 1,
       textShadow: shadow,
     }}
   >

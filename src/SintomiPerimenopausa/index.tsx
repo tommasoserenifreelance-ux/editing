@@ -1,11 +1,22 @@
 import {
   AbsoluteFill,
+  Audio,
   Easing,
   interpolate,
   Sequence,
+  staticFile,
   useCurrentFrame,
 } from "remotion";
-import { colors, sans, serif, Signature } from "../EleonoraPiccolo/brand";
+import { colors as brand, inter, Signature } from "../EleonoraPiccolo/brand";
+
+// Pink variant of the brand palette for this reel.
+const colors = {
+  ...brand,
+  pink: "#F6DCE1",
+  rose: "#B8455A",
+  muted: "#8E6F78",
+  grid: "#EBC3CB",
+};
 
 export const SINTOMI_FPS = 30;
 
@@ -151,15 +162,16 @@ const Accent: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 
 const Title: React.FC<{ children: React.ReactNode; size?: number }> = ({
   children,
-  size = 82,
+  size = 64,
 }) => (
   <div
     style={{
       ...useAppear(),
-      fontFamily: serif,
-      fontWeight: 600,
+      fontFamily: inter,
+      fontWeight: 700,
       fontSize: size,
-      lineHeight: 1.05,
+      lineHeight: 1.12,
+      letterSpacing: -1,
       color: colors.plum,
     }}
   >
@@ -171,7 +183,7 @@ const Source: React.FC<{ delay?: number }> = ({ delay = 0 }) => (
   <div
     style={{
       ...useAppear(delay),
-      fontFamily: sans,
+      fontFamily: inter,
       fontSize: 22,
       color: colors.muted,
       marginTop: 10,
@@ -207,7 +219,7 @@ const Intro: React.FC = () => {
       <div
         style={{
           ...useAppear(10),
-          fontFamily: sans,
+          fontFamily: inter,
           fontWeight: 500,
           fontSize: 34,
           lineHeight: 1.4,
@@ -230,7 +242,7 @@ const Intro: React.FC = () => {
             <div key={color} style={{ height: 110 }}>
               <div
                 style={{
-                  fontFamily: sans,
+                  fontFamily: inter,
                   fontWeight: 700,
                   fontSize: 30,
                   color: colors.navy,
@@ -322,7 +334,7 @@ const BarRace: React.FC<{ bars: Bar[] }> = ({ bars }) => {
               position: "absolute",
               top: -34,
               left: tick === 0 ? 0 : -24,
-              fontFamily: sans,
+              fontFamily: inter,
               fontSize: 20,
               color: colors.muted,
             }}
@@ -341,7 +353,7 @@ const BarRace: React.FC<{ bars: Bar[] }> = ({ bars }) => {
               left: 0,
               right: 0,
               top: 20 + ranks[i] * ROW,
-              fontFamily: sans,
+              fontFamily: inter,
               color: colors.navy,
             }}
           >
@@ -374,7 +386,7 @@ const Subtitle: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div
     style={{
       ...useAppear(4),
-      fontFamily: sans,
+      fontFamily: inter,
       fontWeight: 500,
       fontSize: 28,
       color: colors.navy,
@@ -406,7 +418,7 @@ const Bridge: React.FC = () => (
     }}
   >
     <div style={{ textAlign: "center" }}>
-      <Title size={96}>
+      <Title size={76}>
         Ecco invece cosa
         <br />
         hanno riferito
@@ -428,7 +440,7 @@ const Actual: React.FC = () => (
     <div
       style={{
         ...useAppear(125),
-        fontFamily: sans,
+        fontFamily: inter,
         fontSize: 28,
         color: colors.navy,
         marginTop: 10,
@@ -465,7 +477,7 @@ const Stat: React.FC<{
     >
       <div
         style={{
-          fontFamily: sans,
+          fontFamily: inter,
           fontWeight: 500,
           fontSize: 112,
           color,
@@ -476,7 +488,7 @@ const Stat: React.FC<{
       </div>
       <div
         style={{
-          fontFamily: sans,
+          fontFamily: inter,
           fontWeight: 500,
           fontSize: 44,
           color: colors.navy,
@@ -490,7 +502,7 @@ const Stat: React.FC<{
 
 const Finale: React.FC = () => (
   <Scene>
-    <Title size={76}>E per le donne che sono in perimenopausa adesso:</Title>
+    <Title size={60}>E per le donne che sono in perimenopausa adesso:</Title>
     <div style={{ marginTop: 40 }}>
       <Stat value={95} label="spossatezza" color={colors.rose} delay={10} />
       <Stat value={93} label="stanchezza" color={colors.plum} delay={30} />
@@ -499,7 +511,7 @@ const Finale: React.FC = () => (
     <div
       style={{
         ...useAppear(80),
-        fontFamily: sans,
+        fontFamily: inter,
         fontSize: 36,
         lineHeight: 1.35,
         color: colors.navy,
@@ -511,9 +523,10 @@ const Finale: React.FC = () => (
     <div
       style={{
         ...useAppear(105),
-        fontFamily: serif,
-        fontWeight: 600,
-        fontSize: 110,
+        fontFamily: inter,
+        fontWeight: 700,
+        fontSize: 92,
+        letterSpacing: -2,
         color: colors.plum,
         marginTop: 26,
       }}
@@ -534,7 +547,7 @@ export const SintomiPerimenopausa: React.FC = () => {
   ];
   let from = 0;
   return (
-    <AbsoluteFill style={{ backgroundColor: colors.cream }}>
+    <AbsoluteFill style={{ backgroundColor: colors.pink }}>
       {scenes.map(([duration, scene]) => {
         const s = (
           <Sequence key={from} from={from} durationInFrames={duration}>
@@ -544,7 +557,8 @@ export const SintomiPerimenopausa: React.FC = () => {
         from += duration;
         return s;
       })}
-      <Signature color={colors.plum} />
+      <Signature color={colors.plum} fontFamily={inter} />
+      <Audio src={staticFile("audio/sintomi-perimenopausa.m4a")} />
     </AbsoluteFill>
   );
 };
