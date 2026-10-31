@@ -138,7 +138,8 @@ export const decode = (text: string, frame: number, start: number, dur = 9) => {
 /* Smoke and glitch transitions                                          */
 /* ------------------------------------------------------------------ */
 
-/** White smoke that billows over the frame and clears (≈ 1 s). */
+/** Smoke that billows across the frame and clears (≈ 1 s): two layers of
+ * drifting noise clouds whose density rises and falls. */
 export const Smoke: React.FC<{ at?: number; dur?: number; sound?: boolean }> = ({
   at = 0,
   dur = 30,
@@ -147,29 +148,35 @@ export const Smoke: React.FC<{ at?: number; dur?: number; sound?: boolean }> = (
   const frame = useCurrentFrame();
   const { width, height } = useVideoConfig();
   const t = (frame - at) / dur;
-  if (t < 0 || t > 1) return sound ? <Sfx at={at} name="smoke" volume={0.45} /> : null;
-  const cover = Math.sin(Math.PI * t); // 0 → 1 → 0
-  const id = `smoke${at}`;
-  return (
-    <AbsoluteFill style={{ pointerEvents: "none" }}>
-      <svg width={width} height={height} style={{ position: "absolute" }}>
-        <filter id={id} x="-20%" y="-20%" width="140%" height="140%">
-          <feTurbulence type="fractalNoise" baseFrequency="0.006" numOctaves="4" seed={7} result="n">
-            <animate attributeName="baseFrequency" dur="1s" values="0.006;0.007" />
-          </feTurbulence>
-          <feDisplacementMap in="SourceGraphic" in2="n" scale={260 + 200 * t} xChannelSelector="R" yChannelSelector="G" />
-          <feGaussianBlur stdDeviation={18} />
+  const visible = t >= 0 && t <= 1;
+  const cover = visible ? Math.sin(Math.PI * t) : 0; // 0 → 1 → 0
+  const layer = (seed: number, freq: string, drift: number, gain: number) => {
+    const id = `smoke${at}_${seed}`;
+    // alpha = 3·noise + offset: the offset sweeps from "almost none" to "dense"
+    const off = -1.85 + 1.4 * cover * gain; // soft ramp: wisps → thick cloud at the peak
+    return (
+      <g transform={`translate(${-width * 0.3 + drift * t * width} ${-height * 0.1 * t})`}>
+        <filter id={id} x="0" y="0" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency={freq} numOctaves="4" seed={seed} />
+          <feColorMatrix type="matrix" values={`0 0 0 0 0.86  0 0 0 0 0.86  0 0 0 0 0.88  1.9 0 0 0 ${off}`} />
+          <feGaussianBlur stdDeviation="22" />
         </filter>
-        <g filter={`url(#${id})`} opacity={Math.min(1, cover * 1.4)}>
-          {[0, 1, 2, 3, 4, 5].map((i) => {
-            const cx = width * (0.15 + 0.14 * i + 0.1 * Math.sin(i * 2.1 + t * 3));
-            const cy = height * (0.55 + 0.25 * Math.sin(i * 1.7) - t * 0.2);
-            return <circle key={i} cx={cx} cy={cy} r={Math.max(width, height) * (0.12 + 0.5 * cover)} fill="#E8E8EA" />;
-          })}
-        </g>
-      </svg>
+        <rect x={0} y={0} width={width * 1.6} height={height * 1.3} filter={`url(#${id})`} />
+      </g>
+    );
+  };
+  return (
+    <>
+      {visible ? (
+        <AbsoluteFill style={{ pointerEvents: "none" }}>
+          <svg width={width} height={height} style={{ position: "absolute" }}>
+            {layer(3, "0.0016 0.0026", 0.35, 1)}
+            {layer(11, "0.0028 0.0042", -0.25, 0.8)}
+          </svg>
+        </AbsoluteFill>
+      ) : null}
       {sound ? <Sfx at={at} name="smoke" volume={0.45} /> : null}
-    </AbsoluteFill>
+    </>
   );
 };
 
@@ -439,8 +446,10 @@ export const TornCollage: React.FC<{
 }> = ({ items, word }) => {
   const frame = useCurrentFrame();
   const { fps, width, height } = useVideoConfig();
+  const push = interpolate(frame, [0, 200], [1, 1.08], clamp);
   return (
     <Room>
+      <AbsoluteFill style={{ transform: `scale(${push})` }}>
       {items.map((it, i) => {
         const p = spring({ frame: frame - it.at, fps, config: { damping: 13, mass: 0.7 } });
         const w = width * it.w;
@@ -453,6 +462,7 @@ export const TornCollage: React.FC<{
           </div>
         );
       })}
+      </AbsoluteFill>
       {word ? <BigWord text={word.text} at={word.at} color={word.color} top={0.72} /> : null}
     </Room>
   );

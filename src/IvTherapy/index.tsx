@@ -45,7 +45,7 @@ export const IV_DURATION = sec(VOICE_END + 0.3);
 /* ------------------------------------------------------------------ */
 
 const ANCHOR_H = "45% 9%";
-const ANCHOR_V = "50% 8%";
+const ANCHOR_V = "50% 4%";
 
 const Speaker: React.FC<{
   start: number;
@@ -60,7 +60,7 @@ const Speaker: React.FC<{
       punch={punch.map((w) => wt(w, start) - start)}
       src={vertical ? "iv/clip_v.mp4" : "iv/clip.mp4"}
       anchor={vertical ? ANCHOR_V : ANCHOR_H}
-      closeScale={vertical ? 1.3 : 1.75}
+      closeScale={vertical ? 1.18 : 1.75}
     />
     <AbsoluteFill style={{ background: "linear-gradient(180deg, transparent 55%, rgba(0,0,0,0.45))" }} />
     <Vignette strength={0.45} />
@@ -106,14 +106,15 @@ const SCENES: Scene[] = [
       <TornCollage
         items={[
           { src: "iv/news1.png", at: 2, w: 0.6, x: 0.36, y: 0.06, rot: -5 },
-          { src: "iv/news2.png", at: at(t0, "rischio"), w: 0.5, x: 0.68, y: 0.22, rot: 4 },
-          { src: "iv/news3.png", at: at(t0, "servono"), w: 0.62, x: 0.42, y: 0.5, rot: -2 },
+          { src: "iv/news2.png", at: at(t0, "moda"), w: 0.5, x: 0.68, y: 0.22, rot: 4 },
+          { src: "iv/news3.png", at: at(t0, "ridimensionare"), w: 0.62, x: 0.42, y: 0.5, rot: -2 },
         ]}
       />
     ),
   },
   {
-    from: wt("o", 9.9),
+    // the speaker carries "o le si tratta", the giant words land on "da miracolo"
+    from: wt("da", 10.8),
     smoke: true,
     render: (t0) => (
       <Room>
@@ -315,15 +316,16 @@ const V_SCENES: Scene[] = [
     render: (t0) => (
       <TornCollage
         items={[
-          { src: "iv/news1.png", at: 2, w: 0.9, x: 0.5, y: 0.14, rot: -5 },
-          { src: "iv/news2.png", at: at(t0, "rischio"), w: 0.85, x: 0.5, y: 0.36, rot: 4 },
-          { src: "iv/news3.png", at: at(t0, "servono"), w: 0.9, x: 0.5, y: 0.6, rot: -2 },
+          { src: "iv/news1.png", at: 2, w: 0.96, x: 0.5, y: 0.4, rot: -5 },
+          { src: "iv/news2.png", at: at(t0, "moda"), w: 0.92, x: 0.52, y: 0.1, rot: 4 },
+          { src: "iv/news3.png", at: at(t0, "ridimensionare"), w: 0.96, x: 0.48, y: 0.62, rot: -3 },
         ]}
       />
     ),
   },
   {
-    from: wt("o", 9.9),
+    // the speaker carries "o le si tratta", the giant words land on "da miracolo"
+    from: wt("da", 10.8),
     smoke: true,
     render: (t0) => (
       <Room>
