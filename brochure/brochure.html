@@ -69,12 +69,6 @@
   .p3 { padding: 16mm 18mm 0; }
   .p3 h2 { font-size: 20pt; margin-top: 2mm; }
   .p3 .intro { margin-top: 3mm; font-size: 9.4pt; max-width: 160mm; }
-  .evid { margin-top: 7mm; display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
-  .card-ev { background: var(--navy); color: #fff; display: grid; grid-template-columns: 34mm 1fr; min-height: 42mm; }
-  .card-ev .t { padding: 5mm 5mm 4mm; }
-  .card-ev h4 { font-weight: 500; text-transform: uppercase; letter-spacing: .06em; font-size: 10pt; }
-  .card-ev p { font-size: 8.4pt; color: rgba(255,255,255,.82); margin-top: 1.5mm; line-height: 1.45; }
-  .card-ev .tag { margin-top: 2mm; font-size: 6.8pt; letter-spacing: .2em; text-transform: uppercase; color: var(--mid); }
   .sez { margin-top: 7mm; display: flex; align-items: center; gap: 4mm; }
   .sez .h { font-size: 11pt; white-space: nowrap; }
   .sez::after { content: ""; flex: 1; height: .3mm; background: var(--mid); }
@@ -82,13 +76,21 @@
   .serv { background: var(--powder); padding: 3.6mm 4mm; }
   .serv h5 { font-weight: 500; text-transform: uppercase; color: var(--navy); font-size: 8.4pt; letter-spacing: .06em; }
   .serv p { font-size: 7.9pt; margin-top: .8mm; line-height: 1.4; }
-  .grid-foto { margin-top: 4mm; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: 28mm; gap: 3mm; }
-  .grid-foto img { height: 28mm; }
-  .duo { margin-top: 4mm; display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
-  .duo .item { display: grid; grid-template-columns: 30mm 1fr; gap: 4mm; align-items: start; }
-  .duo .item .f { height: 30mm; overflow: hidden; }
-  .duo h5 { font-weight: 500; text-transform: uppercase; color: var(--navy); font-size: 9pt; letter-spacing: .06em; }
-  .duo p { font-size: 8.2pt; margin-top: 1mm; line-height: 1.45; }
+  .lab { margin-top: 6mm; background: var(--navy); color: #fff; display: grid; grid-template-columns: 48mm 1fr; }
+  .lab-img { min-height: 0; overflow: hidden; }
+  .lab-body { padding: 5.5mm 6mm 5mm; }
+  .lab .tag { font-size: 6.8pt; letter-spacing: .2em; text-transform: uppercase; color: var(--mid); }
+  .lab h4 { font-weight: 500; text-transform: uppercase; letter-spacing: .08em; font-size: 14pt; margin-top: 1mm; }
+  .lab-intro { font-size: 8.6pt; color: rgba(255,255,255,.85); margin-top: 1.5mm; line-height: 1.45; }
+  .lab-grid { margin-top: 3.5mm; display: grid; grid-template-columns: 1fr 1fr; gap: 3mm 5mm; }
+  .lab-grid div { border-top: .3mm solid rgba(255,255,255,.3); padding-top: 2mm; }
+  .lab-grid h5 { font-weight: 500; text-transform: uppercase; letter-spacing: .06em; font-size: 8pt; }
+  .lab-grid p { font-size: 7.8pt; color: rgba(255,255,255,.8); margin-top: .6mm; line-height: 1.4; }
+  .duo { margin-top: 4mm; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; }
+  .duo .item { display: grid; grid-template-columns: 1fr; gap: 2.5mm; align-content: start; }
+  .duo .item .f { height: 28mm; overflow: hidden; }
+  .duo h5 { font-weight: 500; text-transform: uppercase; color: var(--navy); font-size: 8.4pt; letter-spacing: .06em; }
+  .duo p { font-size: 7.9pt; margin-top: 1mm; line-height: 1.45; }
 
   /* ---------- 4 · TEAM + CONTATTI ---------- */
   .p4 { padding: 16mm 18mm 0; }
@@ -188,21 +190,17 @@
   <h2 class="h">Prevenzione, diagnosi e cura</h2>
   <p class="intro">La medicina funzionale adotta una visione olistica del corpo: il sintomo è il punto di partenza per individuare le cause del disagio, con un metodo personalizzato che agisce sui processi di invecchiamento.</p>
 
-  <div class="evid">
-    <div class="card-ev">
-      <div><img src="img/analisi.jpg" alt="" style="object-position: 55% 50%"></div>
-      <div class="t">
-        <h4>Analisi del sangue</h4>
-        <p>Prelievi ed esami ematochimici in studio per check-up personalizzati, profilo ormonale e test dello stress ossidativo.</p>
-        <p class="tag">Check-up &amp; prevenzione</p>
-      </div>
-    </div>
-    <div class="card-ev">
-      <div><img src="img/team_piccolo.jpg" alt=""></div>
-      <div class="t">
-        <h4>Visita ginecologica</h4>
-        <p>Con la Dott.ssa Eleonora Piccolo, ginecologa esperta in ormoni bioidentici: menopausa, ciclo e salute ormonale femminile.</p>
-        <p class="tag">Salute della donna</p>
+  <div class="lab">
+    <div class="lab-img"><img src="img/analisi.jpg" alt="" style="object-position: 55% 50%"></div>
+    <div class="lab-body">
+      <p class="tag">Laboratorio analisi · prelievi in sede</p>
+      <h4>Bonaccorso Lab</h4>
+      <p class="lab-intro">Prelievi e analisi del sangue direttamente in studio, con i risultati letti e integrati nel tuo percorso di medicina funzionale e della longevità.</p>
+      <div class="lab-grid">
+        <div><h5>Prelievi e analisi del sangue</h5><p>Esami ematochimici, check-up completi, profilo ormonale e tiroideo.</p></div>
+        <div><h5>Prelievi della longevità</h5><p>Pannelli avanzati sui marcatori dell'invecchiamento per prevenire per tempo.</p></div>
+        <div><h5>Infiammazione e citochine</h5><p>Dosaggio delle citochine infiammatorie e dei marcatori dell'infiammazione cronica.</p></div>
+        <div><h5>Valutazione cardiovascolare</h5><p>Profilo lipidico avanzato e marcatori del rischio cardiovascolare.</p></div>
       </div>
     </div>
   </div>
@@ -212,24 +210,18 @@
     <div class="serv"><h5>Ossigeno-ozono terapia</h5><p>Effetti antinfiammatori e antiossidanti per dolore e prevenzione.</p></div>
     <div class="serv"><h5>Flebo multivitaminiche</h5><p>Vitamine e minerali per energia e difese immunitarie.</p></div>
     <div class="serv"><h5>Ormoni bioidentici</h5><p>Riequilibrio ormonale personalizzato per donna e uomo.</p></div>
-    <div class="serv"><h5>Stress ossidativo</h5><p>Valutazione e test dello stress ossidativo con prelievo.</p></div>
+    <div class="serv"><h5>Stress ossidativo</h5><p>Test dello stress ossidativo con prelievo presso Bonaccorso Lab.</p></div>
     <div class="serv"><h5>PRP</h5><p>Plasma ricco di piastrine per la rigenerazione dei tessuti.</p></div>
     <div class="serv"><h5>Idrocolonterapia</h5><p>Riequilibrio della flora e del benessere intestinale.</p></div>
     <div class="serv"><h5>Terapia chelante</h5><p>Eliminazione dei metalli pesanti dall'organismo.</p></div>
     <div class="serv"><h5>Neuralterapia</h5><p>Anestetico locale a basso dosaggio per dolore e infiammazione.</p></div>
     <div class="serv"><h5>Terapia del dolore</h5><p>Percorsi su misura per il dolore acuto e cronico.</p></div>
   </div>
-  <div class="grid-foto">
-    <img src="img/ozono.jpg" alt="" style="object-position: 60% 40%">
-    <img src="img/flebo.jpg" alt="" style="object-position: 50% 30%">
-    <img src="img/dephura.jpg" alt="" style="object-position: 30% 50%">
-    <img src="img/prp.jpg" alt="" style="object-position: 50% 45%">
-  </div>
-
-  <div class="sez"><span class="h">Estetica &amp; nutrizione</span></div>
+  <div class="sez"><span class="h">Donna, estetica &amp; nutrizione</span></div>
   <div class="duo">
-    <div class="item"><div class="f"><img src="img/estetica.jpg" alt=""></div><div><h5>Medicina estetica di corpo e viso</h5><p>Cellulite, accumuli adiposi, lassità della pelle, macchie, cicatrici e segni dell'invecchiamento, con tecnologie di ultima generazione.</p></div></div>
-    <div class="item"><div class="f"><img src="img/liposcultura.jpg" alt=""></div><div><h5>Liposcultura alimentare</h5><p>Un approccio innovativo e personalizzato alla gestione del peso e al miglioramento della composizione corporea.</p></div></div>
+    <div class="item"><div class="f"><img src="img/team_piccolo.jpg" alt="" style="object-position: 50% 15%"></div><div><h5>Visita ginecologica</h5><p>Con la Dott.ssa Eleonora Piccolo, ginecologa esperta in ormoni bioidentici: menopausa, ciclo e salute ormonale.</p></div></div>
+    <div class="item"><div class="f"><img src="img/estetica.jpg" alt=""></div><div><h5>Medicina estetica corpo e viso</h5><p>Cellulite, adiposità, lassità cutanea, macchie e segni dell'invecchiamento.</p></div></div>
+    <div class="item"><div class="f"><img src="img/liposcultura.jpg" alt=""></div><div><h5>Liposcultura alimentare</h5><p>Gestione personalizzata del peso e della composizione corporea.</p></div></div>
   </div>
   <div class="footer"><span>Studio Bonaccorso</span><span>03</span></div>
 </section>
