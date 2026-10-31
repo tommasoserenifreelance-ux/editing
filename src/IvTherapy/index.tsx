@@ -138,7 +138,7 @@ const SCENES: Scene[] = [
   { from: wt("che", 54.3), speaker: true, render: th("wide") },
   { from: wt("per", 58.3), render: lineup },
   { from: wt("In", 63.9), speaker: true, render: th("close", ["vezzo", "migliore"]) },
-  { from: wt("È", 69.7), render: (t0) => <Dossier doc="iv/news3.png" stamp="SOLIDO" stampAt={at(t0, "solido")} /> },
+  { from: wt("È", 69.7), bars: true, render: (t0) => <CrtMonitor big="SOLIDO" small={"RAZIONALE\nSCIENTIFICO"} smallAt={at(t0, "razionale")} /> },
   { from: wt("E", 73.5), speaker: true, render: th("wide", ["vero", "generica"]) },
   { from: wt("la", 80.9), smoke: true, render: (t0) => <Room><BigWord text="PERSONALIZZAZIONE" at={at(t0, "personalizzazione")} color={ref.yellow} top={0.48} /></Room> },
   {
@@ -252,7 +252,7 @@ const IntroTitle: React.FC = () => {
   const k = interpolate(frame, [t0, t0 + 8], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   return (
     <AbsoluteFill>
-      <OffthreadVideo src={staticFile("iv/intro_bg.mp4")} />
+      <OffthreadVideo src={staticFile("iv/intro_bg.mp4")} volume={0.75} />
       <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
         <div style={{ fontFamily: anton, fontSize: 104, color: "#fff", letterSpacing: "0.01em", opacity: k, transform: `scale(${0.96 + 0.04 * k})`, textShadow: "0 4px 18px rgba(0,0,0,0.5)" }}>
           IV THERAPY
