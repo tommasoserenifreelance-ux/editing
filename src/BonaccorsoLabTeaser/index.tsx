@@ -156,16 +156,16 @@ const Hint: React.FC = () => (
             ...useRise(20),
             fontFamily: sans,
             fontWeight: 300,
-            fontSize: 84,
-            lineHeight: 1.15,
+            fontSize: 66,
+            lineHeight: 1.2,
             color: colors.white,
           }}
         >
-          Lo Studio
+          Lo Studio cresce
           <br />
-          cresce
+          e diventa anche
           <br />
-          e diventa…
+          un laboratorio…
         </div>
       </div>
       <div
@@ -173,17 +173,14 @@ const Hint: React.FC = () => (
           ...useRise(70),
           fontFamily: sans,
           fontWeight: 500,
-          fontSize: 96,
-          lineHeight: 1.1,
-          letterSpacing: 2,
+          lineHeight: 1,
           textTransform: "uppercase",
           color: colors.white,
           marginTop: 80,
         }}
       >
-        anche un
-        <br />
-        laboratorio
+        <div style={{ fontSize: 66, letterSpacing: 8 }}>Studio Bonaccorso</div>
+        <div style={{ fontSize: 230, letterSpacing: 12, marginTop: 10 }}>Lab</div>
       </div>
       <div
         style={{
