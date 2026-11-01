@@ -165,7 +165,7 @@ const Hint: React.FC = () => (
           <br />
           e diventa anche
           <br />
-          un laboratorio…
+          un centro prelievi…
         </div>
       </div>
       <div
