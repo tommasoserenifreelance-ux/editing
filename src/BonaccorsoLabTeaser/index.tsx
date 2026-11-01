@@ -15,7 +15,7 @@ import { colors, sans } from "./theme";
 // the studio has become a lab, without revealing the service yet.
 
 const INTRO = 105;
-const HINT = 165;
+const HINT = 225;
 const OUTRO = 165;
 const TRANSITION = 15;
 
@@ -163,9 +163,9 @@ const Hint: React.FC = () => (
         >
           Lo Studio
           <br />
-          si è
+          cresce
           <br />
-          trasformato…
+          e diventa…
         </div>
       </div>
       <div
@@ -181,19 +181,26 @@ const Hint: React.FC = () => (
           marginTop: 80,
         }}
       >
-        in un laboratorio
+        anche un
+        <br />
+        laboratorio
       </div>
       <div
         style={{
           ...useRise(100),
           fontFamily: sans,
           fontWeight: 400,
-          fontSize: 48,
+          fontSize: 46,
+          lineHeight: 1.35,
           color: colors.mid,
           marginTop: 40,
         }}
       >
-        Ma non ti diciamo ancora tutto.
+        …e non solo: tanti altri servizi
+        <br />
+        ti aspettano. Ma non ti diciamo
+        <br />
+        ancora tutto.
       </div>
     </AbsoluteFill>
   </AbsoluteFill>
