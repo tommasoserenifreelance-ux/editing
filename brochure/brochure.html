@@ -47,23 +47,20 @@
   .cover .base { position: absolute; left: 0; right: 0; bottom: 0; height: 22mm; background: var(--navy); color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 18mm; font-size: 8.5pt; letter-spacing: .08em; }
 
   /* ---------- 2 · STUDIO + DOTTORE ---------- */
-  .p2 .alto { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 100%; height: 128mm; }
+  .p2 .alto { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 100%; height: 108mm; }
   .p2 .alto > div { min-height: 0; overflow: hidden; }
-  .p2 .alto .txt { background: var(--powder); padding: 15mm 12mm 8mm 18mm; }
-  .p2 .alto .txt p { margin-top: 3.5mm; font-size: 9.6pt; }
-  .p2 h2 { font-size: 20pt; margin-top: 2.5mm; }
+  .p2 .alto .txt { background: var(--powder); padding: 12mm 10mm 6mm 18mm; }
+  .p2 .alto .txt p { margin-top: 2.6mm; font-size: 8.9pt; line-height: 1.5; }
+  .p2 h2 { font-size: 18pt; margin-top: 2mm; }
   .p2 .metodo { display: grid; grid-template-columns: repeat(5, 1fr); margin: 0 18mm; border-bottom: .3mm solid var(--powder); }
-  .p2 .metodo div { padding: 6mm 2mm; text-align: center; font-size: 7.5pt; letter-spacing: .18em; text-transform: uppercase; color: var(--navy); border-right: .3mm solid var(--powder); }
+  .p2 .metodo div { padding: 3.5mm 2mm; text-align: center; font-size: 7.5pt; letter-spacing: .18em; text-transform: uppercase; color: var(--navy); border-right: .3mm solid var(--powder); }
   .p2 .metodo div:last-child { border-right: 0; }
-  .p2 .metodo b { display: block; font-weight: 300; font-size: 15pt; color: var(--slate); letter-spacing: 0; margin-bottom: 1mm; }
-  .p2 .dott { display: grid; grid-template-columns: 62mm 1fr; gap: 10mm; padding: 10mm 18mm 0; }
-  .p2 .dott .foto { height: 78mm; }
-  .p2 .dott h3 { font-size: 15pt; }
-  .p2 .dott .ruolo { font-size: 8.5pt; color: var(--slate); letter-spacing: .14em; text-transform: uppercase; margin-top: 1mm; }
-  .p2 .dott p { margin-top: 3mm; font-size: 9.2pt; }
-  .p2 .dott ul { margin-top: 3mm; list-style: none; font-size: 8.6pt; }
-  .p2 .dott li { padding: 1.4mm 0 1.4mm 5mm; border-bottom: .3mm solid var(--powder); position: relative; }
-  .p2 .dott li::before { content: ""; position: absolute; left: 0; top: 3.2mm; width: 2mm; height: 2mm; border-radius: 50%; background: var(--mid); }
+  .p2 .metodo b { display: block; font-weight: 300; font-size: 13pt; color: var(--slate); letter-spacing: 0; margin-bottom: 1mm; }
+  .p2 .dott { padding: 7mm 18mm 0; }
+  .p2 .dott .foto { float: left; width: 50mm; height: 68mm; margin: 0 7mm 3mm 0; overflow: hidden; }
+  .p2 .dott h3 { font-size: 14pt; }
+  .p2 .dott .ruolo { font-size: 8pt; color: var(--slate); letter-spacing: .14em; text-transform: uppercase; margin-top: .6mm; }
+  .p2 .dott p:not(.kicker):not(.ruolo) { margin-top: 2mm; font-size: 8.3pt; line-height: 1.48; text-align: justify; hyphens: auto; }
 
   /* ---------- 3 · SERVIZI ---------- */
   .p3 { padding: 16mm 18mm 0; }
@@ -76,6 +73,8 @@
   .serv { background: var(--powder); padding: 3.6mm 4mm; }
   .serv h5 { font-weight: 500; text-transform: uppercase; color: var(--navy); font-size: 8.4pt; letter-spacing: .06em; }
   .serv p { font-size: 7.9pt; margin-top: .8mm; line-height: 1.4; }
+  .serv.span3 { grid-column: span 3; display: flex; align-items: baseline; gap: 4mm; }
+  .serv.span3 p { margin-top: 0; }
   .lab { margin-top: 6mm; background: var(--navy); color: #fff; display: grid; grid-template-columns: 48mm 1fr; }
   .lab-img { min-height: 0; overflow: hidden; }
   .lab-body { padding: 5.5mm 6mm 5mm; }
@@ -95,12 +94,12 @@
   /* ---------- 4 · TEAM + CONTATTI ---------- */
   .p4 { padding: 16mm 18mm 0; }
   .p4 h2 { font-size: 20pt; margin-top: 2mm; }
-  .team { margin-top: 10mm; display: grid; grid-template-columns: repeat(3, 1fr); gap: 9mm 6mm; }
-  .membro { display: grid; grid-template-columns: 25mm 1fr; gap: 3mm; align-items: center; }
+  .team { margin-top: 12mm; display: grid; grid-template-columns: repeat(5, 1fr); gap: 11mm 4mm; }
+  .membro { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 2.5mm; }
   .membro .f img { object-position: 50% 12%; }
-  .membro .f { width: 25mm; height: 25mm; border-radius: 50%; overflow: hidden; background: var(--cielo); }
-  .membro b { display: block; font-weight: 500; color: var(--navy); font-size: 9.2pt; line-height: 1.25; }
-  .membro span { display: block; font-size: 8pt; color: var(--slate); line-height: 1.3; margin-top: .6mm; }
+  .membro .f { flex: none; width: 30mm; height: 30mm; border-radius: 50%; overflow: hidden; background: var(--cielo); }
+  .membro b { display: block; font-weight: 500; color: var(--navy); font-size: 9pt; line-height: 1.25; }
+  .membro span { display: block; font-size: 7.9pt; color: var(--slate); line-height: 1.3; margin-top: .6mm; }
   .contatti { position: absolute; left: 0; right: 0; bottom: 0; height: 124mm; background: var(--navy); color: #fff; padding: 14mm 18mm 0; }
   .contatti .msg { font-size: 13pt; font-weight: 300; color: #fff; letter-spacing: .02em; }
   .contatti .cols { margin-top: 9mm; display: grid; grid-template-columns: 1.25fr 1fr 1fr; gap: 8mm; }
@@ -121,8 +120,8 @@
   html.bleed .page { margin: 0; overflow: visible; break-after: auto; background: transparent; }
   html.bleed .cover .img { inset: -3mm -3mm auto -3mm; height: 193mm; }
   html.bleed .cover .base { left: -3mm; right: -3mm; bottom: -3mm; height: 25mm; padding: 0 21mm 3mm; }
-  html.bleed .p2 .alto { margin: -3mm -3mm 0; height: 131mm; }
-  html.bleed .p2 .alto .txt { padding: 18mm 12mm 8mm 21mm; }
+  html.bleed .p2 .alto { margin: -3mm -3mm 0; height: 111mm; }
+  html.bleed .p2 .alto .txt { padding: 15mm 10mm 6mm 21mm; }
   html.bleed .contatti { left: -3mm; right: -3mm; bottom: -3mm; height: 127mm; padding: 14mm 21mm 0; }
   html.bleed .contatti .logo { left: 21mm; bottom: 16mm; }
   html.bleed .contatti .legal { right: 21mm; bottom: 16mm; }
@@ -166,20 +165,17 @@
     <div><b>05</b>Cutaneo</div>
   </div>
   <div class="dott">
-    <div class="foto"><img src="img/dottore.jpg" alt="Dott. Michele Bonaccorso" style="object-position: 40% 30%"></div>
-    <div>
-      <p class="kicker">Il fondatore</p>
-      <h3 class="h" style="margin-top:2mm">Dott. Michele Bonaccorso</h3>
-      <p class="ruolo">Medico funzionale e della longevità</p>
-      <p>Specializzato in anestesia e rianimazione, ossigeno-ozonoterapia e medicina funzionale. Da oltre 10 anni pratica con successo l'ossigeno-ozonoterapia per la cura delle patologie muscolo-scheletriche, nel trattamento delle malattie neurodegenerative e infiammatorie, e come tecnica di prevenzione e rallentamento dell'invecchiamento.</p>
-      <ul>
-        <li>Laurea con il massimo dei voti, Università degli Studi di Catania</li>
-        <li>Collaborazione con il Prof. Franzini, presidente SIOOT</li>
-        <li>Scuola di medicina antiaging AMIA · Diploma AIMF Health</li>
-        <li>Master di II livello in Terapia del dolore, Università di Parma</li>
-        <li>Già responsabile di terapia del dolore, Istituto Ospedaliero di Castellanza</li>
-      </ul>
-    </div>
+    <div class="foto"><img src="img/dottore.jpg" alt="Dott. Michele Bonaccorso" style="object-position: 50% 20%"></div>
+    <p class="kicker">Il fondatore</p>
+    <h3 class="h" style="margin-top:2mm">Dott. Michele Bonaccorso</h3>
+    <p class="ruolo">Medico funzionale e della longevità</p>
+    <p>Il dottor Michele Bonaccorso è medico anestesista, specializzato in medicina funzionale e della longevità, con particolare riferimento all'ossigeno-ozonoterapia e alla terapia del dolore. Il suo virtuoso percorso di studi gli ha permesso di essere oggi tra i più qualificati esponenti di medicina funzionale e della longevità in Italia.</p>
+    <p>Si è laureato con il massimo dei voti presso l'Università degli Studi di Catania, con una tesi dal titolo "Dolore da fratture vertebrali osteoporotiche: la cifoplastica".</p>
+    <p>Da oltre 10 anni pratica con successo l'ossigeno-ozonoterapia per la cura delle patologie muscolo-scheletriche, nel trattamento delle malattie neurodegenerative e infiammatorie, e come tecnica di prevenzione e rallentamento dell'invecchiamento.</p>
+    <p>Ha frequentato la scuola di medicina antiaging AMIA (Associazione Medici Italiani Antiaging). Ha conseguito il diploma presso la scuola dell'AIMF HEALTH (Associazione Italiana di Medicina Funzionale), diventando medico funzionalista, e ha conseguito il Master di II livello in Terapia del Dolore presso l'Università degli Studi di Parma. Ha ricoperto il ruolo di responsabile della terapia del dolore presso l'Istituto Ospedaliero di Castellanza del gruppo Multimedica.</p>
+    <p>Il dottor Bonaccorso segue con costanza congressi nazionali e internazionali e partecipa regolarmente alle principali fiere di settore negli Stati Uniti, per rimanere sempre aggiornato sulle ultime novità in campo funzionale e antiaging. È relatore invitato a congressi ed eventi dedicati alla longevità, tra cui il Kalemana Festival (4.500 partecipanti). È inoltre fondatore del Longevity Tour (500 partecipanti), ed è frequentatore abituale dell'A4M (American Academy of Anti-Aging Medicine), il congresso di medicina della longevità più importante al mondo.</p>
+    <p>Sui social il dottor Bonaccorso porta la medicina della longevità a un pubblico sempre più ampio: il suo profilo Instagram conta oltre 130.000 follower e genera in media 3 milioni di visualizzazioni mensili. È ospite frequente di podcast dedicati alla salute e al benessere, ed è stato protagonista de La Clinica della Longevità, in onda su Real Time.</p>
+    <p>Dalla sua volontà è nato lo Studio Bonaccorso, un luogo in cui si seguono i principi della medicina funzionale e antiaging, secondo cui il paziente va trattato e curato come un unicum, valutandolo nella sua totalità. L'obiettivo è promuovere la prevenzione, stimolare i processi naturali di rigenerazione e rallentare l'invecchiamento cellulare.</p>
   </div>
   <div class="footer"><span>Studio Bonaccorso</span><span>02</span></div>
 </section>
@@ -212,10 +208,11 @@
     <div class="serv"><h5>Ormoni bioidentici</h5><p>Riequilibrio ormonale personalizzato per donna e uomo.</p></div>
     <div class="serv"><h5>Stress ossidativo</h5><p>Test dello stress ossidativo con prelievo presso Studio Bonaccorso Lab.</p></div>
     <div class="serv"><h5>PRP</h5><p>Plasma ricco di piastrine per la rigenerazione dei tessuti.</p></div>
+    <div class="serv"><h5>Esosomi autologhi</h5><p>Vescicole rigenerative ottenute dal proprio sangue per pelle e tessuti.</p></div>
     <div class="serv"><h5>Idrocolonterapia</h5><p>Riequilibrio della flora e del benessere intestinale.</p></div>
     <div class="serv"><h5>Terapia chelante</h5><p>Eliminazione dei metalli pesanti dall'organismo.</p></div>
     <div class="serv"><h5>Neuralterapia</h5><p>Anestetico locale a basso dosaggio per dolore e infiammazione.</p></div>
-    <div class="serv"><h5>Terapia del dolore</h5><p>Percorsi su misura per il dolore acuto e cronico.</p></div>
+    <div class="serv span3"><h5>Terapia del dolore</h5><p>Percorsi su misura per il dolore acuto e cronico.</p></div>
   </div>
   <div class="sez"><span class="h">Donna, estetica &amp; nutrizione</span></div>
   <div class="duo">
@@ -238,6 +235,7 @@
     <div class="membro"><div class="f"><img src="img/team_galasso.jpg" alt=""></div><div><b>Dott. Valerio Galasso</b><span>Nutrizione per endometriosi</span></div></div>
     <div class="membro"><div class="f"><img src="img/team_mangini.jpg" alt=""></div><div><b>Dott. Stefano Mangini</b><span>Cardiochirurgia · Lipedema</span></div></div>
     <div class="membro"><div class="f"><img src="img/team_lacagnina.jpg" alt=""></div><div><b>Dott. Stefano Lacagnina</b><span>Idrocolonterapia Dephura</span></div></div>
+    <div class="membro"><div class="f"><img src="img/team_neroni.jpg" alt=""></div><div><b>Dott.ssa Elena Neroni</b><span>Idrocolonterapia Dephura</span></div></div>
     <div class="membro"><div class="f"><img src="img/team_lombardi.jpg" alt=""></div><div><b>Dott.ssa Martina Lombardi</b><span>Fisioterapia dermofunzionale</span></div></div>
     <div class="membro"><div class="f"><img src="img/team_morelli.jpg" alt=""></div><div><b>Dott.ssa Maria Luisa Morelli</b><span>Osteopatia · Medicina cinese e facetaping</span></div></div>
   </div>
