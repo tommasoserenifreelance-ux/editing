@@ -11,16 +11,19 @@ import words from "./words.json";
  * left, one right — then the block clears.
  */
 
-type Word = { w: string; s: number; e: number };
+export type Word = { w: string; s: number; e: number };
 export const WORDS = words as Word[];
 
 const clean = (w: string) => w.replace(/[.,?:!]/g, "");
 
-export const wt = (text: string, after = 0) => {
-  const hit = WORDS.find((x) => x.s >= after - 0.01 && clean(x.w) === text);
+/** Word-time lookup over a given transcript (the IG cut has its own timings). */
+export const makeWt = (list: Word[]) => (text: string, after = 0) => {
+  const hit = list.find((x) => x.s >= after - 0.01 && clean(x.w) === text);
   if (!hit) throw new Error(`word not found: ${text} after ${after}`);
   return hit.s;
 };
+
+export const wt = makeWt(WORDS);
 
 const YELLOW = new Set(
   "benessere ovunque moda miracolo verità mezzo interessante prezioso personalizzata perché basi intravenosa molecole sanguigno digerente vantaggio concreto 100% utile assorbimento documentate apporto prevenzione migliore solido vero seria personalizzazione misura persona esami obiettivi d'arte sartoriale alimentazione serve valutazione davvero ideale professionista medico".split(
@@ -31,14 +34,15 @@ const RED = new Set(["truffa", "vezzo", "generica", "tutti", "self-service", "l�
 
 type Chunk = { small: string; big?: string; color?: string; s: number; e: number; bs: number };
 
-const chunks = (list: Word[]): Chunk[] => {
+export const chunksOf = (list: Word[], extra: string[] = []): Chunk[] => {
+  const YELLOW_X = new Set([...YELLOW, ...extra]);
   const out: Chunk[] = [];
   let cur: Word[] = [];
   const flush = () => {
     if (!cur.length) return;
     const last = cur[cur.length - 1];
     const key = clean(last.w).toLowerCase();
-    const big = YELLOW.has(key) || RED.has(key);
+    const big = YELLOW_X.has(key) || RED.has(key);
     out.push({
       small: (big ? cur.slice(0, -1) : cur).map((x) => x.w).join(" "),
       big: big ? clean(last.w).toUpperCase() : undefined,
@@ -54,7 +58,7 @@ const chunks = (list: Word[]): Chunk[] => {
     const key = clean(x.w).toLowerCase();
     const next = list[i + 1];
     if (!next) return flush();
-    if (YELLOW.has(key) || RED.has(key)) return flush();
+    if (YELLOW_X.has(key) || RED.has(key)) return flush();
     if (/[.?:!]$/.test(x.w)) return flush();
     if (cur.length >= 4) return flush();
   });
@@ -62,7 +66,7 @@ const chunks = (list: Word[]): Chunk[] => {
   return out;
 };
 
-export const CHUNKS = chunks(WORDS);
+export const CHUNKS = chunksOf(WORDS);
 
 const Phrase: React.FC<{ c: Chunk; slot: number; until: number }> = ({ c, slot, until }) => {
   const frame = useCurrentFrame();
@@ -115,14 +119,17 @@ const Phrase: React.FC<{ c: Chunk; slot: number; until: number }> = ({ c, slot, 
 };
 
 /** Kinetic captions for the speaker shots; `visible(t)` says whether a chunk may show. */
-export const Kinetic: React.FC<{ visible: (t: number) => { on: boolean; end: number } }> = ({ visible }) => (
+export const Kinetic: React.FC<{
+  visible: (t: number) => { on: boolean; end: number };
+  chunks?: Chunk[];
+}> = ({ visible, chunks: CH = CHUNKS }) => (
   <AbsoluteFill style={{ pointerEvents: "none" }}>
-    {CHUNKS.map((c, i) => {
+    {CH.map((c, i) => {
       const { on, end } = visible(c.s + 0.01);
       if (!on) return null;
       // blocks of two phrases: a phrase stays until the next block starts
       const slot = i % 2;
-      const nextBlock = CHUNKS[slot === 0 ? i + 2 : i + 1];
+      const nextBlock = CH[slot === 0 ? i + 2 : i + 1];
       const until = Math.min(nextBlock ? nextBlock.s : c.e + 1, c.e + 1.6, end);
       const from = sec(c.s);
       const dur = Math.max(2, sec(until) - from);

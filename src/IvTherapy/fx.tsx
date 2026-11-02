@@ -357,7 +357,7 @@ export const Dossier: React.FC<{
   const inP = spring({ frame, fps, config: { damping: 16, mass: 0.8 } });
   const open = spring({ frame: frame - 10, fps, config: { damping: 14, mass: 0.9 } });
   const st = spring({ frame: frame - stampAt, fps, config: { damping: 8, mass: 0.5 } });
-  const W = Math.min(width * 0.72, 1300);
+  const W = height > width ? width * 0.96 : Math.min(width * 0.72, 1300);
   const H = W * 0.66;
   const push = interpolate(frame, [0, 150], [1, 1.1], clamp);
   return (
@@ -402,15 +402,17 @@ export const PolaroidWall: React.FC<{
   const frame = useCurrentFrame();
   const { fps, width, height } = useVideoConfig();
   const n = items.length;
-  const pw = Math.min(width / (n + 0.6), height * 0.5);
+  const vertical = height > width;
+  // vertical: big polaroids in a zig-zag down the frame; horizontal: one row
+  const pw = vertical ? width * 0.56 : Math.min(width / (n + 0.6), height * 0.5);
   return (
     <AbsoluteFill style={{ background: "radial-gradient(ellipse 70% 60% at 50% 40%, #3A3530, #16130F)" }}>
       <AbsoluteFill style={{ backgroundImage: "repeating-linear-gradient(90deg, rgba(255,255,255,0.025) 0 3px, transparent 3px 60px)" }} />
       {items.map((it, i) => {
         const p = spring({ frame: frame - it.at, fps, config: { damping: 12, mass: 0.6 } });
         const rot = [-6, 4, -3, 7][i % 4];
-        const x = width / 2 + (i - (n - 1) / 2) * pw * 1.05 - pw / 2;
-        const y = height * 0.18 + (i % 2) * height * 0.06;
+        const x = vertical ? width * (i % 2 === 0 ? 0.3 : 0.7) - pw / 2 : width / 2 + (i - (n - 1) / 2) * pw * 1.05 - pw / 2;
+        const y = vertical ? height * (0.04 + i * 0.27) : height * 0.18 + (i % 2) * height * 0.06;
         return (
           <div key={i} style={{ position: "absolute", left: x, top: y, width: pw, height: pw * 1.18, background: "#F4F1EA", padding: pw * 0.05, paddingBottom: pw * 0.2, boxShadow: "0 18px 40px rgba(0,0,0,0.55)", transform: `translateY(${(1 - p) * -height}px) rotate(${rot * p}deg)`, opacity: frame < it.at ? 0 : 1 }}>
             <div style={{ position: "relative", width: "100%", height: "100%", overflow: "hidden", background: "#222" }}>
