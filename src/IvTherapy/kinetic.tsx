@@ -73,9 +73,12 @@ const Phrase: React.FC<{ c: Chunk; slot: number; until: number }> = ({ c, slot, 
   const { width, height } = useVideoConfig();
   const vertical = height > width;
   const smallSize = vertical ? 54 : 46;
-  const bigSize = vertical ? (c.big && c.big.length > 10 ? 96 : 128) : c.big && c.big.length > 12 ? 96 : 118;
   // slot 0 upper-left, slot 1 lower-right (around the speaker, as in the reference)
   const x = vertical ? (slot === 0 ? 0.07 : 0.2) : slot === 0 ? 0.2 : 0.5;
+  const base = vertical ? (c.big && c.big.length > 10 ? 96 : 128) : c.big && c.big.length > 12 ? 96 : 118;
+  // never run past the right edge: fit the big word into the width left after x
+  const room = width * (1 - x) - (c.small ? width * 0.04 : 0) - width * 0.05;
+  const bigSize = Math.min(base, room / (Math.max(c.big?.length ?? 1, 1) * 0.8));
   const y = vertical ? (slot === 0 ? 0.56 : 0.69) : slot === 0 ? 0.52 : 0.66;
   const inK = interpolate(frame, [0, 4], [0, 1], { extrapolateRight: "clamp" });
   const out = interpolate(frame, [until - 3, until], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });

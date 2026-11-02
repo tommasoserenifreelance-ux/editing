@@ -354,15 +354,15 @@ export const Dossier: React.FC<{
 }> = ({ doc, photo, photoIsVideo, stamp, stampAt = 30 }) => {
   const frame = useCurrentFrame();
   const { fps, width, height } = useVideoConfig();
-  const inP = spring({ frame, fps, config: { damping: 16, mass: 0.8 } });
-  const open = spring({ frame: frame - 10, fps, config: { damping: 14, mass: 0.9 } });
+  const inP = spring({ frame, fps, config: { damping: 18, mass: 0.5 } });
+  const open = spring({ frame: frame - 4, fps, config: { damping: 16, mass: 0.6 } });
   const st = spring({ frame: frame - stampAt, fps, config: { damping: 8, mass: 0.5 } });
   const W = height > width ? width * 0.96 : Math.min(width * 0.72, 1300);
   const H = W * 0.66;
   const push = interpolate(frame, [0, 150], [1, 1.1], clamp);
   return (
     <Room>
-      <div style={{ position: "absolute", left: (width - W) / 2, top: (height - H) / 2, width: W, height: H, transform: `translateY(${(1 - inP) * height * 0.6}px) rotate(${-4 + 2 * inP}deg) scale(${push})`, perspective: 1600 }}>
+      <div style={{ position: "absolute", left: (width - W) / 2, top: (height - H) / 2, width: W, height: H, transform: `translateY(${(1 - inP) * height * 0.3}px) rotate(${-4 + 2 * inP}deg) scale(${push})`, perspective: 1600 }}>
         {/* back of folder */}
         <div style={{ position: "absolute", inset: 0, background: ref.manila, borderRadius: 10, boxShadow: "0 30px 60px rgba(0,0,0,0.6)" }} />
         {/* document */}
@@ -389,7 +389,7 @@ export const Dossier: React.FC<{
         ) : null}
       </div>
       <Sfx at={0} name="whoosh" volume={0.35} />
-      <Sfx at={12} name="swoosh" volume={0.3} />
+      <Sfx at={4} name="swoosh" volume={0.3} />
       {stamp ? <Sfx at={stampAt} name="impact" volume={0.4} /> : null}
     </Room>
   );
