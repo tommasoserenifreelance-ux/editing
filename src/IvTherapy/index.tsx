@@ -301,7 +301,7 @@ const wtI = makeWt(WORDS_IG);
 const atI = (t0: number, w: string) => sec(wtI(w, t0) - t0);
 const CHUNKS_IG = chunksOf(WORDS_IG, ["ma"]);
 
-const V_END = 47.37; // end of clip_ig, right after "ma"
+const V_END = 47.4; // end of clip_ig, right after "ma"
 const V_CARD = 3.2;
 export const IV_V_DURATION = sec(V_END + V_CARD);
 
@@ -417,7 +417,7 @@ export const IvTherapyInstagram: React.FC = () => (
     end={V_END + V_CARD}
     voice="iv/voice_ig.m4a"
     anchor={ANCHOR_V}
-    voiceEnd={V_END}
+    voiceEnd={V_END + 0.4} // "ma" rings out (short echo) over the card
     chunks={CHUNKS_IG}
     overlay={<HookTitle />}
   />
