@@ -476,25 +476,27 @@ export const TornCollage: React.FC<{
 /* ------------------------------------------------------------------ */
 
 /** Huge glowing word that decodes in (reference: ECOLOGIA / INTERNET). */
-export const BigWord: React.FC<{ text: string; at: number; color: string; top?: number; size?: number }> = ({
-  text,
-  at,
-  color,
-  top = 0.38,
-  size,
-}) => {
+export const BigWord: React.FC<{
+  text: string;
+  at: number;
+  color: string;
+  top?: number;
+  size?: number;
+  /** no letter scramble: the word is readable from its first frame (short holds) */
+  plain?: boolean;
+}> = ({ text, at, color, top = 0.38, size, plain }) => {
   const frame = useCurrentFrame();
   const { width, height } = useVideoConfig();
   // Montserrat Black Italic caps are ~0.8 em wide: keep the word inside the frame
   const fs = size ?? Math.min((width * 1.08) / Math.max(text.length, 5), height * 0.22);
-  const p = interpolate(frame - at, [0, 10], [0, 1], clamp);
+  const p = interpolate(frame - at, [0, plain ? 5 : 10], [0, 1], clamp);
   return (
     <>
       <div style={{ position: "absolute", left: 0, right: 0, top: height * top - fs / 2, textAlign: "center", fontFamily: mont, fontWeight: 900, fontStyle: "italic", fontSize: fs, lineHeight: 1, letterSpacing: "-0.01em", color, opacity: frame < at ? 0 : 1, textShadow: `0 0 ${fs * 0.15}px ${color}aa, 0 0 ${fs * 0.4}px ${color}55, 0 ${fs * 0.04}px 0 rgba(0,0,0,0.6)`, transform: `scale(${1.15 - 0.15 * p})` }}>
-        {decode(text, frame, at, 10)}
+        {plain ? text : decode(text, frame, at, 10)}
       </div>
-      <Sfx at={at} name="glitch" volume={0.3} />
-      <Sfx at={at + 9} name="impact" volume={0.35} />
+      {plain ? null : <Sfx at={at} name="glitch" volume={0.3} />}
+      <Sfx at={plain ? at : at + 9} name="impact" volume={0.35} />
     </>
   );
 };

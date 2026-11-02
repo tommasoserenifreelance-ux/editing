@@ -302,8 +302,9 @@ const atI = (t0: number, w: string) => sec(wtI(w, t0) - t0);
 const CHUNKS_IG = chunksOf(WORDS_IG, ["ma"]);
 
 const V_END = 47.4; // end of clip_ig, right after "ma"
+const V_HOLD = 0.6; // "MA…" stays on screen for a beat before the end card
 const V_CARD = 3.2;
-export const IV_V_DURATION = sec(V_END + V_CARD);
+export const IV_V_DURATION = sec(V_END + V_HOLD + V_CARD);
 
 const thV = (framing: "wide" | "close", punch: string[] = []) => (t0: number) => (
   <Speaker start={t0} framing={framing} punch={punch} vertical src="iv/clip_ig.mp4" lookup={wtI} />
@@ -404,17 +405,17 @@ const V_SCENES: Scene[] = [
           Non un trattamento da
         </div>
         <BigWord text="SELF-SERVICE" at={atI(t0, "self-service")} color={ref.red} top={0.42} />
-        <BigWord text="MA…" at={atI(t0, "ma")} color={ref.yellow} top={0.6} size={190} />
+        <BigWord text="MA…" at={atI(t0, "ma")} color={ref.yellow} top={0.6} size={190} plain />
       </Room>
     ),
   },
-  { from: V_END, bars: true, render: () => <EndCard /> },
+  { from: V_END + V_HOLD, bars: true, render: () => <EndCard /> },
 ];
 
 export const IvTherapyInstagram: React.FC = () => (
   <Timeline
     scenes={V_SCENES}
-    end={V_END + V_CARD}
+    end={V_END + V_HOLD + V_CARD}
     voice="iv/voice_ig.m4a"
     anchor={ANCHOR_V}
     voiceEnd={V_END + 0.4} // "ma" rings out (short echo) over the card
