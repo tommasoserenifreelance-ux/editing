@@ -11,7 +11,7 @@ from PIL import Image
 
 from nightlife_grade import blur
 
-BAR_FRAC = 0.048  # bar width as a fraction of image width (measured on the reference)
+BAR_FRAC = 0.040  # bar width as a fraction of image width (measured on the reference)
 
 
 def star(h, w, cx, cy, length, angles, k, bar=None):
@@ -29,18 +29,20 @@ def star(h, w, cx, cy, length, angles, k, bar=None):
         t = np.radians(ang)
         ux, uy = np.cos(t), np.sin(t)
         along = np.abs(dx * ux + dy * uy) / length
-        across = np.abs(-dx * uy + dy * ux) / (bar / 2)
+        # bars widen towards the centre (measured: ~3.5% of width mid-arm, ~6.5% near the light)
+        local = bar * (1 + 0.9 * np.clip(1 - along * 1.6, 0, 1) ** 2)
+        across = np.abs(-dx * uy + dy * ux) / (local / 2)
         body = np.exp(-across ** 4)                       # flat top, soft edges
         fade = np.clip(1 - along, 0, 1) ** 0.8
-        out = np.maximum(out, body * fade * 0.80)
-        out = np.maximum(out, np.exp(-(across * 1.3) ** 2) * fade * 0.9)  # slightly brighter middle
-    core = np.exp(-(r / (0.9 * bar)) ** 2)
+        out = np.maximum(out, body * fade * 0.92)
+        out = np.maximum(out, np.exp(-(across * 1.2) ** 2) * fade)  # bright middle, near white like the reference
+    core = np.exp(-(r / (1.2 * bar)) ** 2)
     halo = np.exp(-(r / (2.5 * bar)) ** 2) * 0.40
     full = np.zeros((h, w)); full[y0:y1, x0:x1] = np.maximum.reduce([out, core, halo])
     return full
 
 
-def add_stars(a, stars, angle=20.0, tint=(0.75, 0.35, 1.0), angle2=112.0):
+def add_stars(a, stars, angle=20.0, tint=(0.75, 0.35, 1.0), angle2=112.0, behind=None):
     h, w, _ = a.shape
     k = max(w, h) / 2000.0
     I = np.zeros((h, w))
@@ -50,7 +52,9 @@ def add_stars(a, stars, angle=20.0, tint=(0.75, 0.35, 1.0), angle2=112.0):
     glow = blur(I, 14 * k)
     white = np.clip(I, 0, 1)
     col = np.array(tint)
-    light = white[..., None] * (0.6 + 0.4 * col) * 0.85 + glow[..., None] * col * 0.5
+    light = white[..., None] * (0.78 + 0.22 * col) * 0.95 + glow[..., None] * col * 0.45
+    if behind is not None:  # flares sit behind the subject (arm/body stay in front)
+        light = light * (1 - behind)[..., None]
     return np.clip(1 - (1 - a) * (1 - np.clip(light, 0, 1)), 0, 1)
 
 
@@ -63,11 +67,17 @@ def main():
     p.add_argument("--angle2", type=float, default=112.0, help="second bar angle (deg)")
     p.add_argument("--tint", default="0.75,0.35,1.0")
     p.add_argument("--exif-from")
+    p.add_argument("--mask", help="subject mask: flares go behind the subject")
     args = p.parse_args()
     im = Image.open(args.input)
     a = np.asarray(im.convert("RGB")).astype(np.float64) / 255.0
     stars = [tuple(map(float, s.split(","))) for s in args.star]
-    out = add_stars(a, stars, args.angle, tuple(map(float, args.tint.split(","))), args.angle2)
+    behind = None
+    if args.mask:
+        mk = Image.open(args.mask).convert("L").resize(im.size)
+        k = max(im.size) / 2000.0
+        behind = np.clip(blur(np.clip((np.asarray(mk) / 255.0 - 0.15) / 0.7, 0, 1), 1.2 * k), 0, 1)
+    out = add_stars(a, stars, args.angle, tuple(map(float, args.tint.split(","))), args.angle2, behind)
     o = Image.fromarray(np.round(out * 255).astype(np.uint8))
     src = Image.open(args.exif_from) if args.exif_from else im
     kw = {k: v for k, v in (("icc_profile", src.info.get("icc_profile")), ("exif", src.info.get("exif"))) if v}
