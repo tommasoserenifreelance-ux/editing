@@ -30,7 +30,20 @@ PINK_RGB = np.array([
     [0, 0, 0], [11, 2, 8], [40, 9, 26], [108, 22, 63],
     [170, 45, 105], [208, 100, 147], [232, 200, 215], [252, 242, 247],
 ], float)
-RAMPS = {"violet": (RAMP_L, RAMP_RGB), "pink": (PINK_L, PINK_RGB)}
+
+
+def _rehue(rgb, hue_deg):
+    import colorsys
+    out = []
+    for r, g, b in rgb / 255.0:
+        h, s_, v = colorsys.rgb_to_hsv(r, g, b)
+        out.append(colorsys.hsv_to_rgb(hue_deg / 360.0, s_, v))
+    return np.array(out) * 255.0
+
+
+# same intensity/saturation as the pink reference, turned violet
+VIOLET_VIVID_RGB = _rehue(PINK_RGB, 282)
+RAMPS = {"violet": (RAMP_L, RAMP_RGB), "pink": (PINK_L, PINK_RGB), "violet_vivid": (PINK_L, VIOLET_VIVID_RGB)}
 
 
 def violet_ramp(L255, ramp="violet"):
@@ -66,7 +79,7 @@ def violet_background(a, mask, strength=1.0, lift=1.0, ramp="violet", bg_blur=0.
     # soft violet glow around the brightest background lights
     hot = np.clip((Lb - 0.55) / 0.45, 0, 1) * bg
     glow = blur(hot, 35 * k)
-    gcol = np.array([0.55, 0.30, 0.85]) if ramp == "violet" else np.array([0.90, 0.25, 0.60])
+    gcol = np.array([0.90, 0.25, 0.60]) if ramp == "pink" else np.array([0.55, 0.20, 0.90])
     tinted = 1 - (1 - tinted) * (1 - glow[..., None] * gcol * 0.6)
 
     # violet spill on the subject's edges (rim from the background light)
