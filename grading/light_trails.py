@@ -13,6 +13,7 @@ from nightlife_grade import blur
 CORE = np.array([1.00, 0.80, 1.00])
 GLOW = np.array([0.58, 0.12, 1.00])
 HALO = np.array([0.45, 0.10, 0.85])
+TRAIL_HUE = 282.0  # violet (reference trails are hue ~3, red)
 
 
 def smooth_noise(n, rng, scale, knots=6):
@@ -134,16 +135,17 @@ def trails_from_mask(a, mask, ref_head, ref_size, head, size):
     cy = ref_head[1] - head[1] / sc
     m = mask.convert("L").transform((w, h), Image.AFFINE, (ax, 0, cx, 0, ax, cy), resample=Image.BICUBIC)
     I = np.asarray(m).astype(np.float64) / 255.0
-    I = blur(I, 2.0 * k)                       # slightly soft, like the reference
-    core = np.clip((I - 0.35) / 0.45, 0, 1) ** 1.3
-    hot = np.clip((I - 0.85) / 0.15, 0, 1)     # only the very centre goes pale
-    glow1 = blur(I, 9 * k)
-    glow2 = blur(I, 30 * k)
-    wash = blur(I, 120 * k)
-    sat_core = np.array([0.80, 0.30, 1.00])    # saturated violet core (reference core is full red)
-    light = (core[..., None] * sat_core * 2.2 + hot[..., None] * CORE * 0.6
-             + glow1[..., None] * GLOW * 2.4 + glow2[..., None] * HALO * 2.2 + wash[..., None] * HALO * 1.6)
-    out = 1 - (1 - a) * np.exp(-light)
+    # Colour profile measured on the RED LINE trails: saturation stays ~0.95
+    # everywhere (never white), value rises from ~0.5 in the glow to ~0.9 in the core.
+    # Same profile, hue turned to violet.
+    from nightlife_grade import hsv_to_rgb
+    core = blur(I, 2.0 * k)
+    glow = blur(I, 10 * k)
+    halo = blur(I, 32 * k)
+    T = np.maximum.reduce([core, glow * 0.75, halo * 0.45])
+    V = np.interp(T, [0, 0.05, 0.2, 0.4, 0.6, 0.8, 1.0], [0, 0.18, 0.50, 0.60, 0.67, 0.76, 0.90])
+    col = hsv_to_rgb(np.full_like(T, TRAIL_HUE), np.full_like(T, 0.94), V)
+    out = 1 - (1 - a) * (1 - col)          # screen: keeps the colour saturated on dark areas
     return np.clip(out, 0, 1)
 
 
