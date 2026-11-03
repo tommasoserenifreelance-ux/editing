@@ -156,6 +156,12 @@ const Shot: React.FC<{
     brightness = 0.8;
     x -= local * 4;
   }
+  if (cut.fx === "rush") {
+    // Rushing at the sign: a hard zoom with a turn, flickering on the beat.
+    zoom += t * t * 0.6;
+    rotate += t * 7;
+    brightness = 1 + interpolate(frame - lastBeat, [0, 4], [0.5, 0], clamp);
+  }
   if (cut.fx === "vortex") {
     rotate += t * t * 55;
     zoom += t * 0.45;
@@ -204,7 +210,7 @@ const Shot: React.FC<{
             </AbsoluteFill>
           ))
         : null}
-      {cut.fx === "rgb" && local < 6
+      {(cut.fx === "rgb" || cut.fx === "rush") && local < 6
         ? // Doubled, colour-shifted copies as the purple kicks in.
           [-1, 1].map((side) => (
             <AbsoluteFill
@@ -246,9 +252,10 @@ const Shot: React.FC<{
   );
 };
 
-// The neon logo seen from behind (mirrored) rising from the bottom of the
-// frame and drifting like the reference's, turning to face the lens by the
-// cut, then flying on into the sign shot and landing on the real sign
+// The neon logo seen from behind (mirrored) shooting up from the bottom of
+// the frame and drifting like the reference's, turning to face the lens by
+// the cut, then flying on into the sign shot: it eases in over the sign and
+// snaps onto it
 // (measured in clip 1: centre 8 px right of and 95 px above the frame's
 // centre, 0.59 of the logo's width once the shot's punch-in is counted).
 const LOGO_KEYS = {
@@ -256,27 +263,29 @@ const LOGO_KEYS = {
     148,
     149,
     150,
-    151,
+    152,
     153,
+    154,
     155,
     156,
-    157,
     158,
     159,
-    161,
-    163,
+    162,
+    165,
     LOGO_LAND,
     169,
     173,
   ],
-  x: [-60, -40, -20, -20, -60, -180, -120, -60, -20, -10, -2, 4, 8, 8, 8],
-  y: [820, 720, 672, 640, 590, 560, 540, 500, 440, 380, 170, 10, -95, -95, -95],
+  x: [-60, -20, -20, -60, -180, -120, -60, -20, -10, -4, 6, 8, 8, 8, 8],
+  y: [
+    820, 672, 640, 590, 560, 540, 500, 440, 380, 250, -40, -80, -95, -95, -95,
+  ],
   scale: [
-    0.6, 0.95, 1.15, 1.25, 1.25, 1.2, 1.15, 1.1, 1.05, 1.0, 0.86, 0.72, 0.59,
+    0.6, 1.15, 1.25, 1.25, 1.2, 1.15, 1.1, 1.05, 1.0, 0.9, 0.7, 0.63, 0.59,
     0.59, 0.59,
   ],
   rotateY: [
-    200, 195, 190, 185, 180, 200, 240, 290, 330, 352, 358, 360, 360, 360, 360,
+    200, 190, 185, 180, 200, 240, 290, 330, 352, 358, 360, 360, 360, 360, 360,
   ],
   opacity: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.6, 0],
 };
@@ -396,11 +405,12 @@ const Overlays: React.FC = () => {
   );
 };
 
-const Caption: React.FC<{ text: string; opacity: number; top: string }> = ({
-  text,
-  opacity,
-  top,
-}) => (
+const Caption: React.FC<{
+  text: string;
+  opacity: number;
+  top: string;
+  size?: number;
+}> = ({ text, opacity, top, size = 72 }) => (
   <AbsoluteFill>
     <div
       style={{
@@ -412,10 +422,10 @@ const Caption: React.FC<{ text: string; opacity: number; top: string }> = ({
         opacity,
         fontFamily: captionFont,
         fontStyle: "italic",
-        fontSize: 72,
+        fontSize: size,
         color: yellow,
         textShadow:
-          "0 0 14px rgba(236, 210, 90, 0.55), 0 2px 10px rgba(0, 0, 0, 0.6)",
+          "0 0 16px rgba(236, 210, 90, 0.6), 0 3px 12px rgba(0, 0, 0, 0.75)",
       }}
     >
       {text}
@@ -426,7 +436,7 @@ const Caption: React.FC<{ text: string; opacity: number; top: string }> = ({
 const Captions: React.FC<Venus2Props> = ({ caption, endText }) => {
   const frame = useCurrentFrame();
   if (frame >= CAPTION.from && frame < CAPTION.to) {
-    return <Caption text={caption} opacity={1} top="78%" />;
+    return <Caption text={caption} opacity={1} top="64%" size={96} />;
   }
   if (frame >= END_TEXT.from && frame < END_TEXT.to) {
     return (

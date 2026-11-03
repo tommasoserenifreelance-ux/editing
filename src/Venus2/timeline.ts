@@ -1,21 +1,20 @@
 // Edit decision list for the second Venus reel (30 fps), modelled on the
 // "THE ROOM" reference with effects from the first Venus reel: a black &
-// white intro with white flashes under the voice-over and typewriter
-// caption, the logo flipping past and landing on the real sign, a smear and
-// RGB split into the purple drop, speed ramps and beat zooms, a whip on the
-// dancer's hand swing, a camcorder shot, a vortex, a black & white
-// stop-motion on the song's percussion roll, a quick-fire run with a film
-// burn, and a wash into the end card. Cuts sit on the song's beat grid. No
-// shot repeats: each new clip appears once, and the rest of the run is
-// filled with moments of the first reel's clips that it never showed.
+// white intro with white flashes under the voice-over and caption, the logo
+// flipping past and landing on the real sign, a smear and RGB split into the
+// purple drop, speed ramps and beat zooms, a whip on the dancer's hand
+// swing, a camcorder shot, a vortex, a black & white stop-motion on the
+// song's percussion roll, a film burn into a quick-fire run of the dancer,
+// and a wash into the end card. Cuts sit on the song's beat grid. Only clips
+// of the last night: each appears once, except the dancer.
 
 export const VENUS2_FPS = 30;
 
 // Frame 0 is 51.28 s into the song (scripts/venus2_audio.py): the build-up
 // plays under the voice-over and the drop at 60.12 s lands here.
 export const DROP = 265;
-export const END_CARD = 640;
-export const VENUS2_DURATION = 728;
+export const END_CARD = 583;
+export const VENUS2_DURATION = 671;
 
 export const CLIPS = {
   c1: "venus2/clips/1.mp4", // crowd under the Venus sign, 2.7 s (white flash at 0.4 s)
@@ -30,24 +29,14 @@ export const CLIPS = {
   ballerina: "venus2/clips/ballerina.mp4", // masked dancer in mesh, 5.6 s; hands swing right at 1.4-1.6 s
   dance: "venus2/clips/dance.mp4", // girl dancing, arms up, 2.6 s
   kiss: "venus2/clips/kiss.mp4", // girl blowing a kiss, 1.4 s
-  // Clips of the first Venus reel, only at moments it never showed.
-  "old-v1": "nightlife/clips/v1.mp4", // blonde with lollipop 0-14 s, brunette in red 14-21.7 s
-  "old-v2": "nightlife/clips/v2.mp4", // brunette singing
-  "old-v4": "nightlife/clips/v4.mp4", // group of girls with drinks
-  "old-v5": "nightlife/clips/v5.mp4", // two girls smoking
-  "old-dancer": "nightlife/clips/ballerine.mp4", // dancer in purple corset
-  "old-sign": "nightlife/clips/logo.mp4", // neon "venus" sign
-  "old-t1": "nightlife/clips/t1.mp4", // blonde in black corset dancing
-  "old-t2": "nightlife/clips/t2.mp4", // crowd under the Venus sign
-  "old-t5": "nightlife/clips/t5.mp4", // blonde blowing a kiss, then dancing
-  "old-t6": "nightlife/clips/t6.mp4", // blonde in zebra from 3.3 s
   // Speed-ramped shots rendered by scripts/venus2_ramps.py, played from 0.
   "c4-intro": "venus2/ramps/c4-intro.mp4",
   "c9-intro": "venus2/ramps/c9-intro.mp4",
-  "dance-intro": "venus2/ramps/dance-intro.mp4",
-  "c2-haze": "venus2/ramps/c2-haze.mp4",
+  "c2-long": "venus2/ramps/c2-long.mp4",
   "ballerina-drop": "venus2/ramps/ballerina-drop.mp4",
   "c3-pan": "venus2/ramps/c3-pan.mp4",
+  "dance-vortex": "venus2/ramps/dance-vortex.mp4",
+  "ballerina-end": "venus2/ramps/ballerina-end.mp4",
 } as const;
 
 export type ClipFx =
@@ -57,7 +46,8 @@ export type ClipFx =
   | "vhs"
   | "vortex"
   | "burst"
-  | "double";
+  | "double"
+  | "rush";
 
 export type Cut = {
   from: number;
@@ -74,33 +64,29 @@ export const CUTS: Cut[] = [
   // Black & white build-up under the voice-over
   { from: 0, clip: "c4-intro", at: 0, whipOut: "right" },
   { from: 58, clip: "c9-intro", at: 0 },
-  { from: 86, clip: "dance-intro", at: 0 },
+  { from: 86, clip: "ballerina", at: 4.5 },
   { from: 115, clip: "c5", at: 0.2 },
   { from: 159, clip: "c1", at: 0.6 },
-  { from: 187, clip: "old-v1", at: 16.1, fx: "pushIn" },
-  { from: 234, clip: "c2-haze", at: 0, fx: "haze" },
+  { from: 187, clip: "c2-long", at: 0, fx: "pushIn" },
   // Drop into purple
   { from: DROP, clip: "ballerina-drop", at: 0, fx: "rgb", whipOut: "right" },
-  { from: 295, clip: "c3-pan", at: 0 },
+  { from: 295, clip: "c3-pan", at: 0, fx: "rush" },
   { from: 323, clip: "c8", at: 0.3, fx: "vhs" },
   { from: 367, clip: "kiss", at: 0.2 },
-  { from: 396, clip: "old-t1", at: 6.0, fx: "vortex" },
+  { from: 396, clip: "dance-vortex", at: 0, fx: "vortex" },
   { from: 425, clip: "c6", at: 0.0, whipOut: "left" },
-  { from: 453, clip: "old-v2", at: 4.0 },
-  // Black & white stop-motion on the percussion roll, then the dancer
-  // plays on
-  { from: 467, clip: "old-dancer", at: 7.0, fx: "burst" },
-  { from: 497, clip: "old-dancer", at: 8.5 },
-  { from: 525, clip: "old-v4", at: 5.0, whipOut: "right" },
-  // Quick-fire run
-  { from: 540, clip: "old-t2", at: 0.5 },
-  { from: 544, clip: "old-v5", at: 2.0 },
-  { from: 548, clip: "old-sign", at: 0.3, fx: "double" },
-  { from: 554, clip: "old-t6", at: 3.0 },
-  { from: 558, clip: "old-t5", at: 2.5 },
-  // Wash and flashes into the end card
-  { from: 562, clip: "old-v1", at: 7.0 },
-  { from: 617, clip: "c7", at: 0.2 },
+  // Black & white stop-motion on the percussion roll
+  { from: 467, clip: "ballerina", at: 2.0, fx: "burst" },
+  // Out of it on a film burn: a quick-fire run of the dancer's poses
+  { from: 497, clip: "ballerina", at: 0.2, fx: "rgb" },
+  { from: 501, clip: "ballerina", at: 1.8, fx: "rgb" },
+  { from: 505, clip: "ballerina", at: 2.6, fx: "rgb" },
+  { from: 509, clip: "ballerina", at: 3.3, fx: "rgb" },
+  { from: 513, clip: "ballerina", at: 4.3, fx: "rgb" },
+  { from: 517, clip: "ballerina", at: 5.0, fx: "rgb" },
+  // Slow motion under the wash, flashes, and the two girls into the end card
+  { from: 521, clip: "ballerina-end", at: 0 },
+  { from: 559, clip: "c7", at: 0.2 },
 ];
 
 // Shown in black & white: the intro and the stop-motion run.
@@ -120,8 +106,7 @@ export const BEATS = [
 export const SMEARS: [number, number][] = [
   [257, 268],
   [319, 323],
-  [449, 453],
-  [558, 562],
+  [517, 521],
 ];
 
 // Hits of the song's percussion roll (66.97-67.69 s): the stop-motion jumps
@@ -163,31 +148,30 @@ export const FLASHES: Flash[] = [
   white(86, 88),
   white(115, 117),
   white(187, 189),
-  white(234, 236),
   // White hits on the beat after the drop.
   white(323, 325),
   white(367, 368, 0.6),
   white(396, 398),
-  white(453, 455),
-  white(525, 527),
-  white(540, 541),
-  // Film burn in the quick-fire run.
+  white(425, 427),
+  // Film burn out of the stop-motion, then white on every other pose.
   {
-    from: 552,
-    to: 554,
+    from: 497,
+    to: 500,
     fill: "radial-gradient(ellipse at 30% 30%, #fffef5 0%, #ffe08a 40%, #ff8a1e 75%, #ff5a00 100%)",
     opacity: 1,
   },
+  white(505, 506, 0.7),
+  white(513, 514, 0.7),
   // Yellow, then cyan, out of the wash.
-  { from: 612, to: 615, fill: "#e8ff1a", opacity: 0.92 },
-  { from: 615, to: 617, fill: "#a8f6ff", opacity: 0.92 },
+  { from: 554, to: 557, fill: "#e8ff1a", opacity: 0.92 },
+  { from: 557, to: 559, fill: "#a8f6ff", opacity: 0.92 },
 ];
 
 // Purple wash building up until the yellow flash.
-export const WASH: [number, number] = [585, 612];
+export const WASH: [number, number] = [530, 554];
 
-// Shown whole from the first word of the voice-over.
-export const CAPTION = { from: 10, to: 115 };
+// Shown whole from the start of the voice-over until the logo comes in.
+export const CAPTION = { from: 10, to: 146 };
 
 export const VOICE_FROM = 8;
 export const VOICE_TO = VOICE_FROM + 99;
@@ -235,9 +219,12 @@ export const SFX: { file: string; from: number; volume: number }[] = [
   sfx("swoosh-fast", 295, 12, 0.4),
   sfx("swoosh-slow", 321, 41, 0.28),
   sfx("swoosh-slow", 410, 41, 0.28),
-  sfx("swoosh-fast", 453, 12, 0.4),
-  sfx("swoosh-slow", 540, 41, 0.28),
-  sfx("camera-flash", 552, 7, 0.4),
-  sfx("camera-flash", 612, 7, 0.35),
+  sfx("swoosh-fast", 467, 12, 0.4),
+  // Burn and quick-fire run out of the stop-motion.
+  sfx("impact", 497, 22, 0.25),
+  sfx("camera-flash", 497, 7, 0.4),
+  sfx("shutter-short", 497, 0, 0.45),
+  sfx("swoosh-slow", 521, 41, 0.28),
+  sfx("camera-flash", 554, 7, 0.35),
   sfx("impact", END_CARD, 22, 0.3),
 ];

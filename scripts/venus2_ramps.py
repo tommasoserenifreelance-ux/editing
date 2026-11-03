@@ -1,6 +1,6 @@
 """Renders the speed-ramped shots of the Venus2 reel.
 
-    python3 scripts/venus2_ramps.py RAW_DIR
+    python3 scripts/venus2_ramps.py RAW_DIR [NAME ...]
 
 RAW_DIR holds the original 50 fps clips (VENUS.*.30.10.mp4 from the
 footage-nightlife release, saved as n_<name>.mp4). Each ramp plays its clip
@@ -23,10 +23,11 @@ OUT = Path(__file__).resolve().parent.parent / "public" / "venus2" / "ramps"
 RAMPS = {
     "c4-intro": ("4", 0.0, 58, 0.8, 0.8),
     "c9-intro": ("9", 0.0, 28, 1.6, 0.6),
-    "dance-intro": ("dance", 0.0, 29, 0.6, 1.4),
-    "c2-haze": ("2", 0.0, 31, 0.6, 2.0),
+    "c2-long": ("2", 0.0, 78, 0.9, 0.9),
     "ballerina-drop": ("ballerina", 0.55, 30, 0.5, 1.5),
-    "c3-pan": ("3", 0.0, 28, 1.5, 0.7),
+    "c3-pan": ("3", 0.0, 28, 1.6, 1.2),
+    "dance-vortex": ("dance", 0.3, 29, 0.6, 2.0),
+    "ballerina-end": ("ballerina", 3.7, 33, 0.4, 1.2),
 }
 EXTRA = 6
 
@@ -89,5 +90,7 @@ def render(name, clip, at, frames, r0, r1, raw_dir):
 if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
     raw_dir = Path(sys.argv[1])
+    only = sys.argv[2:]
     for name, spec in RAMPS.items():
-        render(name, *spec, raw_dir)
+        if not only or name in only:
+            render(name, *spec, raw_dir)
