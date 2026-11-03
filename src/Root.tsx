@@ -1,4 +1,10 @@
-import { Composition, Folder } from "remotion";
+import { Composition, Folder, Still } from "remotion";
+import {
+  BoccaMenopausa,
+  SLIDE_COUNT,
+  SLIDE_HEIGHT,
+  SLIDE_WIDTH,
+} from "./BoccaMenopausa";
 import { CIBO_DURATION, CIBO_FPS, CiboMedicina } from "./CiboMedicina";
 import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
@@ -94,6 +100,18 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
       />
+      <Folder name="BoccaMenopausa">
+        {Array.from({ length: SLIDE_COUNT }, (_, i) => (
+          <Still
+            key={i}
+            id={`BoccaMenopausa-${i + 1}`}
+            component={BoccaMenopausa}
+            width={SLIDE_WIDTH}
+            height={SLIDE_HEIGHT}
+            defaultProps={{ index: i }}
+          />
+        ))}
+      </Folder>
     </>
   );
 };

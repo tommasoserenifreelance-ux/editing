@@ -38,18 +38,28 @@ export const colors = {
   grid: "#E4D9CF",
 };
 
+// Pink variant used from the symptoms reel on.
+export const pinkColors = {
+  ...colors,
+  pink: "#F6DCE1",
+  rose: "#B8455A",
+  muted: "#8E6F78",
+  grid: "#EBC3CB",
+};
+
 export const Signature: React.FC<{
   color: string;
   shadow?: string;
   opacity?: number;
   fontFamily?: string;
-}> = ({ color, shadow, opacity = 1, fontFamily = serif }) => (
+  bottom?: number;
+}> = ({ color, shadow, opacity = 1, fontFamily = serif, bottom = 170 }) => (
   <div
     style={{
       position: "absolute",
       left: 0,
       right: 0,
-      bottom: 170,
+      bottom,
       opacity,
       textAlign: "center",
       color,

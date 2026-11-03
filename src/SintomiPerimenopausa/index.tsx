@@ -7,16 +7,11 @@ import {
   staticFile,
   useCurrentFrame,
 } from "remotion";
-import { colors as brand, inter, Signature } from "../EleonoraPiccolo/brand";
-
-// Pink variant of the brand palette for this reel.
-const colors = {
-  ...brand,
-  pink: "#F6DCE1",
-  rose: "#B8455A",
-  muted: "#8E6F78",
-  grid: "#EBC3CB",
-};
+import {
+  inter,
+  pinkColors as colors,
+  Signature,
+} from "../EleonoraPiccolo/brand";
 
 export const SINTOMI_FPS = 30;
 
