@@ -78,7 +78,6 @@ const Speaker: React.FC<{
 type Scene = {
   from: number;
   speaker?: boolean;
-  noCaptions?: boolean; // speaker shot without kinetic captions
   smoke?: boolean; // smoke transition into this scene
   bars?: boolean; // colour-bar glitch into this scene
   render: (t0: number) => React.ReactNode;
@@ -116,9 +115,17 @@ const SCENES: Scene[] = [
       />
     ),
   },
-  // "o le si tratta da miracolo, o da truffa": the client wants none of these
-  // words on screen, so the speaker carries it uncaptioned; punch-in on "La verità"
-  { from: wt("da", 10.8), speaker: true, noCaptions: true, render: th("wide") },
+  {
+    // the speaker carries "o le si tratta", the giant words land on "da miracolo"
+    from: wt("da", 10.8),
+    smoke: true,
+    render: (t0) => (
+      <Room>
+        <BigWord text="MIRACOLO" at={at(t0, "miracolo")} color={ref.yellow} top={0.36} />
+        <BigWord text="TRUFFA" at={at(t0, "truffa")} color={ref.red} top={0.66} />
+      </Room>
+    ),
+  },
   { from: wt("La", 13), speaker: true, render: th("close", ["mezzo"]) },
   { from: wt("La", 18.4), bars: true, render: () => <CrtMonitor big="IV THERAPY" small={"INTRAVENOUS\nTHERAPY"} /> },
   { from: wt("è", 20.3), speaker: true, render: th("wide", ["prezioso", "personalizzata"]) },
@@ -217,7 +224,7 @@ const Timeline: React.FC<{
       chunks={chunks}
       visible={(t) => {
         const i = sceneAt(scenes, t);
-        return { on: !!scenes[i].speaker && !scenes[i].noCaptions, end: scenes[i + 1]?.from ?? end };
+        return { on: !!scenes[i].speaker, end: scenes[i + 1]?.from ?? end };
       }}
     />
     {overlay}
@@ -358,7 +365,16 @@ const V_SCENES: Scene[] = [
       />
     ),
   },
-  { from: wtI("da", 9.3), speaker: true, noCaptions: true, render: thV("wide") },
+  {
+    from: wtI("da", 9.3),
+    smoke: true,
+    render: (t0) => (
+      <Room>
+        <BigWord text="MIRACOLO" at={atI(t0, "miracolo")} color={ref.yellow} top={0.4} />
+        <BigWord text="TRUFFA" at={atI(t0, "truffa")} color={ref.red} top={0.58} />
+      </Room>
+    ),
+  },
   { from: wtI("La", 11.2), speaker: true, render: thV("close", ["mezzo"]) },
   { from: wtI("La", 15.9), bars: true, render: () => <CrtMonitor big="IV THERAPY" small={"INTRAVENOUS\nTHERAPY"} /> },
   { from: wtI("è", 17.5), speaker: true, render: thV("wide", ["prezioso", "personalizzata"]) },
