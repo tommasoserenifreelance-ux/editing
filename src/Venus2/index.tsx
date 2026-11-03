@@ -4,6 +4,7 @@ import {
   Freeze,
   interpolate,
   OffthreadVideo,
+  random,
   Sequence,
   staticFile,
   useCurrentFrame,
@@ -11,18 +12,21 @@ import {
 import { VenusLogo, YabLogo } from "../Nightlife";
 import { captionFont, yellow } from "../Nightlife/fonts";
 import {
+  BEATS,
+  BLACK_AND_WHITE,
   CAPTION,
   CLIPS,
   CUTS,
   Cut,
+  DROP,
   END_CARD,
   END_LOGOS,
   END_TEXT,
   FLASHES,
   LOGO_FLY,
-  LOGO_GHOST,
   ROLL,
   SFX,
+  SMEARS,
   VENUS2_FPS,
   VOICE_FROM,
   VOICE_TO,
@@ -46,6 +50,15 @@ const clamp = {
   extrapolateRight: "clamp",
 } as const;
 
+const inRange = (frame: number, ranges: [number, number][]) =>
+  ranges.find(([a, b]) => frame >= a && frame < b);
+
+// Venus purple, folded from all the light like the reference's red: mids
+// lifted, deep blacks, skin kept a touch warm.
+const PURPLE = "url(#venus2-purple) contrast(1.15)";
+// Black & white of the first Venus reel.
+const MONO = "grayscale(1) contrast(1.05) brightness(1.08)";
+
 const Video: React.FC<{ cut: Cut }> = ({ cut }) => (
   <OffthreadVideo
     src={staticFile(CLIPS[cut.clip])}
@@ -56,12 +69,9 @@ const Video: React.FC<{ cut: Cut }> = ({ cut }) => (
 );
 
 // Stop-motion: hold a pose on each hit of the roll, jumping 0.2 s ahead in
-// the clip every time, then play on normally from the last pose.
-const burstFrame = (frame: number) => {
-  const last = ROLL[ROLL.length - 1];
-  const hit = ROLL.filter((h) => h <= frame).length - 1;
-  return frame < last ? hit * 6 : (ROLL.length - 1) * 6 + (frame - last);
-};
+// the clip every time.
+const burstFrame = (frame: number) =>
+  Math.max(0, ROLL.filter((h) => h <= frame).length - 1) * 6;
 
 // Camcorder overlay: recording info running down the left edge.
 const Camcorder: React.FC = () => {
@@ -101,33 +111,38 @@ const Camcorder: React.FC = () => {
   );
 };
 
-const Shot: React.FC<{ cut: Cut; length: number; whipIn: boolean }> = ({
-  cut,
-  length,
-  whipIn,
-}) => {
+const Shot: React.FC<{
+  cut: Cut;
+  length: number;
+  whipIn?: "left" | "right";
+}> = ({ cut, length, whipIn }) => {
   const local = useCurrentFrame();
   const frame = cut.from + local;
   const t = local / length;
 
-  // Punch in on every cut, then a slow drift and a little handheld shake.
-  let zoom = interpolate(local, [0, 6], [1.1, 1.03], clamp) + local * 0.0008;
-  const x = Math.sin(frame * 0.9) * 5 + Math.sin(frame * 2.3) * 3;
-  const y = Math.cos(frame * 0.7) * 5;
-  let shift = 0;
+  // Punch in on every cut, a slow drift, and a handheld shake with a little
+  // roll; it kicks harder for a moment on the drop.
+  let zoom = interpolate(local, [0, 6], [1.14, 1.05], clamp) + local * 0.001;
+  const kick = interpolate(frame, [DROP, DROP + 14], [3, 1], clamp);
+  let x = (Math.sin(frame * 0.9) * 7 + Math.sin(frame * 2.3) * 4) * kick;
+  const y = (Math.cos(frame * 0.7) * 7 + Math.cos(frame * 1.9) * 3) * kick;
+  let rotate = Math.sin(frame * 0.5) * 0.8 * kick;
   let blur = 0;
-  let rotate = 0;
   let brightness = 1;
 
-  // Whip pan: out of a shot to the right, into the next from the left.
+  // Bump the zoom on every beat after the drop.
+  const lastBeat = Math.max(...BEATS.filter((b) => b <= frame), -100);
+  zoom += interpolate(frame - lastBeat, [0, 5], [0.06, 0], clamp);
+
+  // Whip pans out of a shot and into the next.
   if (cut.whipOut && local >= length - 4) {
     const k = local - (length - 5);
-    shift += k * 120;
-    blur += k * 8;
+    x += (cut.whipOut === "right" ? 1 : -1) * k * 130;
+    blur += k * 9;
   }
   if (whipIn && local < 4) {
-    shift -= (4 - local) * 120;
-    blur += (4 - local) * 8;
+    x += (whipIn === "right" ? -1 : 1) * (4 - local) * 130;
+    blur += (4 - local) * 9;
   }
   if (cut.fx === "pushIn") {
     // The camera pushes into the shot and loses focus before the haze.
@@ -137,46 +152,67 @@ const Shot: React.FC<{ cut: Cut; length: number; whipIn: boolean }> = ({
   }
   if (cut.fx === "haze") {
     blur += interpolate(local, [0, length], [14, 4], clamp);
-    brightness = 0.75;
-    shift -= local * 4;
+    brightness = 0.8;
+    x -= local * 4;
   }
   if (cut.fx === "vortex") {
-    rotate = t * t * 50;
-    zoom += t * 0.4;
+    rotate += t * t * 55;
+    zoom += t * 0.45;
     blur += t * t * 6;
   }
-  let video: React.ReactNode = <Video cut={cut} />;
-  if (cut.fx === "burst") {
-    const hold = burstFrame(frame);
-    video = <Freeze frame={hold}>{video}</Freeze>;
-    // A small punch on each hit, like a camera firing.
-    const sinceHit = frame - Math.max(...ROLL.filter((h) => h <= frame));
-    if (frame < ROLL[ROLL.length - 1]) {
-      zoom += interpolate(sinceHit, [0, 3], [0.05, 0], clamp);
-    }
-  }
 
-  const transform = `translate(${x + shift}px, ${y}px) rotate(${rotate}deg) scale(${zoom})`;
-  const filter = [
+  const bw = inRange(frame, BLACK_AND_WHITE);
+  const smear = inRange(frame, SMEARS);
+  let filter = [
+    bw ? MONO : PURPLE,
     blur ? `blur(${blur}px)` : "",
     brightness !== 1 ? `brightness(${brightness})` : "",
   ].join(" ");
+  let transform = `translate(${x}px, ${y}px) rotate(${rotate}deg) scale(${zoom})`;
+  if (smear) {
+    // Blown out and stretched, painted purple below.
+    const drop = smear[0] === SMEARS[0][0];
+    filter = `grayscale(1) brightness(1.9) contrast(1.5) blur(${drop ? 34 : 16}px)`;
+    transform += ` scale(1.1, 1.45) skewX(${Math.sin(frame) * 8}deg)`;
+  }
+
+  let video: React.ReactNode = <Video cut={cut} />;
+  if (cut.fx === "burst") {
+    video = <Freeze frame={burstFrame(frame)}>{video}</Freeze>;
+    // A small punch on each hit, like a camera firing.
+    const sinceHit = frame - Math.max(...ROLL.filter((h) => h <= frame));
+    transform += ` scale(${interpolate(sinceHit, [0, 3], [1.05, 1], clamp)})`;
+  }
 
   return (
     <AbsoluteFill>
-      <AbsoluteFill style={{ transform, filter: filter.trim() || undefined }}>
-        {video}
-      </AbsoluteFill>
-      {cut.fx === "vortex"
+      <AbsoluteFill style={{ transform, filter }}>{video}</AbsoluteFill>
+      {cut.fx === "vortex" && !smear
         ? // Ghosts turning further ahead: the spin blur of the reference.
           [1, 2, 3].map((i) => (
             <AbsoluteFill
               key={i}
               style={{
-                transform: `translate(${x}px, ${y}px) rotate(${rotate + i * 7 * t}deg) scale(${zoom + i * 0.04 * t})`,
-                filter: `blur(${2 + i * 2}px)`,
+                transform: `${transform} rotate(${i * 7 * t}deg) scale(${1 + i * 0.04 * t})`,
+                filter: `${filter} blur(${2 + i * 2}px)`,
                 mixBlendMode: "screen",
                 opacity: 0.4 * t,
+              }}
+            >
+              <Video cut={cut} />
+            </AbsoluteFill>
+          ))
+        : null}
+      {cut.fx === "rgb" && local < 6
+        ? // Doubled, colour-shifted copies as the purple kicks in.
+          [-1, 1].map((side) => (
+            <AbsoluteFill
+              key={side}
+              style={{
+                transform: `${transform} translateX(${side * 30}px)`,
+                filter: `${filter} hue-rotate(${side * 90}deg) blur(3px)`,
+                mixBlendMode: "screen",
+                opacity: 0.6 * (1 - local / 6),
               }}
             >
               <Video cut={cut} />
@@ -188,6 +224,7 @@ const Shot: React.FC<{ cut: Cut; length: number; whipIn: boolean }> = ({
         <AbsoluteFill
           style={{
             transform: `${transform} translateY(-330px)`,
+            filter,
             mixBlendMode: "screen",
             opacity: 0.75,
           }}
@@ -195,8 +232,13 @@ const Shot: React.FC<{ cut: Cut; length: number; whipIn: boolean }> = ({
           <Video cut={cut} />
         </AbsoluteFill>
       ) : null}
+      {smear ? (
+        <AbsoluteFill
+          style={{ background: "#b21cff", mixBlendMode: "color" }}
+        />
+      ) : null}
       {cut.fx === "burst" && ROLL.slice(0, -1).includes(frame) ? (
-        <AbsoluteFill style={{ background: "white", opacity: 0.35 }} />
+        <AbsoluteFill style={{ background: "white", opacity: 0.4 }} />
       ) : null}
       {cut.fx === "vhs" ? <Camcorder /> : null}
     </AbsoluteFill>
@@ -204,60 +246,70 @@ const Shot: React.FC<{ cut: Cut; length: number; whipIn: boolean }> = ({
 };
 
 // The neon logo seen from behind (mirrored) rising from the bottom of the
-// frame, drifting left and back, then turning edge-on and gone by the cut;
-// frame by frame after the reference.
+// frame and drifting like the reference's, turning to face the lens by the
+// cut, then flying on into the sign shot and landing on the real sign.
 const LOGO_KEYS = {
-  //      0     1     2     3     4     5     6     7     8     9    10   11
-  x: [-60, -40, -20, -20, -40, -90, -270, -110, -50, -60, -60, -60],
-  y: [820, 720, 672, 640, 600, 576, 576, 576, 560, 540, 540, 540],
-  scale: [0.6, 0.95, 1.15, 1.25, 1.25, 1.25, 1.25, 1.2, 1.15, 1.1, 1.1, 1.1],
-  rotateY: [200, 195, 190, 185, 182, 180, 178, 172, 150, 118, 95, 90],
+  frame: [148, 149, 150, 151, 153, 155, 156, 157, 158, 159, 162, 166, 172],
+  x: [-60, -40, -20, -20, -60, -180, -120, -60, -20, -10, -4, 0, 0],
+  y: [820, 720, 672, 640, 590, 560, 540, 500, 440, 380, 60, -125, -125],
+  scale: [
+    0.6, 0.95, 1.15, 1.25, 1.25, 1.2, 1.15, 1.1, 1.05, 1.0, 0.86, 0.74, 0.74,
+  ],
+  rotateY: [200, 195, 190, 185, 180, 200, 240, 290, 330, 355, 360, 360, 360],
+  opacity: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
 };
 
 const LogoFly: React.FC = () => {
   const frame = useCurrentFrame();
-  const glow =
-    "drop-shadow(0 0 6px #ff3df0) drop-shadow(0 0 22px #ff3df0) drop-shadow(0 0 50px #c020ff)";
-  if (frame >= LOGO_FLY[0] && frame < LOGO_FLY[1]) {
-    const k = frame - LOGO_FLY[0];
-    return (
-      <AbsoluteFill
+  if (frame < LOGO_FLY[0] || frame >= LOGO_FLY[1]) {
+    return null;
+  }
+  const at = (key: keyof typeof LOGO_KEYS) =>
+    interpolate(frame, LOGO_KEYS.frame, LOGO_KEYS[key], clamp);
+  // A bright glow as it hits the sign.
+  const hit = interpolate(frame, [164, 166, 172], [1, 1.8, 1], clamp);
+  return (
+    <AbsoluteFill
+      style={{
+        justifyContent: "center",
+        alignItems: "center",
+        perspective: 1400,
+        opacity: at("opacity"),
+      }}
+    >
+      <div
         style={{
-          justifyContent: "center",
-          alignItems: "center",
-          perspective: 1400,
+          transform: `translate(${at("x")}px, ${at("y")}px) rotateY(${at("rotateY")}deg) scale(${at("scale")})`,
+          filter: `drop-shadow(0 0 ${6 * hit}px #ff3df0) drop-shadow(0 0 ${22 * hit}px #ff3df0) drop-shadow(0 0 ${50 * hit}px #c020ff)`,
         }}
       >
-        <div
-          style={{
-            transform: `translate(${LOGO_KEYS.x[k]}px, ${LOGO_KEYS.y[k]}px) rotateY(${LOGO_KEYS.rotateY[k]}deg) scale(${LOGO_KEYS.scale[k]})`,
-            filter: glow,
-          }}
-        >
-          <VenusLogo />
-        </div>
-      </AbsoluteFill>
-    );
+        <VenusLogo />
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// Film grain over the black & white parts.
+const Grain: React.FC = () => {
+  const frame = useCurrentFrame();
+  if (!inRange(frame, BLACK_AND_WHITE)) {
+    return null;
   }
-  if (frame >= LOGO_GHOST[0] && frame < LOGO_GHOST[1]) {
-    // A faint double exposure of the logo over the real sign.
-    const opacity = interpolate(frame, LOGO_GHOST, [0.8, 0], clamp);
-    return (
-      <AbsoluteFill
-        style={{ justifyContent: "center", alignItems: "center", opacity }}
-      >
-        <div
-          style={{
-            transform: "translate(-70px, -90px) scale(0.45)",
-            filter: glow,
-          }}
-        >
-          <VenusLogo />
-        </div>
-      </AbsoluteFill>
-    );
-  }
-  return null;
+  return (
+    <AbsoluteFill style={{ opacity: 0.16, mixBlendMode: "overlay" }}>
+      <svg width="100%" height="100%">
+        <filter id="venus2-grain">
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.85"
+            numOctaves={2}
+            seed={Math.floor(random(`grain${frame}`) * 1000)}
+          />
+        </filter>
+        <rect width="100%" height="100%" filter="url(#venus2-grain)" />
+      </svg>
+    </AbsoluteFill>
+  );
 };
 
 const Overlays: React.FC = () => {
@@ -389,21 +441,20 @@ export const Venus2: React.FC<Venus2Props> = (props) => {
   return (
     <AbsoluteFill style={{ background: "black" }}>
       <svg width={0} height={0} style={{ position: "absolute" }}>
-        {/* Lifts the mids, as the reference does, before the saturation. */}
-        <filter id="venus2-gamma" colorInterpolationFilters="sRGB">
+        <filter id="venus2-purple" colorInterpolationFilters="sRGB">
+          <feColorMatrix
+            type="matrix"
+            values="0.72 0.5 0.14 0 0  0.12 0.27 0.02 0 0  0.62 0.68 0.48 0 0  0 0 0 1 0"
+          />
           <feComponentTransfer>
-            <feFuncR type="gamma" amplitude={1} exponent={0.72} offset={0} />
-            <feFuncG type="gamma" amplitude={1} exponent={0.72} offset={0} />
-            <feFuncB type="gamma" amplitude={1} exponent={0.72} offset={0} />
+            <feFuncR type="gamma" amplitude={1} exponent={0.6} offset={0} />
+            <feFuncG type="gamma" amplitude={1} exponent={0.6} offset={0} />
+            <feFuncB type="gamma" amplitude={1} exponent={0.6} offset={0} />
           </feComponentTransfer>
         </filter>
       </svg>
       {frame < END_CARD ? (
-        // Venus purple, with the reference's punch: brighter mids, deep
-        // blacks, rich colour.
-        <AbsoluteFill
-          style={{ filter: "url(#venus2-gamma) saturate(1.6) contrast(1.12)" }}
-        >
+        <AbsoluteFill>
           {CUTS.map((cut, i) => {
             const to = CUTS[i + 1]?.from ?? END_CARD;
             return (
@@ -416,12 +467,13 @@ export const Venus2: React.FC<Venus2Props> = (props) => {
                 <Shot
                   cut={cut}
                   length={to - cut.from}
-                  whipIn={Boolean(CUTS[i - 1]?.whipOut)}
+                  whipIn={CUTS[i - 1]?.whipOut}
                 />
               </Sequence>
             );
           })}
           <LogoFly />
+          <Grain />
         </AbsoluteFill>
       ) : null}
       <Overlays />

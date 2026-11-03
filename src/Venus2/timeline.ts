@@ -1,10 +1,12 @@
 // Edit decision list for the second Venus reel (30 fps), modelled on the
-// "THE ROOM" reference: typewriter caption over the voice-over, the logo
-// flipping past on its back before the sign shot, a whip on the dancer's hand
-// swing, a camcorder shot, a vortex, a stop-motion run on the song's
-// percussion roll, a quick-fire run with a film burn, and a wash into the
-// end card. Every cut sits on the song's beat grid. Each clip appears at most
-// twice, never with the same moment twice.
+// "THE ROOM" reference with effects from the first Venus reel: a black &
+// white intro with white flashes under the voice-over and typewriter
+// caption, the logo flipping past and landing on the real sign, a smear and
+// RGB split into the purple drop, speed ramps and beat zooms, a whip on the
+// dancer's hand swing, a camcorder shot, a vortex, a black & white
+// stop-motion on the song's percussion roll, a quick-fire run with a film
+// burn, and a wash into the end card. Cuts sit on the song's beat grid; each
+// clip appears at most twice, never with the same moment twice.
 
 export const VENUS2_FPS = 30;
 
@@ -27,9 +29,28 @@ export const CLIPS = {
   ballerina: "venus2/clips/ballerina.mp4", // masked dancer in mesh, 5.6 s; hands swing right at 1.4-1.6 s
   dance: "venus2/clips/dance.mp4", // girl dancing, arms up, 2.6 s
   kiss: "venus2/clips/kiss.mp4", // girl blowing a kiss, 1.4 s
+  // Speed-ramped shots rendered by scripts/venus2_ramps.py, played from 0.
+  "c4-intro": "venus2/ramps/c4-intro.mp4",
+  "c9-intro": "venus2/ramps/c9-intro.mp4",
+  "dance-intro": "venus2/ramps/dance-intro.mp4",
+  "c9-push": "venus2/ramps/c9-push.mp4",
+  "c2-haze": "venus2/ramps/c2-haze.mp4",
+  "ballerina-drop": "venus2/ramps/ballerina-drop.mp4",
+  "c3-pan": "venus2/ramps/c3-pan.mp4",
+  "dance-vortex": "venus2/ramps/dance-vortex.mp4",
+  "ballerina-play": "venus2/ramps/ballerina-play.mp4",
+  "c1-out": "venus2/ramps/c1-out.mp4",
+  "c5-wash": "venus2/ramps/c5-wash.mp4",
 } as const;
 
-export type ClipFx = "pushIn" | "haze" | "vhs" | "vortex" | "burst" | "double";
+export type ClipFx =
+  | "pushIn"
+  | "haze"
+  | "rgb"
+  | "vhs"
+  | "vortex"
+  | "burst"
+  | "double";
 
 export type Cut = {
   from: number;
@@ -37,40 +58,63 @@ export type Cut = {
   // Second of the source clip shown on the first frame of the cut.
   at: number;
   fx?: ClipFx;
-  // Whip pan out of this shot to the right, into the next one.
-  whipOut?: boolean;
+  // Whip pan out of this shot, into the next one.
+  whipOut?: "left" | "right";
 };
 
 // Each cut lasts until the next one starts.
 export const CUTS: Cut[] = [
-  // Build-up under the voice-over
-  { from: 0, clip: "c4", at: 0.0 },
-  { from: 58, clip: "c9", at: 0.0 },
-  { from: 86, clip: "dance", at: 0.0 },
+  // Black & white build-up under the voice-over
+  { from: 0, clip: "c4-intro", at: 0, whipOut: "right" },
+  { from: 58, clip: "c9-intro", at: 0 },
+  { from: 86, clip: "dance-intro", at: 0 },
   { from: 115, clip: "c5", at: 0.2 },
   { from: 159, clip: "c1", at: 0.6 },
-  { from: 187, clip: "c9", at: 1.3, fx: "pushIn" },
-  { from: 234, clip: "c2", at: 0.0, fx: "haze" },
-  // Drop
-  { from: DROP, clip: "ballerina", at: 0.55, whipOut: true },
-  { from: 295, clip: "c3", at: 0.0 },
+  { from: 187, clip: "c9-push", at: 0, fx: "pushIn" },
+  { from: 234, clip: "c2-haze", at: 0, fx: "haze" },
+  // Drop into purple
+  { from: DROP, clip: "ballerina-drop", at: 0, fx: "rgb", whipOut: "right" },
+  { from: 295, clip: "c3-pan", at: 0 },
   { from: 323, clip: "c8", at: 0.3, fx: "vhs" },
   { from: 367, clip: "kiss", at: 0.2 },
-  { from: 396, clip: "dance", at: 1.1, fx: "vortex" },
-  { from: 425, clip: "c6", at: 0.0 },
+  { from: 396, clip: "dance-vortex", at: 0, fx: "vortex" },
+  { from: 425, clip: "c6", at: 0.0, whipOut: "left" },
   { from: 453, clip: "c4", at: 1.97 },
-  // Stop-motion on the percussion roll, then the dancer plays on
+  // Black & white stop-motion on the percussion roll, then the dancer
+  // plays on
   { from: 467, clip: "ballerina", at: 2.0, fx: "burst" },
-  { from: 525, clip: "c1", at: 1.9 },
+  { from: 497, clip: "ballerina-play", at: 0 },
+  { from: 525, clip: "c1-out", at: 0, whipOut: "right" },
   // Quick-fire run
   { from: 540, clip: "c2", at: 1.8 },
   { from: 544, clip: "c8", at: 1.85 },
-  { from: 548, clip: "c3", at: 1.0, fx: "double" },
+  { from: 548, clip: "c3", at: 1.1, fx: "double" },
   { from: 554, clip: "kiss", at: 1.2 },
   { from: 558, clip: "c6", at: 1.05 },
-  // Wash and flashes into the end card
-  { from: 562, clip: "c5", at: 2.0 },
+  // Slow motion under the wash and flashes into the end card
+  { from: 562, clip: "c5-wash", at: 0 },
   { from: 617, clip: "c7", at: 0.2 },
+];
+
+// Shown in black & white: the intro and the stop-motion run.
+export const BLACK_AND_WHITE: [number, number][] = [
+  [0, DROP],
+  [467, 497],
+];
+
+// Beats after the drop: each one bumps the zoom.
+export const BEATS = [
+  265, 280, 295, 309, 323, 338, 353, 367, 382, 396, 410, 425, 439, 453, 467,
+  482, 497, 511, 525, 540, 554, 568, 583, 598, 611, 626,
+];
+
+// Blown-out purple smears between shots, from the first Venus reel; the
+// first one carries the drop.
+export const SMEARS: [number, number][] = [
+  [257, 268],
+  [319, 323],
+  [449, 453],
+  [558, 562],
 ];
 
 // Hits of the song's percussion roll (66.97-67.69 s): the stop-motion jumps
@@ -84,6 +128,13 @@ export type Flash = {
   fill: string;
   opacity: number;
 };
+
+const white = (from: number, to: number, opacity = 1): Flash => ({
+  from,
+  to,
+  fill: "#fbfbfd",
+  opacity,
+});
 
 export const FLASHES: Flash[] = [
   // Cyan streak down the left edge, then a light bar on the right.
@@ -99,8 +150,20 @@ export const FLASHES: Flash[] = [
     fill: "linear-gradient(90deg, transparent 68%, rgba(255,40,210,0.95) 76%, rgba(255,60,220,0.9) 88%, transparent 95%)",
     opacity: 1,
   },
-  // Green tint on the cut to the second shot.
-  { from: 58, to: 60, fill: "#a6ff7a", opacity: 0.55 },
+  // White flashes on the phrases and cuts of the intro, as in the first
+  // Venus reel.
+  white(53, 56),
+  white(86, 88),
+  white(115, 117),
+  white(187, 189),
+  white(234, 236),
+  // White hits on the beat after the drop.
+  white(323, 325),
+  white(367, 368, 0.6),
+  white(396, 398),
+  white(453, 455),
+  white(525, 527),
+  white(540, 541),
   // Film burn in the quick-fire run.
   {
     from: 552,
@@ -130,10 +193,9 @@ export const CAPTION = {
 export const VOICE_FROM = 8;
 export const VOICE_TO = VOICE_FROM + 99;
 
-// The logo flips past on its back over shot 4, edge-on by the cut, and a
-// ghost of it lingers over the sign shot.
-export const LOGO_FLY: [number, number] = [148, 159];
-export const LOGO_GHOST: [number, number] = [159, 162];
+// The logo flips past on its back over shot 4, turning to face the lens by
+// the cut, then flies on into the sign shot and lands on the real sign.
+export const LOGO_FLY: [number, number] = [148, 172];
 
 export const END_TEXT = {
   from: END_CARD + 2,
@@ -166,11 +228,15 @@ const sfx = (file: string, at: number, peak: number, volume: number) => ({
 });
 
 export const SFX: { file: string; from: number; volume: number }[] = [
-  sfx("impact", LOGO_FLY[0] + 4, 22, 0.45),
+  sfx("impact", 166, 22, 0.45),
   sfx("swoosh-slow", DROP, 41, 0.22),
   sfx("sub-drop", DROP, 28, 0.17),
+  // Swooshes on the whips and smears, fast and slow taking turns.
   sfx("swoosh-fast", 295, 12, 0.4),
-  sfx("swoosh-slow", 410, 41, 0.3),
+  sfx("swoosh-slow", 321, 41, 0.28),
+  sfx("swoosh-slow", 410, 41, 0.28),
+  sfx("swoosh-fast", 453, 12, 0.4),
+  sfx("swoosh-slow", 540, 41, 0.28),
   sfx("camera-flash", 552, 7, 0.4),
   sfx("camera-flash", 612, 7, 0.35),
   sfx("impact", END_CARD, 22, 0.3),
