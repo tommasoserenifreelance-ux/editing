@@ -53,14 +53,39 @@ def body_loop(cx, cy, s, rng):
     return np.stack([x, y], 1)
 
 
+def connector(p0, p1, s, rng, wave=0.05, n=700, bulge=0.0):
+    """Wavy segment between two points (gentle hand wobble)."""
+    t = np.linspace(0, 1, n)
+    x = p0[0] + (p1[0] - p0[0]) * t
+    y = p0[1] + (p1[1] - p0[1]) * t
+    env = np.sin(np.pi * t)  # wobble zero at the ends so joints stay continuous
+    y = y + env * (wave * s * np.sin(t * rng.uniform(4, 8) + rng.uniform(0, 6)) + smooth_noise(n, rng, 0.03 * s, 4))
+    x = x + env * bulge * s  # sideways arc
+    return np.stack([x, y], 1)
+
+
+def smooth_path(p, win):
+    """Moving average on the coordinates: rounds the joints between segments."""
+    k = np.ones(win) / win
+    pad = np.pad(p, ((win, win), (0, 0)), mode="edge")
+    return np.stack([np.convolve(pad[:, i], k, mode="same")[win:-win] for i in range(2)], 1)
+
+
+def resample(p, n):
+    """Even spacing along the arc length."""
+    d = np.r_[0, np.cumsum(np.hypot(*np.diff(p, axis=0).T))]
+    t = np.linspace(0, d[-1], n)
+    return np.stack([np.interp(t, d, p[:, i]) for i in range(2)], 1)
+
+
 def render(paths, w, h, width, rng):
     """Draw paths with varying intensity into a float mask (0..1)."""
     img = Image.new("L", (w, h), 0)
     d = ImageDraw.Draw(img)
     for p in paths:
         n = len(p)
-        inten = np.clip(0.75 + 0.25 * np.sin(np.linspace(0, rng.uniform(2, 4), n) + rng.uniform(0, 6)), 0.15, 1)
-        inten *= np.clip(np.minimum(np.arange(n), n - np.arange(n)) / (0.08 * n), 0, 1)  # fade ends
+        inten = np.clip(0.85 + 0.15 * np.sin(np.linspace(0, rng.uniform(4, 7), n) + rng.uniform(0, 6)), 0.15, 1)
+        inten *= np.clip(np.minimum(np.arange(n), n - np.arange(n)) / (0.03 * n), 0, 1)  # fade ends
         for i in range(n - 1):
             v = int(255 * inten[i])
             if v > 3:
@@ -74,11 +99,17 @@ def add_trails(a, head, size, seed=3):
     cx, cy = head
     s = size
     k = max(w, h) / 2000.0
-    paths = [head_loops(cx, cy, s, rng),
-             streak(cy - 0.62 * s, -0.05 * w, cx - 0.2 * s, s, rng, 0.06),
-             streak(cy - 0.35 * s, -0.05 * w, cx - 0.45 * s, s, rng, 0.05),
-             body_loop(cx + 0.05 * s, cy + 1.05 * s, s * 0.85, rng),
-             streak(cy + 0.75 * s, -0.05 * w, cx - 0.55 * s, s, rng, 0.04)]
+    # ONE continuous trail, like a single light moved during the exposure:
+    # enters from the left, loops around the head, drops to the shoulder,
+    # circles it and leaves towards the left again.
+    hl = head_loops(cx, cy, s, rng)
+    bl = body_loop(cx + 0.05 * s, cy + 1.05 * s, s * 0.85, rng)
+    a_in = connector((-0.05 * w, cy - 0.62 * s), hl[0], s, rng, 0.06)
+    mid = connector(hl[-1], bl[0], s, rng, 0.02, bulge=0.30)
+    a_out = connector(bl[-1], (-0.05 * w, cy + 0.75 * s), s, rng, 0.05)
+    path = np.concatenate([a_in, hl, mid, bl, a_out])
+    path = resample(smooth_path(path, 25), 5000)
+    paths = [path]
     core = render(paths, w, h, 7 * k, rng)
     core = blur(core, 1.5 * k)
     glow1 = blur(core, 9 * k)
