@@ -59,7 +59,7 @@ def hsv_to_rgb(h, s, v):
 
 # Skin target measured on the flash portraits of the references (HSV):
 # hue ~20 deg (peach/rose, not yellow), saturation ~0.40, value ~0.70.
-SKIN_HUE, SKIN_SAT, SKIN_VAL = 20.0, 0.40, 0.66
+SKIN_HUE, SKIN_SAT, SKIN_VAL = 23.0, 0.44, 0.66
 # 0 = keep full original skin detail (no smoothing); glow kept subtle
 SKIN_SMOOTH, SKIN_GLOW = 0.0, 0.35
 # extra shadow depth (0..1)
