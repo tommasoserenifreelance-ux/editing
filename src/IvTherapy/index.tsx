@@ -102,7 +102,11 @@ const lineup = (t0: number) => (
 
 const SCENES: Scene[] = [
   { from: 0, speaker: true, render: th("wide") },
-  { from: wt("le", 1.5), render: () => <RetroTV src="iv/b_patient_infusion.mp4" /> },
+  {
+    // shifted left so the YouTube hook title (right side) never covers it
+    from: wt("le", 1.5),
+    render: () => <RetroTV src="iv/b_patient_infusion.mp4" x={-300} />,
+  },
   {
     from: wt("E", 3.9),
     render: (t0) => (
@@ -273,6 +277,7 @@ export const IvTherapyYouTube: React.FC = () => (
   <AbsoluteFill style={{ backgroundColor: "#000" }}>
     <Sequence durationInFrames={HOOK_END}>
       <IvTherapy />
+      <HookTitle />
     </Sequence>
     <Sequence from={HOOK_END} durationInFrames={INTRO}>
       <IntroTitle />
@@ -313,9 +318,27 @@ const thV = (framing: "wide" | "close", punch: string[] = []) => (t0: number) =>
 /** Hook title on the first seconds (also what shows on the cover frame). */
 const HookTitle: React.FC = () => {
   const frame = useCurrentFrame();
+  const { width, height } = useVideoConfig();
   const out = interpolate(frame, [sec(3.1), sec(3.4)], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   const pulse = 1 + 0.02 * Math.sin(frame / 5);
   if (out <= 0) return null;
+  const line = (size: number, color: string, text: string) => (
+    <div style={{ fontFamily: mont, fontWeight: 900, fontStyle: "italic", fontSize: size, lineHeight: 1.0, color, letterSpacing: "-0.01em" }}>{text}</div>
+  );
+  if (width > height) {
+    // horizontal: stacked on the empty right side of the wide shot
+    return (
+      <AbsoluteFill style={{ pointerEvents: "none", opacity: out }}>
+        <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 900, background: "linear-gradient(270deg, rgba(0,0,0,0.7), rgba(0,0,0,0.35) 60%, transparent)" }} />
+        <div style={{ position: "absolute", right: 90, top: 140, textAlign: "right", transform: `scale(${pulse})`, transformOrigin: "100% 0%", textShadow: "0 4px 18px rgba(0,0,0,0.7)" }}>
+          <div style={{ fontFamily: mont, fontWeight: 800, fontStyle: "italic", fontSize: 54, color: "#fff", letterSpacing: "-0.01em", marginBottom: 6 }}>Flebo di vitamine:</div>
+          {line(108, ref.yellow, "QUANDO")}
+          {line(108, ref.yellow, "SERVONO")}
+          {line(108, "#fff", "DAVVERO?")}
+        </div>
+      </AbsoluteFill>
+    );
+  }
   return (
     <AbsoluteFill style={{ pointerEvents: "none", opacity: out }}>
       <div style={{ position: "absolute", left: 0, right: 0, top: 0, height: 560, background: "linear-gradient(180deg, rgba(0,0,0,0.82), rgba(0,0,0,0.55) 60%, transparent)" }} />
@@ -326,9 +349,7 @@ const HookTitle: React.FC = () => {
         <div style={{ fontFamily: mont, fontWeight: 900, fontStyle: "italic", fontSize: 92, lineHeight: 1.05, color: ref.yellow, letterSpacing: "-0.01em" }}>
           QUANDO SERVONO
         </div>
-        <div style={{ fontFamily: mont, fontWeight: 900, fontStyle: "italic", fontSize: 118, lineHeight: 1.0, color: "#fff", letterSpacing: "-0.01em" }}>
-          DAVVERO?
-        </div>
+        {line(118, "#fff", "DAVVERO?")}
       </div>
     </AbsoluteFill>
   );

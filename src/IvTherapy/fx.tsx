@@ -253,7 +253,8 @@ export const RetroTV: React.FC<{
   startFrom?: number;
   scale?: number;
   bars?: number; // frame at which to flash colour bars on the screen
-}> = ({ src, startFrom = 0, scale = 1, bars }) => {
+  x?: number; // horizontal offset of the set (px) — the room stays full-frame
+}> = ({ src, startFrom = 0, scale = 1, bars, x = 0 }) => {
   const frame = useCurrentFrame();
   const { fps, width, height } = useVideoConfig();
   const p = spring({ frame, fps, config: { damping: 18, mass: 0.7 } });
@@ -268,7 +269,7 @@ export const RetroTV: React.FC<{
       <div
         style={{
           position: "absolute",
-          left: (width - W) / 2,
+          left: (width - W) / 2 + x,
           top: height * 0.5 - H * 0.52,
           width: W,
           height: H,
