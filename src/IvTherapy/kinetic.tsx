@@ -26,11 +26,11 @@ export const makeWt = (list: Word[]) => (text: string, after = 0) => {
 export const wt = makeWt(WORDS);
 
 const YELLOW = new Set(
-  "benessere ovunque moda miracolo verità mezzo interessante prezioso personalizzata perché basi intravenosa molecole sanguigno digerente vantaggio concreto 100% utile assorbimento documentate apporto prevenzione migliore solido vero seria personalizzazione misura persona esami obiettivi d'arte sartoriale alimentazione serve valutazione davvero ideale professionista medico".split(
+  "benessere ovunque moda verità mezzo interessante prezioso personalizzata perché basi intravenosa molecole sanguigno digerente vantaggio concreto 100% utile assorbimento documentate apporto prevenzione migliore solido vero seria personalizzazione misura persona esami obiettivi d'arte sartoriale alimentazione serve valutazione davvero ideale professionista medico".split(
     " ",
   ),
 );
-const RED = new Set(["truffa", "vezzo", "generica", "tutti", "self-service", "lì"]);
+const RED = new Set(["vezzo", "generica", "tutti", "self-service", "lì"]);
 
 type Chunk = { small: string; big?: string; color?: string; s: number; e: number; bs: number };
 
