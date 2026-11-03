@@ -14,7 +14,7 @@ from nightlife_grade import blur
 BAR_FRAC = 0.040  # bar width as a fraction of image width (measured on the reference)
 
 
-def star(h, w, cx, cy, length, angles, k, bar=None):
+def star(h, w, cx, cy, length, angles, k, bar=None, seed=0):
     """One reference-style flare: two broad, flat-topped, semi-transparent bars
     (constant width, soft edges) crossing at the light, fading towards the ends."""
     bar = bar or BAR_FRAC * w                     # bar width ~3% of the frame, as measured
@@ -33,11 +33,17 @@ def star(h, w, cx, cy, length, angles, k, bar=None):
         local = bar * (1 + 0.9 * np.clip(1 - along * 1.6, 0, 1) ** 2)
         across = np.abs(-dx * uy + dy * ux) / (local / 2)
         body = np.exp(-across ** 4)                       # flat top, soft edges
+        # streaky texture inside the bar (real flares are not uniform)
+        rng = np.random.default_rng(seed + int(ang))
+        signed = (-dx * uy + dy * ux) / (local / 2)
+        ph = rng.uniform(0, 6, 3)
+        body = body * (0.78 + 0.22 * np.sin(signed * 2.3 + ph[0]) * np.sin(signed * 5.1 + ph[1]))
+        body = body * (0.85 + 0.15 * np.sin(along * 9 + ph[2]))
         fade = np.clip(1 - along, 0, 1) ** 0.8
         out = np.maximum(out, body * fade * 0.92)
         out = np.maximum(out, np.exp(-(across * 1.2) ** 2) * fade)  # bright middle, near white like the reference
-    core = np.exp(-(r / (1.2 * bar)) ** 2)
-    halo = np.exp(-(r / (2.5 * bar)) ** 2) * 0.40
+    core = np.exp(-(r / (0.35 * bar)) ** 2)        # small bulb
+    halo = np.exp(-(r / (1.6 * bar)) ** 2) * 0.45
     full = np.zeros((h, w)); full[y0:y1, x0:x1] = np.maximum.reduce([out, core, halo])
     return full
 
@@ -46,8 +52,10 @@ def add_stars(a, stars, angle=20.0, tint=(0.75, 0.35, 1.0), angle2=112.0, behind
     h, w, _ = a.shape
     k = max(w, h) / 2000.0
     I = np.zeros((h, w))
-    for (x, y, size) in stars:
-        I = np.maximum(I, star(h, w, x, y, size, (angle, angle2), k))
+    for i, st in enumerate(stars):
+        x, y, size = st[:3]
+        amp = st[3] if len(st) > 3 else 1.0
+        I = np.maximum(I, amp * star(h, w, x, y, size, (angle + (i % 3 - 1) * 1.5, angle2 + (i % 2) * 2.0), k, seed=i * 7))
     I = blur(I, 1.5 * k)
     glow = blur(I, 14 * k)
     white = np.clip(I, 0, 1)
@@ -58,7 +66,8 @@ def add_stars(a, stars, angle=20.0, tint=(0.75, 0.35, 1.0), angle2=112.0, behind
         # reference, where the air around the lights is hazy, never pitch black)
         yy, xx = np.mgrid[0:h, 0:w]
         hz = np.zeros((h, w))
-        for (x, y, size) in stars:
+        for st in stars:
+            x, y, size = st[:3]
             hz = np.maximum(hz, np.exp(-(((xx - x) ** 2 + (yy - y) ** 2) / (0.75 * size) ** 2)))
         hz = np.maximum(hz, blur(I, 60 * k) * 2.0)
         light = light + np.clip(hz, 0, 1)[..., None] * col * haze
@@ -71,7 +80,7 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("input")
     p.add_argument("output")
-    p.add_argument("--star", action="append", required=True, help="x,y,length")
+    p.add_argument("--star", action="append", required=True, help="x,y,length[,intensity]")
     p.add_argument("--angle", type=float, default=20.0, help="first bar angle (deg)")
     p.add_argument("--angle2", type=float, default=112.0, help="second bar angle (deg)")
     p.add_argument("--tint", default="0.75,0.35,1.0")
