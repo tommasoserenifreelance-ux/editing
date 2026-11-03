@@ -2,7 +2,7 @@
 // "THE ROOM" reference with effects from the first Venus reel: a black &
 // white intro with white flashes under the voice-over and caption, the logo
 // flipping past and landing on the real sign, where the picture turns to
-// colour, a smear and RGB split into the purple drop, speed ramps and beat
+// colour, a smear and RGB split into the drop, speed ramps and beat
 // zooms, a whip on the dancer's hand swing, a camcorder shot bouncing into
 // the next kiss, a black & white stop-motion on the song's
 // percussion roll, a film burn into a quick-fire run of the dancer, and a
@@ -63,7 +63,7 @@ export const CUTS: Cut[] = [
   { from: 115, clip: "c5", at: 0.2 },
   // The logo lands on the sign and the picture turns to colour
   { from: 159, clip: "c1", at: 0.6, fx: "pushIn" },
-  // Drop into purple
+  // Drop, in the clips' own colour
   { from: DROP, clip: "ballerina-drop", at: 0, fx: "rgb", whipOut: "right" },
   { from: 251, clip: "c8", at: 0.0, fx: "vhs" },
   { from: 295, clip: "kiss", at: 0.2, bounce: true },

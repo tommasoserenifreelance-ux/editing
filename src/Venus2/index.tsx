@@ -54,9 +54,9 @@ const clamp = {
 const inRange = (frame: number, ranges: [number, number][]) =>
   ranges.find(([a, b]) => frame >= a && frame < b);
 
-// Venus purple, folded from all the light like the reference's red: mids
-// lifted, deep blacks, skin kept a touch warm.
-const PURPLE = "url(#venus2-purple) contrast(1.15)";
+// The clips' own colour, lightly corrected: mids lifted a touch out of the
+// dark, a little contrast and saturation.
+const NATURAL = "url(#venus2-lift) contrast(1.06) saturate(1.05)";
 // Black & white of the first Venus reel.
 const MONO = "grayscale(1) contrast(1.05) brightness(1.08)";
 
@@ -168,7 +168,7 @@ const Shot: React.FC<{
 
   const bw = inRange(frame, BLACK_AND_WHITE);
   const smear = inRange(frame, SMEARS);
-  let filter = [bw ? MONO : PURPLE, blur ? `blur(${blur}px)` : ""].join(" ");
+  let filter = [bw ? MONO : NATURAL, blur ? `blur(${blur}px)` : ""].join(" ");
   let transform = `translate(${x}px, ${y}px) rotate(${rotate}deg) scale(${zoom})`;
   if (smear) {
     // Blown out and stretched, painted purple below.
@@ -189,7 +189,7 @@ const Shot: React.FC<{
     <AbsoluteFill>
       <AbsoluteFill style={{ transform, filter }}>{video}</AbsoluteFill>
       {cut.fx === "rgb" && local < 6
-        ? // Doubled, colour-shifted copies as the purple kicks in.
+        ? // Doubled, colour-shifted copies as the colour kicks in.
           [-1, 1].map((side) => (
             <AbsoluteFill
               key={side}
@@ -477,15 +477,11 @@ export const Venus2: React.FC<Venus2Props> = (props) => {
   return (
     <AbsoluteFill style={{ background: "black" }}>
       <svg width={0} height={0} style={{ position: "absolute" }}>
-        <filter id="venus2-purple" colorInterpolationFilters="sRGB">
-          <feColorMatrix
-            type="matrix"
-            values="0.72 0.5 0.14 0 0  0.12 0.27 0.02 0 0  0.62 0.68 0.48 0 0  0 0 0 1 0"
-          />
+        <filter id="venus2-lift" colorInterpolationFilters="sRGB">
           <feComponentTransfer>
-            <feFuncR type="gamma" amplitude={1} exponent={0.6} offset={0} />
-            <feFuncG type="gamma" amplitude={1} exponent={0.6} offset={0} />
-            <feFuncB type="gamma" amplitude={1} exponent={0.6} offset={0} />
+            <feFuncR type="gamma" amplitude={1} exponent={0.85} offset={0} />
+            <feFuncG type="gamma" amplitude={1} exponent={0.85} offset={0} />
+            <feFuncB type="gamma" amplitude={1} exponent={0.85} offset={0} />
           </feComponentTransfer>
         </filter>
       </svg>
