@@ -1,4 +1,4 @@
-import { AbsoluteFill } from "remotion";
+import { AbsoluteFill, Img, staticFile } from "remotion";
 import {
   inter,
   pinkColors as colors,
@@ -17,18 +17,20 @@ const LIGHT: Theme = {
   text: colors.navy,
   accent: colors.rose,
 };
-const DARK: Theme = {
+// Text over a darkened photo.
+const PHOTO: Theme = {
   bg: colors.plum,
-  title: colors.pink,
+  title: "#fff",
   text: "#fff",
-  accent: "#F2A7B5",
+  accent: "#F6C1CC",
 };
 
 const Frame: React.FC<{
   theme: Theme;
   index: number;
+  photo?: string;
   children: React.ReactNode;
-}> = ({ theme, index, children }) => (
+}> = ({ theme, index, photo, children }) => (
   <AbsoluteFill
     style={{
       backgroundColor: theme.bg,
@@ -36,9 +38,30 @@ const Frame: React.FC<{
       color: theme.text,
       justifyContent: "center",
       padding: "0 100px 80px",
+      textShadow: photo ? "0 2px 14px rgba(0,0,0,0.45)" : undefined,
     }}
   >
-    {children}
+    {photo ? (
+      <>
+        <Img
+          src={staticFile(`img/${photo}`)}
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+          }}
+        />
+        <AbsoluteFill
+          style={{
+            background:
+              "linear-gradient(rgba(40,20,35,0.35), rgba(40,20,35,0.6))",
+          }}
+        />
+      </>
+    ) : null}
+    <div style={{ position: "relative" }}>{children}</div>
     <div
       style={{
         position: "absolute",
@@ -126,9 +149,14 @@ const SYMPTOMS: [string, string][] = [
   ],
 ];
 
-const SLIDES: { theme: Theme; render: (t: Theme) => React.ReactNode }[] = [
+const SLIDES: {
+  theme: Theme;
+  photo?: string;
+  render: (t: Theme) => React.ReactNode;
+}[] = [
   {
-    theme: DARK,
+    theme: PHOTO,
+    photo: "bocca-sorriso.jpg",
     render: (t) => (
       <>
         <div style={{ fontSize: 110, marginBottom: 30 }}>💧</div>
@@ -173,7 +201,8 @@ const SLIDES: { theme: Theme; render: (t: Theme) => React.ReactNode }[] = [
     ),
   },
   {
-    theme: DARK,
+    theme: PHOTO,
+    photo: "bocca-ragazza.jpg",
     render: (t) => (
       <>
         <Title theme={t} size={68}>
@@ -228,7 +257,8 @@ const SLIDES: { theme: Theme; render: (t: Theme) => React.ReactNode }[] = [
     ),
   },
   {
-    theme: DARK,
+    theme: PHOTO,
+    photo: "bocca-donna.jpg",
     render: (t) => (
       <Body size={44}>
         I sintomi orali in menopausa{" "}
@@ -274,7 +304,7 @@ export const SLIDE_COUNT = SLIDES.length;
 export const BoccaMenopausa: React.FC<{ index: number }> = ({ index }) => {
   const slide = SLIDES[index];
   return (
-    <Frame theme={slide.theme} index={index}>
+    <Frame theme={slide.theme} index={index} photo={slide.photo}>
       {slide.render(slide.theme)}
     </Frame>
   );
