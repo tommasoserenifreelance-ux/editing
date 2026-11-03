@@ -122,18 +122,49 @@ def add_trails(a, head, size, seed=3):
     return np.clip(out, 0, 1)
 
 
+def trails_from_mask(a, mask, ref_head, ref_size, head, size):
+    """Place a trail mask extracted from a reference (grey 0..255) on the image,
+    scaled so the reference head maps onto our head, and render it as violet neon."""
+    h, w, _ = a.shape
+    k = max(w, h) / 2000.0
+    sc = size / ref_size
+    # inverse affine: output (x, y) -> mask (x', y')
+    ax = 1 / sc
+    cx = ref_head[0] - head[0] / sc
+    cy = ref_head[1] - head[1] / sc
+    m = mask.convert("L").transform((w, h), Image.AFFINE, (ax, 0, cx, 0, ax, cy), resample=Image.BICUBIC)
+    I = np.asarray(m).astype(np.float64) / 255.0
+    I = blur(I, 2.0 * k)                       # slightly soft, like the reference
+    core = np.clip((I - 0.35) / 0.45, 0, 1) ** 1.3
+    hot = np.clip((I - 0.85) / 0.15, 0, 1)     # only the very centre goes pale
+    glow1 = blur(I, 9 * k)
+    glow2 = blur(I, 30 * k)
+    wash = blur(I, 120 * k)
+    sat_core = np.array([0.80, 0.30, 1.00])    # saturated violet core (reference core is full red)
+    light = (core[..., None] * sat_core * 2.2 + hot[..., None] * CORE * 0.6
+             + glow1[..., None] * GLOW * 2.4 + glow2[..., None] * HALO * 2.2 + wash[..., None] * HALO * 1.6)
+    out = 1 - (1 - a) * np.exp(-light)
+    return np.clip(out, 0, 1)
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("input")
     p.add_argument("output")
     p.add_argument("--head", type=float, nargs=2, required=True)
+    p.add_argument("--mask", help="trail mask extracted from a reference (use its exact shape)")
+    p.add_argument("--ref-head", type=float, nargs=2, help="head centre in the mask (px)")
+    p.add_argument("--ref-size", type=float, help="head width in the mask (px)")
     p.add_argument("--size", type=float, required=True)
     p.add_argument("--seed", type=int, default=3)
     p.add_argument("--exif-from")
     args = p.parse_args()
     im = Image.open(args.input)
     a = np.asarray(im.convert("RGB")).astype(np.float64) / 255.0
-    out = add_trails(a, args.head, args.size, args.seed)
+    if args.mask:
+        out = trails_from_mask(a, Image.open(args.mask), args.ref_head, args.ref_size, args.head, args.size)
+    else:
+        out = add_trails(a, args.head, args.size, args.seed)
     o = Image.fromarray(np.round(out * 255).astype(np.uint8))
     src = Image.open(args.exif_from) if args.exif_from else im
     kw = {k: v for k, v in (("icc_profile", src.info.get("icc_profile")), ("exif", src.info.get("exif"))) if v}
