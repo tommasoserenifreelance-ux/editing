@@ -42,7 +42,7 @@ def star(h, w, cx, cy, length, angles, k, bar=None):
     return full
 
 
-def add_stars(a, stars, angle=20.0, tint=(0.75, 0.35, 1.0), angle2=112.0, behind=None):
+def add_stars(a, stars, angle=20.0, tint=(0.75, 0.35, 1.0), angle2=112.0, behind=None, haze=0.0):
     h, w, _ = a.shape
     k = max(w, h) / 2000.0
     I = np.zeros((h, w))
@@ -53,6 +53,15 @@ def add_stars(a, stars, angle=20.0, tint=(0.75, 0.35, 1.0), angle2=112.0, behind
     white = np.clip(I, 0, 1)
     col = np.array(tint)
     light = white[..., None] * (0.78 + 0.22 * col) * 0.95 + glow[..., None] * col * 0.45
+    if haze:
+        # lit smoke around the lights: lifts the blacks near each flare (like the
+        # reference, where the air around the lights is hazy, never pitch black)
+        yy, xx = np.mgrid[0:h, 0:w]
+        hz = np.zeros((h, w))
+        for (x, y, size) in stars:
+            hz = np.maximum(hz, np.exp(-(((xx - x) ** 2 + (yy - y) ** 2) / (0.75 * size) ** 2)))
+        hz = np.maximum(hz, blur(I, 60 * k) * 2.0)
+        light = light + np.clip(hz, 0, 1)[..., None] * col * haze
     if behind is not None:  # flares sit behind the subject (arm/body stay in front)
         light = light * (1 - behind)[..., None]
     return np.clip(1 - (1 - a) * (1 - np.clip(light, 0, 1)), 0, 1)
@@ -68,6 +77,7 @@ def main():
     p.add_argument("--tint", default="0.75,0.35,1.0")
     p.add_argument("--exif-from")
     p.add_argument("--mask", help="subject mask: flares go behind the subject")
+    p.add_argument("--haze", type=float, default=0.0, help="lit smoke around the lights (0..0.6)")
     args = p.parse_args()
     im = Image.open(args.input)
     a = np.asarray(im.convert("RGB")).astype(np.float64) / 255.0
@@ -77,7 +87,7 @@ def main():
         mk = Image.open(args.mask).convert("L").resize(im.size)
         k = max(im.size) / 2000.0
         behind = np.clip(blur(np.clip((np.asarray(mk) / 255.0 - 0.15) / 0.7, 0, 1), 1.2 * k), 0, 1)
-    out = add_stars(a, stars, args.angle, tuple(map(float, args.tint.split(","))), args.angle2, behind)
+    out = add_stars(a, stars, args.angle, tuple(map(float, args.tint.split(","))), args.angle2, behind, args.haze)
     o = Image.fromarray(np.round(out * 255).astype(np.uint8))
     src = Image.open(args.exif_from) if args.exif_from else im
     kw = {k: v for k, v in (("icc_profile", src.info.get("icc_profile")), ("exif", src.info.get("exif"))) if v}
