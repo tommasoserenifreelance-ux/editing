@@ -20,7 +20,9 @@ export const SEGMENTS: [number, number][] = [
   [146.9, 153.73],
   [154.02, 160.15],
   [160.34, 167.85],
-  [168.14, 177.3],
+  // Split to drop the pause between "quanto" and "pesano".
+  [168.14, 171.52],
+  [171.84, 177.3],
 ];
 export const CLIPS = SEGMENTS.map(([s, e]) => Math.round((e - s) * FPS));
 // Frames of the slide between takes.
@@ -67,7 +69,10 @@ const PHRASES: string[][][] = [
   ],
   [
     ["s:La vera", "b:domanda"],
-    ["s:quindi non è quanto", "c:pesano i miei geni"],
+    ["s:quindi non è", "c:quanto"],
+  ],
+  [
+    ["c:pesano i miei geni"],
     ["s:ma quanto", "x:posso influenzare"],
     ["s:ciò che fanno quindi", "i:i\u00a0miei geni"],
   ],

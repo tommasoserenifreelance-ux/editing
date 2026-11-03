@@ -22,8 +22,9 @@ const BROLLS: BRollCue[] = [
     from: wordFrame(0, "tassi"),
     to: wordFrame(0, "ma"),
   },
-  // The double helix for "il nostro DNA in 50 anni non è cambiato".
-  { src: broll("479.mp4"), from: wordFrame(0, "nostro"), to: take(1) },
+  // The double helix for "ma il nostro DNA in 50 anni non è cambiato",
+  // straight after the belly so he never flashes on screen in between.
+  { src: broll("479.mp4"), from: wordFrame(0, "ma"), to: take(1) },
   // Chromosomes for "il patrimonio genetico", then arm fat for
   // "la tendenza ad accumulare peso".
   {
@@ -60,8 +61,8 @@ const STICKERS: StickerCue[] = [
   },
   { ...single("🤫", wordFrame(6, "silenzioso")), to: wordFrame(6, "o") },
   { ...single("💡", wordFrame(6, "accende")), to: take(7) },
-  { ...single("🤔", wordFrame(7, "domanda")), to: wordFrame(7, "ma") },
-  { ...single("💪", wordFrame(7, "posso")), to: take(8) },
+  { ...single("🤔", wordFrame(7, "domanda")), to: wordFrame(8, "ma") },
+  { ...single("💪", wordFrame(8, "posso")), to: take(9) },
 ];
 
 export const Geni: React.FC = () => (
