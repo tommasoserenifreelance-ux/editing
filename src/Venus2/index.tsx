@@ -112,24 +112,34 @@ const Camcorder: React.FC = () => {
   );
 };
 
+// Smallest zoom that keeps a 9:16 frame covered when turned by `deg`.
+const coverScale = (deg: number) => {
+  const r = (Math.abs(deg % 180) * Math.PI) / 180;
+  return Math.abs(Math.cos(r)) + (16 / 9) * Math.abs(Math.sin(r));
+};
+
 const Shot: React.FC<{
   cut: Cut;
   length: number;
   whipIn?: "left" | "right";
-}> = ({ cut, length, whipIn }) => {
+  bounceOut?: boolean;
+}> = ({ cut, length, whipIn, bounceOut }) => {
   const local = useCurrentFrame();
   const frame = cut.from + local;
   const t = local / length;
 
   // Punch in on every cut, a slow drift, and a handheld shake with a little
   // roll; it kicks harder for a moment on the drop.
-  let zoom = interpolate(local, [0, 6], [1.14, 1.05], clamp) + local * 0.001;
-  const kick = interpolate(frame, [DROP, DROP + 14], [3, 1], clamp);
+  let zoom = cut.steady
+    ? interpolate(local, [0, 6], [1.06, 1.03], clamp)
+    : interpolate(local, [0, 6], [1.14, 1.05], clamp) + local * 0.001;
+  const kick =
+    interpolate(frame, [DROP, DROP + 14], [3, 1], clamp) *
+    (cut.steady ? 0.15 : 1);
   let x = (Math.sin(frame * 0.9) * 7 + Math.sin(frame * 2.3) * 4) * kick;
-  const y = (Math.cos(frame * 0.7) * 7 + Math.cos(frame * 1.9) * 3) * kick;
-  let rotate = Math.sin(frame * 0.5) * 0.8 * kick;
+  let y = (Math.cos(frame * 0.7) * 7 + Math.cos(frame * 1.9) * 3) * kick;
+  let rotate = cut.steady ? 0 : Math.sin(frame * 0.5) * 0.8 * kick;
   let blur = 0;
-  let brightness = 1;
 
   // Bump the zoom on every beat after the drop.
   const lastBeat = Math.max(...BEATS.filter((b) => b <= frame), -100);
@@ -151,30 +161,28 @@ const Shot: React.FC<{
     zoom += p * p * 0.9;
     blur += p * 18;
   }
-  if (cut.fx === "haze") {
-    blur += interpolate(local, [0, length], [14, 4], clamp);
-    brightness = 0.8;
-    x -= local * 4;
+  // Bounce: the outgoing shot squashes away, the next springs in and
+  // overshoots before it settles.
+  if (bounceOut && local >= length - 3) {
+    const k = local - (length - 3) + 1;
+    zoom *= 1 - k * 0.06;
+    y -= k * 25;
   }
-  if (cut.fx === "rush") {
-    // Rushing at the sign: a hard zoom with a turn, flickering on the beat.
-    zoom += t * t * 0.6;
-    rotate += t * 7;
-    brightness = 1 + interpolate(frame - lastBeat, [0, 4], [0.5, 0], clamp);
+  if (cut.bounce) {
+    zoom *= interpolate(local, [0, 3, 6, 9], [0.8, 1.12, 0.97, 1], clamp);
+    y += interpolate(local, [0, 3, 6, 9], [90, -35, 12, 0], clamp);
   }
   if (cut.fx === "vortex") {
-    rotate += t * t * 55;
-    zoom += t * 0.45;
-    blur += t * t * 6;
+    // A fast spin that keeps winding up, zoomed in enough to never show the
+    // frame's edges.
+    rotate += t ** 1.4 * 150;
+    zoom = Math.max(zoom, coverScale(rotate) * 1.04) + t * 0.15;
+    blur += t * t * 8;
   }
 
   const bw = inRange(frame, BLACK_AND_WHITE);
   const smear = inRange(frame, SMEARS);
-  let filter = [
-    bw ? MONO : PURPLE,
-    blur ? `blur(${blur}px)` : "",
-    brightness !== 1 ? `brightness(${brightness})` : "",
-  ].join(" ");
+  let filter = [bw ? MONO : PURPLE, blur ? `blur(${blur}px)` : ""].join(" ");
   let transform = `translate(${x}px, ${y}px) rotate(${rotate}deg) scale(${zoom})`;
   if (smear) {
     // Blown out and stretched, painted purple below.
@@ -200,7 +208,7 @@ const Shot: React.FC<{
             <AbsoluteFill
               key={i}
               style={{
-                transform: `${transform} rotate(${i * 7 * t}deg) scale(${1 + i * 0.04 * t})`,
+                transform: `translate(${x}px, ${y}px) rotate(${rotate + i * 10 * t}deg) scale(${Math.max(zoom, coverScale(rotate + i * 10 * t) * 1.04)})`,
                 filter: `${filter} blur(${2 + i * 2}px)`,
                 mixBlendMode: "screen",
                 opacity: 0.4 * t,
@@ -210,7 +218,7 @@ const Shot: React.FC<{
             </AbsoluteFill>
           ))
         : null}
-      {(cut.fx === "rgb" || cut.fx === "rush") && local < 6
+      {cut.fx === "rgb" && local < 6
         ? // Doubled, colour-shifted copies as the purple kicks in.
           [-1, 1].map((side) => (
             <AbsoluteFill
@@ -226,19 +234,6 @@ const Shot: React.FC<{
             </AbsoluteFill>
           ))
         : null}
-      {cut.fx === "double" ? (
-        // Second exposure of the sign, stacked above the first.
-        <AbsoluteFill
-          style={{
-            transform: `${transform} translateY(-330px)`,
-            filter,
-            mixBlendMode: "screen",
-            opacity: 0.75,
-          }}
-        >
-          <Video cut={cut} />
-        </AbsoluteFill>
-      ) : null}
       {smear ? (
         <AbsoluteFill
           style={{ background: "#b21cff", mixBlendMode: "color" }}
@@ -531,6 +526,7 @@ export const Venus2: React.FC<Venus2Props> = (props) => {
                   cut={cut}
                   length={to - cut.from}
                   whipIn={CUTS[i - 1]?.whipOut}
+                  bounceOut={CUTS[i + 1]?.bounce}
                 />
               </Sequence>
             );

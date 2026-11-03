@@ -19,9 +19,9 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from nightlife_audio import SR, blend, decode, encode, lowpass  # noqa: E402
 
-SONG_FROM = 51.28  # song time at frame 0: the build-up, then the drop at 60.12 s
-END_CARD = 583 / 30  # video time of the end card
-LENGTH = 671 / 30  # video length
+SONG_FROM = 52.72  # song time at frame 0: the build-up, then the drop at 60.12 s
+END_CARD = 540 / 30  # video time of the end card
+LENGTH = 628 / 30  # video length
 SPEED = 1.08
 OPEN_OVER = 4.0
 OUT = Path(__file__).resolve().parent.parent / "public" / "venus2"

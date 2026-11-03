@@ -3,7 +3,9 @@
     python3 scripts/venus2_ramps.py RAW_DIR [NAME ...]
 
 RAW_DIR holds the original 50 fps clips (VENUS.*.30.10.mp4 from the
-footage-nightlife release, saved as n_<name>.mp4). Each ramp plays its clip
+footage-nightlife release, saved as n_<name>.mp4); n_4stab.mp4 is clip 4
+stabilized with ffmpeg's vidstabdetect/vidstabtransform (smoothing=40,
+optzoom=1). Each ramp plays its clip
 from `at` with the speed going linearly from r0 to r1 over `frames` frames at
 30 fps; in-between source frames are blended so slow motion stays smooth.
 Writes public/venus2/ramps/<name>.mp4, a few frames longer than the cut.
@@ -21,12 +23,11 @@ OUT = Path(__file__).resolve().parent.parent / "public" / "venus2" / "ramps"
 # name: (clip, at in seconds, frames, r0, r1). Keep in sync with
 # src/Venus2/timeline.ts.
 RAMPS = {
-    "c4-intro": ("4", 0.0, 58, 0.8, 0.8),
+    "c4-intro": ("4stab", 0.0, 58, 0.8, 0.8),
     "c9-intro": ("9", 0.0, 28, 1.6, 0.6),
-    "c2-long": ("2", 0.0, 78, 0.9, 0.9),
     "ballerina-drop": ("ballerina", 0.55, 30, 0.5, 1.5),
-    "c3-pan": ("3", 0.0, 28, 1.6, 1.2),
-    "dance-vortex": ("dance", 0.3, 29, 0.6, 2.0),
+    "dance-vortex": ("dance", 0.3, 29, 1.0, 2.4),
+    "ballerina-mid": ("ballerina", 4.7, 29, 0.7, 0.5),
     "ballerina-end": ("ballerina", 3.7, 33, 0.4, 1.2),
 }
 EXTRA = 6
