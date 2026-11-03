@@ -27,10 +27,9 @@ const PHOTO: Theme = {
 
 const Frame: React.FC<{
   theme: Theme;
-  index: number;
   photo?: string;
   children: React.ReactNode;
-}> = ({ theme, index, photo, children }) => (
+}> = ({ theme, photo, children }) => (
   <AbsoluteFill
     style={{
       backgroundColor: theme.bg,
@@ -62,18 +61,6 @@ const Frame: React.FC<{
       </>
     ) : null}
     <div style={{ position: "relative" }}>{children}</div>
-    <div
-      style={{
-        position: "absolute",
-        top: 70,
-        right: 80,
-        fontSize: 26,
-        fontWeight: 600,
-        color: theme.accent,
-      }}
-    >
-      {index + 1}/{SLIDES.length}
-    </div>
     <Signature color={theme.title} fontFamily={inter} bottom={70} />
   </AbsoluteFill>
 );
@@ -303,7 +290,7 @@ export const SLIDE_COUNT = SLIDES.length;
 export const BoccaMenopausa: React.FC<{ index: number }> = ({ index }) => {
   const slide = SLIDES[index];
   return (
-    <Frame theme={slide.theme} index={index} photo={slide.photo}>
+    <Frame theme={slide.theme} photo={slide.photo}>
       {slide.render(slide.theme)}
     </Frame>
   );
