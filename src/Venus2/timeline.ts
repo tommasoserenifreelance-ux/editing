@@ -4,7 +4,7 @@
 // flipping past and landing on the real sign, where the picture turns to
 // colour, a smear and RGB split into the purple drop, speed ramps and beat
 // zooms, a whip on the dancer's hand swing, a camcorder shot bouncing into
-// the next kiss, a vortex, a black & white stop-motion on the song's
+// the next kiss, a black & white stop-motion on the song's
 // percussion roll, a film burn into a quick-fire run of the dancer, and a
 // wash into the end card. Cuts sit on the song's beat grid. Only clips of
 // the last night, each once except the dancer; the sign is only seen in the
@@ -34,11 +34,11 @@ export const CLIPS = {
   "c9-intro": "venus2/ramps/c9-intro.mp4",
   "ballerina-drop": "venus2/ramps/ballerina-drop.mp4",
   "ballerina-mid": "venus2/ramps/ballerina-mid.mp4",
-  "dance-vortex": "venus2/ramps/dance-vortex.mp4",
+  "dance-ramp": "venus2/ramps/dance-ramp.mp4",
   "ballerina-end": "venus2/ramps/ballerina-end.mp4",
 } as const;
 
-export type ClipFx = "pushIn" | "rgb" | "vhs" | "vortex" | "burst";
+export type ClipFx = "pushIn" | "rgb" | "vhs" | "burst";
 
 export type Cut = {
   from: number;
@@ -68,7 +68,7 @@ export const CUTS: Cut[] = [
   { from: 251, clip: "c8", at: 0.0, fx: "vhs" },
   { from: 295, clip: "kiss", at: 0.2, bounce: true },
   { from: 324, clip: "ballerina-mid", at: 0 },
-  { from: 353, clip: "dance-vortex", at: 0, fx: "vortex" },
+  { from: 353, clip: "dance-ramp", at: 0 },
   { from: 382, clip: "c6", at: 0.0, whipOut: "left" },
   // Black & white stop-motion on the percussion roll
   { from: 424, clip: "ballerina", at: 2.0, fx: "burst" },

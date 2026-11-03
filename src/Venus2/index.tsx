@@ -112,12 +112,6 @@ const Camcorder: React.FC = () => {
   );
 };
 
-// Smallest zoom that keeps a 9:16 frame covered when turned by `deg`.
-const coverScale = (deg: number) => {
-  const r = (Math.abs(deg % 180) * Math.PI) / 180;
-  return Math.abs(Math.cos(r)) + (16 / 9) * Math.abs(Math.sin(r));
-};
-
 const Shot: React.FC<{
   cut: Cut;
   length: number;
@@ -126,7 +120,6 @@ const Shot: React.FC<{
 }> = ({ cut, length, whipIn, bounceOut }) => {
   const local = useCurrentFrame();
   const frame = cut.from + local;
-  const t = local / length;
 
   // Punch in on every cut, a slow drift, and a handheld shake with a little
   // roll; it kicks harder for a moment on the drop.
@@ -138,7 +131,7 @@ const Shot: React.FC<{
     (cut.steady ? 0.15 : 1);
   let x = (Math.sin(frame * 0.9) * 7 + Math.sin(frame * 2.3) * 4) * kick;
   let y = (Math.cos(frame * 0.7) * 7 + Math.cos(frame * 1.9) * 3) * kick;
-  let rotate = cut.steady ? 0 : Math.sin(frame * 0.5) * 0.8 * kick;
+  const rotate = cut.steady ? 0 : Math.sin(frame * 0.5) * 0.8 * kick;
   let blur = 0;
 
   // Bump the zoom on every beat after the drop.
@@ -172,13 +165,6 @@ const Shot: React.FC<{
     zoom *= interpolate(local, [0, 3, 6, 9], [0.8, 1.12, 0.97, 1], clamp);
     y += interpolate(local, [0, 3, 6, 9], [90, -35, 12, 0], clamp);
   }
-  if (cut.fx === "vortex") {
-    // A fast spin that keeps winding up, zoomed in enough to never show the
-    // frame's edges.
-    rotate += t ** 1.4 * 150;
-    zoom = Math.max(zoom, coverScale(rotate) * 1.04) + t * 0.15;
-    blur += t * t * 8;
-  }
 
   const bw = inRange(frame, BLACK_AND_WHITE);
   const smear = inRange(frame, SMEARS);
@@ -202,22 +188,6 @@ const Shot: React.FC<{
   return (
     <AbsoluteFill>
       <AbsoluteFill style={{ transform, filter }}>{video}</AbsoluteFill>
-      {cut.fx === "vortex" && !smear
-        ? // Ghosts turning further ahead: the spin blur of the reference.
-          [1, 2, 3].map((i) => (
-            <AbsoluteFill
-              key={i}
-              style={{
-                transform: `translate(${x}px, ${y}px) rotate(${rotate + i * 10 * t}deg) scale(${Math.max(zoom, coverScale(rotate + i * 10 * t) * 1.04)})`,
-                filter: `${filter} blur(${2 + i * 2}px)`,
-                mixBlendMode: "screen",
-                opacity: 0.4 * t,
-              }}
-            >
-              <Video cut={cut} />
-            </AbsoluteFill>
-          ))
-        : null}
       {cut.fx === "rgb" && local < 6
         ? // Doubled, colour-shifted copies as the purple kicks in.
           [-1, 1].map((side) => (

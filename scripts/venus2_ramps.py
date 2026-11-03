@@ -26,7 +26,7 @@ RAMPS = {
     "c4-intro": ("4stab", 0.0, 58, 0.8, 0.8),
     "c9-intro": ("9", 0.0, 28, 1.6, 0.6),
     "ballerina-drop": ("ballerina", 0.55, 30, 0.5, 1.5),
-    "dance-vortex": ("dance", 0.3, 29, 1.0, 2.4),
+    "dance-ramp": ("dance", 0.3, 29, 2.0, 0.4),
     "ballerina-mid": ("ballerina", 4.7, 29, 0.7, 0.5),
     "ballerina-end": ("ballerina", 3.7, 33, 0.4, 1.2),
 }
