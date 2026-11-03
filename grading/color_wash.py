@@ -24,7 +24,7 @@ def profile(ref):
     return vs, centers[ok], sat[ok]
 
 
-def wash(a, ref, hue=0.77):
+def wash(a, ref, hue=0.77, protect=()):
     vs_ref, sc, ss = profile(ref)
     h, s, v = rgb_to_hsv(a)
     # match the value histogram to the reference
@@ -38,6 +38,13 @@ def wash(a, ref, hue=0.77):
     # so the transition never passes through pink
     sm = np.clip(skin_mask(a) * 1.6, 0, 1)
     keep = sm * np.clip((v2 - 0.25) / 0.35, 0, 1)
+    # extra regions kept natural (e.g. lips): soft ellipses (x, y, rx, ry)
+    if protect:
+        hh, ww = v.shape
+        yy, xx = np.mgrid[0:hh, 0:ww]
+        for (px, py, rx, ry) in protect:
+            d = ((xx - px) / rx) ** 2 + ((yy - py) / ry) ** 2
+            keep = np.maximum(keep, np.clip((1.0 - d) / 0.35, 0, 1))
     natural = a * (v2 / np.maximum(v, 1e-4))[..., None]  # original colour at the new brightness
     out = washed * (1 - keep[..., None]) + np.clip(natural, 0, 1) * keep[..., None]
     return np.clip(out, 0, 1)
@@ -50,11 +57,13 @@ def main():
     p.add_argument("output")
     p.add_argument("--hue", type=float, default=0.77, help="target hue 0..1 (0.77 = violet)")
     p.add_argument("--exif-from")
+    p.add_argument("--protect", action="append", default=[],
+                   help="x,y,rx,ry ellipse kept natural (repeatable), e.g. lips")
     args = p.parse_args()
     im = Image.open(args.input)
     a = np.asarray(im.convert("RGB")).astype(np.float64) / 255.0
     ref = np.asarray(Image.open(args.reference).convert("RGB")).astype(np.float64) / 255.0
-    out = wash(a, ref, args.hue)
+    out = wash(a, ref, args.hue, [tuple(map(float, r.split(','))) for r in args.protect])
     o = Image.fromarray(np.round(out * 255).astype(np.uint8))
     src = Image.open(args.exif_from) if args.exif_from else im
     kw = {k: v for k, v in (("icc_profile", src.info.get("icc_profile")), ("exif", src.info.get("exif"))) if v}
