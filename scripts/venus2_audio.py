@@ -3,8 +3,8 @@
     python3 scripts/venus2_audio.py SONG.mp3 VOICE.mp3
 
 Writes to public/venus2/:
-  music.m4a  the song from SONG_FROM, faded and opened up gradually into its
-             drop, low-passed from the end card, cut to LENGTH
+  music.m4a  the song from SONG_FROM, faded in and opened up gradually
+             ahead of its drop, low-passed from the end card, cut to LENGTH
   voice.m4a  the voice-over with its pause tightened and sped up by SPEED
 
 SONG_FROM and the end card frame must match src/Venus2/timeline.ts.
@@ -19,11 +19,11 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from nightlife_audio import SR, blend, decode, encode, lowpass  # noqa: E402
 
-SONG_FROM = 54.0  # song time at frame 0, a few bars before the drop at 60.1 s
-DROP = 60.1  # song time of the drop
-END_CARD = 631 / 30  # video time of the end card
-LENGTH = 24.0  # video length
+SONG_FROM = 51.28  # song time at frame 0: the build-up, then the drop at 60.12 s
+END_CARD = 640 / 30  # video time of the end card
+LENGTH = 728 / 30  # video length
 SPEED = 1.08
+OPEN_OVER = 4.0
 OUT = Path(__file__).resolve().parent.parent / "public" / "venus2"
 
 
@@ -36,9 +36,10 @@ def build_music(song_path):
     steps = [song] + [lowpass(song, f) for f in (5000, 2200, 1000, 500, 320)]
     last = len(steps) - 1
 
-    # Fade in from silence, muffled, opening up fully just before the drop;
-    # then a low-pass sweep into the end card.
-    build = np.clip(time / (DROP - SONG_FROM - 0.2), 0, 1)
+    # Fade in from silence, muffled, opening up over OPEN_OVER seconds so the
+    # song's own build-up and break are heard before the drop; then a
+    # low-pass sweep into the end card.
+    build = np.clip(time / OPEN_OVER, 0, 1)
     closing = np.clip((time - END_CARD) / 0.9, 0, 1)
     out = blend(steps, np.maximum(1 - build, closing) * last)
     out *= (np.clip(time / 2.0, 0, 1) ** 2 * (0.35 + 0.65 * build**1.5))[:, None]
