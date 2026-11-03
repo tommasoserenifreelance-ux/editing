@@ -12,3 +12,6 @@ public/cacao/doctor/
 # Same for the prebiotici take: download it from the "prebiotici" release into
 # public/prebiotici/doctor/prebiotici.mp4.
 public/prebiotici/doctor/
+# Same for the geni take: download bonaccorso.geni.mp4 from the "prebiotici"
+# release into public/geni/doctor/geni.mp4.
+public/geni/doctor/
