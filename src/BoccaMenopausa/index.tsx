@@ -264,7 +264,7 @@ const SLIDES: {
           Ti ritrovi in uno di questi <Accent theme={t}>sintomi?</Accent>
         </Title>
         <Body>
-          Raccontamelo nei commenti o scrivimi in DM.
+          Raccontamelo nei commenti.
           <br />
           <br />
           Salva il post e condividilo con un&apos;amica che ha bisogno di
