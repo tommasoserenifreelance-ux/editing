@@ -33,6 +33,71 @@ def blur(a, sigma):
     return a
 
 
+def rgb_to_hsv(a):
+    r, g, b = a[..., 0], a[..., 1], a[..., 2]
+    mx, mn = a.max(-1), a.min(-1)
+    d = mx - mn
+    dd = np.where(d == 0, 1, d)
+    h = np.where(mx == r, ((g - b) / dd) % 6, np.where(mx == g, (b - r) / dd + 2, (r - g) / dd + 4))
+    h = np.where(d == 0, 0, h) * 60.0
+    s = np.where(mx == 0, 0, d / np.where(mx == 0, 1, mx))
+    return h, s, mx
+
+
+def hsv_to_rgb(h, s, v):
+    h = (h % 360) / 60.0
+    c = v * s
+    x = c * (1 - np.abs(h % 2 - 1))
+    m = v - c
+    z = np.zeros_like(h)
+    i = np.floor(h).astype(int) % 6
+    r = np.choose(i, [c, x, z, z, x, c])
+    g = np.choose(i, [x, c, c, x, z, z])
+    b = np.choose(i, [z, z, x, c, c, x])
+    return np.stack([r + m, g + m, b + m], -1)
+
+
+# Skin target measured on the flash portraits of the references (HSV):
+# hue ~20 deg (peach/rose, not yellow), saturation ~0.40, value ~0.70.
+SKIN_HUE, SKIN_SAT, SKIN_VAL = 20.0, 0.40, 0.66
+
+
+def skin_mask(a):
+    h, s, v = rgb_to_hsv(a)
+    hd = (h - 22 + 180) % 360 - 180
+    m = np.exp(-(hd / 14.0) ** 2)
+    m *= np.clip((s - 0.12) / 0.10, 0, 1) * np.clip((0.80 - s) / 0.15, 0, 1)
+    m *= np.clip((v - 0.18) / 0.15, 0, 1)
+    return blur(m, 3)
+
+
+def skin_correct(a, radius):
+    m = skin_mask(a)
+    h, s, v = rgb_to_hsv(a)
+    msum = m.sum() + 1e-6
+    # pull hue toward the target, scale saturation/value so the skin average lands on target
+    hd = (h - SKIN_HUE + 180) % 360 - 180
+    h2 = h - hd * 0.6 * m
+    s_mean = (s * m).sum() / msum
+    v_mean = (v * m).sum() / msum
+    s2 = s * (1 + (SKIN_SAT / s_mean - 1) * m)
+    # gamma on skin value: deeper mids, highlights preserved -> sculpted, glossy skin
+    lit = (m > 0.5) & (v > 0.5)
+    v_face = np.median(v[lit]) if lit.any() else SKIN_VAL
+    gain = SKIN_VAL / max(v_face, 1e-3) ** 1.3
+    v2 = v + (np.clip(gain * v ** 1.3, 0, 1) - v) * m
+    out = hsv_to_rgb(h2, np.clip(s2, 0, 1), np.clip(v2, 0, 1))
+    # soft skin: smooth mid frequencies, keep fine detail at 45%
+    low = blur(out, 4 * radius)
+    smooth = low + (out - low) * 0.45
+    out = out + (smooth - out) * (m * 0.55)[..., None]
+    # gentle glow on skin highlights (sheen like the references)
+    L = lum(out)
+    glow = blur(np.clip(L - 0.60, 0, 1) * m, 5 * radius) * 0.8
+    out = out + glow[..., None] * np.array([0.55, 0.50, 0.45])
+    return np.clip(out, 0, 1)
+
+
 def tone_curve(x):
     # Black point crush (~5%), strong S curve, soft highlight roll-off.
     x = np.clip((x - 0.025) / (1 - 0.025), 0, 1)
@@ -62,8 +127,7 @@ def grade(a, strength=1.0):
     a = np.clip(a * ratio[..., None], 0, 1)
 
     # 3. White balance warmer (+~400K) and a touch of magenta
-    a = a * np.array([1.03, 1.0, 0.94])
-    a[..., 1] *= 0.985
+    a = a * np.array([1.015, 1.0, 0.975])
 
     # 4. Split toning: warm red-brown shadows, cream highlights
     L = np.clip(lum(a), 0, 1)
@@ -82,13 +146,14 @@ def grade(a, strength=1.0):
     is_blue = np.clip((b - np.maximum(r, g)) / np.maximum(mx, 1e-4) * 3, 0, 1)
     is_red = np.clip((r - np.maximum(g, b)) / np.maximum(mx, 1e-4) * 2, 0, 1) * (1 - np.clip((g - b) * 4, 0, 1))
     vib = 1 + 0.18 * (1 - sat)                       # vibrance
-    sat_mul = vib * (1 - 0.15 * is_orange) * (1 + 0.15 * is_blue) * (1 + 0.12 * is_red)
+    sat_mul = vib * (1 - 0.0 * is_orange) * (1 + 0.15 * is_blue) * (1 + 0.12 * is_red)
     a = L[..., None] + (a - L[..., None]) * sat_mul[..., None]
-    # orange luminance +: brighter, glowing skin
-    a = a * (1 + 0.10 * is_orange * np.clip(L * 2.5, 0, 1))[..., None]
     a = np.clip(a, 0, 1)
 
-    # 6. Vignette (-15)
+    # 6. Skin: match the reference skin tone, soften, add sheen
+    a = skin_correct(a, radius)
+
+    # 7. Vignette (-15)
     yy, xx = np.mgrid[0:h, 0:w]
     d = np.sqrt(((xx - w / 2) / (w / 2)) ** 2 + ((yy - h / 2) / (h / 2)) ** 2) / np.sqrt(2)
     vig = 1 - 0.28 * np.clip((d - 0.45) / 0.55, 0, 1) ** 2
