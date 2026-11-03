@@ -24,21 +24,41 @@ RAMP_RGB = np.array([
 ], float)
 
 
-def violet_ramp(L255):
-    return np.stack([np.interp(L255, RAMP_L, RAMP_RGB[:, c]) for c in range(3)], -1) / 255.0
+# magenta/pink ramp measured on the CHIICAS / YAB reference
+PINK_L = np.array([0, 8, 20, 45, 80, 130, 200, 255], float)
+PINK_RGB = np.array([
+    [0, 0, 0], [11, 2, 8], [40, 9, 26], [108, 22, 63],
+    [170, 45, 105], [208, 100, 147], [232, 200, 215], [252, 242, 247],
+], float)
+RAMPS = {"violet": (RAMP_L, RAMP_RGB), "pink": (PINK_L, PINK_RGB)}
 
 
-def violet_background(a, mask, strength=1.0, lift=1.0):
+def violet_ramp(L255, ramp="violet"):
+    rl, rc = RAMPS[ramp]
+    return np.stack([np.interp(L255, rl, rc[:, c]) for c in range(3)], -1) / 255.0
+
+
+def violet_background(a, mask, strength=1.0, lift=1.0, ramp="violet", bg_blur=0.0):
     h, w, _ = a.shape
     k = max(w, h) / 2000.0
     m = np.asarray(mask.resize((w, h))).astype(np.float64) / 255.0
-    m = blur(np.clip((m - 0.15) / 0.7, 0, 1), 1.5 * k)
+    m = np.clip(blur(np.clip((m - 0.15) / 0.7, 0, 1), 1.5 * k), 0, 1)
     bg = 1 - m
 
+    if bg_blur:
+        # shallow depth of field: blur only the background, normalised by the
+        # mask so the subject never bleeds into it; highlights bloom like bokeh
+        wbg = bg[..., None]
+        num = blur(a * wbg, bg_blur * k)
+        den = blur(bg, bg_blur * k)[..., None]
+        soft = num / np.maximum(den, 1e-3)
+        Ls = lum(soft)
+        soft = soft + blur(soft * np.clip((Ls - 0.35) / 0.4, 0, 1)[..., None], bg_blur * 1.5 * k) * 0.8
+        a = np.clip(a * m[..., None] + np.clip(soft, 0, 1) * wbg, 0, 1)
     L = lum(a)
     # lift the crushed background so people/lights behind show up (gamma + gain)
-    Lb = np.clip(1.6 * lift * L ** 0.75, 0, 1) if lift else L
-    tinted = violet_ramp(Lb * 255)
+    Lb = np.clip(1.6 * lift * np.clip(L, 0, 1) ** 0.75, 0, 1) if lift else L
+    tinted = violet_ramp(Lb * 255, ramp)
     # keep a little of the original hue variation (neon, signs) for realism
     chroma = a - L[..., None]
     tinted = np.clip(tinted + chroma * 0.25, 0, 1)
@@ -46,7 +66,8 @@ def violet_background(a, mask, strength=1.0, lift=1.0):
     # soft violet glow around the brightest background lights
     hot = np.clip((Lb - 0.55) / 0.45, 0, 1) * bg
     glow = blur(hot, 35 * k)
-    tinted = 1 - (1 - tinted) * (1 - glow[..., None] * np.array([0.55, 0.30, 0.85]) * 0.6)
+    gcol = np.array([0.55, 0.30, 0.85]) if ramp == "violet" else np.array([0.90, 0.25, 0.60])
+    tinted = 1 - (1 - tinted) * (1 - glow[..., None] * gcol * 0.6)
 
     # violet spill on the subject's edges (rim from the background light)
     edge = np.clip(blur(bg, 10 * k) * m * 2.0, 0, 1)
@@ -64,6 +85,8 @@ def main():
     p.add_argument("--strength", type=float, default=1.0)
     p.add_argument("--lift", type=float, default=1.0)
     p.add_argument("--exif-from")
+    p.add_argument("--ramp", default="violet", choices=sorted(RAMPS))
+    p.add_argument("--bg-blur", type=float, default=0.0, help="background blur (px at 2000px long side)")
     args = p.parse_args()
     im = Image.open(args.input)
     rgb = im.convert("RGB")
@@ -73,7 +96,7 @@ def main():
         from rembg import new_session, remove
         mask = remove(rgb, session=new_session("birefnet-portrait"), only_mask=True)
     a = np.asarray(rgb).astype(np.float64) / 255.0
-    out = violet_background(a, mask, args.strength, args.lift)
+    out = violet_background(a, mask, args.strength, args.lift, args.ramp, args.bg_blur)
     o = Image.fromarray(np.round(out * 255).astype(np.uint8))
     src = Image.open(args.exif_from) if args.exif_from else im
     kw = {k: v for k, v in (("icc_profile", src.info.get("icc_profile")), ("exif", src.info.get("exif"))) if v}
