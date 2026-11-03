@@ -11,6 +11,8 @@ from PIL import Image
 
 from nightlife_grade import blur
 
+THICK = 22.0  # ray thickness (px at 2000px long side)
+
 
 def star(h, w, cx, cy, length, angle, k):
     """Return (core, colour) intensity maps for one X flare."""
@@ -26,12 +28,14 @@ def star(h, w, cx, cy, length, angle, k):
         ux, uy = np.cos(t), np.sin(t)
         along = np.abs(dx * ux + dy * uy)
         across = np.abs(-dx * uy + dy * ux)
-        width = 9.0 * k + along * 0.07           # broad, soft beams like the reference
-        ray = np.exp(-(across / width) ** 2) * np.exp(-along / (0.22 * length))
-        ray += 0.6 * np.exp(-(across / (3.0 * k)) ** 2) * np.exp(-along / (0.30 * length))  # sharp bright spine
+        # thick beams like the reference: wide soft body + bright inner band
+        width = THICK * k + along * 0.10
+        ray = np.exp(-(across / width) ** 2) * np.exp(-along / (0.28 * length))
+        ray += 0.7 * np.exp(-(across / (0.35 * THICK * k)) ** 2) * np.exp(-along / (0.35 * length))
         out = np.maximum(out, ray)
-    core = np.exp(-(r / (16 * k)) ** 2)
-    halo = np.exp(-(r / (70 * k)) ** 2) * 0.6
+    # light source: small phone-flash rectangle + soft halo
+    core = np.exp(-((dx / (14 * k)) ** 2 + (dy / (20 * k)) ** 2) ** 1.5)
+    halo = np.exp(-(r / (90 * k)) ** 2) * 0.7
     full = np.zeros((h, w)); full[y0:y1, x0:x1] = np.maximum.reduce([out, core, halo])
     return full
 
