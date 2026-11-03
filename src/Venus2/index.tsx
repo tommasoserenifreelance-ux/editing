@@ -24,6 +24,7 @@ import {
   END_TEXT,
   FLASHES,
   LOGO_FLY,
+  LOGO_LAND,
   ROLL,
   SFX,
   SMEARS,
@@ -247,16 +248,65 @@ const Shot: React.FC<{
 
 // The neon logo seen from behind (mirrored) rising from the bottom of the
 // frame and drifting like the reference's, turning to face the lens by the
-// cut, then flying on into the sign shot and landing on the real sign.
+// cut, then flying on into the sign shot and landing on the real sign
+// (measured in clip 1: centre 8 px right of and 95 px above the frame's
+// centre, 0.59 of the logo's width once the shot's punch-in is counted).
 const LOGO_KEYS = {
-  frame: [148, 149, 150, 151, 153, 155, 156, 157, 158, 159, 162, 166, 172],
-  x: [-60, -40, -20, -20, -60, -180, -120, -60, -20, -10, -4, 0, 0],
-  y: [820, 720, 672, 640, 590, 560, 540, 500, 440, 380, 60, -125, -125],
-  scale: [
-    0.6, 0.95, 1.15, 1.25, 1.25, 1.2, 1.15, 1.1, 1.05, 1.0, 0.86, 0.74, 0.74,
+  frame: [
+    148,
+    149,
+    150,
+    151,
+    153,
+    155,
+    156,
+    157,
+    158,
+    159,
+    161,
+    163,
+    LOGO_LAND,
+    169,
+    173,
   ],
-  rotateY: [200, 195, 190, 185, 180, 200, 240, 290, 330, 355, 360, 360, 360],
-  opacity: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+  x: [-60, -40, -20, -20, -60, -180, -120, -60, -20, -10, -2, 4, 8, 8, 8],
+  y: [820, 720, 672, 640, 590, 560, 540, 500, 440, 380, 170, 10, -95, -95, -95],
+  scale: [
+    0.6, 0.95, 1.15, 1.25, 1.25, 1.2, 1.15, 1.1, 1.05, 1.0, 0.86, 0.72, 0.59,
+    0.59, 0.59,
+  ],
+  rotateY: [
+    200, 195, 190, 185, 180, 200, 240, 290, 330, 352, 358, 360, 360, 360, 360,
+  ],
+  opacity: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.6, 0],
+};
+
+const LogoAt: React.FC<{ frame: number; opacity: number; glow: number }> = ({
+  frame,
+  opacity,
+  glow,
+}) => {
+  const at = (key: keyof typeof LOGO_KEYS) =>
+    interpolate(frame, LOGO_KEYS.frame, LOGO_KEYS[key], clamp);
+  return (
+    <AbsoluteFill
+      style={{
+        justifyContent: "center",
+        alignItems: "center",
+        perspective: 1400,
+        opacity: at("opacity") * opacity,
+      }}
+    >
+      <div
+        style={{
+          transform: `translate(${at("x")}px, ${at("y")}px) rotateY(${at("rotateY")}deg) scale(${at("scale")})`,
+          filter: `drop-shadow(0 0 ${6 * glow}px #ff3df0) drop-shadow(0 0 ${22 * glow}px #ff3df0) drop-shadow(0 0 ${50 * glow}px #c020ff)`,
+        }}
+      >
+        <VenusLogo />
+      </div>
+    </AbsoluteFill>
+  );
 };
 
 const LogoFly: React.FC = () => {
@@ -264,28 +314,42 @@ const LogoFly: React.FC = () => {
   if (frame < LOGO_FLY[0] || frame >= LOGO_FLY[1]) {
     return null;
   }
-  const at = (key: keyof typeof LOGO_KEYS) =>
-    interpolate(frame, LOGO_KEYS.frame, LOGO_KEYS[key], clamp);
-  // A bright glow as it hits the sign.
-  const hit = interpolate(frame, [164, 166, 172], [1, 1.8, 1], clamp);
+  // Flares as it hits the sign.
+  const glow = interpolate(
+    frame,
+    [LOGO_LAND - 2, LOGO_LAND, LOGO_LAND + 6],
+    [1, 2.2, 1],
+    clamp,
+  );
+  const bloom = interpolate(
+    frame,
+    [LOGO_LAND - 1, LOGO_LAND, LOGO_LAND + 5],
+    [0, 0.9, 0],
+    clamp,
+  );
   return (
-    <AbsoluteFill
-      style={{
-        justifyContent: "center",
-        alignItems: "center",
-        perspective: 1400,
-        opacity: at("opacity"),
-      }}
-    >
-      <div
+    <>
+      {/* Fading copies at the last few positions: a motion trail. */}
+      {frame < LOGO_LAND
+        ? [3, 2, 1].map((back) => (
+            <LogoAt
+              key={back}
+              frame={frame - back * 0.7}
+              opacity={0.42 - back * 0.11}
+              glow={1}
+            />
+          ))
+        : null}
+      <LogoAt frame={frame} opacity={1} glow={glow} />
+      <AbsoluteFill
         style={{
-          transform: `translate(${at("x")}px, ${at("y")}px) rotateY(${at("rotateY")}deg) scale(${at("scale")})`,
-          filter: `drop-shadow(0 0 ${6 * hit}px #ff3df0) drop-shadow(0 0 ${22 * hit}px #ff3df0) drop-shadow(0 0 ${50 * hit}px #c020ff)`,
+          background:
+            "radial-gradient(ellipse 45% 12% at 51% 45%, rgba(255,120,240,0.95), rgba(200,40,255,0.4) 50%, transparent 75%)",
+          mixBlendMode: "screen",
+          opacity: bloom,
         }}
-      >
-        <VenusLogo />
-      </div>
-    </AbsoluteFill>
+      />
+    </>
   );
 };
 
@@ -362,18 +426,7 @@ const Caption: React.FC<{ text: string; opacity: number; top: string }> = ({
 const Captions: React.FC<Venus2Props> = ({ caption, endText }) => {
   const frame = useCurrentFrame();
   if (frame >= CAPTION.from && frame < CAPTION.to) {
-    let shown = 0;
-    for (const part of CAPTION.parts) {
-      shown += Math.ceil(
-        interpolate(
-          frame,
-          [part.at, part.at + part.frames],
-          [0, part.chars],
-          clamp,
-        ),
-      );
-    }
-    return <Caption text={caption.slice(0, shown)} opacity={1} top="78%" />;
+    return <Caption text={caption} opacity={1} top="78%" />;
   }
   if (frame >= END_TEXT.from && frame < END_TEXT.to) {
     return (
