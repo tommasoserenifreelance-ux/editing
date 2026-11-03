@@ -247,13 +247,13 @@ const Captions: React.FC<NightlifeProps> = ({ captions, endText }) => {
   return null;
 };
 
-const VenusLogo: React.FC = () => (
+export const VenusLogo: React.FC = () => (
   <Img src={staticFile("nightlife/venus-logo.png")} style={{ width: 760 }} />
 );
 
 // YAB logo redrawn from the brand mark: thin ring, tall condensed letters.
 // Drawn on the 448-unit grid of the original artwork.
-const YabLogo: React.FC = () => (
+export const YabLogo: React.FC = () => (
   <svg viewBox="0 0 448 448" width={420} height={420}>
     <circle
       cx={225}

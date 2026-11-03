@@ -8,6 +8,7 @@ import {
   PilatesOverlay,
 } from "./PilatesOverlay";
 import { PILATES_DURATION, PilatesReformer } from "./PilatesReformer";
+import { Venus2, VENUS2_DURATION, VENUS2_FPS, venus2Defaults } from "./Venus2";
 import {
   Nightlife,
   NIGHTLIFE_DURATION,
@@ -86,6 +87,15 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
         defaultProps={nightlifeDefaults}
+      />
+      <Composition
+        id="Venus2"
+        component={Venus2}
+        durationInFrames={VENUS2_DURATION}
+        fps={VENUS2_FPS}
+        width={1080}
+        height={1920}
+        defaultProps={venus2Defaults}
       />
     </>
   );
