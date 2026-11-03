@@ -62,6 +62,8 @@ def hsv_to_rgb(h, s, v):
 SKIN_HUE, SKIN_SAT, SKIN_VAL = 20.0, 0.40, 0.66
 # 0 = keep full original skin detail (no smoothing); glow kept subtle
 SKIN_SMOOTH, SKIN_GLOW = 0.0, 0.35
+# extra shadow depth (0..1)
+SHADOW_DEPTH = 0.35
 
 
 def skin_mask(a):
@@ -155,7 +157,15 @@ def grade(a, strength=1.0):
     # 6. Skin: match the reference skin tone, soften, add sheen
     a = skin_correct(a, radius)
 
-    # 7. Vignette (-15)
+    # 7. Deeper shadows: pull down low-mids (sculpts the face, darker surroundings),
+    #    highlights untouched. SHADOW_DEPTH 0 = off.
+    if SHADOW_DEPTH:
+        L = lum(a)
+        t = np.clip(L / 0.6, 0, 1)
+        target = L * (1 - SHADOW_DEPTH * (1 - t) ** 1.5 * np.clip(L / 0.04, 0, 1))
+        a = np.clip(a * (target / np.maximum(L, 1e-4))[..., None], 0, 1)
+
+    # 8. Vignette (-15)
     yy, xx = np.mgrid[0:h, 0:w]
     d = np.sqrt(((xx - w / 2) / (w / 2)) ** 2 + ((yy - h / 2) / (h / 2)) ** 2) / np.sqrt(2)
     vig = 1 - 0.28 * np.clip((d - 0.45) / 0.55, 0, 1) ** 2
