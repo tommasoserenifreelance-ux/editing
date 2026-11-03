@@ -60,6 +60,8 @@ def hsv_to_rgb(h, s, v):
 # Skin target measured on the flash portraits of the references (HSV):
 # hue ~20 deg (peach/rose, not yellow), saturation ~0.40, value ~0.70.
 SKIN_HUE, SKIN_SAT, SKIN_VAL = 20.0, 0.40, 0.66
+# 0 = keep full original skin detail (no smoothing); glow kept subtle
+SKIN_SMOOTH, SKIN_GLOW = 0.0, 0.35
 
 
 def skin_mask(a):
@@ -90,11 +92,11 @@ def skin_correct(a, radius):
     # soft skin: smooth mid frequencies, keep fine detail at 45%
     low = blur(out, 4 * radius)
     smooth = low + (out - low) * 0.45
-    out = out + (smooth - out) * (m * 0.55)[..., None]
+    out = out + (smooth - out) * (m * SKIN_SMOOTH)[..., None]
     # gentle glow on skin highlights (sheen like the references)
     L = lum(out)
     glow = blur(np.clip(L - 0.60, 0, 1) * m, 5 * radius) * 0.8
-    out = out + glow[..., None] * np.array([0.55, 0.50, 0.45])
+    out = out + glow[..., None] * np.array([0.55, 0.50, 0.45]) * SKIN_GLOW
     return np.clip(out, 0, 1)
 
 
