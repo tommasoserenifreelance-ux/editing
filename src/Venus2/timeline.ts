@@ -170,8 +170,12 @@ export const FLASHES: Flash[] = [
 // Purple wash building up until the yellow flash.
 export const WASH: [number, number] = [486, 505];
 
-// Shown whole from the start of the voice-over until the logo comes in.
-export const CAPTION = { from: 10, to: 146 };
+// Captions over the voice-over, timed to public/venus2/voice.m4a: the laugh
+// that opens it, then the words, held until the logo comes in.
+export const CAPTIONS: { from: number; to: number; line: number }[] = [
+  { from: 10, to: 56, line: 0 },
+  { from: 58, to: 146, line: 1 },
+];
 
 export const VOICE_FROM = 8;
 export const VOICE_TO = VOICE_FROM + 99;

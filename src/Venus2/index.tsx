@@ -14,7 +14,7 @@ import { captionFont, yellow } from "../Nightlife/fonts";
 import {
   BEATS,
   BLACK_AND_WHITE,
-  CAPTION,
+  CAPTIONS,
   CLIPS,
   CUTS,
   Cut,
@@ -37,12 +37,12 @@ import {
 export { VENUS2_DURATION, VENUS2_FPS } from "./timeline";
 
 export type Venus2Props = {
-  caption: string;
+  captions: string[];
   endText: string;
 };
 
 export const venus2Defaults: Venus2Props = {
-  caption: "Friday is Venus",
+  captions: ["Ahaha", "Friday is Venus"],
   endText: "See you Friday",
 };
 
@@ -398,10 +398,18 @@ const Caption: React.FC<{
   </AbsoluteFill>
 );
 
-const Captions: React.FC<Venus2Props> = ({ caption, endText }) => {
+const Captions: React.FC<Venus2Props> = ({ captions, endText }) => {
   const frame = useCurrentFrame();
-  if (frame >= CAPTION.from && frame < CAPTION.to) {
-    return <Caption text={caption} opacity={1} top="64%" size={96} />;
+  const caption = CAPTIONS.find((c) => frame >= c.from && frame < c.to);
+  if (caption) {
+    return (
+      <Caption
+        text={captions[caption.line] ?? ""}
+        opacity={1}
+        top="64%"
+        size={66}
+      />
+    );
   }
   if (frame >= END_TEXT.from && frame < END_TEXT.to) {
     return (
