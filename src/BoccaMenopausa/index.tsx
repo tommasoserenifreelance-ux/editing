@@ -159,13 +159,11 @@ const SLIDES: {
     photo: "bocca-sorriso.jpg",
     render: (t) => (
       <>
-        <div style={{ fontSize: 110, marginBottom: 30 }}>💧</div>
         <Title theme={t} size={96}>
           La menopausa ci lascia la bocca <Accent theme={t}>secca</Accent>
         </Title>
         <Body size={38}>
-          Parliamo di cosa succede nella bocca di una donna in
-          peri/menopausa&nbsp;👇
+          Parliamo di cosa succede nella bocca di una donna in peri/menopausa.
         </Body>
       </>
     ),
@@ -267,7 +265,7 @@ const SLIDES: {
         <br />
         <br />
         Accogliamo questi cambiamenti e chiediamo più ascolto e più cura quando
-        li viviamo 💕
+        li viviamo.
       </Body>
     ),
   },
@@ -279,9 +277,10 @@ const SLIDES: {
           Ti ritrovi in uno di questi <Accent theme={t}>sintomi?</Accent>
         </Title>
         <Body>
-          💬 Raccontamelo nei commenti o scrivimi in DM.
+          Raccontamelo nei commenti o scrivimi in DM.
           <br />
-          📌 Salva il post e condividilo con un&apos;amica che ha bisogno di
+          <br />
+          Salva il post e condividilo con un&apos;amica che ha bisogno di
           saperlo.
         </Body>
         <div
