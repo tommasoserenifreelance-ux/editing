@@ -1,5 +1,13 @@
 import { BRollCue, SentenceReel, StickerCue } from "../Bonaccorso/SentenceReel";
-import { at, CLIPS, DURATION, phrases, SEGMENTS, wordFrame } from "./script";
+import {
+  at,
+  CLIPS,
+  DURATION,
+  phrases,
+  SEGMENTS,
+  TRANSITION,
+  wordFrame,
+} from "./script";
 
 export { DURATION as GENI_DURATION, FPS as GENI_FPS } from "./script";
 
@@ -65,5 +73,10 @@ export const Geni: React.FC = () => (
     brolls={BROLLS}
     stickers={STICKERS}
     sounds={[{ at: wordFrame(0, "triplicati"), file: "ding", volume: 0.45 }]}
+    // No zoom, so the logo and the top of his head stay in frame; quick
+    // slides cover the cuts instead.
+    zoom={[1, 1]}
+    drift={0}
+    slideFrames={TRANSITION}
   />
 );

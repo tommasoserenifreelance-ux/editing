@@ -1,3 +1,5 @@
+import { linearTiming, TransitionSeries } from "@remotion/transitions";
+import { slide } from "@remotion/transitions/slide";
 import {
   AbsoluteFill,
   Html5Audio,
@@ -36,10 +38,11 @@ const Take: React.FC<{
   start: number;
   frames: number;
   scale: number;
-}> = ({ src, start, frames, scale }) => {
+  drift: number;
+}> = ({ src, start, frames, scale, drift: driftTo }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const drift = interpolate(frame, [0, frames], [0, 0.02]);
+  const drift = interpolate(frame, [0, frames], [0, driftTo]);
   // Two-frame audio fades so the cuts between sentences don't click.
   const volume = (f: number) =>
     Math.min(1, (f + 1) / 2, Math.max(0, (frames - f) / 2));
@@ -214,7 +217,25 @@ export const SentenceReel: React.FC<{
   brolls: BRollCue[];
   stickers: StickerCue[];
   sounds?: Sound[];
-}> = ({ source, segments, clips, phrases, brolls, stickers, sounds = [] }) => {
+  // Zoom on even and odd takes; alternating scales hide the jump cuts.
+  zoom?: [number, number];
+  // Slow push-in over each take, added to its zoom.
+  drift?: number;
+  // Frames of a quick slide between takes (0 = hard cut). The timeline the
+  // cue frames come from must use the same overlap.
+  slideFrames?: number;
+}> = ({
+  source,
+  segments,
+  clips,
+  phrases,
+  brolls,
+  stickers,
+  sounds = [],
+  zoom = [1.06, 1.12],
+  drift = 0.02,
+  slideFrames = 0,
+}) => {
   const zones = stickers.map((s) => ({
     from: s.delays[0],
     to: s.to,
@@ -237,23 +258,56 @@ export const SentenceReel: React.FC<{
       [],
     ),
     ...brolls.map((b) => ({ at: b.from - 6, file: "whoosh", volume: 0.45 })),
+    // A light whoosh under each slide between takes.
+    ...(slideFrames
+      ? clips.slice(1).map((_, i) => ({
+          at:
+            clips.slice(0, i + 1).reduce((a, b) => a + b, 0) -
+            (i + 1) * slideFrames -
+            3,
+          file: "whoosh",
+          volume: 0.3,
+        }))
+      : []),
     ...sounds,
   ];
+  const take = (i: number) => (
+    <Take
+      src={source}
+      start={segments[i][0]}
+      frames={clips[i]}
+      scale={zoom[i % 2]}
+      drift={drift}
+    />
+  );
   return (
     <AbsoluteFill style={{ backgroundColor: "black" }}>
-      <Series>
-        {clips.map((frames, i) => (
-          <Series.Sequence key={i} durationInFrames={frames}>
-            <Take
-              src={source}
-              start={segments[i][0]}
-              frames={frames}
-              // Alternating scales hide the jump cuts between sentences.
-              scale={i % 2 === 0 ? 1.06 : 1.12}
-            />
-          </Series.Sequence>
-        ))}
-      </Series>
+      {slideFrames ? (
+        <TransitionSeries>
+          {clips.map((frames, i) => [
+            i > 0 ? (
+              <TransitionSeries.Transition
+                key={`t${i}`}
+                presentation={slide({
+                  direction: i % 2 ? "from-right" : "from-left",
+                })}
+                timing={linearTiming({ durationInFrames: slideFrames })}
+              />
+            ) : null,
+            <TransitionSeries.Sequence key={i} durationInFrames={frames}>
+              {take(i)}
+            </TransitionSeries.Sequence>,
+          ])}
+        </TransitionSeries>
+      ) : (
+        <Series>
+          {clips.map((frames, i) => (
+            <Series.Sequence key={i} durationInFrames={frames}>
+              {take(i)}
+            </Series.Sequence>
+          ))}
+        </Series>
+      )}
       {brolls.map((b) => (
         <Sequence key={b.from} from={b.from} durationInFrames={b.to - b.from}>
           <BRoll src={b.src} />

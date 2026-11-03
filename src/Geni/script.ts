@@ -14,15 +14,18 @@ export const FPS = 25;
 export const SEGMENTS: [number, number][] = [
   [117.83, 127.03],
   [127.24, 133.59],
-  [134.18, 138.27],
-  [138.32, 146.71],
+  // Cut before he swallows after "non contino".
+  [134.18, 137.92],
+  [138.36, 146.71],
   [146.9, 153.73],
   [154.02, 160.15],
   [160.34, 167.85],
   [168.14, 177.3],
 ];
 export const CLIPS = SEGMENTS.map(([s, e]) => Math.round((e - s) * FPS));
-const time = timeline(FPS, CLIPS);
+// Frames of the slide between takes.
+export const TRANSITION = 6;
+const time = timeline(FPS, CLIPS, TRANSITION);
 export const { duration: DURATION, at } = time;
 
 // "\u00a0" keeps two spoken words as one caption word ("un altro", "i miei").

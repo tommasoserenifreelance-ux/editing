@@ -12,17 +12,18 @@ export type Phrase = { from: number; to: number; lines: Line[] };
 // Whisper word timings per take: [word, start, end] in seconds.
 export type TimedWords = [string, number, number][][];
 
-// Timeline of takes laid end to end, given their lengths in frames.
-export const timeline = (fps: number, clips: number[]) => {
-  const clipStart = clips.map((_, i) =>
-    clips.slice(0, i).reduce((a, b) => a + b, 0),
+// Timeline of takes laid end to end, given their lengths in frames. With a
+// transition between takes, each one starts `overlap` frames early.
+export const timeline = (fps: number, clips: number[], overlap = 0) => {
+  const clipStart = clips.map(
+    (_, i) => clips.slice(0, i).reduce((a, b) => a + b, 0) - i * overlap,
   );
   // Frame of a moment given in seconds inside one take.
   const at = (clip: number, seconds: number) =>
     clipStart[clip] + Math.round(seconds * fps);
   return {
     clipStart,
-    duration: clips.reduce((a, b) => a + b, 0),
+    duration: clips.reduce((a, b) => a + b, 0) - (clips.length - 1) * overlap,
     at,
   };
 };
