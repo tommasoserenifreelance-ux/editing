@@ -61,77 +61,79 @@ export type BeatProps = z.infer<typeof beatSchema>;
 
 // Cut points copied frame-by-frame from the reference (24 fps, 9.5 s):
 // shots end at frames 15, 28, 44, 57, 91, 105, 125, 167, 228.
-// Order matches the reference: line 2 leaves first, then line 1, then line 3.
 const f = (frames: number) => frames / 24;
-// Leftover truffle crumb on the bench, bottom-left of C0007.
-const crumb = [{ x: 130, y: 915, w: 160, h: 180, dx: -130, dy: -20 }];
+// Leftover truffle crumb on the bench, bottom-left of the stabilised C0007 shots.
+const crumb = [{ x: 85, y: 985, w: 150, h: 130, dx: -60, dy: -110 }];
 
+// Shots come from public/beat/stab/*.mp4: per-shot tripod-locked cuts of the
+// raw clips (C0005 = Gattopardo, C0006 = Tartare, C0007 = Uovo), so startFrom
+// is relative to each stabilised segment.
 export const beatDefaults: BeatProps = {
   clips: [
-    // La Tartare
-    {
-      src: "beat/C0006.MP4",
-      startFrom: 1.2,
-      duration: f(15),
-      playbackRate: 1.5,
-    }, // burrata
-    {
-      src: "beat/C0006.MP4",
-      startFrom: 10.6,
-      duration: f(13),
-      playbackRate: 1.5,
-    }, // pistacchio
-    {
-      src: "beat/C0006.MP4",
-      startFrom: 14.2,
-      duration: f(16),
-      playbackRate: 2,
-    }, // esce
     // Il Gattopardo
     {
-      src: "beat/C0005.MP4",
-      startFrom: 31.0,
+      src: "beat/stab/g1.mp4",
+      startFrom: 0.1,
+      duration: f(15),
+      playbackRate: 1.5,
+    }, // crema
+    {
+      src: "beat/stab/g2.mp4",
+      startFrom: 0.1,
       duration: f(13),
       playbackRate: 1.5,
     }, // miele
     {
-      src: "beat/C0005.MP4",
-      startFrom: 37.0,
-      duration: f(34),
-      playbackRate: 2.2,
+      src: "beat/stab/g3.mp4",
+      startFrom: 0.1,
+      duration: f(16),
+      playbackRate: 2.6,
     }, // esce
-    // L'Uovo Perfetto (skips 9.7–11 s, truffle picked up from the bench)
+    // La Tartare
     {
-      src: "beat/C0007.MP4",
-      startFrom: 3.3,
+      src: "beat/stab/t1.mp4",
+      startFrom: 0.1,
+      duration: f(13),
+      playbackRate: 1.5,
+    }, // pistacchio
+    {
+      src: "beat/stab/t2.mp4",
+      startFrom: 0.05,
+      duration: f(34),
+      playbackRate: 1.5,
+    }, // esce
+    // L'Uovo Perfetto (never uses C0007 9.7–11 s, truffle picked up from the bench)
+    {
+      src: "beat/stab/u1.mp4",
+      startFrom: 0.1,
       duration: f(14),
       playbackRate: 1.5,
       patches: crumb,
     }, // tartufo
     {
-      src: "beat/C0007.MP4",
-      startFrom: 13.0,
+      src: "beat/stab/u2.mp4",
+      startFrom: 0.1,
       duration: f(20),
       playbackRate: 1.5,
       patches: crumb,
     }, // olio
     {
-      src: "beat/C0007.MP4",
-      startFrom: 15.3,
+      src: "beat/stab/u3.mp4",
+      startFrom: 0.1,
       duration: f(42),
       playbackRate: 1,
       patches: crumb,
     }, // esce
     // Empty bench for the logo
     {
-      src: "beat/C0007.MP4",
-      startFrom: 17.05,
+      src: "beat/stab/u3.mp4",
+      startFrom: 1.85,
       duration: f(61),
-      playbackRate: 0.66,
+      playbackRate: 0.64,
       patches: crumb,
     },
   ],
-  music: "",
+  music: "beat/reference-audio.m4a",
   receipt: {
     restaurant: "BEAT",
     location: "Pizza, Roll & Spa",
@@ -148,8 +150,8 @@ export const beatDefaults: BeatProps = {
     orderShort: "#0467",
   },
   dishes: [
-    { qty: "1", name: "Il Gattopardo", strikeAt: f(72) },
-    { qty: "1", name: "La Tartare", strikeAt: f(28) },
+    { qty: "1", name: "Il Gattopardo", strikeAt: f(29) },
+    { qty: "1", name: "La Tartare", strikeAt: f(74) },
     { qty: "1", name: "L’Uovo Perfetto\n(... o quasi)", strikeAt: f(137) },
   ],
   receiptIn: f(7),
