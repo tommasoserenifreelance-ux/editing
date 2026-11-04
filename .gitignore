@@ -5,3 +5,7 @@ dist
 
 # Ignore the output video from Git but not videos you import into src/.
 out
+
+# Raw client uploads (too large for git, stored in the GitHub release)
+public/zymerex_raw
+public/zymerex/video.mp4
