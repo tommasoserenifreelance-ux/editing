@@ -53,10 +53,11 @@ const SPLIT_END = 182;
 // The top shot carries straight on full-frame (no restart), in slow motion.
 const HERO_START = Math.round(70 * 0.6); // t4 frames already shown
 const HERO = { frames: 24, rate: 0.5 }; // ends as he lifts it, before the bite
-const END = { clip: "C0052", from: 12.0, frames: 40, rate: 0.5 } as const;
+// End: the same shot keeps going (very slow, he is only lifting the piece)
+// while it gently blurs and darkens and the logo fades in. No cut.
+const END = { frames: 40, rate: 0.25 };
 export const SPLIT_DURATION = SPLIT_END + HERO.frames + END.frames;
 
-const src = (clip: string) => staticFile(`beat/split/${clip}.mp4`);
 const stab = (seg: string) => staticFile(`beat/split/stab/${seg}.mp4`);
 
 const Half: React.FC<{ cuts: Cut[]; top: boolean; label: string }> = ({
@@ -115,24 +116,35 @@ const Half: React.FC<{ cuts: Cut[]; top: boolean; label: string }> = ({
   );
 };
 
-const Full: React.FC<{
-  clip: string;
-  from: number;
-  rate: number;
-  style?: React.CSSProperties;
-}> = ({ clip, from, rate, style }) => (
-  <OffthreadVideo
-    src={src(clip)}
-    startFrom={Math.round(from * SPLIT_FPS)}
-    playbackRate={rate}
-    muted
-    style={{ width: "100%", height: "100%", objectFit: "cover", ...style }}
-  />
-);
+const EndShot: React.FC = () => {
+  const f = useCurrentFrame();
+  const k = interpolate(f, [0, 18], [0, 1], {
+    extrapolateRight: "clamp",
+    easing: (t) => t * t * (3 - 2 * t),
+  });
+  return (
+    <OffthreadVideo
+      src={stab("t4")}
+      startFrom={HERO_START + Math.round(HERO.frames * HERO.rate)}
+      playbackRate={END.rate}
+      muted
+      style={{
+        width: "100%",
+        height: "100%",
+        objectFit: "cover",
+        filter: `blur(${7 * k}px) brightness(${1 - 0.15 * k})`,
+        transform: `scale(${1 + 0.04 * k})`,
+      }}
+    />
+  );
+};
 
 const Logo: React.FC = () => {
   const f = useCurrentFrame();
-  const o = interpolate(f, [0, 6], [0, 1], { extrapolateRight: "clamp" });
+  const o = interpolate(f, [6, 20], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
   return (
     <AbsoluteFill
       style={{ alignItems: "center", justifyContent: "center", opacity: o }}
@@ -164,13 +176,7 @@ export const BeatSplit: React.FC = () => (
       />
     </Sequence>
     <Sequence from={SPLIT_END + HERO.frames} durationInFrames={END.frames}>
-      <Full
-        {...END}
-        style={{
-          filter: "blur(7px) brightness(0.85)",
-          transform: "scale(1.04)",
-        }}
-      />
+      <EndShot />
       <Logo />
     </Sequence>
     <Audio src={staticFile("beat/split/reference3-audio.m4a")} />
