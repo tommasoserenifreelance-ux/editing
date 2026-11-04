@@ -35,16 +35,33 @@ export const GeneraliPensioneCover: React.FC = () => (
     <AbsoluteFill
       style={{
         background:
+          "linear-gradient(180deg, rgba(40,4,8,0.97) 0%, rgba(51,5,10,0.94) 18%, rgba(70,8,14,0.6) 25%, rgba(90,10,18,0) 31%)",
+      }}
+    />
+    <AbsoluteFill
+      style={{
+        background:
           "radial-gradient(ellipse 80% 60% at 50% 35%, rgba(0,0,0,0) 55%, rgba(30,8,10,0.35) 100%)",
       }}
     />
+
+    {/* logo */}
+    <AbsoluteFill style={{ top: 170, alignItems: "center" }}>
+      <Img
+        src={staticFile("pensione/generali-logo-white.png")}
+        style={{
+          width: 290,
+          filter: "drop-shadow(0 8px 20px rgba(0,0,0,0.45))",
+        }}
+      />
+    </AbsoluteFill>
 
     {/* sticker */}
     <div
       style={{
         position: "absolute",
         right: 70,
-        top: 290,
+        top: 930,
         transform: "rotate(8deg)",
         ...box(colors.red),
         color: colors.white,
