@@ -41,7 +41,7 @@ const TOP: Cut[] = [
   { seg: "t1", frames: 44, rate: 1, pos: "50% 30%" }, // tray arrives
   { seg: "t2", frames: 28, rate: 1, pos: "50% 45%" }, // wine pour
   { seg: "t3", frames: 40, rate: 1, pos: "50% 40%" }, // picks a piece
-  { seg: "t4", frames: 70, rate: 1.3, pos: "50% 45%" }, // soy, to the mouth
+  { seg: "t4", frames: 70, rate: 0.6, pos: "50% 45%" }, // dipping in soy (slowed)
 ];
 const BOTTOM: Cut[] = [
   { seg: "b1", frames: 44, rate: 1, pos: "50% 38%" }, // rice on nori (C9997)
@@ -51,8 +51,8 @@ const BOTTOM: Cut[] = [
 ];
 const SPLIT_END = 182;
 // The top shot carries straight on full-frame (no restart), in slow motion.
-const HERO_START = Math.round(70 * 1.3); // t4 frames already shown
-const HERO = { frames: 24, rate: 0.5 }; // until the whole piece is in his mouth
+const HERO_START = Math.round(70 * 0.6); // t4 frames already shown
+const HERO = { frames: 24, rate: 0.5 }; // ends as he lifts it, before the bite
 const END = { clip: "C0052", from: 12.0, frames: 40, rate: 0.5 } as const;
 export const SPLIT_DURATION = SPLIT_END + HERO.frames + END.frames;
 
