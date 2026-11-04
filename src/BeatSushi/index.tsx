@@ -11,7 +11,6 @@ import {
   staticFile,
   useCurrentFrame,
 } from "remotion";
-import tracks from "./tracks.json";
 
 // Edit modelled on the reference reel: handheld table shots, a dish is set
 // down, its name pops up in pale-yellow mono caps pinned to the table, light
@@ -28,30 +27,34 @@ new FontFace(
   .then((f) => document.fonts.add(f))
   .then(() => continueRender(handle));
 
-type TrackKey = keyof typeof tracks;
-
-// A shot plays one clip through a list of parts: real time while the dish is
-// set down, a freeze frame (like a photo) the moment it lands, while the name
-// and ingredients appear, then the clip carries on.
-type Part =
-  | { from: number; to: number; rate: number } // source seconds
-  | { freeze: number; frames: number }; // hold the frame at `freeze` s
+// Each shot: the clip plays while the tray is set down (`pre`), then freezes
+// like a photo once the camera has settled, while name and ingredients
+// appear, then carries on (`post`). From the freeze on, the footage is
+// tripod-locked (tools/stabilize_segments.py -> public/beat/sushi/stab), so the
+// text sits still on screen. `zoom` is the stabiliser's border-hiding zoom,
+// applied to `pre` too so the framing doesn't jump at the freeze.
 type Shot = {
-  clip: string; // graded clip in public/beat/sushi
-  parts: Part[];
-  still?: { src: string; frames: number; t: number }; // freeze frame instead
-  label?: { name: string; ingredients: string[]; at: number; track: TrackKey };
-  logo?: { track: TrackKey };
+  clip: string;
+  pre?: [number, number]; // source seconds, real time
+  freeze: number; // source second of the freeze (= start of the stab clip)
+  hold: number; // freeze length, frames
+  post: number; // source second the shot cuts at
+  zoom: number;
+  end?: boolean; // final still with logo
+  label?: { name: string; ingredients: string[]; x: number; y: number };
 };
+
+// from public/beat/sushi/stab/zooms.json (stabiliser output)
+const zooms = { C0012: 1.048, C0014: 1.0928, C0015: 1.0602 };
 
 const SHOTS: Shot[] = [
   {
     clip: "C0012",
-    parts: [
-      { from: 1.45, to: 2.0, rate: 1 },
-      { freeze: 2.0, frames: 46 },
-      { from: 2.0, to: 3.2, rate: 1 },
-    ],
+    pre: [1.45, 2.6],
+    freeze: 2.6,
+    hold: 46,
+    post: 3.55,
+    zoom: zooms.C0012,
     label: {
       name: "DIVINA\nCOMMEDIA",
       ingredients: [
@@ -61,17 +64,17 @@ const SHOTS: Shot[] = [
         "Bacon croccante",
         "Granella di pistacchio",
       ],
-      at: 2.0,
-      track: "C0012",
+      x: 80,
+      y: 1420,
     },
   },
   {
     clip: "C0014",
-    parts: [
-      { from: 0.3, to: 1.1, rate: 1 },
-      { freeze: 1.1, frames: 46 },
-      { from: 1.1, to: 2.55, rate: 1 },
-    ],
+    pre: [0.3, 1.6],
+    freeze: 1.6,
+    hold: 46,
+    post: 2.85,
+    zoom: zooms.C0014,
     label: {
       name: "GATTOPARDO",
       ingredients: [
@@ -82,17 +85,17 @@ const SHOTS: Shot[] = [
         "Pere",
         "Semi di papavero",
       ],
-      at: 1.1,
-      track: "C0014",
+      x: 80,
+      y: 1600,
     },
   },
   {
     clip: "C0015",
-    parts: [
-      { from: 0.35, to: 1.26, rate: 1 },
-      { freeze: 1.26, frames: 46 },
-      { from: 1.26, to: 2.7, rate: 1 },
-    ],
+    pre: [0.35, 2.0],
+    freeze: 2.0,
+    hold: 46,
+    post: 2.9,
+    zoom: zooms.C0015,
     label: {
       name: "PROMESSI\nSPOSI",
       ingredients: [
@@ -101,22 +104,17 @@ const SHOTS: Shot[] = [
         "Philadelphia",
         "Tartufo fresco di stagione",
       ],
-      at: 1.26,
-      track: "C0015",
+      x: 80,
+      y: 1320,
     },
   },
-  {
-    clip: "C0015",
-    parts: [],
-    still: { src: "beat/sushi/C0015_end.png", frames: 40, t: 3.3 },
-    logo: { track: "C0015_logo" },
-  },
+  { clip: "C0015", freeze: 3.3, hold: 40, post: 3.3, zoom: 1, end: true },
 ];
 
-const partFrames = (p: Part) =>
-  "freeze" in p ? p.frames : Math.round(((p.to - p.from) / p.rate) * SUSHI_FPS);
-const shotFrames = (s: Shot) =>
-  s.still ? s.still.frames : s.parts.reduce((n, p) => n + partFrames(p), 0);
+const f24 = (sec: number) => Math.round(sec * SUSHI_FPS);
+const preFrames = (s: Shot) => (s.pre ? f24(s.pre[1] - s.pre[0]) : 0);
+const postFrames = (s: Shot) => f24(s.post - s.freeze);
+const shotFrames = (s: Shot) => preFrames(s) + s.hold + postFrames(s);
 
 const starts = SHOTS.reduce<number[]>(
   (acc, s, i) => [...acc, i === 0 ? 0 : acc[i - 1] + shotFrames(SHOTS[i - 1])],
@@ -124,42 +122,6 @@ const starts = SHOTS.reduce<number[]>(
 );
 export const SUSHI_DURATION =
   starts[starts.length - 1] + shotFrames(SHOTS[SHOTS.length - 1]);
-
-// Output frame (within the shot) -> source seconds, and back.
-const srcTime = (s: Shot, f: number) => {
-  if (s.still) return s.still.t;
-  let base = 0;
-  for (const p of s.parts) {
-    const n = partFrames(p);
-    if (f < base + n)
-      return "freeze" in p
-        ? p.freeze
-        : p.from + ((f - base) / SUSHI_FPS) * p.rate;
-    base += n;
-  }
-  const last = s.parts[s.parts.length - 1];
-  return "freeze" in last ? last.freeze : last.to;
-};
-const outFrame = (s: Shot, t: number) => {
-  let base = 0;
-  for (const p of s.parts) {
-    if ("freeze" in p ? t <= p.freeze : t < p.to)
-      return (
-        base +
-        ("freeze" in p ? 0 : Math.round(((t - p.from) / p.rate) * SUSHI_FPS))
-      );
-    base += partFrames(p);
-  }
-  return base;
-};
-
-// Table point for this frame, following the handheld camera.
-const pinned = (key: TrackKey, t: number) => {
-  const tr = tracks[key];
-  const i = Math.round((t - tr.t0) * tr.fps);
-  const p = tr.pts[Math.max(0, Math.min(tr.pts.length - 1, i))];
-  return { x: p[0], y: p[1] };
-};
 
 const YELLOW = "#F3EC9C";
 const SCRAMBLE = 5; // frames for letters to pop in / out in random order
@@ -190,23 +152,22 @@ const Scrambled: React.FC<{
 const Label: React.FC<{ shot: Shot; seed: string }> = ({ shot, seed }) => {
   const f = useCurrentFrame();
   const l = shot.label!;
-  const inAt = outFrame(shot, l.at);
+  const inAt = preFrames(shot);
   const outAt = shotFrames(shot) - SCRAMBLE;
   if (f < inAt) return null;
-  const { x, y } = pinned(l.track, srcTime(shot, f));
   return (
     <div
       style={{
         position: "absolute",
-        left: x,
-        top: y,
+        left: l.x,
+        top: l.y,
         fontFamily: mono,
         color: YELLOW,
         whiteSpace: "pre",
-        textShadow: "0 0 8px rgba(255,236,140,0.35)",
+        textShadow: "0 1px 6px rgba(0,0,0,0.55), 0 0 8px rgba(255,236,140,0.3)",
       }}
     >
-      <div style={{ fontSize: 42, lineHeight: 1.12 }}>
+      <div style={{ fontSize: 46, lineHeight: 1.1 }}>
         {l.name.split("\n").map((line, i) => (
           <div key={i}>
             <Scrambled
@@ -218,9 +179,7 @@ const Label: React.FC<{ shot: Shot; seed: string }> = ({ shot, seed }) => {
           </div>
         ))}
       </div>
-      <div
-        style={{ fontSize: 25, lineHeight: 1.35, marginTop: 14, opacity: 0.92 }}
-      >
+      <div style={{ fontSize: 26, lineHeight: 1.35, marginTop: 14 }}>
         {l.ingredients.map((line, i) => (
           <div key={i}>
             <Scrambled
@@ -236,61 +195,60 @@ const Label: React.FC<{ shot: Shot; seed: string }> = ({ shot, seed }) => {
   );
 };
 
-const Logo: React.FC<{ shot: Shot }> = ({ shot }) => {
+const Logo: React.FC = () => {
   const f = useCurrentFrame();
   if (f < 6) return null;
-  const { x, y } = pinned(shot.logo!.track, srcTime(shot, f));
   return (
     <Img
       src={staticFile("beat/logo-bianco.png")}
       style={{
         position: "absolute",
         width: 300,
-        left: x - 150,
-        top: y - 160,
+        left: 390,
+        top: 1330,
         filter: "drop-shadow(0 2px 10px rgba(0,0,0,0.35))",
       }}
     />
   );
 };
 
+const fill: React.CSSProperties = {
+  width: "100%",
+  height: "100%",
+  objectFit: "cover",
+};
+
 const ShotVideo: React.FC<{ shot: Shot }> = ({ shot }) => {
-  const fill: React.CSSProperties = {
-    width: "100%",
-    height: "100%",
-    objectFit: "cover",
-  };
-  if (shot.still) return <Img src={staticFile(shot.still.src)} style={fill} />;
-  let base = 0;
+  const dir = "beat/sushi";
+  if (shot.end) {
+    return <Img src={staticFile(`${dir}/stab/C0015_end.png`)} style={fill} />;
+  }
+  const pre = preFrames(shot);
   return (
     <>
-      {shot.parts.map((p, i) => {
-        const from = base;
-        base += partFrames(p);
-        if ("freeze" in p) {
-          // freeze frame: sharpest frame as the tray lands, cleaned up
-          // (denoise + sharpen) and graded like the clip, see public/beat/sushi
-          return (
-            <Sequence key={i} from={from} durationInFrames={p.frames}>
-              <Img
-                src={staticFile(`beat/sushi/${shot.clip}_f${p.freeze}.png`)}
-                style={fill}
-              />
-            </Sequence>
-          );
-        }
-        return (
-          <Sequence key={i} from={from} durationInFrames={partFrames(p)}>
-            <OffthreadVideo
-              src={staticFile(`beat/sushi/${shot.clip}.mp4`)}
-              startFrom={Math.round(p.from * SUSHI_FPS)}
-              playbackRate={p.rate}
-              muted
-              style={fill}
-            />
-          </Sequence>
-        );
-      })}
+      {shot.pre ? (
+        <Sequence durationInFrames={pre}>
+          <OffthreadVideo
+            src={staticFile(`${dir}/${shot.clip}.mp4`)}
+            startFrom={f24(shot.pre[0])}
+            muted
+            style={{ ...fill, transform: `scale(${shot.zoom})` }}
+          />
+        </Sequence>
+      ) : null}
+      <Sequence from={pre} durationInFrames={shot.hold}>
+        <Img
+          src={staticFile(`${dir}/stab/${shot.clip}_freeze.png`)}
+          style={fill}
+        />
+      </Sequence>
+      <Sequence from={pre + shot.hold} durationInFrames={postFrames(shot)}>
+        <OffthreadVideo
+          src={staticFile(`${dir}/stab/${shot.clip}.mp4`)}
+          muted
+          style={fill}
+        />
+      </Sequence>
     </>
   );
 };
@@ -371,12 +329,12 @@ export const BeatSushi: React.FC = () => {
         <Sequence key={i} from={starts[i]} durationInFrames={shotFrames(s)}>
           <ShotVideo shot={s} />
           {s.label ? <Label shot={s} seed={`l${i}`} /> : null}
-          {s.logo ? <Logo shot={s} /> : null}
+          {s.end ? <Logo /> : null}
         </Sequence>
       ))}
       {SHOTS.map((s, i) =>
         s.label ? (
-          <Flicker key={`fl${i}`} at={starts[i] + outFrame(s, s.label.at)} />
+          <Flicker key={`fl${i}`} at={starts[i] + preFrames(s)} />
         ) : null,
       )}
       {starts.slice(1).map((c) => (
