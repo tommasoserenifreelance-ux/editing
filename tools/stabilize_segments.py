@@ -1,6 +1,6 @@
 # Per-shot tripod lock. Each segment is registered to its own first frame with
 # ORB + RANSAC (peeling off plate/hand models), the path is median-filtered,
-# then frames are warped back with one shared zoom that hides the borders.
+# then frames are warped back with the smallest zoom that hides the borders.
 import cv2, numpy as np, subprocess, sys, json
 from scipy.ndimage import median_filter, uniform_filter1d
 SEGS = json.loads(sys.argv[1]); OUT = sys.argv[2]
@@ -45,15 +45,14 @@ def analyse(src, t0, t1):
     return P, int((~ok).sum()), W, H
 res = {}
 need = 1.0
-for name, (src, t0, t1) in SEGS.items():
+for name, (src, t0, t1, *_) in SEGS.items():
     P, bad, W, H = analyse(src, t0, t1)
     z = max(1 + 2 * np.abs(P[:, 0]).max() / W, 1 + 2 * np.abs(P[:, 1]).max() / H) / P[:, 3].min()
-    need = max(need, z); res[name] = P
+    res[name] = (P, min(z + 0.005, 1.1))
     print(f"{name}: {len(P)} fr, unmatched {bad}, |t| max {np.abs(P[:, :2]).max(0).round(1)}, zoom {z:.3f}", flush=True)
-ZOOM = min(need, 1.08)
-print("zoom", round(ZOOM, 3), flush=True)
-for name, (src, t0, t1) in SEGS.items():
-    P = res[name]
+for name, (src, t0, t1, *off) in SEGS.items():
+    P, ZOOM = res[name]
+    ox, oy = (off + [0, 0])[:2]  # optional reframe (px) to keep the dish in shot
     enc = subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "bgr24",
         "-s", f"{W}x{H}", "-r", "50", "-i", "-", "-c:v", "libx264", "-crf", "14",
         "-preset", "fast", "-pix_fmt", "yuv420p", f"{OUT}/{name}.mp4"], stdin=subprocess.PIPE)
@@ -63,6 +62,7 @@ for name, (src, t0, t1) in SEGS.items():
         M[:2, 2] += (tx, ty)
         Z = np.vstack([cv2.getRotationMatrix2D((W / 2, H / 2), 0, ZOOM), [0, 0, 1]])
         A = (Z @ M)[:2]
+        A[:, 2] += (ox, oy)
         enc.stdin.write(cv2.warpAffine(fr, A, (W, H), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REFLECT).tobytes())
     enc.stdin.close(); enc.wait()
     print("wrote", name, flush=True)
