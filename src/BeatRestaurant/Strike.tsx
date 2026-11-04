@@ -19,7 +19,7 @@ export const Strike: React.FC<{
   const r = (k: string) => random(`${seed}-${k}`);
   const pad = 14;
   const x0 = -8 - r("x0") * 6;
-  const x1 = width + 6 + r("x1") * 22;
+  const x1 = width + 14 + r("x1") * 30;
   const h = 40;
   const mid = h / 2;
   // Slight downward drift to the right, like a quick pen stroke.
@@ -61,14 +61,14 @@ export const Strike: React.FC<{
         <path
           d={d}
           pathLength={1}
-          strokeWidth={9}
+          strokeWidth={12}
           strokeDasharray="1 1"
           strokeDashoffset={1 - progress}
         />
         <path
           d={d2}
           pathLength={1}
-          strokeWidth={5}
+          strokeWidth={7}
           strokeDasharray="1 1"
           strokeDashoffset={1 - progress}
         />

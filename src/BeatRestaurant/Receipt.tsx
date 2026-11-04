@@ -35,11 +35,11 @@ const Dashes: React.FC = () => (
   />
 );
 
-const Row: React.FC<{ left: React.ReactNode; right?: React.ReactNode; style?: React.CSSProperties }> = ({
-  left,
-  right,
-  style,
-}) => (
+const Row: React.FC<{
+  left: React.ReactNode;
+  right?: React.ReactNode;
+  style?: React.CSSProperties;
+}> = ({ left, right, style }) => (
   <div
     style={{
       display: "flex",
@@ -71,7 +71,7 @@ export const Receipt: React.FC<{ data: BeatProps; strikeFrames: number }> = ({
           fontFamily: mono,
           fontSize: BODY,
           lineHeight: 1.45,
-          padding: `44px ${PAD_X}px 40px`,
+          padding: `68px ${PAD_X}px 58px`,
           position: "relative",
         }}
       >
@@ -99,7 +99,9 @@ export const Receipt: React.FC<{ data: BeatProps; strikeFrames: number }> = ({
           <div style={{ textAlign: "center", marginTop: 4 }}>{r.location}</div>
           <Dashes />
           <Row
-            left={<b style={{ fontSize: 25, fontWeight: 700 }}>{r.tableLabel}</b>}
+            left={
+              <b style={{ fontSize: 25, fontWeight: 700 }}>{r.tableLabel}</b>
+            }
             right={r.orderLabel}
           />
           <Row left={r.coversLabel} right={r.date} />
@@ -108,10 +110,7 @@ export const Receipt: React.FC<{ data: BeatProps; strikeFrames: number }> = ({
           {data.dishes.map((d, i) => {
             const [first, ...rest] = d.name.split("\n");
             return (
-              <div
-                key={i}
-                style={{ display: "flex", margin: "10px 0" }}
-              >
+              <div key={i} style={{ display: "flex", margin: "14px 0" }}>
                 <span style={{ width: BODY * CHAR * 3, flexShrink: 0 }}>
                   {d.qty}
                 </span>

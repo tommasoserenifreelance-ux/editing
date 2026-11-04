@@ -8,8 +8,22 @@ export const beatSchema = z.object({
   clips: z.array(
     z.object({
       src: z.string(),
-      startFrom: z.number().min(0), // seconds trimmed from the clip start
-      duration: z.number().positive(), // seconds used from the clip
+      startFrom: z.number().min(0), // seconds into the source clip
+      duration: z.number().positive(), // seconds on the output timeline
+      playbackRate: z.number().positive(),
+      // Areas to clean up by copying nearby bench (source-clip pixels).
+      patches: z
+        .array(
+          z.object({
+            x: z.number(),
+            y: z.number(),
+            w: z.number(),
+            h: z.number(),
+            dx: z.number(),
+            dy: z.number(),
+          }),
+        )
+        .optional(),
     }),
   ),
   music: z.string(), // optional audio file in public/, "" = none
@@ -45,33 +59,102 @@ export const beatSchema = z.object({
 
 export type BeatProps = z.infer<typeof beatSchema>;
 
-// Timings copied frame-by-frame from the reference (24 fps, 9.5 s).
+// Cut points copied frame-by-frame from the reference (24 fps, 9.5 s):
+// shots end at frames 15, 28, 44, 57, 91, 105, 125, 167, 228.
+// Order matches the reference: line 2 leaves first, then line 1, then line 3.
+const f = (frames: number) => frames / 24;
+// Leftover truffle crumb on the bench, bottom-left of C0007.
+const crumb = [{ x: 130, y: 915, w: 160, h: 180, dx: -130, dy: -20 }];
+
 export const beatDefaults: BeatProps = {
-  clips: [],
+  clips: [
+    // La Tartare
+    {
+      src: "beat/C0006.MP4",
+      startFrom: 1.2,
+      duration: f(15),
+      playbackRate: 1.5,
+    }, // burrata
+    {
+      src: "beat/C0006.MP4",
+      startFrom: 10.6,
+      duration: f(13),
+      playbackRate: 1.5,
+    }, // pistacchio
+    {
+      src: "beat/C0006.MP4",
+      startFrom: 14.2,
+      duration: f(16),
+      playbackRate: 2,
+    }, // esce
+    // Il Gattopardo
+    {
+      src: "beat/C0005.MP4",
+      startFrom: 31.0,
+      duration: f(13),
+      playbackRate: 1.5,
+    }, // miele
+    {
+      src: "beat/C0005.MP4",
+      startFrom: 37.0,
+      duration: f(34),
+      playbackRate: 2.2,
+    }, // esce
+    // L'Uovo Perfetto (skips 9.7–11 s, truffle picked up from the bench)
+    {
+      src: "beat/C0007.MP4",
+      startFrom: 3.3,
+      duration: f(14),
+      playbackRate: 1.5,
+      patches: crumb,
+    }, // tartufo
+    {
+      src: "beat/C0007.MP4",
+      startFrom: 13.0,
+      duration: f(20),
+      playbackRate: 1.5,
+      patches: crumb,
+    }, // olio
+    {
+      src: "beat/C0007.MP4",
+      startFrom: 15.3,
+      duration: f(42),
+      playbackRate: 1,
+      patches: crumb,
+    }, // esce
+    // Empty bench for the logo
+    {
+      src: "beat/C0007.MP4",
+      startFrom: 17.05,
+      duration: f(61),
+      playbackRate: 0.66,
+      patches: crumb,
+    },
+  ],
   music: "",
   receipt: {
-    restaurant: "BEAT RESTAURANT",
-    location: "Via Esempio 1, Città",
+    restaurant: "BEAT",
+    location: "Pizza, Roll & Spa",
     tableLabel: "TAVOLO 12",
     coversLabel: "COPERTI: 2",
     serviceLabel: "SALA",
     orderLabel: "ORDINE #0467",
-    date: "17 Nov 2026",
+    date: "04 Nov 2026",
     time: "20:32",
     footerLine1: "CUCINA",
-    footerLine2: "SERVIZIO AL TAVOLO",
+    footerLine2: "SALA",
     printedLabel: "Stampato: 20:32",
-    printedDate: "17 Nov 2026",
+    printedDate: "04 Nov 2026",
     orderShort: "#0467",
   },
   dishes: [
-    { qty: "1", name: "Tagliatelle al ragù", strikeAt: 74 / 24 },
-    { qty: "1", name: "Risotto, zafferano\ne midollo", strikeAt: 28 / 24 },
-    { qty: "1", name: "Tiramisù della casa", strikeAt: 132 / 24 },
+    { qty: "1", name: "Il Gattopardo", strikeAt: f(72) },
+    { qty: "1", name: "La Tartare", strikeAt: f(28) },
+    { qty: "1", name: "L’Uovo Perfetto\n(... o quasi)", strikeAt: f(137) },
   ],
-  receiptIn: 7 / 24,
-  receiptOut: 167 / 24,
-  logoIn: 189 / 24,
-  logoSrc: "",
-  logoText: "BEAT\nRESTAURANT",
+  receiptIn: f(7),
+  receiptOut: f(167),
+  logoIn: f(189),
+  logoSrc: "beat/logo-bianco.png",
+  logoText: "BEAT",
 };

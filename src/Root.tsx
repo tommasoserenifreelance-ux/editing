@@ -82,18 +82,8 @@ export const RemotionRoot: React.FC = () => {
           defaultProps={beatDefaults}
           durationInFrames={BEAT_DURATION}
           fps={BEAT_FPS}
-          width={1080}
-          height={1920}
-        />
-        <Composition
-          id="BeatComandaOrizzontale"
-          component={BeatRestaurant}
-          schema={beatSchema}
-          defaultProps={beatDefaults}
-          durationInFrames={BEAT_DURATION}
-          fps={BEAT_FPS}
-          width={1100}
-          height={720}
+          width={1920}
+          height={1080}
         />
       </Folder>
     </>
