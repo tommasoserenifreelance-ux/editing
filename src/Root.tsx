@@ -8,6 +8,8 @@ import {
   PilatesOverlay,
 } from "./PilatesOverlay";
 import { PILATES_DURATION, PilatesReformer } from "./PilatesReformer";
+import { BEAT_DURATION, BEAT_FPS, BeatRestaurant } from "./BeatRestaurant";
+import { beatDefaults, beatSchema } from "./BeatRestaurant/schema";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -72,6 +74,28 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
       />
+      <Folder name="BeatRestaurant">
+        <Composition
+          id="BeatComanda"
+          component={BeatRestaurant}
+          schema={beatSchema}
+          defaultProps={beatDefaults}
+          durationInFrames={BEAT_DURATION}
+          fps={BEAT_FPS}
+          width={1080}
+          height={1920}
+        />
+        <Composition
+          id="BeatComandaOrizzontale"
+          component={BeatRestaurant}
+          schema={beatSchema}
+          defaultProps={beatDefaults}
+          durationInFrames={BEAT_DURATION}
+          fps={BEAT_FPS}
+          width={1100}
+          height={720}
+        />
+      </Folder>
     </>
   );
 };
