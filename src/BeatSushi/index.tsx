@@ -48,9 +48,9 @@ const SHOTS: Shot[] = [
   {
     clip: "C0012",
     parts: [
-      { from: 1.45, to: 1.9, rate: 1 },
-      { freeze: 1.9, frames: 46 },
-      { from: 1.9, to: 3.1, rate: 1 },
+      { from: 1.45, to: 2.0, rate: 1 },
+      { freeze: 2.0, frames: 46 },
+      { from: 2.0, to: 3.2, rate: 1 },
     ],
     label: {
       name: "DIVINA\nCOMMEDIA",
@@ -61,16 +61,16 @@ const SHOTS: Shot[] = [
         "Bacon croccante",
         "Granella di pistacchio",
       ],
-      at: 1.9,
+      at: 2.0,
       track: "C0012",
     },
   },
   {
     clip: "C0014",
     parts: [
-      { from: 0.3, to: 0.95, rate: 1 },
-      { freeze: 0.95, frames: 46 },
-      { from: 0.95, to: 2.4, rate: 1 },
+      { from: 0.3, to: 1.1, rate: 1 },
+      { freeze: 1.1, frames: 46 },
+      { from: 1.1, to: 2.55, rate: 1 },
     ],
     label: {
       name: "GATTOPARDO",
@@ -82,16 +82,16 @@ const SHOTS: Shot[] = [
         "Pere",
         "Semi di papavero",
       ],
-      at: 0.95,
+      at: 1.1,
       track: "C0014",
     },
   },
   {
     clip: "C0015",
     parts: [
-      { from: 0.35, to: 1.1, rate: 1 },
-      { freeze: 1.1, frames: 46 },
-      { from: 1.1, to: 2.6, rate: 1 },
+      { from: 0.35, to: 1.26, rate: 1 },
+      { freeze: 1.26, frames: 46 },
+      { from: 1.26, to: 2.7, rate: 1 },
     ],
     label: {
       name: "PROMESSI\nSPOSI",
@@ -101,7 +101,7 @@ const SHOTS: Shot[] = [
         "Philadelphia",
         "Tartufo fresco di stagione",
       ],
-      at: 1.1,
+      at: 1.26,
       track: "C0015",
     },
   },
@@ -268,7 +268,8 @@ const ShotVideo: React.FC<{ shot: Shot }> = ({ shot }) => {
         const from = base;
         base += partFrames(p);
         if ("freeze" in p) {
-          // freeze frame: a still grabbed from the graded clip
+          // freeze frame: sharpest frame as the tray lands, cleaned up
+          // (denoise + sharpen) and graded like the clip, see public/beat/sushi
           return (
             <Sequence key={i} from={from} durationInFrames={p.frames}>
               <Img
