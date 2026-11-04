@@ -664,7 +664,7 @@ const SoundEffects: React.FC = () => (
   </>
 );
 
-export const ContoGenerali: React.FC = () => {
+export const ContoGenerali: React.FC<{ sfx?: boolean }> = ({ sfx = true }) => {
   return (
     <AbsoluteFill style={{ backgroundColor: "black" }}>
       <SpeakerVideo />
@@ -715,7 +715,7 @@ export const ContoGenerali: React.FC = () => {
       <Sequence from={SPEECH_END} durationInFrames={END_CARD}>
         <EndCard />
       </Sequence>
-      <SoundEffects />
+      {sfx ? <SoundEffects /> : null}
     </AbsoluteFill>
   );
 };
