@@ -37,7 +37,7 @@ type Shot = {
   pre?: [number, number]; // source seconds, real time
   freeze: number; // source second of the freeze (= start of the stab clip)
   hold: number; // freeze length, frames
-  post: number; // source second the shot cuts at
+  post: number; // source second the shot cuts at (0 = cut on the freeze)
   end?: boolean; // final still with logo
   label?: { name: string; ingredients: string[]; x: number; y: number };
 };
@@ -48,7 +48,7 @@ const SHOTS: Shot[] = [
     pre: [1.45, 2.6],
     freeze: 2.6,
     hold: 46,
-    post: 3.55,
+    post: 0,
     label: {
       name: "DIVINA\nCOMMEDIA",
       ingredients: [
@@ -67,7 +67,7 @@ const SHOTS: Shot[] = [
     pre: [0.3, 1.6],
     freeze: 1.6,
     hold: 46,
-    post: 2.85,
+    post: 0,
     label: {
       name: "GATTOPARDO",
       ingredients: [
@@ -87,7 +87,7 @@ const SHOTS: Shot[] = [
     pre: [0.35, 2.0],
     freeze: 2.0,
     hold: 46,
-    post: 2.9,
+    post: 0,
     label: {
       name: "PROMESSI\nSPOSI",
       ingredients: [
@@ -105,7 +105,7 @@ const SHOTS: Shot[] = [
 
 const f24 = (sec: number) => Math.round(sec * SUSHI_FPS);
 const preFrames = (s: Shot) => (s.pre ? f24(s.pre[1] - s.pre[0]) : 0);
-const postFrames = (s: Shot) => f24(s.post - s.freeze);
+const postFrames = (s: Shot) => (s.post ? f24(s.post - s.freeze) : 0);
 const shotFrames = (s: Shot) => preFrames(s) + s.hold + postFrames(s);
 
 const starts = SHOTS.reduce<number[]>(
@@ -145,6 +145,7 @@ const Label: React.FC<{ shot: Shot; seed: string }> = ({ shot, seed }) => {
   const f = useCurrentFrame();
   const l = shot.label!;
   const inAt = preFrames(shot);
+  // letters clear over the last frames of the freeze, then straight to the cut
   const outAt = preFrames(shot) + shot.hold - SCRAMBLE;
   if (f < inAt) return null;
   return (
@@ -234,39 +235,30 @@ const ShotVideo: React.FC<{ shot: Shot }> = ({ shot }) => {
           style={fill}
         />
       </Sequence>
-      <Sequence from={pre + shot.hold} durationInFrames={postFrames(shot)}>
-        <OffthreadVideo
-          src={staticFile(`${dir}/${shot.clip}.mp4`)}
-          startFrom={(shot.pre ? f24(shot.pre[0]) : 0) + pre}
-          muted
-          style={fill}
-        />
-      </Sequence>
+      {postFrames(shot) > 0 ? (
+        <Sequence from={pre + shot.hold} durationInFrames={postFrames(shot)}>
+          <OffthreadVideo
+            src={staticFile(`${dir}/${shot.clip}.mp4`)}
+            startFrom={(shot.pre ? f24(shot.pre[0]) : 0) + pre}
+            muted
+            style={fill}
+          />
+        </Sequence>
+      ) : null}
     </>
   );
 };
 
-// Film-style flash: purple flicker, then a warm white burst on the cut.
+// Film-style warm white burst on the cut.
 const Flash: React.FC<{ at: number }> = ({ at }) => {
   const f = useCurrentFrame() - at;
-  const tint = interpolate(f, [-3, -1, 0, 1], [0, 0.28, 0.12, 0], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
   const burst = interpolate(f, [-1, 0, 1, 3], [0, 0.95, 0.55, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
-  if (tint === 0 && burst === 0) return null;
+  if (burst === 0) return null;
   return (
     <AbsoluteFill style={{ pointerEvents: "none" }}>
-      <AbsoluteFill
-        style={{
-          background: "linear-gradient(160deg, #5a46d6, #8b3fae 60%, #2a2a8f)",
-          mixBlendMode: "screen",
-          opacity: tint,
-        }}
-      />
       <AbsoluteFill
         style={{
           background:
