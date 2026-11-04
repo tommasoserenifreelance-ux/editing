@@ -28,31 +28,36 @@ new FontFace(
   .then(() => continueRender(handle));
 
 type Cut = {
-  clip: "C0052" | "C9997";
-  from: number; // source seconds
+  seg: string; // stabilised segment in public/beat/split/stab (starts at its cut)
   frames: number; // output frames
   rate: number;
-  y: number; // vertical crop (object-position %) inside its half
+  pos: string; // object-position inside its half
 };
 
-// Frame counts follow the reference cut points (1.83, 3.0, 4.67, 7.58 s).
+// Every shot is tripod-locked (tools/stabilize_segments.py). Frame counts
+// follow the reference cut points (1.83, 3.0, 4.67, 7.58 s); both halves cut
+// together.
 const TOP: Cut[] = [
-  { clip: "C0052", from: 6.6, frames: 44, rate: 1, y: 30 }, // tray arrives
-  { clip: "C0052", from: 17.6, frames: 28, rate: 1, y: 45 }, // wine pour
-  { clip: "C0052", from: 31.0, frames: 40, rate: 1, y: 40 }, // picks a piece
-  { clip: "C0052", from: 33.4, frames: 70, rate: 1.3, y: 45 }, // soy, eats
+  { seg: "t1", frames: 44, rate: 1, pos: "50% 30%" }, // tray arrives
+  { seg: "t2", frames: 28, rate: 1, pos: "50% 45%" }, // wine pour
+  { seg: "t3", frames: 40, rate: 1, pos: "50% 40%" }, // picks a piece
+  { seg: "t4", frames: 70, rate: 1.3, pos: "50% 45%" }, // soy, to the mouth
 ];
 const BOTTOM: Cut[] = [
-  { clip: "C9997", from: 9.0, frames: 72, rate: 1, y: 38 }, // rice on nori
-  { clip: "C9997", from: 15.0, frames: 40, rate: 1, y: 40 }, // pressing rice
-  { clip: "C9997", from: 33.0, frames: 70, rate: 1, y: 55 }, // rolling
+  { seg: "b1", frames: 44, rate: 1, pos: "50% 38%" }, // rice on nori (C9997)
+  { seg: "b2", frames: 28, rate: 1.5, pos: "50% 2%" }, // piping cream (C0005)
+  { seg: "b3", frames: 40, rate: 1.6, pos: "50% 2%" }, // honey drizzle (C0005)
+  { seg: "b4", frames: 70, rate: 0.85, pos: "50% 55%" }, // rolling (C9997)
 ];
 const SPLIT_END = 182;
-const HERO = { clip: "C0052", from: 32.1, frames: 19, rate: 0.5 } as const;
+// The top shot carries straight on full-frame (no restart), in slow motion.
+const HERO_START = Math.round(70 * 1.3); // t4 frames already shown
+const HERO = { frames: 19, rate: 0.5 };
 const END = { clip: "C0052", from: 12.0, frames: 45, rate: 0.5 } as const;
 export const SPLIT_DURATION = SPLIT_END + HERO.frames + END.frames;
 
 const src = (clip: string) => staticFile(`beat/split/${clip}.mp4`);
+const stab = (seg: string) => staticFile(`beat/split/stab/${seg}.mp4`);
 
 const Half: React.FC<{ cuts: Cut[]; top: boolean; label: string }> = ({
   cuts,
@@ -77,15 +82,14 @@ const Half: React.FC<{ cuts: Cut[]; top: boolean; label: string }> = ({
         return (
           <Sequence key={i} from={from} durationInFrames={c.frames}>
             <OffthreadVideo
-              src={src(c.clip)}
-              startFrom={Math.round(c.from * SPLIT_FPS)}
+              src={stab(c.seg)}
               playbackRate={c.rate}
               muted
               style={{
                 width: "100%",
                 height: "100%",
                 objectFit: "cover",
-                objectPosition: `50% ${c.y}%`,
+                objectPosition: c.pos,
               }}
             />
           </Sequence>
@@ -151,10 +155,12 @@ export const BeatSplit: React.FC = () => (
       <Half cuts={BOTTOM} top={false} label="WE MAKE" />
     </Sequence>
     <Sequence from={SPLIT_END} durationInFrames={HERO.frames}>
-      {/* punch in on the piece being lifted */}
-      <Full
-        {...HERO}
-        style={{ transform: "scale(1.7)", transformOrigin: "33% 36%" }}
+      <OffthreadVideo
+        src={stab("t4")}
+        startFrom={HERO_START}
+        playbackRate={HERO.rate}
+        muted
+        style={{ width: "100%", height: "100%", objectFit: "cover" }}
       />
     </Sequence>
     <Sequence from={SPLIT_END + HERO.frames} durationInFrames={END.frames}>
