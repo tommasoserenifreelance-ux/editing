@@ -30,54 +30,128 @@ new FontFace(
 
 type TrackKey = keyof typeof tracks;
 
+// A shot plays one clip through a list of parts: real time while the dish is
+// set down, a freeze frame (like a photo) the moment it lands, while the name
+// and ingredients appear, then the clip carries on.
+type Part =
+  | { from: number; to: number; rate: number } // source seconds
+  | { freeze: number; frames: number }; // hold the frame at `freeze` s
 type Shot = {
   clip: string; // graded clip in public/beat/sushi
-  from: number; // source seconds
-  frames: number; // output frames
-  rate: number;
-  label?: { text: string; at: number; track: TrackKey }; // `at` = source s
-  logo?: { at: number; track: TrackKey };
+  parts: Part[];
+  still?: { src: string; frames: number; t: number }; // freeze frame instead
+  label?: { name: string; ingredients: string[]; at: number; track: TrackKey };
+  logo?: { track: TrackKey };
 };
 
 const SHOTS: Shot[] = [
   {
     clip: "C0012",
-    from: 1.2,
-    frames: 63,
-    rate: 1,
-    label: { text: "DIVINA\nCOMMEDIA", at: 1.9, track: "C0012" },
+    parts: [
+      { from: 1.45, to: 1.9, rate: 1 },
+      { freeze: 1.9, frames: 46 },
+      { from: 1.9, to: 3.1, rate: 1 },
+    ],
+    label: {
+      name: "DIVINA\nCOMMEDIA",
+      ingredients: [
+        "Crudo di Fassona",
+        "Avocado",
+        "Philadelphia",
+        "Bacon croccante",
+        "Granella di pistacchio",
+      ],
+      at: 1.9,
+      track: "C0012",
+    },
   },
   {
     clip: "C0014",
-    from: 0.25,
-    frames: 66,
-    rate: 1,
-    label: { text: "GATTOPARDO", at: 0.95, track: "C0014" },
+    parts: [
+      { from: 0.3, to: 0.95, rate: 1 },
+      { freeze: 0.95, frames: 46 },
+      { from: 0.95, to: 2.4, rate: 1 },
+    ],
+    label: {
+      name: "GATTOPARDO",
+      ingredients: [
+        "Lardo",
+        "Philadelphia",
+        "Noci",
+        "Miele",
+        "Pere",
+        "Semi di papavero",
+      ],
+      at: 0.95,
+      track: "C0014",
+    },
   },
   {
     clip: "C0015",
-    from: 0.3,
-    frames: 46,
-    rate: 1,
-    label: { text: "PROMESSI\nSPOSI", at: 1.05, track: "C0015" },
+    parts: [
+      { from: 0.35, to: 1.1, rate: 1 },
+      { freeze: 1.1, frames: 46 },
+      { from: 1.1, to: 2.6, rate: 1 },
+    ],
+    label: {
+      name: "PROMESSI\nSPOSI",
+      ingredients: [
+        "Crudo di Fassona",
+        "Avocado",
+        "Philadelphia",
+        "Tartufo fresco di stagione",
+      ],
+      at: 1.1,
+      track: "C0015",
+    },
   },
   {
     clip: "C0015",
-    from: 2.2,
-    frames: 37,
-    rate: 0.75,
-    logo: { at: 2.2, track: "C0015_logo" },
+    parts: [],
+    still: { src: "beat/sushi/C0015_end.png", frames: 40, t: 3.3 },
+    logo: { track: "C0015_logo" },
   },
 ];
 
+const partFrames = (p: Part) =>
+  "freeze" in p ? p.frames : Math.round(((p.to - p.from) / p.rate) * SUSHI_FPS);
+const shotFrames = (s: Shot) =>
+  s.still ? s.still.frames : s.parts.reduce((n, p) => n + partFrames(p), 0);
+
 const starts = SHOTS.reduce<number[]>(
-  (acc, s, i) => [...acc, i === 0 ? 0 : acc[i - 1] + SHOTS[i - 1].frames],
+  (acc, s, i) => [...acc, i === 0 ? 0 : acc[i - 1] + shotFrames(SHOTS[i - 1])],
   [],
 );
 export const SUSHI_DURATION =
-  starts[starts.length - 1] + SHOTS[SHOTS.length - 1].frames;
+  starts[starts.length - 1] + shotFrames(SHOTS[SHOTS.length - 1]);
 
-const srcTime = (s: Shot, f: number) => s.from + (f / SUSHI_FPS) * s.rate;
+// Output frame (within the shot) -> source seconds, and back.
+const srcTime = (s: Shot, f: number) => {
+  if (s.still) return s.still.t;
+  let base = 0;
+  for (const p of s.parts) {
+    const n = partFrames(p);
+    if (f < base + n)
+      return "freeze" in p
+        ? p.freeze
+        : p.from + ((f - base) / SUSHI_FPS) * p.rate;
+    base += n;
+  }
+  const last = s.parts[s.parts.length - 1];
+  return "freeze" in last ? last.freeze : last.to;
+};
+const outFrame = (s: Shot, t: number) => {
+  let base = 0;
+  for (const p of s.parts) {
+    if ("freeze" in p ? t <= p.freeze : t < p.to)
+      return (
+        base +
+        ("freeze" in p ? 0 : Math.round(((t - p.from) / p.rate) * SUSHI_FPS))
+      );
+    base += partFrames(p);
+  }
+  return base;
+};
 
 // Table point for this frame, following the handheld camera.
 const pinned = (key: TrackKey, t: number) => {
@@ -90,14 +164,36 @@ const pinned = (key: TrackKey, t: number) => {
 const YELLOW = "#F3EC9C";
 const SCRAMBLE = 5; // frames for letters to pop in / out in random order
 
+// Text whose letters pop in (from `on`) and out (from `off`) in random order.
+const Scrambled: React.FC<{
+  text: string;
+  on: number;
+  off: number;
+  seed: string;
+}> = ({ text, on, off, seed }) => {
+  const f = useCurrentFrame();
+  return (
+    <>
+      {text.split("").map((ch, k) => {
+        const a = on + Math.floor(random(`${seed}in${k}`) * SCRAMBLE);
+        const b = off + Math.floor(random(`${seed}out${k}`) * SCRAMBLE);
+        return (
+          <span key={k} style={{ opacity: f >= a && f < b ? 1 : 0 }}>
+            {ch}
+          </span>
+        );
+      })}
+    </>
+  );
+};
+
 const Label: React.FC<{ shot: Shot; seed: string }> = ({ shot, seed }) => {
   const f = useCurrentFrame();
   const l = shot.label!;
-  const inAt = Math.round(((l.at - shot.from) / shot.rate) * SUSHI_FPS);
-  const outAt = shot.frames - SCRAMBLE;
+  const inAt = outFrame(shot, l.at);
+  const outAt = shotFrames(shot) - SCRAMBLE;
   if (f < inAt) return null;
   const { x, y } = pinned(l.track, srcTime(shot, f));
-  let n = 0;
   return (
     <div
       style={{
@@ -105,37 +201,44 @@ const Label: React.FC<{ shot: Shot; seed: string }> = ({ shot, seed }) => {
         left: x,
         top: y,
         fontFamily: mono,
-        fontSize: 42,
-        lineHeight: 1.12,
         color: YELLOW,
         whiteSpace: "pre",
         textShadow: "0 0 8px rgba(255,236,140,0.35)",
       }}
     >
-      {l.text.split("\n").map((line, li) => (
-        <div key={li}>
-          {line.split("").map((ch) => {
-            const k = n++;
-            const on = inAt + Math.floor(random(`${seed}in${k}`) * SCRAMBLE);
-            const off = outAt + Math.floor(random(`${seed}out${k}`) * SCRAMBLE);
-            const visible = f >= on && f < off;
-            return (
-              <span key={k} style={{ opacity: visible ? 1 : 0 }}>
-                {ch}
-              </span>
-            );
-          })}
-        </div>
-      ))}
+      <div style={{ fontSize: 42, lineHeight: 1.12 }}>
+        {l.name.split("\n").map((line, i) => (
+          <div key={i}>
+            <Scrambled
+              text={line}
+              on={inAt}
+              off={outAt}
+              seed={`${seed}n${i}`}
+            />
+          </div>
+        ))}
+      </div>
+      <div
+        style={{ fontSize: 25, lineHeight: 1.35, marginTop: 14, opacity: 0.92 }}
+      >
+        {l.ingredients.map((line, i) => (
+          <div key={i}>
+            <Scrambled
+              text={line.toUpperCase()}
+              on={inAt + 6 + i * 3}
+              off={outAt}
+              seed={`${seed}i${i}`}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
 
 const Logo: React.FC<{ shot: Shot }> = ({ shot }) => {
   const f = useCurrentFrame();
-  const at =
-    Math.round(((shot.logo!.at - shot.from) / shot.rate) * SUSHI_FPS) + 6;
-  if (f < at) return null;
+  if (f < 6) return null;
   const { x, y } = pinned(shot.logo!.track, srcTime(shot, f));
   return (
     <Img
@@ -148,6 +251,46 @@ const Logo: React.FC<{ shot: Shot }> = ({ shot }) => {
         filter: "drop-shadow(0 2px 10px rgba(0,0,0,0.35))",
       }}
     />
+  );
+};
+
+const ShotVideo: React.FC<{ shot: Shot }> = ({ shot }) => {
+  const fill: React.CSSProperties = {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+  };
+  if (shot.still) return <Img src={staticFile(shot.still.src)} style={fill} />;
+  let base = 0;
+  return (
+    <>
+      {shot.parts.map((p, i) => {
+        const from = base;
+        base += partFrames(p);
+        if ("freeze" in p) {
+          // freeze frame: a still grabbed from the graded clip
+          return (
+            <Sequence key={i} from={from} durationInFrames={p.frames}>
+              <Img
+                src={staticFile(`beat/sushi/${shot.clip}_f${p.freeze}.png`)}
+                style={fill}
+              />
+            </Sequence>
+          );
+        }
+        return (
+          <Sequence key={i} from={from} durationInFrames={partFrames(p)}>
+            <OffthreadVideo
+              src={staticFile(`beat/sushi/${shot.clip}.mp4`)}
+              startFrom={Math.round(p.from * SUSHI_FPS)}
+              playbackRate={p.rate}
+              muted
+              style={fill}
+            />
+          </Sequence>
+        );
+      })}
+    </>
   );
 };
 
@@ -224,27 +367,15 @@ export const BeatSushi: React.FC = () => {
   return (
     <AbsoluteFill style={{ background: "black" }}>
       {SHOTS.map((s, i) => (
-        <Sequence key={i} from={starts[i]} durationInFrames={s.frames}>
-          <OffthreadVideo
-            src={staticFile(`beat/sushi/${s.clip}.mp4`)}
-            startFrom={Math.round(s.from * SUSHI_FPS)}
-            playbackRate={s.rate}
-            muted
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-          />
+        <Sequence key={i} from={starts[i]} durationInFrames={shotFrames(s)}>
+          <ShotVideo shot={s} />
           {s.label ? <Label shot={s} seed={`l${i}`} /> : null}
           {s.logo ? <Logo shot={s} /> : null}
         </Sequence>
       ))}
       {SHOTS.map((s, i) =>
         s.label ? (
-          <Flicker
-            key={`fl${i}`}
-            at={
-              starts[i] +
-              Math.round(((s.label.at - s.from) / s.rate) * SUSHI_FPS)
-            }
-          />
+          <Flicker key={`fl${i}`} at={starts[i] + outFrame(s, s.label.at)} />
         ) : null,
       )}
       {starts.slice(1).map((c) => (
