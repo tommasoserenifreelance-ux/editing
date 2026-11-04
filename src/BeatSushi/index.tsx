@@ -301,26 +301,6 @@ const Flicker: React.FC<{ at: number }> = ({ at }) => {
   );
 };
 
-// Warm horizontal light leak sweeping across the last frames.
-const Streak: React.FC<{ at: number }> = ({ at }) => {
-  const f = useCurrentFrame() - at;
-  if (f < 0) return null;
-  const o = interpolate(f, [0, 3, 8], [0, 0.85, 0.6], {
-    extrapolateRight: "clamp",
-  });
-  return (
-    <AbsoluteFill
-      style={{
-        background:
-          "linear-gradient(180deg, transparent 52%, rgba(255,140,40,0.0) 54%, rgba(255,160,60,0.9) 60%, rgba(255,210,120,0.95) 63%, rgba(255,120,30,0.5) 68%, transparent 74%)",
-        mixBlendMode: "screen",
-        opacity: o,
-        transform: `translateX(${interpolate(f, [0, 10], [-120, 60])}px)`,
-      }}
-    />
-  );
-};
-
 export const BeatSushi: React.FC = () => {
   const end = SUSHI_DURATION;
   return (
@@ -340,7 +320,6 @@ export const BeatSushi: React.FC = () => {
       {starts.slice(1).map((c) => (
         <Flash key={c} at={c} />
       ))}
-      <Streak at={end - 9} />
       <Audio
         src={staticFile("beat/sushi/reference2-audio.m4a")}
         volume={(f) =>
