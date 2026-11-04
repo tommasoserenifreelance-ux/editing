@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>LaMenopausa — Flyer</title>
+<style>
+  @font-face{font-family:"Lora";src:url(Lora-normal-400.ttf);font-weight:400;font-style:normal}
+  @font-face{font-family:"Lora";src:url(Lora-normal-500.ttf);font-weight:500;font-style:normal}
+  @font-face{font-family:"Lora";src:url(Lora-normal-600.ttf);font-weight:600;font-style:normal}
+  @font-face{font-family:"Lora";src:url(Lora-normal-700.ttf);font-weight:700;font-style:normal}
+  @font-face{font-family:"Lora";src:url(Lora-italic-400.ttf);font-weight:400;font-style:italic}
+  @font-face{font-family:"Lora";src:url(Lora-italic-500.ttf);font-weight:500;font-style:italic}
+  @font-face{font-family:"Lora";src:url(Lora-italic-600.ttf);font-weight:600;font-style:italic}
+  @font-face{font-family:"Lora";src:url(Lora-italic-700.ttf);font-weight:700;font-style:italic}
+
+  :root{
+    --b:0mm;               /* abbondanza (bleed): 0 = A4 netto, 3mm = tipografia */
+    --blush:#E8D5CC; --blush2:#DBC3B8; --soft:#F3EAE5;
+    --accent:#B98F80;      /* rosa antico (più scuro dell'originale per leggibilità) */
+    --accentLight:#D9BFB3;
+    --ink:#1E1416; --text:#3A2E30; --muted:#7A6A68; --line:#D8CCC7;
+    --mx:18mm;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:#fff}
+  body{font-family:"Lora",serif;color:var(--text);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .page{position:relative;width:calc(210mm + 2*var(--b));height:calc(297mm + 2*var(--b));overflow:hidden;background:#fff;break-after:page}
+  .page:last-child{break-after:auto}
+  .inner{position:absolute;left:calc(var(--b) + var(--mx));right:calc(var(--b) + var(--mx));top:var(--b);bottom:var(--b);display:flex;flex-direction:column}
+  .band{position:absolute;left:0;right:0;top:0;height:calc(var(--b) + 8mm);background:var(--blush)}
+
+  .label{font-size:8.5pt;font-weight:600;letter-spacing:.3em;text-transform:uppercase}
+  .footer{display:flex;justify-content:space-between;align-items:center;padding-bottom:11mm;margin-top:auto;font-size:8.5pt;font-weight:500;letter-spacing:.3em;color:var(--muted)}
+  .rule{width:16mm;height:1.2pt;background:var(--accent);margin:3.2mm 0 3.6mm}
+  em.acc{color:var(--accent)}
+  .arrow{display:inline-block;width:5mm;height:3mm;vertical-align:-.2mm;margin-right:2.5mm}
+
+  /* ---------- PAGINA 1 ---------- */
+  .p1 .hero{position:absolute;left:-30%;width:160%;top:0;height:calc(var(--b) + 172mm);background:var(--blush);border-radius:0 0 50% 50% / 0 0 34mm 34mm}
+  .p1 .circle{position:absolute;right:calc(var(--b) + 10mm);top:calc(var(--b) + 26mm);width:64mm;height:64mm;border-radius:50%;background:var(--blush2)}
+  .p1 .kicker{text-transform:uppercase;margin-top:24mm;color:var(--ink);font-size:9pt;letter-spacing:.32em;font-weight:600;position:relative}
+  .p1 .logo{position:relative;margin:22mm auto 0;width:150mm;display:block}
+  .p1 .bottom{margin-top:auto;padding-bottom:14mm}
+  .p1 h1{font-size:36pt;line-height:1.12;font-weight:700;font-style:italic;color:var(--ink)}
+  .p1 h1 .l3{color:var(--accent)}
+  .p1 h1 .up{font-style:normal}
+  .p1 .bar{width:34mm;height:2.4pt;background:var(--ink);margin:9mm 0 7mm}
+  .p1 .ev{display:flex;justify-content:space-between;align-items:flex-end}
+  .p1 .ev .label{color:var(--accent);margin-bottom:2.5mm}
+  .p1 .date{font-size:22pt;font-weight:700;color:var(--ink);line-height:1.15}
+  .p1 .place{font-size:14pt;font-style:italic;color:var(--text);margin-top:1mm}
+  .p1 .site{font-size:10pt;font-weight:600;letter-spacing:.3em;color:var(--ink);padding-bottom:1.5mm}
+
+  /* ---------- PAGINA 2 ---------- */
+  .p2 h2{margin-top:26mm;font-size:54pt;line-height:1.02;font-weight:700;color:var(--ink)}
+  .p2 h2 em{display:block;color:var(--accent);font-weight:600}
+  .p2 .sub{margin-top:9mm;font-size:16pt;line-height:1.35;font-style:italic;color:var(--ink)}
+  .p2 .intro{margin-top:6mm;font-size:12pt;line-height:1.55;max-width:140mm}
+  .grid{margin-top:11mm;display:grid;grid-template-columns:1fr 1fr;column-gap:12mm}
+  .grid .cell{border-top:.75pt solid var(--line);padding:6.5mm 0 8mm}
+  .grid .num{font-size:34pt;font-style:italic;font-weight:600;color:var(--accentLight);line-height:1}
+  .grid h3{font-size:15pt;font-weight:700;color:var(--ink);line-height:1.25}
+  .grid p{font-size:11.5pt;line-height:1.5}
+
+  /* ---------- PAGINA 3 ---------- */
+  .p3 h2{margin-top:22mm;font-size:44pt;line-height:1.08;font-weight:700;color:var(--ink)}
+  .p3 h2 em{color:var(--accent);font-weight:600}
+  .p3 .sub{margin-top:4mm;font-size:13pt;font-style:italic;color:var(--text)}
+  .team{margin-top:9mm;display:grid;grid-template-columns:1fr 1fr;column-gap:12mm}
+  .team .photo{width:100%;height:84mm;border-radius:5mm;overflow:hidden;background:var(--soft)}
+  .team .photo img{width:100%;height:100%;object-fit:cover;object-position:50% 12%;display:block}
+  .team .label{color:var(--accent);margin-top:5.5mm}
+  .team h3{margin-top:2.5mm;font-size:18pt;line-height:1.22;font-weight:700;color:var(--ink)}
+  .team p{font-size:11.5pt;line-height:1.5}
+  .soon{margin-top:9mm;background:var(--blush);border-radius:5mm;padding:7mm 8mm 7.5mm}
+  .chip{display:inline-flex;align-items:center;gap:3mm}
+  .chip span{background:var(--ink);color:#fff;font-size:8.5pt;font-weight:600;letter-spacing:.32em;padding:1.6mm 2mm 1.6mm 3.2mm;border-radius:1mm}
+  .soon h4{margin-top:4.5mm;font-size:15pt;line-height:1.35;font-weight:700;color:var(--ink)}
+  .soon h4 em{font-weight:600}
+  .soon p{margin-top:3mm;font-size:11pt;line-height:1.5;color:var(--text)}
+
+  /* ---------- PAGINA 4 ---------- */
+  .p4 h2{margin-top:26mm;font-size:42pt;line-height:1.12;font-weight:700;color:var(--ink)}
+  .p4 h2 em{color:var(--accent);font-weight:600}
+  .p4 .sub{margin-top:9mm;font-size:15pt;line-height:1.4;font-style:italic;color:var(--ink)}
+  .p4 .intro{margin-top:5mm;font-size:12pt;line-height:1.55;max-width:130mm}
+  .blog{margin-top:14mm;background:var(--blush);border-radius:5mm;padding:9mm;display:flex;gap:10mm;align-items:center}
+  .qr{flex:none;width:58mm;height:58mm;background:#fff;border-radius:3.5mm;padding:5.5mm}
+  .qr img{width:100%;height:100%;display:block}
+  .blog .label{color:var(--ink);font-size:8.5pt;letter-spacing:.24em}
+  .blog h3{margin-top:4mm;font-size:26pt;font-weight:700;color:var(--ink);line-height:1.15}
+  .blog p{margin-top:3mm;font-size:12pt;line-height:1.5;font-style:italic}
+  .blog .url{margin-top:6mm;font-size:10pt;font-weight:700;letter-spacing:.2em;color:var(--ink)}
+  .p4 .end{margin-top:auto;padding-bottom:13mm;display:flex;justify-content:space-between;align-items:flex-end}
+  .p4 .tag{font-size:15pt;line-height:1.4;font-weight:700;font-style:italic;color:var(--ink)}
+  .p4 .tag span{display:block;color:var(--accent);font-weight:600}
+  .p4 .minilogo{width:44mm;display:block}
+</style>
+</head>
+<body>
+
+<!-- ======================= PAGINA 1 ======================= -->
+<section class="page p1">
+  <div class="hero"></div>
+  <div class="circle"></div>
+  <div class="inner">
+    <div class="kicker">Convegno salute femminile · 14 novembre 2026</div>
+    <img class="logo" src="logo.svg" alt="la Menopausa">
+    <div class="bottom">
+      <h1>Conosci la<br>menopausa.<br><span class="l3"><span class="up">Vivila</span> consapevolmente.</span></h1>
+      <div class="bar"></div>
+      <div class="ev">
+        <div>
+          <div class="label">Evento</div>
+          <div class="date">14 Novembre 2026</div>
+          <div class="place">Leon’s Place — Roma</div>
+        </div>
+        <div class="site">LAMENOPAUSA.EU</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= PAGINA 2 ======================= -->
+<section class="page p2">
+  <div class="band"></div>
+  <div class="inner">
+    <h2>Perché <em>LaMenopausa?</em></h2>
+    <div class="sub">Informazioni chiare,<br>scientificamente validate.</div>
+    <p class="intro">LaMenopausa nasce per rendere la medicina accessibile a tutte, creando consapevolezza sulle patologie correlate. Una bussola sicura per orientarsi nella propria salute, senza allarmismi.</p>
+    <div class="grid">
+      <div class="cell"><div class="num">01</div><div class="rule"></div><h3>Fonti validate<br>e verificate</h3><p style="margin-top:2.5mm">Traduciamo studi complessi e ricerche mediche in un linguaggio chiaro e usabile.</p></div>
+      <div class="cell"><div class="num">02</div><div class="rule"></div><h3>Nessun tabù.<br>Parliamo di tutto</h3><p style="margin-top:2.5mm">Sbalzi d’umore, peso, calo della libido. Affrontiamo ogni argomento senza vergogna.</p></div>
+      <div class="cell"><div class="num">03</div><div class="rule"></div><h3>Network di<br>professionisti</h3><p style="margin-top:2.5mm">Un punto di riferimento per donne informate, con i migliori specialisti.</p></div>
+      <div class="cell"><div class="num">04</div><div class="rule"></div><h3>Divulgazione<br>in un unico spazio</h3><p style="margin-top:2.5mm">Consigli pratici, psicologia, stile di vita e approfondimenti medici, tutto insieme.</p></div>
+    </div>
+    <div class="footer"><span>LAMENOPAUSA.EU</span><span>PAG. 02</span></div>
+  </div>
+</section>
+
+<!-- ======================= PAGINA 3 ======================= -->
+<section class="page p3">
+  <div class="band"></div>
+  <div class="inner">
+    <h2>Il <em>team</em> dietro<br>la community.</h2>
+    <div class="sub">Medici che traducono la ricerca in risposte concrete.</div>
+    <div class="team">
+      <div>
+        <div class="photo"><img src="bonaccorso.jpg" alt="Dr. Michele Bonaccorso"></div>
+        <div class="label">Co-fondatore</div>
+        <h3>Dr. Michele<br>Bonaccorso</h3>
+        <div class="rule"></div>
+        <p>Specialista in anestesia e rianimazione, ozonoterapia, medicina della longevità.</p>
+      </div>
+      <div>
+        <div class="photo"><img src="piccolo.jpg" alt="Dr.ssa Eleonora Piccolo"></div>
+        <div class="label">Co-fondatrice</div>
+        <h3>Dr.ssa Eleonora<br>Piccolo</h3>
+        <div class="rule"></div>
+        <p>Specialista in ginecologia e ostetricia, medicina estetica e rigenerativa.</p>
+      </div>
+    </div>
+    <div class="soon">
+      <div class="chip"><span>COMING SOON</span>
+        <svg width="12" height="12" viewBox="0 0 24 24"><path fill="#1E1416" d="M12 0C13 8 16 11 24 12 16 13 13 16 12 24 11 16 8 13 0 12 8 11 11 8 12 0Z"/></svg></div>
+      <h4>La <em>prima clinica digitale</em> dedicata alla donna in menopausa, con un percorso sartoriale a 360 gradi.</h4>
+      <p>Un percorso pionieristico con un unico comune denominatore: la donna al centro nel suo percorso preventivo. Consulenze personalizzate online che abbracciano ogni aspetto della donna: ormonale, nutrizionale, fisico e psichico.</p>
+    </div>
+    <div class="footer" style="padding-top:6mm"><span>LAMENOPAUSA.EU</span><span>PAG. 03</span></div>
+  </div>
+</section>
+
+<!-- ======================= PAGINA 4 ======================= -->
+<section class="page p4">
+  <div class="band"></div>
+  <div class="inner">
+    <h2>Il <em>cuore</em> della<br>nostra divulgazione,<br>in un unico spazio.</h2>
+    <div class="sub">Consigli pratici sulla menopausa, psicologia,<br>stile di vita e approfondimenti medici.</div>
+    <p class="intro">Una guida completa e affidabile per ogni tua esigenza, dove la scienza supporta il tuo stile di vita senza complicarlo.</p>
+    <div class="blog">
+      <div class="qr"><img src="qr.svg" alt="QR code lamenopausa.eu/blog"></div>
+      <div>
+        <div class="label">Leggi · Impara · Condividi</div>
+        <h3>Esplora il blog.</h3>
+        <p>Articoli, studi e approfondimenti su tutti i temi della menopausa.</p>
+        <div class="url"><svg class="arrow" viewBox="0 0 20 12"><path d="M0 6h17M12 1l5 5-5 5" fill="none" stroke="#1E1416" stroke-width="1.6"/></svg>LAMENOPAUSA.EU/BLOG</div>
+      </div>
+    </div>
+    <div class="end">
+      <div class="tag">Costruiamo insieme la cultura<span>sulla menopausa, libera da pregiudizi.</span></div>
+      <img class="minilogo" src="logo.svg" alt="la Menopausa">
+    </div>
+  </div>
+</section>
+
+<script>
+  if (location.hash === '#bleed') document.documentElement.style.setProperty('--b', '3mm');
+</script>
+</body>
+</html>
