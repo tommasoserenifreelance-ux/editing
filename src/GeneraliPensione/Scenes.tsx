@@ -64,18 +64,17 @@ const Label: React.FC<{
 export const YearsScene: React.FC = () => {
   const frame = useCurrentFrame();
   const enter = usePop(0, 13);
-  const roll = interpolate(frame, [6, 34], [0, 20], {
+  const roll = interpolate(frame, [2, 30], [0, 20], {
     ...clamp,
     easing: Easing.inOut(Easing.cubic),
   });
   const year = 2026 + Math.round(roll);
-  const badge = usePop(34, 9);
+  const badge = usePop(30, 9);
   const flip = Math.round(roll) !== roll ? Math.sin(frame * 1.7) * 3 : 0;
   return (
     <Stage>
       <g
         transform={`translate(540 640) scale(${interpolate(enter, [0, 1], [0.6, 1])}) rotate(${-4 + flip})`}
-        opacity={Math.min(1, enter * 1.5)}
       >
         <rect
           x={-270}
@@ -177,7 +176,7 @@ const IconBubble: React.FC<{
 export const LifeScene: React.FC<{ at: [number, number, number] }> = ({
   at,
 }) => {
-  const kids = usePop(at[0], 10);
+  const kids = usePop(0, 10);
   const trip = usePop(at[1], 10);
   const dinner = usePop(at[2], 10);
   const frame = useCurrentFrame();
@@ -247,7 +246,6 @@ export const LifeScene: React.FC<{ at: [number, number, number] }> = ({
 // "un passo per volta": a staircase builds one step at a time.
 export const StepsScene: React.FC<{ stepsAt: number[] }> = ({ stepsAt }) => {
   const frame = useCurrentFrame();
-  const enter = usePop(0, 13);
   const pops = [
     usePop(stepsAt[0], 10),
     usePop(stepsAt[1], 10),
@@ -267,7 +265,7 @@ export const StepsScene: React.FC<{ stepsAt: number[] }> = ({ stepsAt }) => {
   const base = { x: 540 - (stepW * 5) / 2, y: 1000 };
   return (
     <Stage>
-      <g opacity={Math.min(1, enter * 1.5)}>
+      <g>
         {pops.map((p, i) => (
           <g
             key={i}
@@ -309,12 +307,11 @@ export const StepsScene: React.FC<{ stepsAt: number[] }> = ({ stepsAt }) => {
 // "la pensione pubblica da sola potrebbe non bastare": bars with a gap.
 export const GapScene: React.FC<{ gapAt: number }> = ({ gapAt }) => {
   const frame = useCurrentFrame();
-  const enter = usePop(0, 13);
-  const full = interpolate(frame, [4, 24], [0, 1], {
+  const full = interpolate(frame, [0, 16], [0, 1], {
     ...clamp,
     easing: Easing.out(Easing.cubic),
   });
-  const pub = interpolate(frame, [12, 32], [0, 0.62], {
+  const pub = interpolate(frame, [4, 22], [0, 0.62], {
     ...clamp,
     easing: Easing.out(Easing.cubic),
   });
@@ -324,7 +321,7 @@ export const GapScene: React.FC<{ gapAt: number }> = ({ gapAt }) => {
   const y0 = 1000;
   return (
     <Stage>
-      <g opacity={Math.min(1, enter * 1.5)}>
+      <g>
         <rect
           x={180}
           y={y0 + 6}
@@ -398,7 +395,6 @@ export const FlexScene: React.FC<{ whenAt: number; howAt: number }> = ({
   return (
     <Stage>
       <g
-        opacity={Math.min(1, enter * 1.5)}
         transform={`translate(540 700) scale(${interpolate(enter, [0, 1], [0.7, 1])})`}
       >
         {drops.map((d, i) => {
@@ -496,7 +492,6 @@ export const DeadlineScene: React.FC<{ circleAt: number; stampAt: number }> = ({
     <Stage>
       <g
         transform={`translate(540 680) scale(${interpolate(enter, [0, 1], [0.6, 1])}) rotate(3)`}
-        opacity={Math.min(1, enter * 1.5)}
       >
         <rect
           x={-260}

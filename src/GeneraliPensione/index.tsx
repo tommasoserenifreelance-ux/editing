@@ -29,7 +29,7 @@ import {
   StepsScene,
   YearsScene,
 } from "./Scenes";
-import { CUT, WORDS } from "./words";
+import { WORDS } from "./words";
 
 export const PENSIONE_FPS = 30;
 const FPS = PENSIONE_FPS;
@@ -40,8 +40,6 @@ const toFrame = (t: number) => Math.round(t * FPS);
 
 // ---------- timeline maths ----------
 
-// The source has a repeated take; the edit drops CUT.at..CUT.resume.
-const CUT_F = toFrame(CUT.at);
 const SPEECH_END = toFrame(WORDS[WORDS.length - 1].e + 0.25);
 export const PENSIONE_DURATION = SPEECH_END + END_CARD;
 
@@ -65,12 +63,35 @@ type Item =
 
 const cutawayWindows = CUTAWAYS.map((cut) => ({
   ...cut,
-  from: ws(cut.from) - 3,
+  from: ws(cut.from) - 2,
   to: we(cut.to) + 6,
 }));
 
+// Graphics that follow each other closely play as one continuous run, so the
+// speaker never flashes on screen for a few frames between two animations.
+const MERGE_GAP = 30;
+type Run = {
+  from: number;
+  to: number;
+  scenes: { scene: Scene; from: number }[];
+};
+const RUNS: Run[] = [];
+cutawayWindows.forEach((w) => {
+  const last = RUNS[RUNS.length - 1];
+  if (last && w.from - last.to <= MERGE_GAP) {
+    last.to = w.to;
+    last.scenes.push({ scene: w.scene, from: w.from });
+  } else {
+    RUNS.push({
+      from: w.from,
+      to: w.to,
+      scenes: [{ scene: w.scene, from: w.from }],
+    });
+  }
+});
+
 const onGraphic = (frame: number) =>
-  cutawayWindows.some((w) => frame >= w.from && frame < w.to);
+  RUNS.some((r) => frame >= r.from && frame < r.to);
 
 const ITEMS: Item[] = [];
 {
@@ -124,10 +145,9 @@ const ITEMS: Item[] = [];
   });
 }
 
-// Punch-in zoom alternates on the jump cut and every key-phrase block.
+// Punch-in zoom alternates on every key-phrase block.
 const ZOOM_POINTS = [
   0,
-  CUT_F,
   ...ITEMS.filter((it) => it.kind !== "word").map((it) => it.from),
 ]
   .sort((a, b) => a - b)
@@ -157,19 +177,10 @@ const SpeakerVideo: React.FC = () => {
         filter: "contrast(1.08) saturate(1.1) brightness(1.03)",
       }}
     >
-      <Sequence durationInFrames={CUT_F}>
-        <OffthreadVideo
-          src={staticFile(SRC)}
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-        />
-      </Sequence>
-      <Sequence from={CUT_F}>
-        <OffthreadVideo
-          src={staticFile(SRC)}
-          trimBefore={toFrame(CUT.resume)}
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-        />
-      </Sequence>
+      <OffthreadVideo
+        src={staticFile(SRC)}
+        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+      />
     </AbsoluteFill>
   );
 };
@@ -187,47 +198,69 @@ const Vignette: React.FC = () => (
 const SCENES: Record<Scene, React.FC<{ start: number }>> = {
   years: () => <YearsScene />,
   life: ({ start }) => (
-    <LifeScene at={[ws(32) - start, ws(41) - start, ws(44) - start]} />
+    <LifeScene at={[ws(38) - start, ws(47) - start, ws(50) - start]} />
   ),
   steps: ({ start }) => (
     <StepsScene
-      stepsAt={[ws(45), ws(47), ws(49), ws(53), ws(55)].map((f) => f - start)}
+      stepsAt={[ws(51), ws(53), ws(55), ws(59), ws(61)].map((f) => f - start)}
     />
   ),
-  gap: ({ start }) => <GapScene gapAt={ws(63) - start} />,
+  gap: ({ start }) => <GapScene gapAt={ws(69) - start} />,
   flex: ({ start }) => (
-    <FlexScene whenAt={ws(77) - start} howAt={ws(80) - start} />
+    <FlexScene whenAt={ws(83) - start} howAt={ws(86) - start} />
   ),
   deadline: ({ start }) => (
-    <DeadlineScene circleAt={ws(89) - start} stampAt={ws(91) - start} />
+    <DeadlineScene circleAt={ws(95) - start} stampAt={ws(97) - start} />
   ),
 };
 
-const Cutaway: React.FC<{ scene: Scene; start: number; duration: number }> = ({
-  scene,
-  start,
-  duration,
-}) => {
+// A run of graphics: the backdrop cuts in at once and each scene starts its
+// animation on its first frame; consecutive scenes slide into each other.
+const SceneSlot: React.FC<{
+  children: React.ReactNode;
+  duration: number;
+  last: boolean;
+}> = ({ children, duration, last }) => {
   const frame = useCurrentFrame();
-  const reveal = interpolate(frame, [0, 8], [0, 150], {
-    extrapolateRight: "clamp",
-    easing: Easing.out(Easing.cubic),
-  });
-  const exit = interpolate(frame, [duration - 5, duration], [1, 0], {
+  const out = last
+    ? 0
+    : interpolate(frame, [duration - 6, duration], [0, 1], {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+        easing: Easing.in(Easing.cubic),
+      });
+  return (
+    <AbsoluteFill
+      style={{ opacity: 1 - out, transform: `translateX(${-out * 300}px)` }}
+    >
+      {children}
+    </AbsoluteFill>
+  );
+};
+
+const GraphicRun: React.FC<{ run: Run }> = ({ run }) => {
+  const frame = useCurrentFrame();
+  const duration = run.to - run.from;
+  const exit = interpolate(frame, [duration - 4, duration], [1, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
-  const Art = SCENES[scene];
   return (
-    <AbsoluteFill
-      style={{
-        clipPath: `circle(${reveal}% at 50% 34%)`,
-        opacity: exit,
-        transform: `scale(${interpolate(exit, [0, 1], [1.08, 1])})`,
-      }}
-    >
+    <AbsoluteFill style={{ opacity: exit }}>
       <GraphicBackground />
-      <Art start={start} />
+      {run.scenes.map((sc, i) => {
+        const next = run.scenes[i + 1];
+        const from = sc.from - run.from;
+        const len = (next ? next.from - run.from : duration) - from;
+        const Art = SCENES[sc.scene];
+        return (
+          <Sequence key={sc.scene} from={from} durationInFrames={len}>
+            <SceneSlot duration={len} last={!next}>
+              <Art start={sc.from} />
+            </SceneSlot>
+          </Sequence>
+        );
+      })}
     </AbsoluteFill>
   );
 };
@@ -595,24 +628,28 @@ const SFX: { at: number; file: Sfx; volume: number }[] = [];
 const sfx = (at: number, file: Sfx, volume: number) =>
   SFX.push({ at: Math.max(0, at), file, volume });
 
+RUNS.forEach((r) => {
+  sfx(r.from - 3, "whoosh", 0.75);
+  r.scenes.slice(1).forEach((sc) => sfx(sc.from - 6, "swoosh", 0.55));
+  sfx(r.to - 6, "swoosh", 0.35);
+});
+
 cutawayWindows.forEach((w) => {
-  sfx(w.from - 5, "whoosh", 0.75);
-  sfx(w.to - 6, "swoosh", 0.35);
   if (w.scene === "years") {
-    sfx(w.from + 34, "stamp", 0.75);
+    sfx(w.from + 30, "stamp", 0.75);
   } else if (w.scene === "life") {
-    [32, 41, 44].forEach((i) => sfx(ws(i), "pop", 0.55));
+    [38, 47, 50].forEach((i) => sfx(ws(i), "pop", 0.55));
   } else if (w.scene === "steps") {
-    [45, 47, 49, 53, 55].forEach((i) => sfx(ws(i), "tick", 0.55));
-    sfx(ws(55) + 6, "ding", 0.45);
+    [51, 53, 55, 59, 61].forEach((i) => sfx(ws(i), "tick", 0.55));
+    sfx(ws(61) + 6, "ding", 0.45);
   } else if (w.scene === "gap") {
-    sfx(ws(63), "stamp", 0.7);
+    sfx(ws(69), "stamp", 0.7);
   } else if (w.scene === "flex") {
-    sfx(ws(77) + 8, "kaching", 0.5);
-    sfx(ws(80) + 6, "kaching", 0.45);
+    sfx(ws(83) + 8, "kaching", 0.5);
+    sfx(ws(86) + 6, "kaching", 0.45);
   } else {
-    sfx(ws(89), "swoosh", 0.5);
-    sfx(ws(91), "stamp", 0.8);
+    sfx(ws(95), "swoosh", 0.5);
+    sfx(ws(97), "stamp", 0.8);
   }
 });
 
@@ -656,9 +693,9 @@ export const GeneraliPensione: React.FC = () => {
     <AbsoluteFill style={{ backgroundColor: "black" }}>
       <SpeakerVideo />
       <Vignette />
-      {cutawayWindows.map((w) => (
-        <Sequence key={w.scene} from={w.from} durationInFrames={w.to - w.from}>
-          <Cutaway scene={w.scene} start={w.from} duration={w.to - w.from} />
+      {RUNS.map((r) => (
+        <Sequence key={r.from} from={r.from} durationInFrames={r.to - r.from}>
+          <GraphicRun run={r} />
         </Sequence>
       ))}
       {BADGES.map((b) => {
