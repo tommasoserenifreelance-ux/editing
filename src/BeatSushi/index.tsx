@@ -28,24 +28,19 @@ new FontFace(
   .then(() => continueRender(handle));
 
 // Each shot: the clip plays while the tray is set down (`pre`), then freezes
-// like a photo once the camera has settled, while name and ingredients
-// appear, then carries on (`post`). From the freeze on, the footage is
-// tripod-locked (tools/stabilize_segments.py -> public/beat/sushi/stab), so the
-// text sits still on screen. `zoom` is the stabiliser's border-hiding zoom,
-// applied to `pre` too so the framing doesn't jump at the freeze.
+// like a photo once the dish is placed, while name and ingredients appear;
+// the text clears and the clip carries on with its natural handheld move
+// (`post`). The freeze still is the exact frame the clip resumes from
+// (public/beat/sushi/still, frame (round(pre0*24)+preFrames)/24 s).
 type Shot = {
   clip: string;
   pre?: [number, number]; // source seconds, real time
   freeze: number; // source second of the freeze (= start of the stab clip)
   hold: number; // freeze length, frames
   post: number; // source second the shot cuts at
-  zoom: number;
   end?: boolean; // final still with logo
   label?: { name: string; ingredients: string[]; x: number; y: number };
 };
-
-// from public/beat/sushi/stab/zooms.json (stabiliser output)
-const zooms = { C0012: 1.048, C0014: 1.0928, C0015: 1.0602 };
 
 const SHOTS: Shot[] = [
   {
@@ -54,7 +49,6 @@ const SHOTS: Shot[] = [
     freeze: 2.6,
     hold: 46,
     post: 3.55,
-    zoom: zooms.C0012,
     label: {
       name: "DIVINA\nCOMMEDIA",
       ingredients: [
@@ -74,7 +68,6 @@ const SHOTS: Shot[] = [
     freeze: 1.6,
     hold: 46,
     post: 2.85,
-    zoom: zooms.C0014,
     label: {
       name: "GATTOPARDO",
       ingredients: [
@@ -95,7 +88,6 @@ const SHOTS: Shot[] = [
     freeze: 2.0,
     hold: 46,
     post: 2.9,
-    zoom: zooms.C0015,
     label: {
       name: "PROMESSI\nSPOSI",
       ingredients: [
@@ -108,7 +100,7 @@ const SHOTS: Shot[] = [
       y: 1320,
     },
   },
-  { clip: "C0015", freeze: 3.3, hold: 40, post: 3.3, zoom: 1, end: true },
+  { clip: "C0015", freeze: 3.3, hold: 40, post: 3.3, end: true },
 ];
 
 const f24 = (sec: number) => Math.round(sec * SUSHI_FPS);
@@ -153,7 +145,7 @@ const Label: React.FC<{ shot: Shot; seed: string }> = ({ shot, seed }) => {
   const f = useCurrentFrame();
   const l = shot.label!;
   const inAt = preFrames(shot);
-  const outAt = shotFrames(shot) - SCRAMBLE;
+  const outAt = preFrames(shot) + shot.hold - SCRAMBLE;
   if (f < inAt) return null;
   return (
     <div
@@ -221,7 +213,7 @@ const fill: React.CSSProperties = {
 const ShotVideo: React.FC<{ shot: Shot }> = ({ shot }) => {
   const dir = "beat/sushi";
   if (shot.end) {
-    return <Img src={staticFile(`${dir}/stab/C0015_end.png`)} style={fill} />;
+    return <Img src={staticFile(`${dir}/still/C0015_end.png`)} style={fill} />;
   }
   const pre = preFrames(shot);
   return (
@@ -232,19 +224,20 @@ const ShotVideo: React.FC<{ shot: Shot }> = ({ shot }) => {
             src={staticFile(`${dir}/${shot.clip}.mp4`)}
             startFrom={f24(shot.pre[0])}
             muted
-            style={{ ...fill, transform: `scale(${shot.zoom})` }}
+            style={fill}
           />
         </Sequence>
       ) : null}
       <Sequence from={pre} durationInFrames={shot.hold}>
         <Img
-          src={staticFile(`${dir}/stab/${shot.clip}_freeze.png`)}
+          src={staticFile(`${dir}/still/${shot.clip}_freeze.png`)}
           style={fill}
         />
       </Sequence>
       <Sequence from={pre + shot.hold} durationInFrames={postFrames(shot)}>
         <OffthreadVideo
-          src={staticFile(`${dir}/stab/${shot.clip}.mp4`)}
+          src={staticFile(`${dir}/${shot.clip}.mp4`)}
+          startFrom={(shot.pre ? f24(shot.pre[0]) : 0) + pre}
           muted
           style={fill}
         />
