@@ -15,10 +15,9 @@ const person = (cx: number): Part[] => [
 export const ICONS = {
   bolt: [{ d: "M36 6 L16 36 H30 L26 58 L48 26 H34 Z" }],
   belly: [
-    { d: "M32 12 a20 20 0 1 1 -0.01 0" },
-    { d: "M2 32 h6 M56 32 h6" },
-    { d: "M7 26 l-5 6 5 6 M57 26 l5 6 -5 6" },
-    { d: "M26 36 a6 6 0 0 0 12 0" },
+    { d: "M32 18 a14 14 0 1 1 -0.01 0" },
+    { d: "M32 2 V10 M32 54 V62 M2 32 H10 M54 32 H62" },
+    { d: "M27 7 L32 2 L37 7 M27 57 L32 62 L37 57 M7 27 L2 32 L7 37 M57 27 L62 32 L57 37" },
   ],
   hourglass: [
     { d: "M16 6 H48 M16 58 H48" },
@@ -109,7 +108,7 @@ export const Icon: React.FC<{
   color?: string;
   progress?: number; // 0..1 draw-on
   stroke?: number;
-}> = ({ name, size, color = "#fff", progress = 1, stroke = 4.5 }) => {
+}> = ({ name, size, color = "#fff", progress = 1, stroke = 3.4 }) => {
   const parts: Part[] = ICONS[name];
   const p = Math.max(0, Math.min(1, progress));
   return (

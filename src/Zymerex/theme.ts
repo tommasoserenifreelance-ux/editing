@@ -30,8 +30,9 @@ export const C = {
   magenta: "#C8197A",
   purple: "#6B2C8F",
   white: "#FFFFFF",
+  tint: "#EAF2FA",
   red: "#E5383B",
   green: "#2BB673",
 };
 
-export const GRADIENT = `linear-gradient(135deg, ${C.blue} 0%, ${C.purple} 70%, ${C.magenta} 100%)`;
+export const GRADIENT = `linear-gradient(135deg, ${C.blueLight} 0%, ${C.blue} 55%, ${C.blueDeep} 100%)`;

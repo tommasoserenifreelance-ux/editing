@@ -66,7 +66,7 @@ const Captions: React.FC = () => {
   const t = frame / fps;
   const cap = CAPTIONS.find((c) => t >= c.s && t < c.e);
   if (!cap || t > OUTRO_START) return null;
-  const pop = spring({ frame: frame - Math.round(cap.s * fps), fps, config: { damping: 13, mass: 0.45 } });
+  const pop = spring({ frame: frame - Math.round(cap.s * fps), fps, config: { damping: 20, mass: 0.45, overshootClamping: true } });
   return (
     <div
       style={{
@@ -91,7 +91,7 @@ const Captions: React.FC = () => {
           gap: 16,
           alignItems: "center",
           boxShadow: "0 10px 26px rgba(0,30,70,0.35)",
-          transform: `scale(${interpolate(pop, [0, 1], [0.75, 1])})`,
+          transform: `scale(${interpolate(pop, [0, 1], [0.92, 1])})`,
           opacity: Math.min(1, pop * 3),
           whiteSpace: "nowrap",
         }}
@@ -102,7 +102,8 @@ const Captions: React.FC = () => {
             style={
               w.k
                 ? {
-                    background: C.magenta,
+                    background: "white",
+                    color: C.blue,
                     borderRadius: 10,
                     padding: "0 12px 4px",
                     margin: "0 -6px",

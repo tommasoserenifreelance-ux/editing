@@ -8,6 +8,7 @@ import {
   PilatesOverlay,
 } from "./PilatesOverlay";
 import { PILATES_DURATION, PilatesReformer } from "./PilatesReformer";
+import { IconSheet } from "./Zymerex/IconSheet";
 import { Zymerex, ZYMEREX_DURATION, ZYMEREX_FPS } from "./Zymerex";
 
 // Each <Composition> is an entry in the sidebar!
@@ -70,6 +71,14 @@ export const RemotionRoot: React.FC = () => {
         component={PilatesOverlay}
         durationInFrames={OVERLAY_DURATION}
         fps={OVERLAY_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="ZymerexIcons"
+        component={IconSheet}
+        durationInFrames={1}
+        fps={24}
         width={1080}
         height={1920}
       />

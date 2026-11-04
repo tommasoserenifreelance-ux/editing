@@ -39,7 +39,7 @@ const Chip: React.FC<{ at: number; label: string; icon: IconName; pulseAt: numbe
 }) => {
   const pop = usePop(at, 10, 0.6);
   const t = useT(pulseAt);
-  const pulse = t > 0 && t < 0.6 ? 1 + 0.07 * Math.sin((t / 0.6) * Math.PI) : 1;
+  const pulse = t > 0 && t < 0.6 ? 1 + 0.03 * Math.sin((t / 0.6) * Math.PI) : 1;
   return (
     <div
       style={{
@@ -52,7 +52,7 @@ const Chip: React.FC<{ at: number; label: string; icon: IconName; pulseAt: numbe
         justifyContent: "center",
         gap: 16,
         opacity: Math.min(1, pop * 2),
-        transform: `scale(${interpolate(pop, [0, 1], [0.4, 1]) * pulse})`,
+        transform: `scale(${interpolate(pop, [0, 1], [0.9, 1]) * pulse})`,
       }}
     >
       <IconDisc name={icon} size={120} from={at} />
@@ -98,7 +98,7 @@ const Timer: React.FC = () => {
           <defs>
             <linearGradient id="zg" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0" stopColor={C.blue} />
-              <stop offset="1" stopColor={C.magenta} />
+              <stop offset="1" stopColor={C.blueDeep} />
             </linearGradient>
           </defs>
         </svg>
@@ -143,7 +143,7 @@ const PersonCol: React.FC<{ mark: IconName; i: number; t: number }> = ({ mark, i
   const pop = usePop(at, 12);
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 14 }}>
-      <IconDisc name={mark} size={86} from={at + 0.2} bg={i === 1 ? C.magenta : C.blue} />
+      <IconDisc name={mark} size={86} from={at + 0.2} />
       <div style={{ transform: `scale(${pop})` }}>
         <Icon
           name="person"
@@ -169,7 +169,7 @@ const NoDiet: React.FC = () => {
           </div>
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <span style={{ fontSize: 34, fontWeight: 800, color: C.magenta }}>NON ESISTE</span>
+          <span style={{ fontSize: 34, fontWeight: 800, color: C.blue }}>NON ESISTE</span>
           <span style={{ fontSize: 56, fontWeight: 900, lineHeight: 1.05 }}>
             una dieta
             <br />
@@ -214,14 +214,15 @@ const Gut: React.FC = () => {
             width: 300,
             height: 300,
             borderRadius: 300,
-            background: GRADIENT,
+            background: "white",
+            border: `3px solid rgba(0,93,160,0.18)`,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            boxShadow: "0 24px 60px rgba(0,30,70,0.35)",
+            boxShadow: "0 18px 44px rgba(0,30,70,0.22)",
           }}
         >
-          <Icon name="intestine" size={190} stroke={5} progress={interpolate(t, [0.1, 1.6], [0, 1], clamp)} />
+          <Icon name="intestine" size={190} color={C.blue} stroke={3.6} progress={interpolate(t, [0.1, 1.6], [0, 1], clamp)} />
         </div>
         <div
           style={{
@@ -256,19 +257,18 @@ const Glow: React.FC<{ size: number }> = ({ size }) => (
 
 const Products: React.FC = () => {
   const t = useT(0);
-  const ib = usePop(28.36, 10, 0.8);
+  const ib = usePop(28.36);
   const move = usePop(30.08, 16);
   const rg = usePop(31.64, 11);
   const arrow = interpolate(t, [32.1, 32.6], [0, 1], clamp);
   const badge = usePop(32.3, 11);
   const same = usePop(34.26, 10);
   const out = interpolate(t, [35.55, 35.85], [1, 0], clamp);
-  const float = Math.sin(t * 2.2) * 8;
+  const float = Math.sin(t * 1.6) * 4;
 
   const ibW = interpolate(move, [0, 1], [640, 440]);
   const ibX = interpolate(move, [0, 1], [540, 770]);
   const ibY = interpolate(move, [0, 1], [1000, 960]);
-  const wobble = interpolate(ib, [0, 1], [-14, 0]);
 
   return (
     <Visible from={28.3} to={35.9}>
@@ -276,10 +276,11 @@ const Products: React.FC = () => {
         {/* IB-Support */}
         <div
           style={{
+            opacity: ib,
             position: "absolute",
             left: ibX,
             top: ibY + float,
-            transform: `translate(-50%,-50%) scale(${ib}) rotate(${wobble}deg)`,
+            transform: `translate(-50%,-50%) scale(${interpolate(ib, [0, 1], [0.85, 1])}) `,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -297,9 +298,10 @@ const Products: React.FC = () => {
           <div
             style={{
               position: "absolute",
+              opacity: rg,
               left: 255,
               top: 970 - float,
-              transform: `translate(-50%,-50%) scale(${rg}) rotate(${interpolate(rg, [0, 1], [12, -4])}deg)`,
+              transform: `translate(-50%,-50%) scale(${interpolate(rg, [0, 1], [0.85, 1])})`,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -334,7 +336,7 @@ const Products: React.FC = () => {
                 boxShadow: "0 10px 30px rgba(0,30,70,0.4)",
               }}
             >
-              <Icon name="arrow" size={70} stroke={7} progress={arrow} />
+              <Icon name="arrow" size={64} stroke={5} progress={arrow} />
             </div>
           </div>
           <div
@@ -342,7 +344,7 @@ const Products: React.FC = () => {
               position: "absolute",
               left: 540,
               top: 640,
-              transform: `translate(-50%,-50%) scale(${badge}) rotate(-4deg)`,
+              transform: `translate(-50%,-50%) scale(${interpolate(badge, [0, 1], [0.9, 1])})`,
             }}
           >
             <div
@@ -351,14 +353,15 @@ const Products: React.FC = () => {
                 background: GRADIENT,
                 color: "white",
                 borderRadius: 100,
-                padding: "18px 44px",
-                fontSize: 52,
+                padding: "16px 44px",
+                fontSize: 46,
+                opacity: badge,
                 fontWeight: 900,
                 letterSpacing: 2,
                 whiteSpace: "nowrap",
               }}
             >
-              ✦ NUOVO NOME ✦
+              NUOVO NOME
             </div>
           </div>
         </Visible>
@@ -370,7 +373,7 @@ const Products: React.FC = () => {
               position: "absolute",
               left: 540,
               top: 1290,
-              transform: `translate(-50%,-50%) scale(${same})`,
+              transform: `translate(-50%,-50%) scale(${interpolate(same, [0, 1], [0.9, 1])})`,
             }}
           >
             <div
@@ -381,7 +384,8 @@ const Products: React.FC = () => {
                 display: "flex",
                 alignItems: "center",
                 gap: 20,
-                fontSize: 48,
+                opacity: same,
+                fontSize: 44,
                 fontWeight: 900,
                 whiteSpace: "nowrap",
               }}
@@ -461,7 +465,7 @@ const Counter: React.FC<{ from: number }> = ({ from }) => {
   const t = useT(from);
   const v = interpolate(t, [0, 1.0], [0, 6], { ...clamp, easing: (x) => 1 - Math.pow(1 - x, 3) });
   return (
-    <span style={{ fontSize: 96, fontWeight: 900, lineHeight: 1, color: C.magenta }}>
+    <span style={{ fontSize: 96, fontWeight: 900, lineHeight: 1, color: C.blue }}>
       {Math.round(v)} MLD
     </span>
   );
@@ -485,7 +489,7 @@ const ActionCard: React.FC<{ a: Action }> = ({ a }) => {
         >
           <IconDisc name={a.icon} size={190} from={a.from + 0.05} draw={0.9} />
           <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: 1 }}>
-            <span style={{ fontSize: 30, fontWeight: 800, color: C.magenta, letterSpacing: 2 }}>
+            <span style={{ fontSize: 30, fontWeight: 800, color: C.blue, letterSpacing: 2 }}>
               AZIONE {a.n}/5
             </span>
             {a.n === 5 ? <Counter from={a.from + 0.1} /> : null}
@@ -533,7 +537,7 @@ const ActionsHeader: React.FC = () => {
               width: 26,
               height: 26,
               borderRadius: 26,
-              background: i < done ? C.magenta : "#D8E2EE",
+              background: i < done ? C.blue : "#D8E2EE",
               transform: `scale(${i === done - 1 ? 1.25 : 1})`,
             }}
           />
@@ -565,7 +569,7 @@ const Dosage: React.FC = () => {
             </span>
           </Row>
           <Row from={56.68}>
-            <IconDisc name="plate" size={78} from={56.68} bg={C.magenta} />
+            <IconDisc name="plate" size={78} from={56.68} />
             <span style={{ fontSize: 34, fontWeight: 800, lineHeight: 1.1 }}>
               lontano dai
               <br />

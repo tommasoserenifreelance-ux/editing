@@ -1,7 +1,7 @@
 import React from "react";
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { Icon, IconName } from "./Icons";
-import { C, font, GRADIENT } from "./theme";
+import { C, font } from "./theme";
 
 const clamp = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
 
@@ -13,10 +13,12 @@ export const useT = (from: number) => {
 };
 
 /** Spring that starts at `from` seconds; returns 0..1 (with overshoot). */
-export const usePop = (from: number, damping = 12, mass = 0.7) => {
+// Smooth, no-overshoot ease (kept signature so callers can stay unchanged).
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const usePop = (from: number, _damping = 0, _mass = 0) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  return spring({ frame: frame - Math.round(from * fps), fps, config: { damping, mass } });
+  return spring({ frame: frame - Math.round(from * fps), fps, config: { damping: 26, stiffness: 150, mass: 0.9, overshootClamping: true } });
 };
 
 /** 1 while visible, fades to 0 over the last `fade` seconds before `to`. */
@@ -42,7 +44,8 @@ export const IconDisc: React.FC<{
   from: number;
   bg?: string;
   draw?: number;
-}> = ({ name, size, from, bg = GRADIENT, draw = 0.7 }) => {
+}> = ({ name, size, from, bg, draw = 0.7 }) => {
+  const solid = bg !== undefined;
   const t = useT(from);
   const pop = usePop(from, 11);
   return (
@@ -51,16 +54,18 @@ export const IconDisc: React.FC<{
         width: size,
         height: size,
         borderRadius: size,
-        background: bg,
+        background: solid ? bg : C.tint,
+        border: solid ? "none" : `2px solid rgba(0,93,160,0.18)`,
+        boxSizing: "border-box",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        transform: `scale(${pop})`,
-        boxShadow: "0 10px 24px rgba(0,40,90,0.30)",
+        transform: `scale(${interpolate(pop, [0, 1], [0.85, 1])})`,
+        opacity: pop,
         flexShrink: 0,
       }}
     >
-      <Icon name={name} size={size * 0.58} progress={interpolate(t, [0.05, 0.05 + draw], [0, 1], clamp)} />
+      <Icon name={name} size={size * 0.56} color={solid ? "#fff" : C.blue} progress={interpolate(t, [0.05, 0.05 + draw], [0, 1], clamp)} />
     </div>
   );
 };
@@ -79,24 +84,24 @@ export const Stamp: React.FC<{ kind: "check" | "cross"; from: number; size: numb
         width: size,
         height: size,
         borderRadius: size,
-        background: kind === "check" ? C.green : C.red,
+        background: kind === "check" ? C.blue : C.navy,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        transform: `scale(${pop}) rotate(${interpolate(pop, [0, 1], [-30, 0])}deg)`,
-        boxShadow: "0 6px 14px rgba(0,0,0,0.25)",
+        transform: `scale(${interpolate(pop, [0, 1], [0.8, 1])})`,
+        opacity: pop,
         flexShrink: 0,
       }}
     >
-      <Icon name={kind} size={size * 0.6} stroke={8} progress={interpolate(t, [0.05, 0.35], [0, 1], clamp)} />
+      <Icon name={kind} size={size * 0.6} stroke={6} progress={interpolate(t, [0.05, 0.35], [0, 1], clamp)} />
     </div>
   );
 };
 
 export const cardStyle: React.CSSProperties = {
   background: "rgba(255,255,255,0.97)",
-  borderRadius: 40,
-  boxShadow: "0 24px 60px rgba(0,30,70,0.35)",
+  borderRadius: 28,
+  boxShadow: "0 18px 44px rgba(0,30,70,0.22)",
   fontFamily: font,
   color: C.navy,
 };
@@ -122,7 +127,7 @@ export const TopPill: React.FC<{
           display: "flex",
           justifyContent: "center",
           opacity: Math.min(1, pop * 2) * out,
-          transform: `translateY(${interpolate(pop, [0, 1], [-60, 0])}px) scale(${interpolate(pop, [0, 1], [0.8, 1])})`,
+          transform: `translateY(${interpolate(pop, [0, 1], [-24, 0])}px) scale(${interpolate(pop, [0, 1], [0.96, 1])})`,
         }}
       >
         <div
@@ -169,7 +174,7 @@ export const Slot: React.FC<{
           alignItems: "center",
           height: 0,
           opacity: Math.min(1, pop * 2) * out,
-          transform: `scale(${interpolate(pop, [0, 1], [0.7, 1]) * interpolate(out, [0, 1], [0.92, 1])})`,
+          transform: `scale(${interpolate(pop, [0, 1], [0.95, 1]) * interpolate(out, [0, 1], [0.92, 1])})`,
         }}
       >
         {children}
@@ -192,7 +197,7 @@ export const Row: React.FC<{ from: number; children: React.ReactNode; style?: Re
         alignItems: "center",
         gap: 26,
         opacity: Math.min(1, pop * 1.5),
-        transform: `translateX(${interpolate(pop, [0, 1], [-80, 0])}px)`,
+        transform: `translateX(${interpolate(pop, [0, 1], [-30, 0])}px)`,
         ...style,
       }}
     >
