@@ -1,24 +1,23 @@
 import React from "react";
-import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
+import { interpolate, spring, useVideoConfig } from "remotion";
+import { useSrcSec } from "./timeline";
 import { Icon, IconName } from "./Icons";
 import { C, font } from "./theme";
 
 const clamp = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
 
 /** Seconds since `from` (can be negative). */
-export const useT = (from: number) => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-  return frame / fps - from;
-};
+// All overlay times are authored in source-clip seconds; the edit removes
+// silences, so time is read through the cut map.
+export const useT = (from: number) => useSrcSec() - from;
 
 /** Spring that starts at `from` seconds; returns 0..1 (with overshoot). */
 // Smooth, no-overshoot ease (kept signature so callers can stay unchanged).
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const usePop = (from: number, _damping = 0, _mass = 0) => {
-  const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  return spring({ frame: frame - Math.round(from * fps), fps, config: { damping: 26, stiffness: 150, mass: 0.9, overshootClamping: true } });
+  const src = useSrcSec();
+  return spring({ frame: (src - from) * fps, fps, config: { damping: 24, stiffness: 240, mass: 0.8, overshootClamping: true } });
 };
 
 /** 1 while visible, fades to 0 over the last `fade` seconds before `to`. */

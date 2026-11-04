@@ -12,61 +12,71 @@ import {
 } from "remotion";
 import { CAPTIONS } from "./captions";
 import { Overlays } from "./Scenes";
+import { Sfx } from "./Sfx";
+import { SEGMENT_OUT_STARTS, SEGMENTS, srcToOut, TRANSITION_SEGMENTS, useSrcSec } from "./timeline";
 import { C, font, GRADIENT } from "./theme";
 import "./theme";
 
 export const ZYMEREX_FPS = 24;
-const VIDEO_SECONDS = 58.458;
-export const VIDEO_FRAMES = Math.floor(VIDEO_SECONDS * ZYMEREX_FPS); // 1403
-const OUTRO_START = 58.3; // speech ends at ~58.28 s
-export const ZYMEREX_DURATION = Math.round((OUTRO_START + 3.2) * ZYMEREX_FPS);
+const OUTRO_START = 58.3; // source seconds; speech ends at ~58.28 s
+const OUTRO_OUT = srcToOut(OUTRO_START);
+export const ZYMEREX_DURATION = Math.round((OUTRO_OUT + 3.2) * ZYMEREX_FPS);
 
 const clamp = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
 
-// Jump-cut style punch-ins, one per sentence. [startSec, scale]
-const ZOOMS: [number, number][] = [
-  [0, 1.1],
-  [3.66, 1.0],
-  [12.26, 1.1],
-  [18.28, 1.0],
-  [25.0, 1.12],
-  [28.3, 1.0],
-  [35.9, 1.07],
-  [46.0, 1.0],
-  [55.3, 1.09],
-];
+// Jump-cut framing: every kept segment gets its own punch-in, alternating
+// wide / tight like the reference.
+const FRAMING = [1.0, 1.16, 1.06, 1.2];
+
+const TR = 4; // frames on each side of the cut
+
+const segOutFrame = (i: number, fps: number) => Math.round(SEGMENT_OUT_STARTS[i] * fps);
 
 const VideoLayer: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const t = frame / fps;
   let idx = 0;
-  ZOOMS.forEach(([s], i) => {
-    if (t >= s) idx = i;
+  SEGMENTS.forEach((_, i) => {
+    if (frame >= segOutFrame(i, fps)) idx = i;
   });
-  const [s0, z] = ZOOMS[idx];
-  const next = ZOOMS[idx + 1]?.[0] ?? VIDEO_SECONDS;
-  // slow drift inside each segment
-  const drift = interpolate(t, [s0, next], [0, 0.025], clamp);
-  // short ease into each cut so it feels like a snap-zoom
-  const snap = spring({ frame: frame - Math.round(s0 * fps), fps, config: { damping: 18, mass: 0.5 } });
-  const prevZ = idx > 0 ? ZOOMS[idx - 1][1] : z;
-  const scale = interpolate(snap, [0, 1], [prevZ, z]) + drift;
+  const local = (frame - segOutFrame(idx, fps)) / fps;
+  const z = FRAMING[idx % FRAMING.length] + local * 0.006; // slow push-in
+
+  // zoom-blur around transition cuts
+  let boost = 0;
+  for (const i of TRANSITION_SEGMENTS) {
+    const d = frame - segOutFrame(i, fps); // <0 before cut, >=0 after
+    if (d >= -TR && d < TR) boost = Math.max(boost, 1 - Math.abs(d + 0.5) / TR);
+  }
+  const scale = z * (1 + boost * 0.28);
   return (
-    <AbsoluteFill style={{ transform: `scale(${scale})`, transformOrigin: "540px 560px" }}>
-      <OffthreadVideo src={staticFile("zymerex/video.mp4")} />
+    <AbsoluteFill
+      style={{
+        transform: `scale(${scale})`,
+        transformOrigin: "540px 560px",
+        filter: boost > 0 ? `blur(${boost * 16}px) brightness(${1 + boost * 0.35})` : undefined,
+      }}
+    >
+      {SEGMENTS.map(([a, b], i) => {
+        const from = segOutFrame(i, fps);
+        const dur = (i + 1 < SEGMENTS.length ? segOutFrame(i + 1, fps) : from + Math.round((b - a) * fps)) - from;
+        return (
+          <Sequence key={i} from={from} durationInFrames={dur}>
+            <OffthreadVideo src={staticFile("zymerex/video.mp4")} startFrom={Math.round(a * fps)} />
+          </Sequence>
+        );
+      })}
     </AbsoluteFill>
   );
 };
 
 // Zymerex-style captions: bold white words on a brand-blue block.
 const Captions: React.FC = () => {
-  const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const t = frame / fps;
+  const t = useSrcSec();
   const cap = CAPTIONS.find((c) => t >= c.s && t < c.e);
   if (!cap || t > OUTRO_START) return null;
-  const pop = spring({ frame: frame - Math.round(cap.s * fps), fps, config: { damping: 20, mass: 0.45, overshootClamping: true } });
+  const pop = spring({ frame: (t - cap.s) * fps, fps, config: { damping: 20, mass: 0.45, overshootClamping: true } });
   return (
     <div
       style={{
@@ -123,7 +133,7 @@ const Captions: React.FC = () => {
 const Pictogram: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const t = frame / fps;
+  const t = useSrcSec();
   const enter = spring({ frame: frame - 6, fps, config: { damping: 14 } });
   const out = interpolate(t, [OUTRO_START, OUTRO_START + 0.25], [1, 0], clamp);
   const breathe = 1 + Math.sin(t * 2) * 0.02;
@@ -205,15 +215,14 @@ export const Zymerex: React.FC = () => {
   const { fps } = useVideoConfig();
   return (
     <AbsoluteFill style={{ background: C.blueDeep }}>
-      <Sequence durationInFrames={VIDEO_FRAMES}>
-        <VideoLayer />
-      </Sequence>
+      <VideoLayer />
       <AbsoluteFill>
         <Overlays />
       </AbsoluteFill>
       <Captions />
       <Pictogram />
-      <Sequence from={Math.round(OUTRO_START * fps)}>
+      <Sfx outroOut={OUTRO_OUT} />
+      <Sequence from={Math.round(OUTRO_OUT * fps)}>
         <Outro />
       </Sequence>
     </AbsoluteFill>
