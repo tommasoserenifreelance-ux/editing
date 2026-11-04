@@ -174,7 +174,7 @@ const ProductsScene: React.FC = () => {
   const move = usePop(30.08);
   // IB-Support: big in the centre, then slides right when the old name appears.
   const x = interpolate(move, [0, 1], [540, 770]);
-  const w = interpolate(move, [0, 1], [640, 440]);
+  const w = interpolate(move, [0, 1], [430, 380]);
   const pop = usePop(28.36);
   const out = interpolate(t, [35.55, 35.85], [1, 0], clamp);
   const bob = Math.sin(t * 1.4) * 4;
@@ -186,7 +186,7 @@ const ProductsScene: React.FC = () => {
           style={{
             position: "absolute",
             left: x,
-            top: 990 + bob,
+            top: 1080 + bob,
             width: w,
             transform: `translate(-50%,-50%) scale(${interpolate(pop, [0, 1], [0.85, 1])})`,
             opacity: pop * out,
@@ -194,8 +194,8 @@ const ProductsScene: React.FC = () => {
           }}
         />
       </Visible>
-      <Product src="zymerex/regola-ibs.png" at={31.64} to={35.85} x={260} y={980} height={400} desaturateAt={32.3} />
-      <FloatIcon name="arrow" at={32.1} to={35.85} x={480} y={990} size={110} stroke={5} />
+      <Product src="zymerex/regola-ibs.png" at={31.64} to={35.85} x={290} y={1080} height={340} desaturateAt={32.3} />
+      <FloatIcon name="arrow" at={32.1} to={35.85} x={500} y={1080} size={110} stroke={5} />
       <FloatIcon name="check" at={34.26} to={35.85} x={540} y={1290} size={110} stroke={6} />
     </>
   );
@@ -252,7 +252,7 @@ export const Overlays: React.FC = () => (
     <Swarm from={49.56} to={55.2} />
 
     {/* posologia */}
-    <Product src="zymerex/ib-support.png" at={55.36} to={58.35} x={350} y={1000} width={460} />
+    <Product src="zymerex/ib-support.png" at={55.36} to={58.35} x={350} y={1080} width={380} />
     <FloatIcon name="pill" at={55.4} to={58.35} x={800} y={900} size={150} />
     <FloatIcon name="pill" at={55.84} to={58.35} x={800} y={1040} size={150} />
     <FloatIcon name="plate" at={56.68} to={58.35} x={800} y={1200} size={130} />

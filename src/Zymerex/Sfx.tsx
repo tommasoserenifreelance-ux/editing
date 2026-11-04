@@ -23,15 +23,12 @@ const SRC_CUES: Cue[] = [
   { src: "whoosh", at: 30.08, vol: 0.35, lead: 0.2 },
 ];
 
-export const Sfx: React.FC<{ outroOut: number }> = ({ outroOut }) => {
+export const Sfx: React.FC = () => {
   const { fps } = useVideoConfig();
   const cues: { src: string; out: number; vol: number }[] = [
     ...SRC_CUES.map((c) => ({ src: c.src, out: srcToOut(c.at) - (c.lead ?? 0), vol: c.vol })),
     // whoosh peaks right on each zoom-blur cut (output time)
     ...TRANSITION_SEGMENTS.map((i) => ({ src: "whoosh", out: SEGMENT_OUT_STARTS[i] - 0.22, vol: 0.5 })),
-    // riser into the logo hit
-    { src: "riser-hit", out: outroOut - 0.85, vol: 0.55 },
-    { src: "chime", out: outroOut + 0.45, vol: 0.3 },
   ];
   return (
     <>

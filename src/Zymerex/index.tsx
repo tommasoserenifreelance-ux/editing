@@ -14,7 +14,7 @@ import { CAPTIONS } from "./captions";
 import { Overlays } from "./Scenes";
 import { Sfx } from "./Sfx";
 import { SEGMENT_OUT_STARTS, SEGMENTS, srcToOut, TRANSITION_SEGMENTS, useSrcSec } from "./timeline";
-import { C, font, GRADIENT } from "./theme";
+import { C, font } from "./theme";
 import "./theme";
 
 export const ZYMEREX_FPS = 24;
@@ -158,52 +158,22 @@ const Pictogram: React.FC = () => {
   );
 };
 
-// End card: a brand-blue circle grows out of the pictogram, then the full logo.
+// End card: fade to neutral black, then the full Zymerex logo. No product, no sound.
 const Outro: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = frame / fps;
-  const grow = interpolate(t, [0, 0.55], [0, 1], { ...clamp, easing: (x) => 1 - Math.pow(1 - x, 3) });
-  const logo = spring({ frame: frame - 10, fps, config: { damping: 13, mass: 0.8 } });
-  const wipe = interpolate(t, [0.4, 1.0], [0, 100], clamp);
-  const prod = spring({ frame: frame - 22, fps, config: { damping: 14 } });
-  const line = interpolate(t, [0.9, 1.4], [0, 1], clamp);
+  const black = interpolate(t, [0, 0.35], [0, 1], clamp);
+  const logo = interpolate(t, [0.45, 1.1], [0, 1], { ...clamp, easing: (x) => 1 - Math.pow(1 - x, 3) });
   return (
-    <AbsoluteFill>
-      <div
-        style={{
-          position: "absolute",
-          left: 540,
-          top: 1800,
-          width: 4400 * grow,
-          height: 4400 * grow,
-          borderRadius: "50%",
-          transform: "translate(-50%,-50%)",
-          background: `radial-gradient(circle at 50% 40%, ${C.blueLight} 0%, ${C.blue} 35%, ${C.blueDeep} 70%)`,
-        }}
-      />
-      {/* subtle brand "Z" stroke */}
-      <AbsoluteFill style={{ opacity: 0.08 * grow, alignItems: "center", justifyContent: "center" }}>
-        <Img src={staticFile("zymerex/pittogramma.png")} style={{ width: 1300 }} />
-      </AbsoluteFill>
-      <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 40 }}>
-        <div
-          style={{
-            transform: `scale(${interpolate(logo, [0, 1], [0.7, 1])}) translateY(${interpolate(logo, [0, 1], [40, 0])}px)`,
-            clipPath: `inset(0 ${100 - wipe}% 0 0)`,
-            marginTop: -160,
-          }}
-        >
-          <Img src={staticFile("zymerex/logo.png")} style={{ width: 820 }} />
-        </div>
-        <div style={{ width: 520 * line, height: 6, borderRadius: 6, background: GRADIENT }} />
+    <AbsoluteFill style={{ background: `rgba(0,0,0,${black})` }}>
+      <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
         <Img
-          src={staticFile("zymerex/ib-support.png")}
+          src={staticFile("zymerex/logo.png")}
           style={{
-            width: 460,
-            opacity: Math.min(1, prod * 2),
-            transform: `translateY(${interpolate(prod, [0, 1], [120, 0])}px)`,
-            filter: "drop-shadow(0 30px 40px rgba(0,0,0,0.35))",
+            width: 760,
+            opacity: logo,
+            transform: `scale(${interpolate(logo, [0, 1], [0.94, 1])})`,
           }}
         />
       </AbsoluteFill>
@@ -214,14 +184,14 @@ const Outro: React.FC = () => {
 export const Zymerex: React.FC = () => {
   const { fps } = useVideoConfig();
   return (
-    <AbsoluteFill style={{ background: C.blueDeep }}>
+    <AbsoluteFill style={{ background: "#000" }}>
       <VideoLayer />
       <AbsoluteFill>
         <Overlays />
       </AbsoluteFill>
       <Captions />
       <Pictogram />
-      <Sfx outroOut={OUTRO_OUT} />
+      <Sfx />
       <Sequence from={Math.round(OUTRO_OUT * fps)}>
         <Outro />
       </Sequence>
