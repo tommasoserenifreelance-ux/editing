@@ -9,4 +9,4 @@ out
 # Raw footage (too big for git, kept in the materiale-beat release)
 public/beat/*.MP4
 public/beat/stab/
-public/beat/reference-audio.m4a
+public/beat/reference-audio*.m4a

@@ -3,7 +3,7 @@ import { z } from "zod";
 // Every editable bit of the video lives here so it can be tweaked from the
 // Remotion Studio sidebar or via --props when rendering.
 export const beatSchema = z.object({
-  // Clips in public/ (e.g. "beat/clip1.mp4"), played back-to-back with hard
+  // Clips (or .png/.jpg stills) in public/, played back-to-back with hard
   // cuts. Leave empty to preview with the placeholder steel-bench background.
   clips: z.array(
     z.object({
@@ -104,17 +104,10 @@ export const beatDefaults: BeatProps = {
     }, // esce
     // L'Uovo Perfetto (never uses C0007 9.7–11 s, truffle picked up from the bench)
     {
-      src: "beat/stab/u1.mp4",
-      startFrom: 0.1,
-      duration: f(14),
-      playbackRate: 1.5,
-      patches: crumb,
-    }, // tartufo
-    {
       src: "beat/stab/u2.mp4",
-      startFrom: 0.1,
-      duration: f(20),
-      playbackRate: 1.5,
+      startFrom: 0.05,
+      duration: f(34),
+      playbackRate: 1,
       patches: crumb,
     }, // olio
     {
@@ -124,16 +117,16 @@ export const beatDefaults: BeatProps = {
       playbackRate: 1,
       patches: crumb,
     }, // esce
-    // Empty bench for the logo
+    // Empty bench for the logo: a still frame (crumb already removed), since
+    // the camera drifts ~50 px once the plate is gone.
     {
-      src: "beat/stab/u3.mp4",
-      startFrom: 1.85,
+      src: "beat/stab/fine.png",
+      startFrom: 0,
       duration: f(61),
-      playbackRate: 0.64,
-      patches: crumb,
+      playbackRate: 1,
     },
   ],
-  music: "beat/reference-audio.m4a",
+  music: "beat/reference-audio-pulito.m4a",
   receipt: {
     restaurant: "BEAT",
     location: "Pizza, Roll & Spa",

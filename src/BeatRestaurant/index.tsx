@@ -52,13 +52,22 @@ const ClipVideo: React.FC<{ c: Clip; style?: React.CSSProperties }> = ({
   style,
 }) => {
   const { fps } = useVideoConfig();
+  const fill: React.CSSProperties = {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    ...style,
+  };
+  if (/\.(png|jpe?g)$/i.test(c.src)) {
+    return <Img src={staticFile(c.src)} style={fill} />;
+  }
   return (
     <OffthreadVideo
       src={staticFile(c.src)}
       startFrom={Math.round(c.startFrom * fps)}
       playbackRate={c.playbackRate}
       muted
-      style={{ width: "100%", height: "100%", objectFit: "cover", ...style }}
+      style={fill}
     />
   );
 };
