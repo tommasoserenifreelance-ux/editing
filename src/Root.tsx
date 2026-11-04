@@ -10,6 +10,7 @@ import {
 import { PILATES_DURATION, PilatesReformer } from "./PilatesReformer";
 import { BEAT_DURATION, BEAT_FPS, BeatRestaurant } from "./BeatRestaurant";
 import { beatDefaults, beatSchema } from "./BeatRestaurant/schema";
+import { BeatSushi, SUSHI_DURATION, SUSHI_FPS } from "./BeatSushi";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -84,6 +85,14 @@ export const RemotionRoot: React.FC = () => {
           fps={BEAT_FPS}
           width={1920}
           height={1080}
+        />
+        <Composition
+          id="BeatSushi"
+          component={BeatSushi}
+          durationInFrames={SUSHI_DURATION}
+          fps={SUSHI_FPS}
+          width={1080}
+          height={1920}
         />
       </Folder>
     </>
