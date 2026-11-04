@@ -1,0 +1,311 @@
+import {
+  AbsoluteFill,
+  Audio,
+  continueRender,
+  delayRender,
+  Img,
+  interpolate,
+  OffthreadVideo,
+  random,
+  Sequence,
+  staticFile,
+  useCurrentFrame,
+} from "remotion";
+
+// Talking-head reel modelled on the "parlato" reference: one continuous take
+// cut into punch-in / punch-out framings on the phrases, a different
+// transition on every cut (mirror, light leak, glitch, white flash), small
+// boxed captions and big keyword cards, logo at the end. Source:
+// public/beat/talk/take2.mp4 = C9993 from 12.5 s (second take), graded.
+export const TALK_FPS = 30;
+
+const mono = "Space Mono";
+const handle = delayRender("Loading Space Mono");
+new FontFace(
+  mono,
+  `url(${staticFile("fonts/space-mono-latin-400-normal.woff2")})`,
+)
+  .load()
+  .then((f) => document.fonts.add(f))
+  .then(() => continueRender(handle));
+
+const SRC = staticFile("beat/talk/take2.mp4");
+const T0 = 0.35; // take2 seconds at output frame 0
+const f30 = (sec: number) => Math.round((sec - T0) * TALK_FPS);
+
+// Framings (take2 seconds). Face sits at ~45% x, 42% y of the frame.
+type Shot = { from: number; to: number; zoom: number; rot: number };
+const SHOTS: Shot[] = [
+  { from: 0.35, to: 1.55, zoom: 1.0, rot: 0 }, // BEAT
+  { from: 1.55, to: 2.45, zoom: 1.45, rot: 0 }, // puoi trovarci
+  { from: 2.45, to: 3.8, zoom: 1.12, rot: -2.5 }, // in via Alcide De Gasperi 6
+  { from: 3.8, to: 5.25, zoom: 1.6, rot: 0 }, // a Bagno a Ripoli
+];
+const END_FROM = 5.25;
+export const TALK_DURATION = f30(END_FROM) + 46;
+
+type Caption = { text: string; from: number; to: number; big?: boolean };
+const CAPTIONS: Caption[] = [
+  { text: "BEAT", from: 0.45, to: 1.55, big: true },
+  { text: "puoi trovarci", from: 1.6, to: 2.45 },
+  { text: "in via Alcide", from: 2.5, to: 3.05 },
+  { text: "De Gasperi 6", from: 3.05, to: 3.8 },
+  { text: "BAGNO A RIPOLI", from: 3.85, to: 5.25, big: true },
+];
+
+const Framed: React.FC<{ shot: Shot }> = ({ shot }) => {
+  const f = useCurrentFrame();
+  const n = f30(shot.to) - f30(shot.from);
+  // slow push inside each framing, like the reference
+  const drift = interpolate(f, [0, n], [1, 1.035]);
+  return (
+    <AbsoluteFill style={{ overflow: "hidden" }}>
+      <OffthreadVideo
+        src={SRC}
+        startFrom={Math.round(shot.from * TALK_FPS)}
+        muted
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          transformOrigin: "45% 42%",
+          transform: `scale(${shot.zoom * drift * (shot.rot ? 1.06 : 1)}) rotate(${shot.rot}deg)`,
+        }}
+      />
+    </AbsoluteFill>
+  );
+};
+
+// --- transitions, each centred on a cut frame ---
+
+const Mirror: React.FC<{ at: number }> = ({ at }) => {
+  const f = useCurrentFrame() - at;
+  if (f < -2 || f > 2) return null;
+  return (
+    <AbsoluteFill style={{ overflow: "hidden" }}>
+      {[0, 1].map((side) => (
+        <div
+          key={side}
+          style={{
+            position: "absolute",
+            top: 0,
+            width: 540,
+            height: 1920,
+            left: side * 540,
+            overflow: "hidden",
+          }}
+        >
+          <OffthreadVideo
+            src={SRC}
+            startFrom={Math.round((SHOTS[0].to + f / TALK_FPS) * TALK_FPS)}
+            muted
+            style={{
+              width: 1080,
+              height: 1920,
+              objectFit: "cover",
+              transform: side ? "scaleX(-1)" : undefined,
+              marginLeft: side ? -540 : 0,
+            }}
+          />
+        </div>
+      ))}
+    </AbsoluteFill>
+  );
+};
+
+const LightLeak: React.FC<{ at: number }> = ({ at }) => {
+  const f = useCurrentFrame() - at;
+  const o = interpolate(f, [-4, 0, 2, 6], [0, 0.9, 0.7, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  if (o === 0) return null;
+  return (
+    <AbsoluteFill
+      style={{
+        background:
+          "radial-gradient(ellipse at 15% 30%, #fff6d0 0%, #ffc04a 30%, #ff7a1a 60%, rgba(255,80,0,0) 85%)",
+        mixBlendMode: "screen",
+        opacity: o,
+      }}
+    />
+  );
+};
+
+const Glitch: React.FC<{ at: number }> = ({ at }) => {
+  const f = useCurrentFrame() - at;
+  if (f < -2 || f > 1) return null;
+  const bands = Array.from({ length: 14 }, (_, i) => i);
+  return (
+    <AbsoluteFill style={{ pointerEvents: "none" }}>
+      <AbsoluteFill
+        style={{
+          background: "#d0200f",
+          mixBlendMode: "multiply",
+          opacity: 0.85,
+        }}
+      />
+      {bands.map((i) => {
+        const r = random(`g${f}${i}`);
+        return (
+          <div
+            key={i}
+            style={{
+              position: "absolute",
+              left: 0,
+              right: 0,
+              top: (i * 1920) / 14,
+              height: 1920 / 14 - 6,
+              transform: `translateX(${(r - 0.5) * 160}px)`,
+              background:
+                r > 0.6
+                  ? "rgba(255,255,255,0.18)"
+                  : r > 0.3
+                    ? "rgba(0,0,0,0.35)"
+                    : "transparent",
+              mixBlendMode: "screen",
+            }}
+          />
+        );
+      })}
+    </AbsoluteFill>
+  );
+};
+
+const WhiteFlash: React.FC<{ at: number }> = ({ at }) => {
+  const f = useCurrentFrame() - at;
+  const o = interpolate(f, [-3, 0, 3, 8], [0, 1, 0.8, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  if (o === 0) return null;
+  return <AbsoluteFill style={{ background: "#fffbea", opacity: o }} />;
+};
+
+// --- captions ---
+
+const CaptionView: React.FC<{ c: Caption }> = ({ c }) => {
+  const f = useCurrentFrame();
+  const pop = interpolate(f, [0, 3], [0.85, 1], { extrapolateRight: "clamp" });
+  return (
+    <AbsoluteFill
+      style={{ alignItems: "center", top: c.big ? 1180 : 1240, bottom: "auto" }}
+    >
+      {c.big ? (
+        <div
+          style={{
+            fontFamily: mono,
+            fontSize: 96,
+            letterSpacing: 2,
+            color: "white",
+            transform: `scale(${pop})`,
+            textShadow: "0 4px 18px rgba(0,0,0,0.55)",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {c.text}
+        </div>
+      ) : (
+        <div
+          style={{
+            fontFamily: mono,
+            fontSize: 38,
+            color: "white",
+            background: "rgba(20,20,20,0.72)",
+            borderRadius: 12,
+            padding: "8px 22px",
+            transform: `scale(${pop})`,
+          }}
+        >
+          {c.text}
+        </div>
+      )}
+    </AbsoluteFill>
+  );
+};
+
+const EndCard: React.FC = () => {
+  const f = useCurrentFrame();
+  const k = interpolate(f, [0, 14], [0, 1], { extrapolateRight: "clamp" });
+  const logo = interpolate(f, [4, 16], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  return (
+    <AbsoluteFill>
+      <OffthreadVideo
+        src={SRC}
+        startFrom={Math.round(END_FROM * TALK_FPS)}
+        playbackRate={0.5}
+        muted
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          filter: `blur(${8 * k}px) brightness(${1 - 0.25 * k})`,
+          transform: `scale(${1.04 + 0.04 * k})`,
+        }}
+      />
+      <AbsoluteFill
+        style={{
+          alignItems: "center",
+          justifyContent: "center",
+          opacity: logo,
+        }}
+      >
+        <Img
+          src={staticFile("beat/logo-bianco.png")}
+          style={{
+            width: 360,
+            filter: "drop-shadow(0 2px 12px rgba(0,0,0,0.4))",
+          }}
+        />
+      </AbsoluteFill>
+    </AbsoluteFill>
+  );
+};
+
+export const BeatTalk: React.FC = () => {
+  const cuts = SHOTS.slice(1).map((s) => f30(s.from));
+  const end = f30(END_FROM);
+  return (
+    <AbsoluteFill style={{ background: "black" }}>
+      {SHOTS.map((s, i) => (
+        <Sequence
+          key={i}
+          from={f30(s.from)}
+          durationInFrames={f30(s.to) - f30(s.from)}
+        >
+          <Framed shot={s} />
+        </Sequence>
+      ))}
+      <Sequence from={end}>
+        <EndCard />
+      </Sequence>
+      {CAPTIONS.map((c, i) => (
+        <Sequence
+          key={i}
+          from={f30(c.from)}
+          durationInFrames={f30(c.to) - f30(c.from)}
+        >
+          <CaptionView c={c} />
+        </Sequence>
+      ))}
+      <Mirror at={cuts[0]} />
+      <LightLeak at={cuts[1]} />
+      <Glitch at={cuts[2]} />
+      <WhiteFlash at={end} />
+      <Audio
+        src={SRC}
+        startFrom={Math.round(T0 * TALK_FPS)}
+        // fade out before the crew's "top" at the end of the take
+        volume={(f) =>
+          interpolate(f, [end + 4, end + 12], [1, 0], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          })
+        }
+      />
+    </AbsoluteFill>
+  );
+};
