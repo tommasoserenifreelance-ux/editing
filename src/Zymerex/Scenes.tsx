@@ -1,16 +1,15 @@
 import React from "react";
 import { Img, interpolate, staticFile } from "remotion";
 import { Icon, IconName } from "./Icons";
-import { C } from "./theme";
 import { usePop, useT, Visible } from "./ui";
 
 // Everything here is "naked": brand-blue line icons or product packshots,
-// no cards, pills or boxes behind them. A soft white glow keeps them legible
-// over the jacket and the wall.
+// no cards, pills or boxes behind them. White strokes with a brand-blue halo stay
+// legible over both the white shirt and the jacket.
 
 const clamp = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
 const GLOW =
-  "drop-shadow(0 0 3px rgba(255,255,255,0.95)) drop-shadow(0 0 10px rgba(255,255,255,0.85)) drop-shadow(0 6px 18px rgba(0,30,70,0.25))";
+  "drop-shadow(0 0 2px rgba(0,63,115,1)) drop-shadow(0 0 6px rgba(0,93,160,0.9)) drop-shadow(0 6px 16px rgba(0,30,70,0.45))";
 
 /** One icon at (x, y) centre that fades/scales in at `at` and draws itself on. */
 const FloatIcon: React.FC<{
@@ -39,7 +38,7 @@ const FloatIcon: React.FC<{
           filter: GLOW,
         }}
       >
-        <Icon name={name} size={size} color={C.blue} stroke={stroke} progress={interpolate(t, [0, draw], [0, 1], clamp)} />
+        <Icon name={name} size={size} color="#fff" stroke={stroke} progress={interpolate(t, [0, draw], [0, 1], clamp)} />
       </div>
     </Visible>
   );
@@ -101,13 +100,13 @@ const Timer: React.FC = () => {
         }}
       >
         <svg width={300} height={300}>
-          <circle cx={150} cy={150} r={r} fill="none" stroke="rgba(0,93,160,0.2)" strokeWidth={10} />
+          <circle cx={150} cy={150} r={r} fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth={10} />
           <circle
             cx={150}
             cy={150}
             r={r}
             fill="none"
-            stroke={C.blue}
+            stroke="#fff"
             strokeWidth={10}
             strokeLinecap="round"
             strokeDasharray={circ}
@@ -116,7 +115,7 @@ const Timer: React.FC = () => {
           />
         </svg>
         <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <Icon name="timer" size={140} color={C.blue} stroke={3.6} progress={interpolate(t, [0, 0.6], [0, 1], clamp)} />
+          <Icon name="timer" size={140} color="#fff" stroke={3.6} progress={interpolate(t, [0, 0.6], [0, 1], clamp)} />
         </div>
       </div>
     </Visible>
@@ -144,7 +143,7 @@ const Bubbles: React.FC<{ from: number; to: number }> = ({ from, to }) => {
               width: s,
               height: s,
               borderRadius: s,
-              border: `3px solid ${C.blue}`,
+              border: "3px solid #fff",
               transform: `translate(${x}px, ${interpolate(life, [0, 1], [120, -260])}px) scale(${popped ? interpolate(life, [0.82, 1], [1, 1.8]) : 1})`,
               opacity: popped ? interpolate(life, [0.82, 1], [1, 0]) : 1,
             }}
