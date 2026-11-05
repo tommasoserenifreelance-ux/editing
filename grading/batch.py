@@ -96,7 +96,7 @@ def process(row, in_dir, out_dir):
             a = violet_background(a, mask_img, lift=1.6, ramp="violet_vivid", bg_blur=6)
             a = add_bokeh(a, m, layout(w, h, np.random.default_rng(seed), 7))
         elif style == "glow":
-            a = violet_background(a, mask_img, lift=3.0, ramp="violet_vivid", bg_blur=8)
+            a = violet_background(a, mask_img, lift=2.4, ramp="violet_vivid", bg_blur=8)
             a = glow(a, m, smooth=0.6, bright=0.22, gloss=0.3)
         elif style == "streaks":
             a = violet_background(a, mask_img, lift=1.6, ramp="violet_vivid", bg_blur=3)
@@ -115,6 +115,9 @@ def process(row, in_dir, out_dir):
             a = trails_from_mask(a, Image.open(os.path.join(HERE, "assets", "trail_redline.png")),
                                  (345, 300), 200, (hx, hy), hs)
         a = highlight_knee(np.clip(a, 0, 1))      # never burn the subject
+        # background: lower ceiling so the violet never blows out
+        bgw = (1 - np.clip(blur(np.clip((m - 0.15) / 0.7, 0, 1), 2), 0, 1))[..., None]
+        a = a * (1 - bgw) + highlight_knee(a, knee=0.55, ceiling=0.80) * bgw
         a = add_grain(a, 0.04, seed=seed)
 
     o = Image.fromarray(np.round(np.clip(a, 0, 1) * 255).astype(np.uint8))

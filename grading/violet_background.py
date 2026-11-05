@@ -32,17 +32,18 @@ PINK_RGB = np.array([
 ], float)
 
 
-def _rehue(rgb, hue_deg):
+def _rehue(rgb, hue_deg, min_sat=0.0, max_val=1.0):
     import colorsys
     out = []
     for r, g, b in rgb / 255.0:
         h, s_, v = colorsys.rgb_to_hsv(r, g, b)
-        out.append(colorsys.hsv_to_rgb(hue_deg / 360.0, s_, v))
+        out.append(colorsys.hsv_to_rgb(hue_deg / 360.0, max(s_, min_sat), min(v, max_val)))
     return np.array(out) * 255.0
 
 
 # same intensity/saturation as the pink reference, turned violet
-VIOLET_VIVID_RGB = _rehue(PINK_RGB, 282)
+# lights stay saturated violet, never lavender-white (no burnt patches)
+VIOLET_VIVID_RGB = _rehue(PINK_RGB, 282, min_sat=0.45, max_val=0.86)
 RAMPS = {"violet": (RAMP_L, RAMP_RGB), "pink": (PINK_L, PINK_RGB), "violet_vivid": (PINK_L, VIOLET_VIVID_RGB)}
 
 
