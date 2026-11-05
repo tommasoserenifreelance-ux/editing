@@ -23,7 +23,7 @@ import numpy as np
 from PIL import Image, ImageFilter
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from nightlife_grade import grade, lum, blur, BRIGHT  # noqa: E402
+from nightlife_grade import grade, lum, blur, BRIGHT, MID, highlight_knee  # noqa: E402
 from violet_background import violet_background  # noqa: E402
 from bokeh import add_bokeh, layout  # noqa: E402
 from skin_glow import glow  # noqa: E402
@@ -75,7 +75,13 @@ def process(row, in_dir, out_dir):
     im = Image.open(src)
     icc, exif = im.info.get("icc_profile"), im.info.get("exif")
     rgb = im.convert("RGB")
-    a = grade(np.asarray(rgb).astype(np.float64) / 255.0, **BRIGHT)
+    a0 = np.asarray(rgb).astype(np.float64) / 255.0
+    # brighter grade only where it helps: glossy-skin style, or a dim subject
+    sm = np.asarray(rgb.reduce(8)).astype(np.float64) / 255.0
+    hh, ww, _ = sm.shape
+    subj = np.percentile(lum(sm[int(.15 * hh):int(.6 * hh), int(.25 * ww):int(.75 * ww)]), 92)
+    bright = style == "glow" or (subj < 0.62 and style != "crowd")
+    a = grade(a0, **(BRIGHT if bright else MID))
     seed = zlib.crc32(name.encode()) % 1000
     h, w, _ = a.shape
 
@@ -91,7 +97,7 @@ def process(row, in_dir, out_dir):
             a = add_bokeh(a, m, layout(w, h, np.random.default_rng(seed), 7))
         elif style == "glow":
             a = violet_background(a, mask_img, lift=3.0, ramp="violet_vivid", bg_blur=8)
-            a = glow(a, m, smooth=0.6, bright=0.28, gloss=0.35)
+            a = glow(a, m, smooth=0.6, bright=0.22, gloss=0.3)
         elif style == "streaks":
             a = violet_background(a, mask_img, lift=1.6, ramp="violet_vivid", bg_blur=3)
             cx = (m.mean(0) * np.arange(w)).sum() / max(m.mean(0).sum(), 1e-6) / w
@@ -108,12 +114,13 @@ def process(row, in_dir, out_dir):
             hx, hy, hs = map(float, row[2:5])
             a = trails_from_mask(a, Image.open(os.path.join(HERE, "assets", "trail_redline.png")),
                                  (345, 300), 200, (hx, hy), hs)
+        a = highlight_knee(np.clip(a, 0, 1))      # never burn the subject
         a = add_grain(a, 0.04, seed=seed)
 
     o = Image.fromarray(np.round(np.clip(a, 0, 1) * 255).astype(np.uint8))
     kw = {k: v for k, v in (("icc_profile", icc), ("exif", exif)) if v}
     o.save(out, quality=100, subsampling=0, **kw)
-    return name, style
+    return name, style + (" +luminosa" if bright else "")
 
 
 def main():

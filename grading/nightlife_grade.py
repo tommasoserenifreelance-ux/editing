@@ -103,6 +103,15 @@ def skin_correct(a, radius, skin_val=None):
     return np.clip(out, 0, 1)
 
 
+def highlight_knee(a, knee=0.80, ceiling=0.97):
+    """Soft shoulder on the brightest channel: nothing reaches pure white, hue kept.
+    Protects the subject from burning (client note: "non bruciare il soggetto")."""
+    m = a.max(-1)
+    span = ceiling - knee
+    m2 = np.where(m > knee, knee + span * np.tanh((m - knee) / span), m)
+    return a * (m2 / np.maximum(m, 1e-6))[..., None]
+
+
 def tone_curve(x, black=0.025):
     # Black point crush (~5%), strong S curve, soft highlight roll-off.
     x = np.clip((x - black) / (1 - black), 0, 1)
@@ -115,7 +124,9 @@ def tone_curve(x, black=0.025):
 
 # Brighter variant (client: "non scurire troppo"): more exposure, lighter
 # shadows, less black crush, brighter skin target.
-BRIGHT = dict(exposure=0.25, shadow_depth=0.12, black=0.012, skin_val=0.76, vignette=0.15)
+# Middle ground: not as dark as the default, for well-lit subjects.
+MID = dict(exposure=0.0, shadow_depth=0.22, black=0.018, skin_val=0.70, vignette=0.22)
+BRIGHT = dict(exposure=0.15, shadow_depth=0.12, black=0.012, skin_val=0.76, vignette=0.15)
 
 
 def grade(a, strength=1.0, exposure=-0.12, shadow_depth=None, black=0.025, skin_val=None, vignette=0.28):
@@ -178,7 +189,7 @@ def grade(a, strength=1.0, exposure=-0.12, shadow_depth=None, black=0.025, skin_
     vig = 1 - vignette * np.clip((d - 0.45) / 0.55, 0, 1) ** 2
     a = a * vig[..., None]
 
-    a = np.clip(a, 0, 1)
+    a = highlight_knee(np.clip(a, 0, 1))
     return src + (a - src) * strength
 
 
