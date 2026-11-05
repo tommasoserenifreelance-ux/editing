@@ -28,6 +28,9 @@ python grading/grain.py bokeh.jpg final.jpg --amount 0.04 --exif-from ORIG.jpg
 | X / flare stella dall'alto | `star_flares.py --mask … --star x,y,len[,int]` |
 | Tutto viola (wash) con pelle naturale | `color_wash.py --protect x,y,rx,ry` (labbra) |
 | Pelle colorata rosa-viola | `subject_tint.py` |
+| Pelle "plastificata" luminosa + sfondo viola acceso | `violet_background.py --ramp violet_vivid --bg-blur 8 --lift 3.2` + `skin_glow.py` |
+| Effetto graffiato / strisciate orizzontali | `motion_streaks.py --region x0,y0,x1,y1` |
+| Neutra (solo color) | `nightlife_grade.py` |
 | Grana | `grain.py --amount 0.04` |
 
 Preset Lightroom: `presets/Nightlife Reference v3.xmp` (solo color base).
