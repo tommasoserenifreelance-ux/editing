@@ -10,18 +10,17 @@ def src(n):
 # (a person) and at most ONE venue shot, the bottle detail only once. 30.10 first.
 PLAN = [
  # 30.10 – violet
- ['DSC00419','DSC00618','DSC00162','DSC00882','DSC00424','DSC00390','DSC00860'],
+ ['DSC00419','DSC00618','DSC00162','DSC00882','DSC00424','DSC00390','DSC00860','IMG_5161'],
  ['DSC00086','DSC00242','DSC00329','DSC09865','DSC00766','DSC00427','DSC09350','DSC00862'],
  ['DSC00393','DSC09585','DSC09815','DSC09525','DSC09565','DSC00339'],
  ['DSC00911','DSC00914','DSC00425','DSC09522','DSC09770','DSC00584'],
  # 30.10 – effects
  ['DSC00900','DSC00417','DSC00888','DSC09955','DSC09427','DSC09809'],
- # 30.10 – neutral
- ['DSC00685','DSC00689','DSC00693','DSC00690'],
- ['DSC09368','DSC00549','DSC00552','DSC00044','DSC00097','DSC00411'],
- ['DSC00723','DSC00173','DSC00745','DSC01152-2','DSC00819'],
+ # 30.10 – neutral (only ONE photo of the metallic-wall series: 00689)
+ ['DSC00689','DSC00723','DSC00173','DSC01152-2','DSC00819'],
+ ['DSC09368','DSC00549','DSC00552','DSC00044','DSC00097','DSC00411','DSC00745'],
  # other nights
- ['DSC04985','DSC05003','DSC04991','DSC05033','DSC05497','DSC05684','DSC04947','IMG_5161'],
+ ['DSC04985','DSC05003','DSC04991','DSC05033','DSC05497','DSC05684','DSC04947'],
  ['DSC04982','DSC04984','DSC05502','DSC06438-2','DSC04986','DSC06073'],
 ]
 SINGLE = ['DSC04956','DSC04941']
@@ -41,7 +40,7 @@ pages = []
 pg = Image.new('RGB', (W, H), BG); d = ImageDraw.Draw(pg)
 d.text((160, 280), 'VENUS', font=f(260, True), fill=FG)
 d.text((160, 600), 'Piano foto', font=f(72), fill=SUB)
-for i, n in enumerate(['DSC00618', 'DSC00086', 'DSC00685', 'DSC00860', 'IMG_5161']):
+for i, n in enumerate(['DSC00618', 'DSC00086', 'DSC00689', 'DSC00860', 'IMG_5161']):
     pg.paste(thumb(n, 400), (160 + i * 440, 1000))
 pages.append(pg)
 def strip(pg, d, ph, y0, title):
