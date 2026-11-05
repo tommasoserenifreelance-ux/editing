@@ -8,7 +8,7 @@ Styles (all share the same nightlife base colour and the same violet):
   flares   violet background + star flares on the real lights + grain
   crowd    whole frame toned violet (no subject) + grain
   trail    violet background + light-painting trail (needs head x,y,size) + grain
-  motion   violet background + drag-shutter motion blur with subject ghost + grain
+  motion   violet blurred background + drag-shutter blur ON the subject + grain (1-2 photos)
 
 Usage: python batch.py assignments.csv in_dir out_dir [--workers 2]
 CSV columns: name,style[,head_x,head_y,head_size]
@@ -32,7 +32,7 @@ from motion_streaks import streaks  # noqa: E402
 from star_flares import add_stars  # noqa: E402
 from grain import add_grain  # noqa: E402
 from light_trails import trails_from_mask  # noqa: E402
-from motion_blur import motion  # noqa: E402
+from motion_blur import subject_motion  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 def get_mask(img):
@@ -108,9 +108,9 @@ def process(row, in_dir, out_dir):
             a = violet_background(a, mask_img, lift=1.5, ramp="violet_vivid", bg_blur=4)
             mm = np.clip(blur(np.clip((m - 0.15) / 0.7, 0, 1), 1.2), 0, 1)
             a = add_stars(a, find_lights(a, m), behind=mm, haze=0.2)
-        elif style == "motion":
-            a = violet_background(a, mask_img, lift=1.6, ramp="violet_vivid", bg_blur=0)
-            a = motion(a, m, angle=8 + seed % 15, length=0.07, ghost=0.25)
+        elif style == "motion":   # drag shutter on the subject (use on 1-2 photos max)
+            a = violet_background(a, mask_img, lift=1.6, ramp="violet_vivid", bg_blur=6)
+            a = subject_motion(a, m, angle=12, length=0.06)
         elif style == "crowd":
             a = violet_background(a, mask_img, lift=1.15, ramp="violet_vivid", bg_blur=0)
         elif style == "trail":

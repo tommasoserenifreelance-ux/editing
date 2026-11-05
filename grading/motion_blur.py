@@ -44,6 +44,26 @@ def motion(a, mask, angle=12.0, length=0.07, ghost=0.35):
     return np.clip(a * m[..., None] + bg * (1 - m)[..., None], 0, 1)
 
 
+def subject_motion(a, mask, angle=10.0, length=0.05, amount=0.45):
+    """Drag shutter ON the subject: the sharp (flash) subject plus a smeared,
+    slightly shifted copy of itself that trails off in one direction."""
+    h, w, _ = a.shape
+    k = max(w, h) / 2000.0
+    m = np.clip(blur(np.clip((mask - 0.15) / 0.7, 0, 1), 1.5 * k), 0, 1)
+    n = max(3, int(length * w / 2))
+    t = np.radians(angle)
+    dx, dy = int(np.cos(t) * n * 0.8), int(-np.sin(t) * n * 0.8)
+    sm = line_blur(a * m[..., None], angle, n)
+    smm = line_blur(m[..., None], angle, n)[..., 0]
+    sm = np.roll(np.roll(sm, dy, 0), dx, 1)
+    smm = np.roll(np.roll(smm, dy, 0), dx, 1)
+    ghost = sm / np.maximum(smm, 1e-3)[..., None]
+    wgt = (np.clip(smm * 1.3, 0, 1) * amount)[..., None]
+    # lighten-style mix: the trail shows where it is brighter (light streak), sharp image stays underneath
+    trail = np.maximum(a, ghost)
+    return np.clip(a * (1 - wgt) + trail * wgt * 0.85 + ghost * wgt * 0.15, 0, 1)
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("input")
@@ -53,12 +73,13 @@ def main():
     p.add_argument("--length", type=float, default=0.07)
     p.add_argument("--ghost", type=float, default=0.35)
     p.add_argument("--exif-from")
+    p.add_argument("--on-subject", action="store_true", help="blur the subject (drag shutter) instead of the background")
     args = p.parse_args()
     im = Image.open(args.input)
     a = np.asarray(im.convert("RGB")).astype(np.float64) / 255.0
     h, w, _ = a.shape
     mask = np.asarray(Image.open(args.mask).convert("L").resize((w, h))).astype(np.float64) / 255.0
-    out = motion(a, mask, args.angle, args.length, args.ghost)
+    out = subject_motion(a, mask, args.angle, args.length) if args.on_subject else motion(a, mask, args.angle, args.length, args.ghost)
     o = Image.fromarray(np.round(out * 255).astype(np.uint8))
     src = Image.open(args.exif_from) if args.exif_from else im
     kw = {k: v for k, v in (("icc_profile", src.info.get("icc_profile")), ("exif", src.info.get("exif"))) if v}
