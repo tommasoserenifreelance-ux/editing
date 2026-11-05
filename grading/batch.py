@@ -23,7 +23,7 @@ import numpy as np
 from PIL import Image, ImageFilter
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from nightlife_grade import grade, lum, blur  # noqa: E402
+from nightlife_grade import grade, lum, blur, BRIGHT  # noqa: E402
 from violet_background import violet_background  # noqa: E402
 from bokeh import add_bokeh, layout  # noqa: E402
 from skin_glow import glow  # noqa: E402
@@ -75,7 +75,7 @@ def process(row, in_dir, out_dir):
     im = Image.open(src)
     icc, exif = im.info.get("icc_profile"), im.info.get("exif")
     rgb = im.convert("RGB")
-    a = grade(np.asarray(rgb).astype(np.float64) / 255.0)
+    a = grade(np.asarray(rgb).astype(np.float64) / 255.0, **BRIGHT)
     seed = zlib.crc32(name.encode()) % 1000
     h, w, _ = a.shape
 
@@ -91,7 +91,7 @@ def process(row, in_dir, out_dir):
             a = add_bokeh(a, m, layout(w, h, np.random.default_rng(seed), 7))
         elif style == "glow":
             a = violet_background(a, mask_img, lift=3.0, ramp="violet_vivid", bg_blur=8)
-            a = glow(a, m)
+            a = glow(a, m, smooth=0.6, bright=0.28, gloss=0.35)
         elif style == "streaks":
             a = violet_background(a, mask_img, lift=1.6, ramp="violet_vivid", bg_blur=3)
             cx = (m.mean(0) * np.arange(w)).sum() / max(m.mean(0).sum(), 1e-6) / w

@@ -75,7 +75,7 @@ def skin_mask(a):
     return blur(m, 3)
 
 
-def skin_correct(a, radius):
+def skin_correct(a, radius, skin_val=None):
     m = skin_mask(a)
     h, s, v = rgb_to_hsv(a)
     msum = m.sum() + 1e-6
@@ -87,8 +87,9 @@ def skin_correct(a, radius):
     s2 = s * (1 + (SKIN_SAT / s_mean - 1) * m)
     # gamma on skin value: deeper mids, highlights preserved -> sculpted, glossy skin
     lit = (m > 0.5) & (v > 0.5)
-    v_face = np.median(v[lit]) if lit.any() else SKIN_VAL
-    gain = SKIN_VAL / max(v_face, 1e-3) ** 1.3
+    sv = SKIN_VAL if skin_val is None else skin_val
+    v_face = np.median(v[lit]) if lit.any() else sv
+    gain = sv / max(v_face, 1e-3) ** 1.3
     v2 = v + (np.clip(gain * v ** 1.3, 0, 1) - v) * m
     out = hsv_to_rgb(h2, np.clip(s2, 0, 1), np.clip(v2, 0, 1))
     # soft skin: smooth mid frequencies, keep fine detail at 45%
@@ -102,9 +103,9 @@ def skin_correct(a, radius):
     return np.clip(out, 0, 1)
 
 
-def tone_curve(x):
+def tone_curve(x, black=0.025):
     # Black point crush (~5%), strong S curve, soft highlight roll-off.
-    x = np.clip((x - 0.025) / (1 - 0.025), 0, 1)
+    x = np.clip((x - black) / (1 - black), 0, 1)
     s = x * x * (3 - 2 * x)                 # smoothstep S
     x = 0.45 * s + 0.55 * x                  # blend -> contrast ~+25
     x = np.where(x > 0.85, 0.85 + (x - 0.85) * 0.75, x)  # highlights roll-off
@@ -112,7 +113,12 @@ def tone_curve(x):
     return x
 
 
-def grade(a, strength=1.0):
+# Brighter variant (client: "non scurire troppo"): more exposure, lighter
+# shadows, less black crush, brighter skin target.
+BRIGHT = dict(exposure=0.25, shadow_depth=0.12, black=0.012, skin_val=0.76, vignette=0.15)
+
+
+def grade(a, strength=1.0, exposure=-0.12, shadow_depth=None, black=0.025, skin_val=None, vignette=0.28):
     src = a.copy()
     h, w, _ = a.shape
     radius = max(w, h) / 1000.0
@@ -124,9 +130,9 @@ def grade(a, strength=1.0):
     a = np.clip(a + (clar + tex)[..., None], 0, 1)
 
     # 2. Exposure -0.2 EV and tone curve per luminance (preserves hue)
-    a = a * 2 ** -0.12
+    a = a * 2 ** exposure
     L = lum(a)
-    Lc = tone_curve(L)
+    Lc = tone_curve(L, black)
     ratio = np.where(L > 1e-4, Lc / np.maximum(L, 1e-4), 0)
     a = np.clip(a * ratio[..., None], 0, 1)
 
@@ -155,20 +161,21 @@ def grade(a, strength=1.0):
     a = np.clip(a, 0, 1)
 
     # 6. Skin: match the reference skin tone, soften, add sheen
-    a = skin_correct(a, radius)
+    a = skin_correct(a, radius, skin_val)
 
     # 7. Deeper shadows: pull down low-mids (sculpts the face, darker surroundings),
     #    highlights untouched. SHADOW_DEPTH 0 = off.
-    if SHADOW_DEPTH:
+    sd = SHADOW_DEPTH if shadow_depth is None else shadow_depth
+    if sd:
         L = lum(a)
         t = np.clip(L / 0.6, 0, 1)
-        target = L * (1 - SHADOW_DEPTH * (1 - t) ** 1.5 * np.clip(L / 0.04, 0, 1))
+        target = L * (1 - sd * (1 - t) ** 1.5 * np.clip(L / 0.04, 0, 1))
         a = np.clip(a * (target / np.maximum(L, 1e-4))[..., None], 0, 1)
 
     # 8. Vignette (-15)
     yy, xx = np.mgrid[0:h, 0:w]
     d = np.sqrt(((xx - w / 2) / (w / 2)) ** 2 + ((yy - h / 2) / (h / 2)) ** 2) / np.sqrt(2)
-    vig = 1 - 0.28 * np.clip((d - 0.45) / 0.55, 0, 1) ** 2
+    vig = 1 - vignette * np.clip((d - 0.45) / 0.55, 0, 1) ** 2
     a = a * vig[..., None]
 
     a = np.clip(a, 0, 1)
@@ -180,11 +187,12 @@ def main():
     p.add_argument("input")
     p.add_argument("output")
     p.add_argument("--strength", type=float, default=1.0)
+    p.add_argument("--bright", action="store_true", help="lighter variant (less dark, brighter skin)")
     args = p.parse_args()
     im = Image.open(args.input)
     icc = im.info.get("icc_profile")
     a = np.asarray(im.convert("RGB")).astype(np.float64) / 255.0
-    out = grade(a, args.strength)
+    out = grade(a, args.strength, **(BRIGHT if args.bright else {}))
     out_im = Image.fromarray(np.round(out * 255).astype(np.uint8))
     kw = {"icc_profile": icc} if icc else {}
     if args.output.lower().endswith((".jpg", ".jpeg")):
