@@ -1,12 +1,33 @@
-# Nightlife grade
+# Nightlife grade – pipeline
 
-Look da foto in discoteca (neri profondi e caldi, alte luci crema, pelle dorata e luminosa,
-luci del locale sature, clarity leggera, vignettatura). Mantiene la risoluzione originale
-ed esporta JPEG qualità 100 senza sottocampionamento colore (4:4:4), conservando il profilo ICC.
+Look approvato (DSC00618, versione **7b + grana**): color nightlife, sfondo viola
+sfocato, pallini bokeh viola dietro il soggetto, grana pellicola. Pelle naturale.
+
+## Ricetta approvata
 
 ```bash
-pip install numpy pillow
-python grading/nightlife_grade.py input.jpg output.jpg            # look pieno
-python grading/nightlife_grade.py input.jpg output.jpg --strength 0.7  # più leggero
+# 1. color base (neri profondi, pelle pesca calda, ombre profonde)
+python grading/nightlife_grade.py ORIG.jpg base.png
+# 2. maschera soggetto (rembg / BiRefNet portrait) – calcolata in automatico se manca --mask
+# 3. sfondo viola sfocato e visibile
+python grading/violet_background.py base.png bg.jpg --mask mask.png --ramp violet_vivid --bg-blur 6 --lift 1.6
+# 4. pallini bokeh dietro il soggetto
+python grading/bokeh.py bg.jpg bokeh.jpg --mask mask.png --seed 4
+# 5. grana
+python grading/grain.py bokeh.jpg final.jpg --amount 0.04 --exif-from ORIG.jpg
 ```
-Per output senza perdita usa un nome `.png` o `.tif`.
+
+## Varianti sulla stessa tonalità di viola (da alternare, non tutte su ogni foto)
+
+| Effetto | Script |
+|---|---|
+| Solo sfondo viola (nitido) | `violet_background.py --ramp violet_vivid` |
+| Sfondo viola sfocato | `violet_background.py --ramp violet_vivid --bg-blur 6 --lift 1.6` |
+| Pallini bokeh | `bokeh.py` |
+| Scia di luce (light painting) | `light_trails.py --mask assets/trail_redline.png …` |
+| X / flare stella dall'alto | `star_flares.py --mask … --star x,y,len[,int]` |
+| Tutto viola (wash) con pelle naturale | `color_wash.py --protect x,y,rx,ry` (labbra) |
+| Pelle colorata rosa-viola | `subject_tint.py` |
+| Grana | `grain.py --amount 0.04` |
+
+Preset Lightroom: `presets/Nightlife Reference v3.xmp` (solo color base).
