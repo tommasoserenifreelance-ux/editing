@@ -33,15 +33,17 @@ from grain import add_grain  # noqa: E402
 from light_trails import trails_from_mask  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-_session = None
-
-
 def get_mask(img):
-    global _session
+    """Union of two fast models: BiRefNet-lite (clean edges) + IS-Net (keeps
+    hand-held objects such as glasses that the first one sometimes drops)."""
     from rembg import new_session, remove
-    if _session is None:
-        _session = new_session("birefnet-general-lite")
-    return remove(img, session=_session, only_mask=True)
+    out = None
+    for model in ("birefnet-general-lite", "isnet-general-use"):
+        sess = new_session(model)
+        m = np.asarray(remove(img, session=sess, only_mask=True))
+        out = m if out is None else np.maximum(out, m)
+        del sess
+    return Image.fromarray(out)
 
 
 def find_lights(a, m, n=3):
@@ -76,12 +78,9 @@ def process(row, in_dir, out_dir):
     icc, exif = im.info.get("icc_profile"), im.info.get("exif")
     rgb = im.convert("RGB")
     a0 = np.asarray(rgb).astype(np.float64) / 255.0
-    # brighter grade only where it helps: glossy-skin style, or a dim subject
-    sm = np.asarray(rgb.reduce(8)).astype(np.float64) / 255.0
-    hh, ww, _ = sm.shape
-    subj = np.percentile(lum(sm[int(.15 * hh):int(.6 * hh), int(.25 * ww):int(.75 * ww)]), 92)
-    bright = style == "glow" or (subj < 0.62 and style != "crowd")
-    a = grade(a0, **(BRIGHT if bright else MID))
+    # approved base colour (DSC00618 v7b): warm natural skin, not brightened
+    a = grade(a0)
+    bright = False
     seed = zlib.crc32(name.encode()) % 1000
     h, w, _ = a.shape
 
@@ -117,7 +116,7 @@ def process(row, in_dir, out_dir):
         a = highlight_knee(np.clip(a, 0, 1))      # never burn the subject
         # background: lower ceiling so the violet never blows out
         bgw = (1 - np.clip(blur(np.clip((m - 0.15) / 0.7, 0, 1), 2), 0, 1))[..., None]
-        a = a * (1 - bgw) + highlight_knee(a, knee=0.55, ceiling=0.80) * bgw
+        a = a * (1 - bgw) + highlight_knee(a, knee=0.68, ceiling=0.90) * bgw
         a = add_grain(a, 0.04, seed=seed)
 
     o = Image.fromarray(np.round(np.clip(a, 0, 1) * 255).astype(np.uint8))

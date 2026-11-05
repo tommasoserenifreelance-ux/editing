@@ -43,7 +43,7 @@ def _rehue(rgb, hue_deg, min_sat=0.0, max_val=1.0):
 
 # same intensity/saturation as the pink reference, turned violet
 # lights stay saturated violet, never lavender-white (no burnt patches)
-VIOLET_VIVID_RGB = _rehue(PINK_RGB, 282, min_sat=0.45, max_val=0.86)
+VIOLET_VIVID_RGB = _rehue(PINK_RGB, 282, min_sat=0.35, max_val=0.92)
 RAMPS = {"violet": (RAMP_L, RAMP_RGB), "pink": (PINK_L, PINK_RGB), "violet_vivid": (PINK_L, VIOLET_VIVID_RGB)}
 
 
