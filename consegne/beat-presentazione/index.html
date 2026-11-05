@@ -43,7 +43,7 @@
     position: relative; width: 463px; height: 824px; flex: none; border: 3px solid var(--yellow);
     border-radius: 28px; overflow: hidden; background: #000; cursor: pointer;
   }
-  .reel.wide { flex-direction: column; align-items: flex-start; justify-content: center; gap: 48px; padding: 96px 128px; }
+  .reel.wide { flex-direction: column; align-items: center; justify-content: center; gap: 48px; padding: 96px 128px; }
   .reel.wide .frame { width: 1200px; height: 675px; }
   .reel video { width: 100%; height: 100%; object-fit: cover; display: block; }
   .reel .play {
@@ -58,10 +58,16 @@
   .reel .frame.playing .play { opacity: 0; }
   .reel .text { flex: 1; display: flex; flex-direction: column; gap: 36px; }
   .reel .kicker { font-size: 24px; letter-spacing: 4px; color: var(--yellow); }
-  .reel h2 { font-size: 66px; font-weight: 400; line-height: 1.12; color: var(--light); margin-top: 16px; letter-spacing: -1px; }
+  .download {
+    align-self: flex-start; font-size: 24px; letter-spacing: 2px; color: var(--dark); background: var(--yellow);
+    padding: 18px 30px; border-radius: 999px; text-decoration: none;
+  }
+  .download:hover { background: var(--cream); }
+  .closing .download { align-self: center; }
+  .reel h2 { font-size: 84px; font-weight: 400; line-height: 1.1; color: var(--light); letter-spacing: -1px; }
   .reel .desc { font-size: 26px; line-height: 1.5; color: var(--cream); max-width: 760px; }
   .reel .hint { font-size: 22px; color: var(--muted); }
-  .reel.wide .text { flex: none; flex-direction: row; align-items: flex-end; gap: 64px; width: 1664px; }
+  .reel.wide .text { flex: none; flex-direction: row; align-items: center; justify-content: space-between; gap: 64px; width: 1200px; }
   .reel.wide h2 { font-size: 56px; }
   .reel.wide .desc { max-width: 640px; }
 
@@ -102,6 +108,7 @@
   <section class="slide closing" id="closing">
     <img src="media/logo-white.png" alt="Logo Beat">
     <p>Grazie</p>
+    <a class="download" id="closing-download" target="_blank" rel="noopener" hidden>Scarica i video ↓</a>
   </section>
 
 </div></div>
@@ -113,22 +120,21 @@
 </div>
 
 <script>
+  // Google Drive folder with the videos to download. Leave "" to hide the button.
+  const DRIVE = "";
+
   const REELS = [
     {
       n: "01", time: "0:10", format: "16:9", wide: true, title: "La comanda",
-      desc: "Lo scontrino della comanda sul pass: Gattopardo, Tartare e Uovo perfetto escono dalla cucina e vengono barrati uno a uno.",
     },
     {
       n: "02", time: "0:12", format: "9:16", title: "I sushi d’autore",
-      desc: "Divina Commedia, Gattopardo, Promessi Sposi: ogni piatto si ferma come una foto, con nome e ingredienti.",
     },
     {
       n: "03", time: "0:10", format: "9:16", title: "You enjoy / We make",
-      desc: "Schermo diviso: sopra il servizio al tavolo con il vino, sotto la cucina che prepara i roll.",
     },
     {
       n: "04", time: "0:37", format: "9:16", title: "Cena di Natale aziendale",
-      desc: "Il video parlato per le aziende: buffet, cena servita, menù personalizzabile, parcheggio. Con sottotitoli, icone ed effetti sonori.",
     },
   ];
 
@@ -144,13 +150,18 @@
         <div class="play"></div>
       </div>
       <div class="text">
-        <div><p class="kicker">VIDEO ${r.n} · ${r.time} · ${r.format}</p><h2>${r.title}</h2></div>
-        <p class="desc">${r.desc}</p>
-        ${r.wide ? "" : '<p class="hint">Clicca sul video per avviarlo</p>'}
+        <h2>${r.title}</h2>
+        ${DRIVE ? `<a class="download" href="${DRIVE}" target="_blank" rel="noopener">Scarica i video ↓</a>` : ""}
       </div>
       ${r.wide ? "" : '<img class="logo" src="media/logo-white.png" alt="Logo Beat">'}`;
     stage.insertBefore(s, closing);
   });
+
+  if (DRIVE) {
+    const a = document.getElementById("closing-download");
+    a.href = DRIVE;
+    a.hidden = false;
+  }
 
   const slides = [...document.querySelectorAll(".slide")];
   let current = 0;
