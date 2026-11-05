@@ -46,7 +46,7 @@ def main():
     pg = Image.new("RGB", PAGE, BG); d = ImageDraw.Draw(pg)
     d.text((80, 70), args.title, font=font(54, True), fill=FG)
     d.text((80, 145), f"{len(slides)} slide · formato 4:5 · ordine di pubblicazione", font=font(26), fill=(180, 170, 195))
-    cols, tw = 4, 250
+    cols, tw = 5, 205
     th = int(tw * 5 / 4)
     gx, gy = (PAGE[0] - cols * tw - (cols - 1) * 20) // 2, 220
     for i, (n, lab, im) in enumerate(slides):
