@@ -9,6 +9,8 @@ const FONTS: [string, string, string, string][] = [
   [serif, "700", "normal", "playfair-display-latin-700-normal"],
   [serif, "500", "italic", "playfair-display-latin-500-italic"],
   [serif, "600", "italic", "playfair-display-latin-600-italic"],
+  [serif, "700", "italic", "playfair-display-latin-700-italic"],
+  [serif, "800", "italic", "playfair-display-latin-800-italic"],
   [sans, "400", "normal", "montserrat-latin-400-normal"],
   [sans, "500", "normal", "montserrat-latin-500-normal"],
   [sans, "700", "normal", "montserrat-latin-700-normal"],

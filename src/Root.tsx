@@ -1,4 +1,5 @@
 import { Composition, Folder, Still } from "remotion";
+import { Slide, SLIDES } from "./Carosello/Slides";
 import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
@@ -101,6 +102,16 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1350}
       />
+      {SLIDES.map((slide, i) => (
+        <Still
+          key={i}
+          id={`CaroselloSlide${i + 2}`}
+          component={Slide}
+          width={1080}
+          height={1350}
+          defaultProps={slide}
+        />
+      ))}
       <Composition
         id="CoverPiattoConLei"
         component={Piatto}
