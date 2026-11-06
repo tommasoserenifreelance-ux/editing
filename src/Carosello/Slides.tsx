@@ -11,11 +11,13 @@ export type SlideData = {
   title: string;
   body: string;
   source?: string;
+  study?: string; // cropped PubMed header in public/studi/
 };
 
 export const SLIDES: SlideData[] = [
   {
     photo: "foto4.jpg",
+    study: "pounis-2016.png",
     title: "La pasta non è il nemico",
     body: "In uno studio su oltre 23.000 italiani, chi mangiava pasta nell'ambito della dieta mediterranea aveva in media un indice di massa corporea più basso.",
     source: "Pounis et al., Nutrition & Diabetes, 2016",
@@ -28,12 +30,14 @@ export const SLIDES: SlideData[] = [
   },
   {
     photo: "foto8.jpg",
+    study: "reynolds-2019.png",
     title: "2. Integrale, quando puoi",
     body: "Più fibre e cereali integrali si associano a un minor rischio di diabete di tipo 2 e malattie cardiovascolari.",
     source: "Reynolds et al., The Lancet, 2019",
   },
   {
     photo: "foto7.jpg",
+    study: "shukla-2015.png",
     title: "3. Prima le verdure",
     body: "Iniziare il pasto con verdure e proteine e mangiare i carboidrati per ultimi ha ridotto il picco di glicemia dopo il pasto.",
     source: "Shukla et al., Diabetes Care, 2015",
@@ -45,6 +49,7 @@ export const SLIDES: SlideData[] = [
   },
   {
     photo: "foto5.jpg",
+    study: "chiavaroli-2018.png",
     title: "5. Nel contesto giusto",
     body: "In 32 studi, la pasta inserita in un'alimentazione a basso indice glicemico non ha fatto aumentare di peso: si è associata anzi a un leggero calo.",
     source: "Chiavaroli et al., BMJ Open, 2018",
@@ -58,7 +63,13 @@ export const SLIDES: SlideData[] = [
   },
 ];
 
-export const Slide: React.FC<SlideData> = ({ photo, title, body, source }) => (
+export const Slide: React.FC<SlideData> = ({
+  photo,
+  title,
+  body,
+  source,
+  study,
+}) => (
   <AbsoluteFill
     style={{
       background: "linear-gradient(160deg, #9BAEA4 0%, #5F7369 100%)",
@@ -83,10 +94,30 @@ export const Slide: React.FC<SlideData> = ({ photo, title, body, source }) => (
         src={staticFile("logo.png")}
         style={{
           width: 92,
-          filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.35))",
+          filter:
+            "drop-shadow(0 2px 4px rgba(0,0,0,0.7)) drop-shadow(0 0 16px rgba(0,0,0,0.55))",
         }}
       />
     </AbsoluteFill>
+    {study ? (
+      <AbsoluteFill style={{ alignItems: "center", paddingTop: 205 }}>
+        <div
+          style={{
+            width: 880,
+            background: "white",
+            borderRadius: 24,
+            padding: "26px 28px 22px",
+            boxShadow: "0 18px 50px rgba(0,0,0,0.35)",
+            transform: "rotate(-1.5deg)",
+          }}
+        >
+          <Img
+            src={staticFile(`studi/${study}`)}
+            style={{ width: "100%", display: "block" }}
+          />
+        </div>
+      </AbsoluteFill>
+    ) : null}
     <AbsoluteFill
       style={{ justifyContent: "flex-end", padding: "0 70px 80px" }}
     >
