@@ -21,7 +21,7 @@ export const CAROSELLO_DURATION = 623; // 20.77 s, length of the source clip
 
 const s = (seconds: number) => Math.round(seconds * CAROSELLO_FPS);
 
-const TITLE = ["Devo rinunciare", "alla pasta? 🍝"];
+const TITLE = ["Devo rinunciare", "alla pasta?"];
 
 const CAPTIONS: { from: number; to: number; text: string }[] = [
   { from: 0, to: 1.6, text: "Molto spesso quando mi vedete" },
@@ -100,6 +100,17 @@ const Title: React.FC = () => {
           }}
         >
           {TITLE[1]}
+          {/* Fluent Emoji 3D (Microsoft, MIT licence) */}
+          <Img
+            src={staticFile("emoji-spaghetti-3d.png")}
+            style={{
+              width: 104,
+              margin: "-24px -30px -24px 10px",
+              verticalAlign: "middle",
+              transform: "rotate(8deg)",
+              filter: "drop-shadow(0 6px 10px rgba(0,0,0,0.25))",
+            }}
+          />
         </div>
       </div>
     </div>
