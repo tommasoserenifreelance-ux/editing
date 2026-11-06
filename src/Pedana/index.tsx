@@ -12,10 +12,10 @@ import {
 import { sans } from "../PilatesReformer/theme";
 
 // Cover video of the vibration plate carousel (4:5), Santa Longevity style.
-// The 9:16 source is scaled to keep the wall above her and the plate below,
-// with a blurred copy filling the sides. Pictogram and title at the top,
-// subtitles over the lower part. Source: GitHub release (pedana.mov),
-// transcoded to public/pedana/pedana_h264.mp4. Captions from Whisper.
+// The 9:16 source is cropped full-bleed to 4:5 and straightened (the shot
+// leans ~2.5°). Pictogram and title at the top, subtitles over the lower
+// part. Source: GitHub release (pedana.mov), transcoded to
+// public/pedana/pedana_h264.mp4. Captions from Whisper.
 
 export const PEDANA_FPS = 24;
 export const PEDANA_DURATION = 146; // 6.08 s, length of the source clip
@@ -23,10 +23,10 @@ export const PEDANA_DURATION = 146; // 6.08 s, length of the source clip
 const s = (seconds: number) => Math.round(seconds * PEDANA_FPS);
 
 const SRC = "pedana/pedana_h264.mp4";
-// Part of the 1080×1920 source shown in the 1350 px tall frame.
-const SHOW_FROM_Y = 300;
-const SHOW_TO_Y = 1890;
-const SCALE = 1350 / (SHOW_TO_Y - SHOW_FROM_Y);
+// Top of the 1080×1920 source shown in the 1350 px tall frame.
+const CROP_TOP = 490;
+const TILT_FIX_DEG = -2.5;
+const ZOOM = 1.06; // hides the corners left by the rotation
 
 const TITLE = ["Pedana vibrante:", "funziona davvero?"];
 
@@ -67,8 +67,8 @@ const Title: React.FC = () => {
       <Img
         src={staticFile("logo.png")}
         style={{
-          width: 96,
-          marginBottom: 12,
+          width: 74,
+          marginBottom: 8,
           filter:
             "drop-shadow(0 2px 4px rgba(0,0,0,0.6)) drop-shadow(0 0 14px rgba(0,0,0,0.4))",
         }}
@@ -85,8 +85,8 @@ const Title: React.FC = () => {
           style={{
             ...pill,
             background: YELLOW,
-            fontSize: 60,
-            padding: "8px 42px",
+            fontSize: 46,
+            padding: "6px 34px",
           }}
         >
           {TITLE[0]}
@@ -95,8 +95,8 @@ const Title: React.FC = () => {
           style={{
             ...pill,
             background: LILAC,
-            fontSize: 60,
-            padding: "8px 42px",
+            fontSize: 46,
+            padding: "6px 34px",
             marginTop: -4,
           }}
         >
@@ -105,8 +105,8 @@ const Title: React.FC = () => {
           <Img
             src={staticFile("emoji-high-voltage-3d.png")}
             style={{
-              width: 92,
-              margin: "-22px -26px -22px 8px",
+              width: 72,
+              margin: "-18px -20px -18px 6px",
               verticalAlign: "middle",
               transform: "rotate(8deg)",
               filter: "drop-shadow(0 6px 10px rgba(0,0,0,0.25))",
@@ -156,25 +156,19 @@ const Caption: React.FC<{ text: string; duration: number }> = ({
 
 export const Pedana: React.FC = () => (
   <AbsoluteFill style={{ backgroundColor: "black" }}>
-    <AbsoluteFill style={{ filter: "blur(30px) brightness(0.8)" }}>
-      <OffthreadVideo
-        src={staticFile(SRC)}
-        muted
-        style={{ width: "100%", height: "100%", objectFit: "cover" }}
-      />
-    </AbsoluteFill>
     <OffthreadVideo
       src={staticFile(SRC)}
       style={{
         position: "absolute",
-        width: 1080 * SCALE,
-        height: 1920 * SCALE,
-        left: (1080 - 1080 * SCALE) / 2,
-        top: -SHOW_FROM_Y * SCALE,
-        boxShadow: "0 0 40px rgba(0,0,0,0.35)",
+        width: 1080,
+        height: 1920,
+        left: 0,
+        top: -CROP_TOP,
+        transformOrigin: `540px ${CROP_TOP + 675}px`,
+        transform: `rotate(${TILT_FIX_DEG}deg) scale(${ZOOM})`,
       }}
     />
-    <AbsoluteFill style={{ alignItems: "center", paddingTop: 34 }}>
+    <AbsoluteFill style={{ alignItems: "center", paddingTop: 22 }}>
       <Title />
     </AbsoluteFill>
     {CAPTIONS.map((c) => (
