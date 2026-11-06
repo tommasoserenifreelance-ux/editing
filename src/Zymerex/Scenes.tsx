@@ -194,8 +194,8 @@ const ProductsScene: React.FC = () => {
           }}
         />
       </Visible>
-      <Product src="zymerex/regola-ibs.png" at={31.64} to={35.85} x={290} y={1080} height={340} desaturateAt={32.3} />
-      <FloatIcon name="arrow" at={32.1} to={35.85} x={500} y={1080} size={110} stroke={5} />
+      <Product src="zymerex/regola-ibs.png" at={31.64} to={35.85} x={280} y={1080} width={360} desaturateAt={32.3} />
+      <FloatIcon name="arrow" at={32.1} to={35.85} x={525} y={1080} size={110} stroke={5} />
       <FloatIcon name="check" at={34.26} to={35.85} x={540} y={1290} size={110} stroke={6} />
     </>
   );
