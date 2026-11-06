@@ -43,9 +43,9 @@ export const SLIDES: SlideData[] = [
     source: "Shukla et al., Diabetes Care, 2015",
   },
   {
-    photo: "foto9.jpg",
+    photo: "foto10.jpg",
     title: "4. Condimento semplice",
-    body: "Sugo di pomodoro, verdure e un filo di olio extravergine a crudo. Meglio limitare panna, burro e sughi troppo elaborati.",
+    body: "Aglio, olio extravergine e peperoncino, con pomodorini pachino tagliati a pezzetti. Meglio limitare panna, burro e sughi troppo elaborati.",
   },
   {
     photo: "foto5.jpg",
@@ -55,7 +55,7 @@ export const SLIDES: SlideData[] = [
     source: "Chiavaroli et al., BMJ Open, 2018",
   },
   {
-    photo: "foto10.jpg",
+    photo: "foto16.jpg",
     title: "Quindi no, non devi rinunciarci",
     body: "Porzione giusta, integrale quando puoi, verdure e condimenti semplici: la pasta può far parte di uno stile di vita longevity.",
     source:
