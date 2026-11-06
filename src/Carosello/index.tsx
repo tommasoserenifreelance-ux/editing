@@ -21,20 +21,20 @@ export const CAROSELLO_DURATION = 623; // 20.77 s, length of the source clip
 
 const s = (seconds: number) => Math.round(seconds * CAROSELLO_FPS);
 
-const TITLE = ["Devo rinunciare", "alla pasta?"];
+const TITLE = ["Devo rinunciare", "alla pasta? 🍝"];
 
 const CAPTIONS: { from: number; to: number; text: string }[] = [
   { from: 0, to: 1.6, text: "Molto spesso quando mi vedete" },
-  { from: 1.6, to: 3.24, text: "mangiare la pasta su Instagram 🍝" },
+  { from: 1.6, to: 3.24, text: "mangiare la pasta su Instagram" },
   { from: 3.24, to: 4.1, text: "mi scrivete:" },
   { from: 4.1, to: 5.1, text: "«Beata te, Elena," },
-  { from: 5.1, to: 6.4, text: "che puoi mangiare la pasta!» 😍" },
-  { from: 6.4, to: 8.0, text: "E lo sento tutto il vostro dolore 🥲" },
-  { from: 8.0, to: 9.04, text: "Ma non è così ❌" },
-  { from: 9.04, to: 10.52, text: "Non dovete rinunciare alla pasta 🙌" },
-  { from: 10.52, to: 11.42, text: "e vi spiego perché 👇" },
+  { from: 5.1, to: 6.4, text: "che puoi mangiare la pasta!»" },
+  { from: 6.4, to: 8.0, text: "E lo sento tutto il vostro dolore" },
+  { from: 8.0, to: 9.04, text: "Ma non è così" },
+  { from: 9.04, to: 10.52, text: "Non dovete rinunciare alla pasta" },
+  { from: 10.52, to: 11.42, text: "e vi spiego perché" },
   { from: 11.42, to: 12.84, text: "Non perché ve lo dico io," },
-  { from: 12.84, to: 15.0, text: "ma perché lo dicono gli esperti 👩‍⚕️" },
+  { from: 12.84, to: 15.0, text: "ma perché lo dicono gli esperti" },
 ];
 
 const YELLOW = "#EEF7A3";
