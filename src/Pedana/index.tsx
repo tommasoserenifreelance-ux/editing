@@ -13,8 +13,8 @@ import { sans } from "../PilatesReformer/theme";
 
 // Cover video of the vibration plate carousel (4:5), Santa Longevity style.
 // The 9:16 source is cropped full-bleed to 4:5 and straightened (the shot
-// leans ~2.5°). Pictogram and title at the top, subtitles over the lower
-// part. Source: GitHub release (pedana.mov), transcoded to
+// leans ~2.5°). Pictogram, title and subtitles in the lower third, as on
+// the pasta carousel cover. Source: GitHub release (pedana.mov), transcoded to
 // public/pedana/pedana_h264.mp4. Captions from Whisper.
 
 export const PEDANA_FPS = 24;
@@ -61,14 +61,14 @@ const Title: React.FC = () => {
         flexDirection: "column",
         alignItems: "center",
         opacity: enter,
-        transform: `translateY(${interpolate(enter, [0, 1], [-40, 0])}px)`,
+        transform: `translateY(${interpolate(enter, [0, 1], [60, 0])}px)`,
       }}
     >
       <Img
         src={staticFile("logo.png")}
         style={{
-          width: 74,
-          marginBottom: 8,
+          width: 110,
+          marginBottom: 14,
           filter:
             "drop-shadow(0 2px 4px rgba(0,0,0,0.6)) drop-shadow(0 0 14px rgba(0,0,0,0.4))",
         }}
@@ -85,8 +85,8 @@ const Title: React.FC = () => {
           style={{
             ...pill,
             background: YELLOW,
-            fontSize: 46,
-            padding: "6px 34px",
+            fontSize: 66,
+            padding: "10px 46px",
           }}
         >
           {TITLE[0]}
@@ -95,8 +95,8 @@ const Title: React.FC = () => {
           style={{
             ...pill,
             background: LILAC,
-            fontSize: 46,
-            padding: "6px 34px",
+            fontSize: 66,
+            padding: "10px 46px",
             marginTop: -4,
           }}
         >
@@ -105,8 +105,8 @@ const Title: React.FC = () => {
           <Img
             src={staticFile("emoji-high-voltage-3d.png")}
             style={{
-              width: 72,
-              margin: "-18px -20px -18px 6px",
+              width: 104,
+              margin: "-24px -30px -24px 10px",
               verticalAlign: "middle",
               transform: "rotate(8deg)",
               filter: "drop-shadow(0 6px 10px rgba(0,0,0,0.25))",
@@ -135,7 +135,7 @@ const Caption: React.FC<{ text: string; duration: number }> = ({
         position: "absolute",
         left: 0,
         right: 0,
-        top: 1070,
+        top: 1150,
         textAlign: "center",
         opacity,
         fontFamily: sans,
@@ -168,7 +168,7 @@ export const Pedana: React.FC = () => (
         transform: `rotate(${TILT_FIX_DEG}deg) scale(${ZOOM})`,
       }}
     />
-    <AbsoluteFill style={{ alignItems: "center", paddingTop: 22 }}>
+    <AbsoluteFill style={{ alignItems: "center", paddingTop: 790 }}>
       <Title />
     </AbsoluteFill>
     {CAPTIONS.map((c) => (
