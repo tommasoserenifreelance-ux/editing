@@ -9,6 +9,7 @@ import {
   PilatesOverlay,
 } from "./PilatesOverlay";
 import { CAROSELLO_DURATION, CAROSELLO_FPS, Carosello } from "./Carosello";
+import { PEDANA_DURATION, PEDANA_FPS, Pedana } from "./Pedana";
 import { PIATTO_DURATION, PIATTO_FPS, Piatto } from "./Piatto";
 import { PILATES_DURATION, PilatesReformer } from "./PilatesReformer";
 import { TRUE_FALSE_DURATION, TrueFalse } from "./TrueFalse";
@@ -93,6 +94,14 @@ export const RemotionRoot: React.FC = () => {
         fps={PIATTO_FPS}
         width={1080}
         height={1920}
+      />
+      <Composition
+        id="PedanaCover"
+        component={Pedana}
+        durationInFrames={PEDANA_DURATION}
+        fps={PEDANA_FPS}
+        width={1080}
+        height={1350}
       />
       <Composition
         id="CaroselloSlide1"

@@ -1,0 +1,190 @@
+import {
+  AbsoluteFill,
+  Img,
+  interpolate,
+  OffthreadVideo,
+  Sequence,
+  spring,
+  staticFile,
+  useCurrentFrame,
+  useVideoConfig,
+} from "remotion";
+import { sans } from "../PilatesReformer/theme";
+
+// Cover video of the vibration plate carousel (4:5), Santa Longevity style.
+// The 9:16 source is scaled to keep the wall above her and the plate below,
+// with a blurred copy filling the sides. Pictogram and title at the top,
+// subtitles over the lower part. Source: GitHub release (pedana.mov),
+// transcoded to public/pedana/pedana_h264.mp4. Captions from Whisper.
+
+export const PEDANA_FPS = 24;
+export const PEDANA_DURATION = 146; // 6.08 s, length of the source clip
+
+const s = (seconds: number) => Math.round(seconds * PEDANA_FPS);
+
+const SRC = "pedana/pedana_h264.mp4";
+// Part of the 1080×1920 source shown in the 1350 px tall frame.
+const SHOW_FROM_Y = 300;
+const SHOW_TO_Y = 1890;
+const SCALE = 1350 / (SHOW_TO_Y - SHOW_FROM_Y);
+
+const TITLE = ["Pedana vibrante:", "funziona davvero?"];
+
+const CAPTIONS: { from: number; to: number; text: string }[] = [
+  { from: 0.25, to: 2.5, text: "Conoscevi la pedana vibrante?" },
+  { from: 2.85, to: 3.7, text: "Io sì!" },
+  { from: 3.9, to: 4.8, text: "Scorri le slide" },
+  { from: 4.8, to: 6.08, text: "per saperne di più!" },
+];
+
+const YELLOW = "#EEF7A3";
+const LILAC = "#D9C4F1";
+
+const pill: React.CSSProperties = {
+  display: "inline-block",
+  borderRadius: 999,
+  color: "#1F1F1F",
+  fontFamily: sans,
+  fontWeight: 700,
+  whiteSpace: "nowrap",
+  boxShadow: "0 8px 24px rgba(0,0,0,0.22)",
+};
+
+const Title: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const enter = spring({ frame, fps, config: { damping: 12, mass: 0.6 } });
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        opacity: enter,
+        transform: `translateY(${interpolate(enter, [0, 1], [-40, 0])}px)`,
+      }}
+    >
+      <Img
+        src={staticFile("logo.png")}
+        style={{
+          width: 96,
+          marginBottom: 12,
+          filter:
+            "drop-shadow(0 2px 4px rgba(0,0,0,0.6)) drop-shadow(0 0 14px rgba(0,0,0,0.4))",
+        }}
+      />
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          transform: "rotate(-2deg)",
+        }}
+      >
+        <div
+          style={{
+            ...pill,
+            background: YELLOW,
+            fontSize: 60,
+            padding: "8px 42px",
+          }}
+        >
+          {TITLE[0]}
+        </div>
+        <div
+          style={{
+            ...pill,
+            background: LILAC,
+            fontSize: 60,
+            padding: "8px 42px",
+            marginTop: -4,
+          }}
+        >
+          {TITLE[1]}
+          {/* Fluent Emoji 3D (Microsoft, MIT licence) */}
+          <Img
+            src={staticFile("emoji-high-voltage-3d.png")}
+            style={{
+              width: 92,
+              margin: "-22px -26px -22px 8px",
+              verticalAlign: "middle",
+              transform: "rotate(8deg)",
+              filter: "drop-shadow(0 6px 10px rgba(0,0,0,0.25))",
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Caption: React.FC<{ text: string; duration: number }> = ({
+  text,
+  duration,
+}) => {
+  const frame = useCurrentFrame();
+  const opacity = interpolate(
+    frame,
+    [0, 3, duration - 3, duration],
+    [0, 1, 1, 0],
+    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+  );
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left: 0,
+        right: 0,
+        top: 1070,
+        textAlign: "center",
+        opacity,
+        fontFamily: sans,
+        fontWeight: 600,
+        fontSize: 52,
+        lineHeight: 1.2,
+        color: "white",
+        padding: "0 60px",
+        WebkitTextStroke: "6px rgba(40,40,40,0.6)",
+        paintOrder: "stroke fill",
+        textShadow: "0 4px 16px rgba(0,0,0,0.45)",
+      }}
+    >
+      {text}
+    </div>
+  );
+};
+
+export const Pedana: React.FC = () => (
+  <AbsoluteFill style={{ backgroundColor: "black" }}>
+    <AbsoluteFill style={{ filter: "blur(30px) brightness(0.8)" }}>
+      <OffthreadVideo
+        src={staticFile(SRC)}
+        muted
+        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+      />
+    </AbsoluteFill>
+    <OffthreadVideo
+      src={staticFile(SRC)}
+      style={{
+        position: "absolute",
+        width: 1080 * SCALE,
+        height: 1920 * SCALE,
+        left: (1080 - 1080 * SCALE) / 2,
+        top: -SHOW_FROM_Y * SCALE,
+        boxShadow: "0 0 40px rgba(0,0,0,0.35)",
+      }}
+    />
+    <AbsoluteFill style={{ alignItems: "center", paddingTop: 34 }}>
+      <Title />
+    </AbsoluteFill>
+    {CAPTIONS.map((c) => (
+      <Sequence
+        key={c.text}
+        from={s(c.from)}
+        durationInFrames={s(c.to) - s(c.from)}
+      >
+        <Caption text={c.text} duration={s(c.to) - s(c.from)} />
+      </Sequence>
+    ))}
+  </AbsoluteFill>
+);
