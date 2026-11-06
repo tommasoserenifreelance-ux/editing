@@ -13,8 +13,8 @@ import { sans } from "../PilatesReformer/theme";
 
 // Cover video of the vibration plate carousel (4:5), Santa Longevity style.
 // The 9:16 source is cropped full-bleed to 4:5 and straightened (the shot
-// leans ~2.5°). Pictogram, title and subtitles in the lower third, as on
-// the pasta carousel cover. Source: GitHub release (pedana.mov), transcoded to
+// leans ~2.5°). Pictogram and title over her torso, subtitles lower, sizes as
+// on the pasta carousel cover. Source: GitHub release (pedana.mov), transcoded to
 // public/pedana/pedana_h264.mp4. Captions from Whisper.
 
 export const PEDANA_FPS = 24;
@@ -168,7 +168,7 @@ export const Pedana: React.FC = () => (
         transform: `rotate(${TILT_FIX_DEG}deg) scale(${ZOOM})`,
       }}
     />
-    <AbsoluteFill style={{ alignItems: "center", paddingTop: 790 }}>
+    <AbsoluteFill style={{ alignItems: "center", paddingTop: 430 }}>
       <Title />
     </AbsoluteFill>
     {CAPTIONS.map((c) => (
