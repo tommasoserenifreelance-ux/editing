@@ -7,6 +7,7 @@ import {
   OVERLAY_FPS,
   PilatesOverlay,
 } from "./PilatesOverlay";
+import { CAROSELLO_DURATION, CAROSELLO_FPS, Carosello } from "./Carosello";
 import { PIATTO_DURATION, PIATTO_FPS, Piatto } from "./Piatto";
 import { PILATES_DURATION, PilatesReformer } from "./PilatesReformer";
 import { TRUE_FALSE_DURATION, TrueFalse } from "./TrueFalse";
@@ -91,6 +92,14 @@ export const RemotionRoot: React.FC = () => {
         fps={PIATTO_FPS}
         width={1080}
         height={1920}
+      />
+      <Composition
+        id="CaroselloSlide1"
+        component={Carosello}
+        durationInFrames={CAROSELLO_DURATION}
+        fps={CAROSELLO_FPS}
+        width={1080}
+        height={1350}
       />
       <Composition
         id="CoverPiattoConLei"
