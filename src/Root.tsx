@@ -7,6 +7,11 @@ import {
 } from "./BoccaMenopausa";
 import { CIBO_DURATION, CIBO_FPS, CiboMedicina } from "./CiboMedicina";
 import { HelloWorld } from "./HelloWorld";
+import {
+  MENTALI_DURATION,
+  MENTALI_FPS,
+  SintomiMentali,
+} from "./SintomiMentali";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
 import {
@@ -97,6 +102,14 @@ export const RemotionRoot: React.FC = () => {
         component={SintomiPerimenopausa}
         durationInFrames={SINTOMI_DURATION}
         fps={SINTOMI_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="SintomiMentali"
+        component={SintomiMentali}
+        durationInFrames={MENTALI_DURATION}
+        fps={MENTALI_FPS}
         width={1080}
         height={1920}
       />
