@@ -1,0 +1,163 @@
+import {
+  AbsoluteFill,
+  interpolate,
+  OffthreadVideo,
+  Sequence,
+  spring,
+  staticFile,
+  useCurrentFrame,
+  useVideoConfig,
+} from "remotion";
+import { colors, sans } from "../PilatesReformer/theme";
+
+export const REEL_FPS = 30;
+
+// [clip file, start (s), end (s)] in edit order.
+const CUTS: [string, number, number][] = [
+  ["clip2.mp4", 0, 4.5],
+  ["clip1.mp4", 0, 3.5],
+  ["clip3.mp4", 0, 3.5],
+  ["clip4.mp4", 8, 12],
+  ["clip5.mp4", 0, 3.5],
+  ["clip2.mp4", 12, 16],
+];
+
+const FADE = 4; // audio fade at each cut, in frames
+
+const toFrames = (s: number) => Math.round(s * REEL_FPS);
+const CUT_FRAMES = CUTS.map(([, a, b]) => toFrames(b - a));
+export const REEL_DURATION = CUT_FRAMES.reduce((a, b) => a + b, 0);
+
+// Hook: two beats over the first shot.
+const HOOK: { from: number; to: number; lines: [string, boolean][] }[] = [
+  {
+    from: 0,
+    to: 63,
+    lines: [
+      ["Schiena rigida", false],
+      ["e poca energia?", false],
+    ],
+  },
+  {
+    from: 63,
+    to: 135,
+    lines: [
+      ["Ecco cosa ti serve", false],
+      ["DAVVERO", true],
+    ],
+  },
+];
+
+const Shot: React.FC<{ src: string; start: number; duration: number }> = ({
+  src,
+  start,
+  duration,
+}) => {
+  const frame = useCurrentFrame();
+  // Small punch-in at the cut, then a slow push.
+  const punch = interpolate(frame, [0, 8], [1.08, 1], {
+    extrapolateRight: "clamp",
+  });
+  const push = interpolate(frame, [0, duration], [1, 1.05]);
+  const volume = interpolate(
+    frame,
+    [0, FADE, duration - FADE, duration],
+    [0, 1, 1, 0],
+    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+  );
+
+  return (
+    <AbsoluteFill style={{ transform: `scale(${punch * push})` }}>
+      <OffthreadVideo
+        src={staticFile(`clips/${src}`)}
+        trimBefore={toFrames(start)}
+        volume={volume}
+        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+      />
+    </AbsoluteFill>
+  );
+};
+
+const boxed: React.CSSProperties = {
+  display: "inline-block",
+  padding: "4px 26px",
+  borderRadius: 16,
+};
+
+const HookText: React.FC<{ lines: [string, boolean][]; duration: number }> = ({
+  lines,
+  duration,
+}) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const exit = interpolate(frame, [duration - 5, duration], [1, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+
+  return (
+    <AbsoluteFill
+      style={{
+        alignItems: "center",
+        paddingTop: 520,
+        fontFamily: sans,
+        fontWeight: 700,
+        textAlign: "center",
+        opacity: exit,
+        filter: "drop-shadow(0 8px 22px rgba(0,0,0,0.35))",
+      }}
+    >
+      {lines.map(([text, strong], i) => {
+        const s = spring({
+          frame: frame - i * 6,
+          fps,
+          config: { damping: 12, mass: 0.6 },
+        });
+        return (
+          <div
+            key={text}
+            style={{
+              marginTop: 14,
+              opacity: Math.min(1, s * 2),
+              transform: `scale(${interpolate(s, [0, 1], [0.6, 1])}) rotate(${strong ? -2 : 0}deg)`,
+            }}
+          >
+            <span
+              style={{
+                ...boxed,
+                fontSize: strong ? 120 : 76,
+                letterSpacing: strong ? 4 : 0,
+                background: strong ? colors.accent : colors.bg,
+                color: strong ? "#fff" : colors.ink,
+              }}
+            >
+              {text}
+            </span>
+          </div>
+        );
+      })}
+    </AbsoluteFill>
+  );
+};
+
+export const ClassReel: React.FC = () => {
+  let offset = 0;
+  return (
+    <AbsoluteFill style={{ backgroundColor: "black" }}>
+      {CUTS.map(([src, start], i) => {
+        const from = offset;
+        offset += CUT_FRAMES[i];
+        return (
+          <Sequence key={i} from={from} durationInFrames={CUT_FRAMES[i]}>
+            <Shot src={src} start={start} duration={CUT_FRAMES[i]} />
+          </Sequence>
+        );
+      })}
+      {HOOK.map(({ from, to, lines }) => (
+        <Sequence key={from} from={from} durationInFrames={to - from}>
+          <HookText lines={lines} duration={to - from} />
+        </Sequence>
+      ))}
+    </AbsoluteFill>
+  );
+};
