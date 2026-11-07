@@ -30,12 +30,18 @@ const YELLOW = new Set(
     " ",
   ),
 );
-const RED = new Set(["truffa", "vezzo", "generica", "tutti", "self-service", "lì"]);
+const RED_IV = new Set(["truffa", "vezzo", "generica", "tutti", "self-service", "lì"]);
 
 type Chunk = { small: string; big?: string; color?: string; s: number; e: number; bs: number };
 
-export const chunksOf = (list: Word[], extra: string[] = []): Chunk[] => {
-  const YELLOW_X = new Set([...YELLOW, ...extra]);
+export const chunksOf = (
+  list: Word[],
+  extra: string[] = [],
+  /** replace the IV keyword sets entirely (other videos) */
+  sets?: { yellow: string[]; red: string[] },
+): Chunk[] => {
+  const YELLOW_X = sets ? new Set(sets.yellow) : new Set([...YELLOW, ...extra]);
+  const RED = sets ? new Set(sets.red) : RED_IV;
   const out: Chunk[] = [];
   let cur: Word[] = [];
   const flush = () => {
