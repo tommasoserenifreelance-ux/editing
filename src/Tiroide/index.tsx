@@ -70,7 +70,7 @@ const SCENES: Scene[] = [
       <Card>
         <Burst at={2} x={0.5} y={0.3} />
         <Lead words={lead(t0, "ed è proprio questo")} top={0.39} />
-        <Big text="IL PROBLEMA." at={at(t0, "problema")} top={0.52} color={ref.red} size={150} />
+        <Big text="IL PROBLEMA." at={at(t0, "problema")} top={0.52} color={ref.red} size={112} />
         <CircleDraw at={at(t0, "problema") + 4} top={0.52} w={0.92} h={0.14} />
       </Card>
     ),
@@ -88,7 +88,7 @@ const SCENES: Scene[] = [
       <Card bg="red">
         <Lead words={lead(t0, "vengono spesso attribuiti")} top={0.36} />
         <Radial at={at(t0, "ad")} top={0.5} color="#141416" />
-        <Big text="AD ALTRO." at={at(t0, "ad")} top={0.5} color="#fff" size={170} />
+        <Big text="AD ALTRO." at={at(t0, "ad")} top={0.5} color="#fff" size={150} />
       </Card>
     ),
   },
@@ -159,7 +159,7 @@ const SCENES: Scene[] = [
       <Card>
         <Clock at={0} top={0.36} />
         <Lead words={lead(t0, "viene riconosciuta")} top={0.6} />
-        <Big text={"MOLTO\nPIÙ TARDI."} at={at(t0, "molto")} top={0.76} color={ref.red} size={150} />
+        <Big text={"MOLTO\nPIÙ TARDI."} at={at(t0, "molto")} top={0.76} color={ref.red} size={135} />
       </Card>
     ),
   },
