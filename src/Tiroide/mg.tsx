@@ -83,9 +83,10 @@ export const Big: React.FC<{
   top: number;
   color?: string;
   size?: number;
-  sfx?: boolean;
+  /** deep hit under the key words only (reference: few low booms) */
+  boom?: boolean;
   shadow?: boolean;
-}> = ({ text, at, top, color = ref.yellow, size, sfx = true, shadow = true }) => {
+}> = ({ text, at, top, color = ref.yellow, size, boom = false, shadow = true }) => {
   const frame = useCurrentFrame();
   const { width, height } = useVideoConfig();
   const lines = text.split("\n");
@@ -118,8 +119,7 @@ export const Big: React.FC<{
           <div key={i}>{decode(l, frame, at + i * 2, 8)}</div>
         ))}
       </div>
-      {sfx ? <Sfx at={at} name="glitch" volume={0.28} /> : null}
-      {sfx ? <Sfx at={at + 7} name="impact" volume={0.3} /> : null}
+      {boom ? <Sfx at={at} name="impact" volume={0.32} /> : null}
     </>
   );
 };
@@ -153,7 +153,7 @@ export const CircleDraw: React.FC<{ at: number; top: number; w: number; h: numbe
           transform={`rotate(-6 ${width / 2} ${height * top})`}
         />
       </svg>
-      <Sfx at={at} name="draw" volume={0.35} />
+      <Sfx at={at} name="draw" volume={0.15} />
     </>
   );
 };
@@ -280,7 +280,7 @@ export const Chip: React.FC<{ text: string; at: number; x: number; y: number; ro
       >
         {text}
       </div>
-      <Sfx at={at} name="pop2" volume={0.4} />
+      <Sfx at={at} name="pop2" volume={0.18} />
     </>
   );
 };
@@ -318,7 +318,7 @@ export const Stamp: React.FC<{ text: string; at: number; x: number; y: number; s
       >
         {text}
       </div>
-      <Sfx at={at} name="impact" volume={0.5} />
+      <Sfx at={at} name="impact" volume={0.4} />
     </>
   );
 };
@@ -382,8 +382,7 @@ export const DotSplit: React.FC<{ at: number; splitAt: number; ratio?: number }>
       <div style={{ position: "absolute", left: width * 0.72, width: cell * 6 - 140, top: height * 0.7, textAlign: "left", fontFamily: mont, fontWeight: 900, fontStyle: "italic", fontSize: 64, color: ref.yellow, opacity: lab }}>
         UOMO
       </div>
-      <Sfx at={at} name="typing" volume={0.3} />
-      <Sfx at={splitAt} name="whoosh_down" volume={0.35} />
+      <Sfx at={splitAt} name="whoosh_down" volume={0.16} />
     </>
   );
 };
@@ -407,7 +406,7 @@ export const Clock: React.FC<{ at: number; top: number; size?: number }> = ({ at
         <line x1={0} y1={0} x2={0} y2={-72} stroke={ref.yellow} strokeWidth={4} strokeLinecap="round" transform={`rotate(${turns * 360})`} />
         <circle r={7} fill="#fff" />
       </svg>
-      <Sfx at={at} name="tick" volume={0.4 * (speed > 0 ? 1 : 0)} />
+      <Sfx at={at} name="tick" volume={0.22 * (speed > 0 ? 1 : 0)} />
     </>
   );
 };
@@ -437,23 +436,26 @@ export const Puzzle: React.FC<{ at: number; top: number }> = ({ at, top }) => {
           strokeWidth={3}
         />
       </svg>
-      <Sfx at={at + 6} name="pop3" volume={0.45} />
+      <Sfx at={at + 6} name="pop3" volume={0.2} />
     </>
   );
 };
 
 /** B-roll with a big decoding label on the lower third (Pulp cutaway). */
-export const BrollWord: React.FC<{ src: string; word: string; at?: number; color?: string; startFrom?: number }> = ({
-  src,
-  word,
-  at = 2,
-  color = ref.yellow,
-  startFrom = 0,
-}) => (
+export const BrollWord: React.FC<{
+  src: string;
+  word: string;
+  at?: number;
+  color?: string;
+  startFrom?: number;
+  lead?: { w: string; at: number }[];
+  boom?: boolean;
+}> = ({ src, word, at = 2, color = ref.yellow, startFrom = 0, lead, boom }) => (
   <AbsoluteFill>
     <Broll src={src} startFrom={startFrom} />
-    <AbsoluteFill style={{ background: "linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.55) 85%)" }} />
-    <Big text={word} at={at} top={0.74} color={color} />
+    <AbsoluteFill style={{ background: "linear-gradient(180deg, transparent 45%, rgba(0,0,0,0.6) 85%)" }} />
+    {lead ? <Lead words={lead} top={0.63} /> : null}
+    <Big text={word} at={at} top={0.74} color={color} boom={boom} />
   </AbsoluteFill>
 );
 
@@ -529,8 +531,7 @@ export const Studies: React.FC<{ items: Study[]; label?: React.ReactNode }> = ({
         })}
         {items.map((it, i) => (
           <React.Fragment key={`s${i}`}>
-            <Sfx at={it.at} name="whoosh" volume={0.3} />
-            <Sfx at={it.at + 8} name="draw" volume={0.22} />
+            <Sfx at={it.at} name="whoosh" volume={0.14} />
           </React.Fragment>
         ))}
       </AbsoluteFill>
