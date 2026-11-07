@@ -25,7 +25,7 @@ const wt = (text: string, after = 0) => {
   return hit.s;
 };
 const at = (t0: number, w: string, after = t0 - 0.3) => sec(wt(w, after) - t0);
-const VOICE_END = 52.68;
+const VOICE_END = 52.8;
 const END = VOICE_END + 1.7;
 export const TIR_FPS = FPS;
 export const TIR_DURATION = sec(END);
