@@ -1,3 +1,4 @@
+import { Img, staticFile } from "remotion";
 import { pinkColors as colors } from "../EleonoraPiccolo/brand";
 import {
   Accent,
@@ -24,11 +25,10 @@ const Point: React.FC<{ theme: typeof LIGHT; title: string; text: string }> = ({
 
 const SLIDES: SlideDef[] = [
   {
-    // Background matches the photo's own backdrop so its faded edges vanish.
-    theme: { ...LIGHT, bg: "linear-gradient(#CDB8A3, #BEA386)" },
+    // The photo's own beige backdrop, so the fade behind the text is seamless.
+    theme: { ...LIGHT, bg: "#BEA386" },
     photo: "acog-calla.jpg",
     bare: true,
-    photoWidth: 640,
     render: (t) => (
       <>
         <Title theme={t} size={76}>
@@ -36,6 +36,30 @@ const SLIDES: SlideDef[] = [
         </Title>
         <Body size={38}>
           Vampate, sonno e umore: cosa raccomandano gli esperti.
+        </Body>
+      </>
+    ),
+  },
+  {
+    theme: LIGHT,
+    render: (t) => (
+      <>
+        <Title theme={t}>
+          Lo <Accent theme={t}>studio</Accent>
+        </Title>
+        <Img
+          src={staticFile("img/acog-studio.png")}
+          style={{
+            marginTop: 50,
+            width: "100%",
+            background: "#fff",
+            padding: 24,
+            borderRadius: 18,
+            boxShadow: "0 12px 40px rgba(110,63,99,0.18)",
+          }}
+        />
+        <Body size={32}>
+          Pubblicato su <b>Obstetrics &amp; Gynecology</b>, novembre 2026.
         </Body>
       </>
     ),
@@ -179,12 +203,7 @@ export const ACOG_SLIDE_COUNT = SLIDES.length;
 export const LineeGuidaACOG: React.FC<{ index: number }> = ({ index }) => {
   const slide = SLIDES[index];
   return (
-    <Frame
-      theme={slide.theme}
-      photo={slide.photo}
-      bare={slide.bare}
-      photoWidth={slide.photoWidth}
-    >
+    <Frame theme={slide.theme} photo={slide.photo} bare={slide.bare}>
       {slide.render(slide.theme)}
     </Frame>
   );

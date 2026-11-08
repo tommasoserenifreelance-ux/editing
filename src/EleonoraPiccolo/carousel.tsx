@@ -5,9 +5,6 @@ import { inter, pinkColors as colors, Signature } from "./brand";
 export const SLIDE_WIDTH = 1080;
 export const SLIDE_HEIGHT = 1350;
 
-const FADE_EDGES =
-  "linear-gradient(to right, transparent, black 25%, black 75%, transparent), linear-gradient(black 85%, transparent)";
-
 export type Theme = { bg: string; title: string; text: string; accent: string };
 
 export const LIGHT: Theme = {
@@ -24,16 +21,15 @@ export const PHOTO: Theme = {
   accent: "#F6C1CC",
 };
 
-// `bare` shows the photo without overlay, at `photoWidth` px wide from the top
-// with its edges faded into the theme background, and the text at the bottom.
-// Meant for photos of a subject on a plain background.
+// `bare` shows the photo full-bleed without the dark overlay, anchored at the
+// top and fading into the theme background behind the text at the bottom.
+// Meant for light photos of a subject on a plain backdrop.
 export const Frame: React.FC<{
   theme: Theme;
   photo?: string;
   bare?: boolean;
-  photoWidth?: number;
   children: React.ReactNode;
-}> = ({ theme, photo, bare, photoWidth = SLIDE_WIDTH, children }) => (
+}> = ({ theme, photo, bare, children }) => (
   <AbsoluteFill
     style={{
       background: theme.bg,
@@ -48,33 +44,22 @@ export const Frame: React.FC<{
       <>
         <Img
           src={staticFile(`img/${photo}`)}
-          style={
-            bare
-              ? {
-                  position: "absolute",
-                  top: 0,
-                  left: (SLIDE_WIDTH - photoWidth) / 2,
-                  width: photoWidth,
-                  WebkitMaskImage: FADE_EDGES,
-                  WebkitMaskComposite: "source-in",
-                }
-              : {
-                  position: "absolute",
-                  inset: 0,
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }
-          }
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: bare ? "top" : "center",
+          }}
         />
-        {bare ? null : (
-          <AbsoluteFill
-            style={{
-              background:
-                "linear-gradient(rgba(40,20,35,0.35), rgba(40,20,35,0.6))",
-            }}
-          />
-        )}
+        <AbsoluteFill
+          style={{
+            background: bare
+              ? `linear-gradient(transparent 50%, ${theme.bg} 80%)`
+              : "linear-gradient(rgba(40,20,35,0.35), rgba(40,20,35,0.6))",
+          }}
+        />
       </>
     ) : null}
     <div style={{ position: "relative" }}>{children}</div>
@@ -138,6 +123,5 @@ export type SlideDef = {
   theme: Theme;
   photo?: string;
   bare?: boolean;
-  photoWidth?: number;
   render: (t: Theme) => React.ReactNode;
 };
