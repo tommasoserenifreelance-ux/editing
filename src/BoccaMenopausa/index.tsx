@@ -1,121 +1,16 @@
-import { AbsoluteFill, Img, staticFile } from "remotion";
+import { pinkColors as colors } from "../EleonoraPiccolo/brand";
 import {
-  inter,
-  pinkColors as colors,
-  Signature,
-} from "../EleonoraPiccolo/brand";
+  Accent,
+  Body,
+  Frame,
+  LIGHT,
+  PHOTO,
+  SlideDef,
+  Tag,
+  Title,
+} from "../EleonoraPiccolo/carousel";
 
-// Instagram carousel, 4:5.
-export const SLIDE_WIDTH = 1080;
-export const SLIDE_HEIGHT = 1350;
-
-type Theme = { bg: string; title: string; text: string; accent: string };
-
-const LIGHT: Theme = {
-  bg: colors.pink,
-  title: colors.plum,
-  text: colors.navy,
-  accent: colors.rose,
-};
-// Text over a darkened photo.
-const PHOTO: Theme = {
-  bg: colors.plum,
-  title: "#fff",
-  text: "#fff",
-  accent: "#F6C1CC",
-};
-
-const Frame: React.FC<{
-  theme: Theme;
-  photo?: string;
-  children: React.ReactNode;
-}> = ({ theme, photo, children }) => (
-  <AbsoluteFill
-    style={{
-      backgroundColor: theme.bg,
-      fontFamily: inter,
-      color: theme.text,
-      justifyContent: "center",
-      padding: "0 100px 80px",
-      textShadow: photo ? "0 2px 14px rgba(0,0,0,0.45)" : undefined,
-    }}
-  >
-    {photo ? (
-      <>
-        <Img
-          src={staticFile(`img/${photo}`)}
-          style={{
-            position: "absolute",
-            inset: 0,
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-          }}
-        />
-        <AbsoluteFill
-          style={{
-            background:
-              "linear-gradient(rgba(40,20,35,0.35), rgba(40,20,35,0.6))",
-          }}
-        />
-      </>
-    ) : null}
-    <div style={{ position: "relative" }}>{children}</div>
-    <Signature color={theme.title} fontFamily={inter} bottom={70} />
-  </AbsoluteFill>
-);
-
-const Title: React.FC<{
-  theme: Theme;
-  size?: number;
-  children: React.ReactNode;
-}> = ({ theme, size = 78, children }) => (
-  <div
-    style={{
-      fontSize: size,
-      fontWeight: 700,
-      lineHeight: 1.08,
-      letterSpacing: -1.5,
-      textTransform: "uppercase",
-      color: theme.title,
-    }}
-  >
-    {children}
-  </div>
-);
-
-const Body: React.FC<{ size?: number; children: React.ReactNode }> = ({
-  size = 40,
-  children,
-}) => (
-  <div
-    style={{ fontSize: size, fontWeight: 400, lineHeight: 1.45, marginTop: 44 }}
-  >
-    {children}
-  </div>
-);
-
-const Accent: React.FC<{ theme: Theme; children: React.ReactNode }> = ({
-  theme,
-  children,
-}) => <span style={{ color: theme.accent }}>{children}</span>;
-
-const Tag: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div
-    style={{
-      display: "inline-block",
-      background: colors.plum,
-      color: colors.pink,
-      fontSize: 34,
-      fontWeight: 600,
-      padding: "16px 28px",
-      borderRadius: 14,
-      margin: "0 14px 18px 0",
-    }}
-  >
-    {children}
-  </div>
-);
+export { SLIDE_HEIGHT, SLIDE_WIDTH } from "../EleonoraPiccolo/carousel";
 
 const SYMPTOMS: [string, string][] = [
   [
@@ -136,11 +31,7 @@ const SYMPTOMS: [string, string][] = [
   ],
 ];
 
-const SLIDES: {
-  theme: Theme;
-  photo?: string;
-  render: (t: Theme) => React.ReactNode;
-}[] = [
+const SLIDES: SlideDef[] = [
   {
     theme: PHOTO,
     photo: "bocca-sorriso.jpg",

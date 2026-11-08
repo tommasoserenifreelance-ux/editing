@@ -7,6 +7,7 @@ import {
 } from "./BoccaMenopausa";
 import { CIBO_DURATION, CIBO_FPS, CiboMedicina } from "./CiboMedicina";
 import { HelloWorld } from "./HelloWorld";
+import { ACOG_SLIDE_COUNT, LineeGuidaACOG } from "./LineeGuidaACOG";
 import {
   MENTALI_DURATION,
   MENTALI_FPS,
@@ -119,6 +120,18 @@ export const RemotionRoot: React.FC = () => {
             key={i}
             id={`BoccaMenopausa-${i + 1}`}
             component={BoccaMenopausa}
+            width={SLIDE_WIDTH}
+            height={SLIDE_HEIGHT}
+            defaultProps={{ index: i }}
+          />
+        ))}
+      </Folder>
+      <Folder name="LineeGuidaACOG">
+        {Array.from({ length: ACOG_SLIDE_COUNT }, (_, i) => (
+          <Still
+            key={i}
+            id={`LineeGuidaACOG-${i + 1}`}
+            component={LineeGuidaACOG}
             width={SLIDE_WIDTH}
             height={SLIDE_HEIGHT}
             defaultProps={{ index: i }}
