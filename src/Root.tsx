@@ -1,5 +1,6 @@
 import { Composition, Folder } from "remotion";
 import { ClassReel, REEL_DURATION, REEL_FPS } from "./ClassReel";
+import { DistrettoWall, WALL_DURATION, WALL_FPS } from "./DistrettoWall";
 import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
@@ -80,6 +81,24 @@ export const RemotionRoot: React.FC = () => {
         fps={REEL_FPS}
         width={1080}
         height={1920}
+      />
+      <Composition
+        id="DistrettoWall"
+        component={DistrettoWall}
+        durationInFrames={WALL_DURATION}
+        fps={WALL_FPS}
+        width={1080}
+        height={1920}
+        defaultProps={{ title: "DISTRETTO", subtitle: "The night in pictures" }}
+      />
+      <Composition
+        id="DistrettoWall-16x9"
+        component={DistrettoWall}
+        durationInFrames={WALL_DURATION}
+        fps={WALL_FPS}
+        width={1920}
+        height={1080}
+        defaultProps={{ title: "DISTRETTO", subtitle: "The night in pictures" }}
       />
     </>
   );
