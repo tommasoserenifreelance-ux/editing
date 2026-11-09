@@ -2,7 +2,7 @@ import { SlideData } from "../Carosello/Slides";
 
 // Vibration plate carousel, slides 2-8 (after the video cover in ./index.tsx).
 // Content from the guidelines by physiotherapist Stella Maris Glowinski
-// ("Pedana vibrante – Linee guida per pazienti con lipedema").
+// ("Pedana vibrante – Linee guida"), without the lipedema framing.
 // Rendered with the pasta carousel's <Slide> layout.
 
 const SOURCE = "Linee guida di Stella Maris Glowinski, fisioterapista";
@@ -11,7 +11,7 @@ export const PEDANA_SLIDES: SlideData[] = [
   {
     photo: "pedana-17.jpg",
     title: "A cosa serve",
-    body: "Può essere un valido supporto anche in pre e post menopausa o con il lipedema: favorisce la mobilità articolare, stimola la circolazione e riduce la sensazione di gambe pesanti.",
+    body: "Un valido supporto per il benessere di tutti i giorni, anche in pre e post menopausa: favorisce la mobilità articolare, stimola la circolazione e riduce la sensazione di gambe pesanti.",
     source: SOURCE,
   },
   {
@@ -47,7 +47,7 @@ export const PEDANA_SLIDES: SlideData[] = [
   {
     photo: "pedana-22.webp",
     title: "Quando evitarla",
-    body: "Interventi recenti, ernie o patologie della colonna, tumori, flebite, trombi o problemi venosi gravi. Con lipedema, linfedema o patologie croniche confrontati sempre con un professionista sanitario.",
+    body: "Interventi recenti, ernie o patologie della colonna, tumori, flebite, trombi o problemi venosi gravi. In caso di patologie croniche confrontati sempre con un professionista sanitario.",
     source: `${SOURCE} · Salva il post e condividilo`,
   },
 ];
