@@ -47,7 +47,7 @@ export const PEDANA_SLIDES: SlideData[] = [
   {
     photo: "pedana-22.webp",
     title: "Quando evitarla",
-    body: "Interventi recenti, ernie o patologie della colonna, tumori, flebite, trombi o problemi venosi gravi. In caso di patologie croniche confrontati sempre con un professionista sanitario.",
+    body: "Interventi recenti, ernie o patologie della colonna, tumori, flebite, trombi o problemi venosi gravi, problemi agli occhi (distacco di retina o del vitreo), impianti dentali e malocclusione. In caso di patologie croniche confrontati sempre con un professionista.",
     source: `${SOURCE} · Salva il post e condividilo`,
   },
 ];
