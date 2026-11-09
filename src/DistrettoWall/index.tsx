@@ -7,17 +7,16 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { sans } from "../PilatesReformer/theme";
 
 export const WALL_FPS = 30;
 export const WALL_DURATION = 300; // 10 s
 
-const PHOTO_COUNT = 43;
-// Night shots (0-27) and photowall shots (28-42) interleaved so the white
+const PHOTO_COUNT = 46;
+// Night shots (0-27, 43-45) and photowall shots (28-42) interleaved so the white
 // backdrops are spread over the wall instead of clustering together.
 const ORDER = (() => {
-  const night = Array.from({ length: 28 }, (_, i) => i);
-  const wall = Array.from({ length: PHOTO_COUNT - 28 }, (_, i) => 28 + i);
+  const night = [...Array.from({ length: 28 }, (_, i) => i), 43, 44, 45];
+  const wall = Array.from({ length: 15 }, (_, i) => 28 + i);
   const out: number[] = [];
   while (night.length || wall.length) {
     if (night.length) out.push(night.shift()!);
@@ -38,8 +37,6 @@ const PER_COL = 6;
 const LOOP = PER_COL * PITCH;
 
 const ease = Easing.bezier(0.22, 1, 0.36, 1);
-
-type Props = { title: string; subtitle: string };
 
 const Column: React.FC<{ col: number; cols: number }> = ({ col, cols }) => {
   const frame = useCurrentFrame();
@@ -88,29 +85,9 @@ const Column: React.FC<{ col: number; cols: number }> = ({ col, cols }) => {
   );
 };
 
-const Reveal: React.FC<{ children: React.ReactNode; delay: number }> = ({
-  children,
-  delay,
-}) => {
-  const frame = useCurrentFrame();
-  const t = interpolate(frame, [delay, delay + 22], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: ease,
-  });
-  return (
-    <div style={{ overflow: "hidden" }}>
-      <div style={{ transform: `translateY(${(1 - t) * 110}%)` }}>
-        {children}
-      </div>
-    </div>
-  );
-};
-
-export const DistrettoWall: React.FC<Props> = ({ title, subtitle }) => {
+export const DistrettoWall: React.FC = () => {
   const frame = useCurrentFrame();
   const { width, height, durationInFrames } = useVideoConfig();
-  const fontFamily = sans;
   const vertical = height > width;
 
   const cols = 13;
@@ -134,9 +111,6 @@ export const DistrettoWall: React.FC<Props> = ({ title, subtitle }) => {
     { extrapolateLeft: "clamp" },
   );
 
-  const titleSize = vertical ? 132 : 120;
-  const pad = vertical ? 70 : 90;
-
   return (
     <AbsoluteFill style={{ background: "#0d0816", opacity: fadeIn * fadeOut }}>
       <AbsoluteFill style={{ perspective: 1800, overflow: "hidden" }}>
@@ -157,67 +131,15 @@ export const DistrettoWall: React.FC<Props> = ({ title, subtitle }) => {
         </div>
       </AbsoluteFill>
 
-      {/* purple tint + bottom gradient for legibility */}
+      {/* purple tint + soft vignette */}
       <AbsoluteFill style={{ background: "rgba(60, 25, 120, 0.42)", mixBlendMode: "multiply" }} />
       <AbsoluteFill
         style={{
           background:
-            "linear-gradient(180deg, rgba(13,8,22,0.55) 0%, rgba(13,8,22,0) 22%, rgba(13,8,22,0) 45%, rgba(13,8,22,0.92) 100%)",
+            "linear-gradient(180deg, rgba(13,8,22,0.5) 0%, rgba(13,8,22,0) 25%, rgba(13,8,22,0) 70%, rgba(13,8,22,0.6) 100%)",
         }}
       />
 
-      <AbsoluteFill
-        style={{
-          justifyContent: "flex-end",
-          padding: pad,
-          paddingBottom: vertical ? 260 : 110,
-          color: "white",
-          fontFamily,
-        }}
-      >
-        <Reveal delay={14}>
-          <div style={{ fontSize: 30, fontWeight: 500, letterSpacing: 8, opacity: 0.85, marginBottom: 18 }}>
-            {subtitle.toUpperCase()}
-          </div>
-        </Reveal>
-        <Reveal delay={20}>
-          <div
-            style={{
-              fontSize: titleSize,
-              fontWeight: 700,
-              lineHeight: 0.95,
-              letterSpacing: -2,
-              textShadow: "0 10px 40px rgba(0,0,0,0.5)",
-            }}
-          >
-            {title}
-          </div>
-        </Reveal>
-        <Reveal delay={30}>
-          <div
-            style={{
-              marginTop: 34,
-              display: "flex",
-              gap: 18,
-              fontSize: 28,
-              fontWeight: 500,
-            }}
-          >
-            <span style={{ background: "#7b3cf0", padding: "14px 34px", borderRadius: 999 }}>
-              Gallery
-            </span>
-            <span
-              style={{
-                border: "2px solid rgba(255,255,255,0.5)",
-                padding: "12px 32px",
-                borderRadius: 999,
-              }}
-            >
-              Contatti
-            </span>
-          </div>
-        </Reveal>
-      </AbsoluteFill>
     </AbsoluteFill>
   );
 };

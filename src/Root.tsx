@@ -89,7 +89,6 @@ export const RemotionRoot: React.FC = () => {
         fps={WALL_FPS}
         width={1080}
         height={1920}
-        defaultProps={{ title: "DISTRETTO", subtitle: "The night in pictures" }}
       />
       <Composition
         id="DistrettoWall-16x9"
@@ -98,7 +97,6 @@ export const RemotionRoot: React.FC = () => {
         fps={WALL_FPS}
         width={1920}
         height={1080}
-        defaultProps={{ title: "DISTRETTO", subtitle: "The night in pictures" }}
       />
     </>
   );
