@@ -45,6 +45,7 @@ export const PEDANA_SLIDES: SlideData[] = [
     source: SOURCE,
   },
   {
+    photo: "pedana-22.webp",
     title: "Quando evitarla",
     body: "Interventi recenti, ernie o patologie della colonna, tumori, flebite, trombi o problemi venosi gravi. Con lipedema, linfedema o patologie croniche confrontati sempre con un professionista sanitario.",
     source: `${SOURCE} · Salva il post e condividilo`,
