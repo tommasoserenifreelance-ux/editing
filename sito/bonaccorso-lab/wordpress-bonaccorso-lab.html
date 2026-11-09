@@ -1,0 +1,149 @@
+<!--
+  BONACCORSO LAB – codice per WordPress / Elementor
+  1. Carica in Media le due immagini: bonaccorso-lab-navy.svg (o il PNG) e prelievo.jpg
+  2. Sostituisci URL_LOGO_BONACCORSO_LAB e URL_FOTO_PROVETTA con i loro indirizzi
+  3. In una nuova pagina (template a larghezza piena), aggiungi un widget "HTML" e incolla tutto questo codice
+-->
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+.bl-page { --navy:#3a5881; --slate:#7f97ba; --mid:#a9bcd4; --powder:#e5edf8; --testo:#3a5881; --bianco:#fff;
+  font-family:"Jost","Helvetica Neue",Arial,sans-serif; color:var(--testo); font-size:16px; line-height:1.6; }
+.bl-page * { box-sizing:border-box; margin:0; padding:0; }
+.bl-page img { display:block; max-width:100%; }
+.bl-page a { color:inherit; }
+.bl-page h1, .bl-page h2, .bl-page h3, .bl-page p, .bl-page li, .bl-page a, .bl-page b, .bl-page strong { font-family:inherit; }
+.bl-page h1, .bl-page h2, .bl-page h3 { margin:0; letter-spacing:normal; }
+.bl-page * { box-sizing: border-box; margin: 0; padding: 0; }
+.bl-page img { display: block; max-width: 100%; }
+.bl-page a { color: inherit; }
+.bl-page .wrap { max-width: 1440px; margin: 0 auto; padding: 0 48px; }
+.bl-page h1, .bl-page h2 { font-weight: 600; color: var(--slate); text-transform: uppercase; line-height: 1.15; }
+.bl-page h2 { font-size: 26px; }
+.bl-page section { padding: 70px 0; }
+.bl-page /* intestazione del sito (anteprima) */
+  .site-header { border-bottom: 2px solid var(--mid); }
+.bl-page /* hero come le pagine servizio */
+  .hero { display: grid; grid-template-columns: 1fr 1fr; min-height: 640px; }
+.bl-page .hero .txt { background: var(--powder); padding: 80px 64px 64px 48px; }
+.bl-page .hero .badge { width: 340px; margin-bottom: 34px; }
+.bl-page .hero h1 { font-size: 38px; }
+.bl-page .hero .lead { margin-top: 26px; font-size: 20px; line-height: 1.55; max-width: 640px; }
+.bl-page .hero .foto img { width: 100%; height: 100%; object-fit: cover; }
+.bl-page .btn { display: inline-block; margin-top: 34px; background: var(--slate); color: var(--bianco); padding: 12px 22px; font-size: 14px; text-transform: uppercase; letter-spacing: .04em; text-decoration: none; border-radius: 3px; }
+.bl-page .btn:hover { background: var(--navy); }
+.bl-page /* liste e testi */
+  .lista p.intro { font-size: 20px; margin-top: 18px; }
+.bl-page .lista ul { list-style: none; margin-top: 20px; columns: 2; column-gap: 60px; max-width: 980px; }
+.bl-page .lista li { font-size: 19px; padding: 9px 0; break-inside: avoid; }
+.bl-page .lista li::before { content: "- "; }
+.bl-page .blocchi .blocco + .blocco { margin-top: 56px; }
+.bl-page .blocco p { margin-top: 14px; font-size: 16px; max-width: 1360px; }
+.bl-page .blocco strong { font-weight: 500; }
+.bl-page /* esami in quattro riquadri */
+  .esami { background: var(--powder); }
+.bl-page .esami .grid { margin-top: 30px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.bl-page .esame { background: var(--bianco); padding: 28px 24px; }
+.bl-page .esame h3 { font-weight: 600; color: var(--navy); text-transform: uppercase; font-size: 16px; line-height: 1.3; }
+.bl-page .esame p { margin-top: 10px; font-size: 15px; }
+.bl-page /* passi */
+  .passi { margin-top: 26px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+.bl-page .passo b { display: inline-flex; width: 34px; height: 34px; border-radius: 50%; background: var(--slate); color: var(--bianco); align-items: center; justify-content: center; font-weight: 500; }
+.bl-page .passo h3 { margin-top: 12px; font-weight: 600; text-transform: uppercase; font-size: 16px; color: var(--navy); }
+.bl-page .passo p { margin-top: 6px; font-size: 15px; }
+.bl-page /* fascia CTA come sul sito */
+  .cta { background: var(--powder); padding: 56px 0; }
+.bl-page .cta .wrap { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
+.bl-page .cta p { color: var(--slate); font-size: 20px; line-height: 1.4; max-width: 300px; }
+.bl-page .cta .btn { margin-top: 0; }
+.bl-page /* footer del sito (anteprima) */
+  .site-footer { background: var(--navy); color: var(--bianco); padding: 50px 0; }
+@media (max-width: 960px) {
+  .bl-page .wrap { padding: 0 20px; }
+  .bl-page .hero { grid-template-columns: 1fr; min-height: 0; }
+  .bl-page .hero .txt { padding: 48px 20px; }
+  .bl-page .hero .badge { width: 260px; }
+  .bl-page .hero h1 { font-size: 30px; }
+  .bl-page .hero .lead { font-size: 18px; }
+  .bl-page .hero .foto { height: 320px; }
+  .bl-page .lista ul { columns: 1; }
+  .bl-page .esami .grid { grid-template-columns: 1fr 1fr; }
+  .bl-page .passi { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  .bl-page .esami .grid { grid-template-columns: 1fr; }
+  .bl-page section { padding: 52px 0; }
+}
+</style>
+<div class="bl-page">
+<section class="hero" style="padding:0">
+    <div class="txt">
+      <img class="badge" src="URL_LOGO_BONACCORSO_LAB" alt="Bonaccorso Lab – centro prelievi per gli esami della longevità">
+      <h1>Centro prelievi</h1>
+      <p class="lead">Bonaccorso Lab è il centro prelievi dello Studio Bonaccorso per gli esami della longevità. Puoi fare i prelievi per i tuoi esami del sangue direttamente in studio, nello stesso luogo in cui segui il tuo percorso di cura, e leggere i risultati insieme al medico.</p>
+      <a class="btn" href="https://studiobonaccorso.it/prenota-visita">Prenota il prelievo</a>
+    </div>
+    <div class="foto"><img src="URL_FOTO_PROVETTA" alt="Provetta per esami del sangue"></div>
+  </section>
+
+  <section class="lista">
+    <div class="wrap">
+      <h2>Gli esami</h2>
+      <p class="intro">Presso Bonaccorso Lab puoi effettuare i prelievi per:</p>
+      <ul>
+        <li>Esami del sangue di routine</li>
+        <li>Check-up completi</li>
+        <li>Profilo ormonale e tiroideo</li>
+        <li>Esami della longevità</li>
+        <li>Citochine infiammatorie</li>
+        <li>Marcatori dell'infiammazione cronica</li>
+        <li>Valutazione cardiovascolare</li>
+        <li>Stress ossidativo</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="esami">
+    <div class="wrap">
+      <h2>Le aree di indagine</h2>
+      <div class="grid">
+        <div class="esame"><h3>Prelievi per esami del sangue</h3><p>Esami ematochimici e check-up completi: ci dicono come stanno funzionando gli organi principali, il metabolismo e il sistema ormonale.</p></div>
+        <div class="esame"><h3>Prelievi della longevità</h3><p>Pannelli avanzati sui marcatori dell'invecchiamento cellulare, organico, cerebrale, muscolo-scheletrico e cutaneo.</p></div>
+        <div class="esame"><h3>Infiammazione e citochine</h3><p>Il dosaggio delle citochine infiammatorie permette di individuare un'infiammazione cronica anche quando non dà ancora sintomi.</p></div>
+        <div class="esame"><h3>Valutazione cardiovascolare</h3><p>Profilo lipidico avanzato e marcatori del rischio cardiovascolare, per un quadro molto più preciso del solo colesterolo.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="blocchi">
+    <div class="wrap">
+      <div class="blocco">
+        <h2>Perché gli esami del sangue sono importanti</h2>
+        <p>In medicina funzionale gli esami del sangue sono il punto di partenza. Il sintomo non è un problema isolato, ma un segnale: per capirne le cause dobbiamo guardare a come funziona l'organismo nel suo insieme.</p>
+        <p>Molti squilibri, come un'infiammazione cronica di basso grado, un'alterazione del metabolismo o un aumento del rischio cardiovascolare, possono restare silenziosi per anni. Misurarli per tempo ci permette di intervenire prima, con strategie mirate di prevenzione, nutrizione e terapia.</p>
+      </div>
+      <div class="blocco">
+        <h2>Gli esami della longevità</h2>
+        <p>La longevità non significa solo vivere più a lungo, ma vivere più a lungo in salute. Gli esami della longevità valutano i marcatori legati ai processi di invecchiamento e ci aiutano a capire a che punto è il tuo organismo e quali aree hanno bisogno di attenzione, per impostare un piano di prevenzione personalizzato.</p>
+        <p>L'infiammazione è una difesa naturale dell'organismo; quando però diventa cronica e silenziosa può contribuire nel tempo all'invecchiamento e a molti disturbi. Le citochine sono le molecole con cui le cellule del sistema immunitario comunicano tra loro: dosarle, insieme agli altri marcatori dell'infiammazione, permette di individuare uno stato infiammatorio anche quando non dà ancora sintomi evidenti.</p>
+      </div>
+      <div class="blocco">
+        <h2>Come funziona</h2>
+        <div class="passi">
+          <div class="passo"><b>1</b><h3>Prenota</h3><p>Prenota il prelievo online o per telefono: ti spieghiamo come prepararti, ad esempio se è richiesto il digiuno.</p></div>
+          <div class="passo"><b>2</b><h3>Vieni in studio</h3><p>Il prelievo si svolge in studio, a Milano o a Roma, in un ambiente riservato e accogliente.</p></div>
+          <div class="passo"><b>3</b><h3>Leggi i risultati con il medico</h3><p>Il medico ti spiega i risultati e li integra nel tuo percorso. Puoi anche programmare il prelievo prima della visita.</p></div>
+        </div>
+      </div>
+      <div class="blocco">
+        <p>Presso lo Studio Bonaccorso gli esami da eseguire vengono sempre scelti dal medico in base alla storia clinica e agli obiettivi di ciascun paziente. Con Bonaccorso Lab prelievo, risultato e lettura insieme al medico si svolgono in un unico luogo, per costruire passo dopo passo un percorso di prevenzione davvero su misura.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="wrap">
+      <p>Studio Bonaccorso è a disposizione per rispondere a tutte le domande.</p>
+      <a class="btn" href="https://studiobonaccorso.it/prenota-visita">Prenota il prelievo</a>
+    </div>
+  </section>
+</div>
