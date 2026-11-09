@@ -33,6 +33,12 @@ export const PEDANA_SLIDES: SlideData[] = [
     source: SOURCE,
   },
   {
+    video: "pedana/video2_h264.mp4",
+    title: "4. Da sdraiata",
+    body: "Polpacci sulla pedana, programma 1 per 10 minuti. Puoi aggiungere flessione ed estensione dei piedi, rotazioni del bacino e respirazione diaframmatica.",
+    source: SOURCE,
+  },
+  {
     photo: "pedana-20.webp",
     title: "Quando aumentare la velocità",
     body: "Solo se non senti dolore e hai preso confidenza. Un leggero formicolio è normale: indica che la circolazione si attiva. Dolore o instabilità? Fermati subito.",
@@ -40,13 +46,7 @@ export const PEDANA_SLIDES: SlideData[] = [
   },
   {
     title: "Quando evitarla",
-    body: "Interventi recenti, ernie o patologie della colonna, tumori, flebite, trombi o problemi venosi gravi. Evita sempre le vibrazioni su occhi, cervicale, denti e mascelle.",
-    source: SOURCE,
-  },
-  {
-    title: "Gradualità e ascolto",
-    body: "L'uso deve essere graduale e rispettoso delle tue sensazioni. Con lipedema, linfedema o patologie croniche confrontati sempre con un professionista sanitario.",
-    source:
-      "Salva il post e condividilo con chi vuole provare la pedana vibrante",
+    body: "Interventi recenti, ernie o patologie della colonna, tumori, flebite, trombi o problemi venosi gravi. Con lipedema, linfedema o patologie croniche confrontati sempre con un professionista sanitario.",
+    source: `${SOURCE} · Salva il post e condividilo`,
   },
 ];

@@ -1,4 +1,4 @@
-import { AbsoluteFill, Img, staticFile } from "remotion";
+import { AbsoluteFill, Img, OffthreadVideo, staticFile } from "remotion";
 import { sans, serif } from "../PilatesReformer/theme";
 
 // Carousel slides 2-8 (4:5), after the video cover in ./index.tsx.
@@ -12,6 +12,7 @@ export type SlideData = {
   body: string;
   source?: string;
   study?: string; // cropped PubMed header in public/studi/
+  video?: string; // path in public/, shown instead of a photo
 };
 
 export const SLIDES: SlideData[] = [
@@ -69,6 +70,7 @@ export const Slide: React.FC<SlideData> = ({
   body,
   source,
   study,
+  video,
 }) => (
   <AbsoluteFill
     style={{
@@ -77,6 +79,12 @@ export const Slide: React.FC<SlideData> = ({
       color: "white",
     }}
   >
+    {video ? (
+      <OffthreadVideo
+        src={staticFile(video)}
+        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+      />
+    ) : null}
     {photo ? (
       <Img
         src={staticFile(`carosello-img/${photo}`)}

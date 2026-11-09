@@ -1,6 +1,11 @@
 import { Composition, Folder, Still } from "remotion";
 import { Slide, SLIDES } from "./Carosello/Slides";
 import { PEDANA_SLIDES } from "./Pedana/Slides";
+import {
+  PedanaVideoSlide,
+  VIDEO_SLIDE_DURATION,
+  VIDEO_SLIDE_FPS,
+} from "./Pedana/VideoSlide";
 import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
@@ -104,16 +109,28 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1350}
       />
-      {PEDANA_SLIDES.map((slide, i) => (
-        <Still
-          key={`pedana-${i}`}
-          id={`PedanaSlide${i + 2}`}
-          component={Slide}
-          width={1080}
-          height={1350}
-          defaultProps={slide}
-        />
-      ))}
+      {PEDANA_SLIDES.map((slide, i) =>
+        slide.video ? (
+          <Composition
+            key={`pedana-${i}`}
+            id={`PedanaSlide${i + 2}`}
+            component={PedanaVideoSlide}
+            durationInFrames={VIDEO_SLIDE_DURATION}
+            fps={VIDEO_SLIDE_FPS}
+            width={1080}
+            height={1350}
+          />
+        ) : (
+          <Still
+            key={`pedana-${i}`}
+            id={`PedanaSlide${i + 2}`}
+            component={Slide}
+            width={1080}
+            height={1350}
+            defaultProps={slide}
+          />
+        ),
+      )}
       <Composition
         id="CaroselloSlide1"
         component={Carosello}
