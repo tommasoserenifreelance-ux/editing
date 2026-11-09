@@ -3,347 +3,211 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bonaccorso Lab – Centro prelievi per gli esami della longevità</title>
-<meta name="description" content="Bonaccorso Lab: prelievi per esami del sangue, esami della longevità, infiammazione e valutazione cardiovascolare direttamente in studio, a Milano e Roma.">
+<title>Bonaccorso Lab – Centro prelievi | Studio Bonaccorso</title>
+<meta name="description" content="Bonaccorso Lab, il centro prelievi dello Studio Bonaccorso per gli esami della longevità: esami del sangue, infiammazione, citochine e valutazione cardiovascolare a Milano e Roma.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<!--
+  Pagina servizio "Bonaccorso Lab" per studiobonaccorso.it (es. /bonaccorso-lab).
+  Struttura e stile ricalcano le pagine servizio esistenti (es. /ossigeno-ozonoterapia):
+  intestazione e footer qui sotto sono solo un'anteprima di quelli del sito.
+-->
 <style>
   :root {
     --navy: #3a5881;
-    --navy-deep: #2c4566;
     --slate: #7f97ba;
     --mid: #a9bcd4;
     --powder: #e5edf8;
-    --testo: #33475f;
+    --testo: #3a5881;
     --bianco: #ffffff;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body { font-family: "Jost", "Helvetica Neue", Arial, sans-serif; color: var(--testo); background: var(--bianco); font-size: 17px; line-height: 1.65; }
+  body { font-family: "Jost", "Helvetica Neue", Arial, sans-serif; color: var(--testo); background: var(--bianco); font-size: 16px; line-height: 1.6; }
   img { display: block; max-width: 100%; }
   a { color: inherit; }
-  .wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
-  .kicker { text-transform: uppercase; letter-spacing: .28em; font-size: 12px; font-weight: 500; color: var(--slate); }
-  h1, h2, h3 { font-weight: 500; color: var(--navy); text-transform: uppercase; letter-spacing: .02em; line-height: 1.15; }
-  h2 { font-size: clamp(26px, 3.4vw, 38px); margin-top: 10px; }
-  h3 { font-size: 17px; letter-spacing: .05em; }
-  .btn { display: inline-block; padding: 15px 30px; font-size: 13px; font-weight: 500; letter-spacing: .22em; text-transform: uppercase; text-decoration: none; transition: background .2s, color .2s; }
-  .btn-pieno { background: var(--bianco); color: var(--navy); }
-  .btn-pieno:hover { background: var(--powder); }
-  .btn-linea { border: 1px solid currentColor; }
-  .btn-navy { background: var(--navy); color: var(--bianco); }
-  .btn-navy:hover { background: var(--navy-deep); }
-  section { padding: 96px 0; }
+  .wrap { max-width: 1440px; margin: 0 auto; padding: 0 48px; }
+  h1, h2 { font-weight: 600; color: var(--slate); text-transform: uppercase; line-height: 1.15; }
+  h2 { font-size: 26px; }
+  section { padding: 70px 0; }
 
-  /* header */
-  header { position: absolute; inset: 0 0 auto 0; z-index: 10; }
-  header .wrap { display: flex; align-items: center; justify-content: space-between; padding-top: 26px; padding-bottom: 26px; }
-  header .logo img { width: 300px; }
-  header nav { display: flex; gap: 30px; align-items: center; }
-  header nav a { color: var(--bianco); text-decoration: none; font-size: 13px; letter-spacing: .2em; text-transform: uppercase; opacity: .9; }
-  header nav a:hover { opacity: 1; }
+  /* intestazione del sito (anteprima) */
+  .site-header { border-bottom: 2px solid var(--mid); }
+  .site-header .wrap { display: flex; align-items: center; justify-content: space-between; height: 132px; }
+  .site-header img { width: 330px; }
+  .burger { width: 36px; display: grid; gap: 8px; }
+  .burger span { height: 2px; background: var(--navy); }
 
-  /* hero */
-  .hero { position: relative; min-height: 92vh; display: flex; align-items: center; color: var(--bianco); background: var(--navy) url("img/prelievo.jpg") center/cover no-repeat; padding: 150px 0 90px; }
-  .hero::before { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, rgba(44,69,102,.95) 0%, rgba(58,88,129,.82) 45%, rgba(58,88,129,.35) 100%); }
-  .hero .wrap { position: relative; width: 100%; }
-  .hero .kicker { color: var(--mid); }
-  .hero h1 { color: var(--bianco); font-size: clamp(34px, 5.2vw, 64px); margin-top: 16px; max-width: 720px; }
-  .hero p.lead { margin-top: 22px; font-size: clamp(17px, 1.6vw, 20px); font-weight: 300; max-width: 560px; color: rgba(255,255,255,.9); }
-  .hero .azioni { margin-top: 36px; display: flex; gap: 16px; flex-wrap: wrap; }
-  .hero .tel { margin-top: 26px; font-size: 15px; color: var(--mid); }
-  .hero .tel a { color: var(--bianco); text-decoration: none; font-weight: 500; }
+  /* hero come le pagine servizio */
+  .hero { display: grid; grid-template-columns: 1fr 1fr; min-height: 640px; }
+  .hero .txt { background: var(--powder); padding: 80px 64px 64px 48px; }
+  .hero .badge { width: 340px; margin-bottom: 34px; }
+  .hero h1 { font-size: 38px; }
+  .hero .lead { margin-top: 26px; font-size: 20px; line-height: 1.55; max-width: 640px; }
+  .hero .foto img { width: 100%; height: 100%; object-fit: cover; }
+  .btn { display: inline-block; margin-top: 34px; background: var(--slate); color: var(--bianco); padding: 12px 22px; font-size: 14px; text-transform: uppercase; letter-spacing: .04em; text-decoration: none; border-radius: 3px; }
+  .btn:hover { background: var(--navy); }
 
-  /* intro */
-  .intro .grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 64px; align-items: center; }
-  .intro p { margin-top: 18px; }
-  .intro strong { color: var(--navy); font-weight: 500; }
-  .tre { margin-top: 34px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-  .tre div { border-top: 2px solid var(--navy); padding-top: 14px; font-size: 15px; line-height: 1.5; }
-  .tre b { display: block; color: var(--navy); font-weight: 500; text-transform: uppercase; letter-spacing: .06em; font-size: 13px; margin-bottom: 6px; }
-  .intro .foto { aspect-ratio: 4/5; overflow: hidden; }
-  .intro .foto img { width: 100%; height: 100%; object-fit: cover; }
+  /* liste e testi */
+  .lista p.intro { font-size: 20px; margin-top: 18px; }
+  .lista ul { list-style: none; margin-top: 20px; columns: 2; column-gap: 60px; max-width: 980px; }
+  .lista li { font-size: 19px; padding: 9px 0; break-inside: avoid; }
+  .lista li::before { content: "- "; }
 
-  /* perché */
-  .perche { background: var(--powder); }
-  .perche .grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: 64px; align-items: start; }
-  .perche p + p { margin-top: 16px; }
-  .perche .citazione { font-size: clamp(22px, 2.4vw, 30px); font-weight: 300; color: var(--navy); line-height: 1.35; margin-top: 18px; }
+  .blocchi .blocco + .blocco { margin-top: 56px; }
+  .blocco p { margin-top: 14px; font-size: 16px; max-width: 1360px; }
+  .blocco strong { font-weight: 500; }
 
-  /* servizi */
-  .servizi .testa { max-width: 680px; }
-  .servizi .testa p { margin-top: 14px; }
-  .cards { margin-top: 48px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
-  .card { border: 1px solid #dbe4f1; padding: 34px 32px; position: relative; background: var(--bianco); transition: border-color .2s, transform .2s; }
-  .card:hover { border-color: var(--mid); transform: translateY(-2px); }
-  .card .num { font-size: 13px; letter-spacing: .2em; color: var(--slate); font-weight: 500; }
-  .card h3 { margin-top: 10px; }
-  .card p { margin-top: 12px; font-size: 16px; }
-  .tags { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px; }
-  .tags span { background: var(--powder); color: var(--navy); font-size: 13px; padding: 4px 12px; }
-  .nota { margin-top: 26px; font-size: 15px; color: var(--slate); font-style: italic; }
+  /* esami in quattro riquadri */
+  .esami { background: var(--powder); }
+  .esami .grid { margin-top: 30px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .esame { background: var(--bianco); padding: 28px 24px; }
+  .esame h3 { font-weight: 600; color: var(--navy); text-transform: uppercase; font-size: 16px; line-height: 1.3; }
+  .esame p { margin-top: 10px; font-size: 15px; }
 
-  /* come funziona */
-  .come { background: var(--navy); color: var(--bianco); }
-  .come h2, .come h3 { color: var(--bianco); }
-  .come .kicker { color: var(--mid); }
-  .passi { margin-top: 48px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
-  .passo { border-top: 1px solid rgba(255,255,255,.3); padding-top: 24px; }
-  .passo .n { width: 44px; height: 44px; border-radius: 50%; background: var(--bianco); color: var(--navy); display: flex; align-items: center; justify-content: center; font-weight: 600; }
-  .passo h3 { margin-top: 18px; }
-  .passo p { margin-top: 10px; color: rgba(255,255,255,.85); font-size: 16px; }
+  /* passi */
+  .passi { margin-top: 26px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  .passo b { display: inline-flex; width: 34px; height: 34px; border-radius: 50%; background: var(--slate); color: var(--bianco); align-items: center; justify-content: center; font-weight: 500; }
+  .passo h3 { margin-top: 12px; font-weight: 600; text-transform: uppercase; font-size: 16px; color: var(--navy); }
+  .passo p { margin-top: 6px; font-size: 15px; }
 
-  /* faq */
-  .faq .grid { display: grid; grid-template-columns: .8fr 1.2fr; gap: 64px; }
-  details { border-bottom: 1px solid #dbe4f1; padding: 22px 0; }
-  details:first-child { border-top: 1px solid #dbe4f1; }
-  summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 20px; font-weight: 500; color: var(--navy); font-size: 18px; }
-  summary::-webkit-details-marker { display: none; }
-  summary::after { content: "+"; font-weight: 300; font-size: 26px; line-height: 1; color: var(--slate); }
-  details[open] summary::after { content: "–"; }
-  details p { margin-top: 12px; }
+  /* fascia CTA come sul sito */
+  .cta { background: var(--powder); padding: 56px 0; }
+  .cta .wrap { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
+  .cta p { color: var(--slate); font-size: 20px; line-height: 1.4; max-width: 300px; }
+  .cta .btn { margin-top: 0; }
 
-  /* medico */
-  .medico { background: var(--powder); }
-  .medico .grid { display: grid; grid-template-columns: 380px 1fr; gap: 64px; align-items: center; }
-  .medico .foto { aspect-ratio: 50/68; overflow: hidden; }
-  .medico .foto img { width: 100%; height: 100%; object-fit: cover; }
-  .medico .ruolo { margin-top: 6px; color: var(--slate); text-transform: uppercase; letter-spacing: .14em; font-size: 13px; font-weight: 500; }
-  .medico p { margin-top: 16px; }
-  .medico blockquote { margin-top: 26px; padding-left: 20px; border-left: 2px solid var(--navy); font-size: 20px; font-weight: 300; color: var(--navy); line-height: 1.45; }
+  /* footer del sito (anteprima) */
+  .site-footer { background: var(--navy); color: var(--bianco); padding: 50px 0; }
+  .site-footer .wrap { display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: center; gap: 24px; font-size: 13px; }
+  .site-footer img { width: 210px; }
+  .site-footer .social { display: flex; justify-content: center; gap: 120px; }
+  .site-footer .social svg { width: 14px; height: 14px; fill: #fff; }
+  .site-footer .privacy { text-align: right; }
 
-  /* contatti */
-  .contatti { background: var(--navy-deep); color: var(--bianco); padding: 90px 0 40px; }
-  .contatti h2 { color: var(--bianco); }
-  .contatti .kicker { color: var(--mid); }
-  .contatti .cols { margin-top: 44px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
-  .contatti h4 { font-weight: 500; font-size: 12px; letter-spacing: .24em; text-transform: uppercase; color: var(--mid); margin-bottom: 12px; }
-  .contatti p { font-size: 16px; color: rgba(255,255,255,.9); }
-  .contatti p + h4 { margin-top: 22px; }
-  .contatti a { text-decoration: none; }
-  .contatti .cta { margin-top: 50px; display: flex; gap: 16px; flex-wrap: wrap; }
-  .contatti .fondo { margin-top: 70px; padding-top: 28px; border-top: 1px solid rgba(255,255,255,.18); display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; font-size: 13px; color: rgba(255,255,255,.6); }
-  .contatti .fondo img { width: 260px; }
-
-  /* barra mobile */
-  .barra { display: none; }
-
-  @media (max-width: 900px) {
-    body { font-size: 16px; }
-    section { padding: 70px 0; }
-    header nav a:not(.btn) { display: none; }
-    header .logo img { width: 220px; }
-    .intro .grid, .perche .grid, .faq .grid, .medico .grid { grid-template-columns: 1fr; gap: 36px; }
-    .medico .foto { max-width: 340px; }
-    .cards, .passi { grid-template-columns: 1fr; }
-    .tre { grid-template-columns: 1fr; }
-    .contatti .cols { grid-template-columns: 1fr 1fr; }
-    .hero { min-height: auto; padding: 130px 0 70px; }
-    .barra { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; }
-    .barra a { flex: 1; text-align: center; padding: 15px 8px; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; font-weight: 500; }
-    .barra a:first-child { background: var(--bianco); color: var(--navy); border-top: 1px solid #dbe4f1; }
-    .barra a:last-child { background: var(--navy); color: var(--bianco); }
-    .contatti { padding-bottom: 90px; }
+  @media (max-width: 960px) {
+    .wrap { padding: 0 20px; }
+    .site-header .wrap { height: 96px; }
+    .site-header img { width: 230px; }
+    .hero { grid-template-columns: 1fr; min-height: 0; }
+    .hero .txt { padding: 48px 20px; }
+    .hero .badge { width: 260px; }
+    .hero h1 { font-size: 30px; }
+    .hero .lead { font-size: 18px; }
+    .hero .foto { height: 320px; }
+    .lista ul { columns: 1; }
+    .esami .grid { grid-template-columns: 1fr 1fr; }
+    .passi { grid-template-columns: 1fr; }
+    .site-footer .wrap { grid-template-columns: 1fr; text-align: center; }
+    .site-footer img { margin: 0 auto; }
+    .site-footer .social { gap: 50px; }
+    .site-footer .privacy { text-align: center; }
   }
-  @media (max-width: 520px) {
-    .wrap { padding: 0 16px; }
-    .contatti .cols { grid-template-columns: 1fr; }
-    header nav .btn { display: none; }
-    .card { padding: 26px 22px; }
+  @media (max-width: 560px) {
+    .esami .grid { grid-template-columns: 1fr; }
+    section { padding: 52px 0; }
   }
 </style>
 </head>
 <body>
 
-<header>
+<!-- Intestazione del sito: anteprima, sulla pagina reale resta quella di WordPress -->
+<header class="site-header">
   <div class="wrap">
-    <a class="logo" href="#top"><img src="img/bonaccorso-lab-bianco.svg" alt="Bonaccorso Lab – centro prelievi per gli esami della longevità"></a>
-    <nav>
-      <a href="#servizi">Servizi</a>
-      <a href="#come-funziona">Come funziona</a>
-      <a href="#contatti">Contatti</a>
-      <a class="btn btn-linea" href="https://studiobonaccorso.it/prenota-visita">Prenota</a>
-    </nav>
+    <img src="img/logo-studio-bonaccorso.png" alt="Studio Bonaccorso – centro di medicina innovativa">
+    <div class="burger" aria-hidden="true"><span></span><span></span><span></span></div>
   </div>
 </header>
 
-<main id="top">
-  <section class="hero">
+<!-- ===== Inizio contenuto della pagina servizio ===== -->
+<main>
+
+  <section class="hero" style="padding:0">
+    <div class="txt">
+      <img class="badge" src="img/bonaccorso-lab-navy.svg" alt="Bonaccorso Lab – centro prelievi per gli esami della longevità">
+      <h1>Centro prelievi</h1>
+      <p class="lead">Bonaccorso Lab è il centro prelievi dello Studio Bonaccorso per gli esami della longevità. Puoi fare i prelievi per i tuoi esami del sangue direttamente in studio, nello stesso luogo in cui segui il tuo percorso di cura, e leggere i risultati insieme al medico.</p>
+      <a class="btn" href="https://studiobonaccorso.it/prenota-visita">Prenota il prelievo</a>
+    </div>
+    <div class="foto"><img src="img/prelievo.jpg" alt="Provetta per esami del sangue"></div>
+  </section>
+
+  <section class="lista">
     <div class="wrap">
-      <p class="kicker">Novità allo Studio Bonaccorso</p>
-      <h1>Centro prelievi per gli esami della longevità</h1>
-      <p class="lead">Fai i prelievi per i tuoi esami del sangue direttamente in studio, a Milano e a Roma, e leggi i risultati insieme al medico, all'interno del tuo percorso di medicina funzionale.</p>
-      <div class="azioni">
-        <a class="btn btn-pieno" href="https://studiobonaccorso.it/prenota-visita">Prenota il prelievo</a>
-        <a class="btn btn-linea" href="#servizi">Scopri gli esami</a>
-      </div>
-      <p class="tel">Oppure chiamaci: <a href="tel:+390291766535">02 91766 535</a> · <a href="tel:+393457245102">345 7245102</a></p>
+      <h2>Gli esami</h2>
+      <p class="intro">Presso Bonaccorso Lab puoi effettuare i prelievi per:</p>
+      <ul>
+        <li>Esami del sangue di routine</li>
+        <li>Check-up completi</li>
+        <li>Profilo ormonale e tiroideo</li>
+        <li>Esami della longevità</li>
+        <li>Citochine infiammatorie</li>
+        <li>Marcatori dell'infiammazione cronica</li>
+        <li>Valutazione cardiovascolare</li>
+        <li>Stress ossidativo</li>
+      </ul>
     </div>
   </section>
 
-  <section class="intro">
-    <div class="wrap grid">
-      <div>
-        <p class="kicker">Bonaccorso Lab</p>
-        <h2>Prelievo, risultati e medico in un unico luogo</h2>
-        <p>Da oggi allo Studio Bonaccorso è attivo <strong>Bonaccorso Lab</strong>, il nostro centro prelievi per gli esami della longevità. Puoi fare i prelievi per i tuoi esami del sangue nello stesso luogo in cui segui il tuo percorso di cura, senza doverti spostare da una struttura all'altra.</p>
-        <p>Abbiamo voluto unire tre momenti che di solito restano separati: il prelievo, il risultato e la sua lettura insieme al medico. Ogni valore diventa così un'informazione utile per costruire, passo dopo passo, un percorso davvero su misura per te.</p>
-        <div class="tre">
-          <div><b>Tutto in un posto</b>Prelievo, risultati e visita nello stesso studio.</div>
-          <div><b>Esami mirati</b>Pannelli scelti in base alla tua storia e ai tuoi obiettivi.</div>
-          <div><b>Lettura con il medico</b>Risultati spiegati e integrati nel tuo percorso.</div>
-        </div>
+  <section class="esami">
+    <div class="wrap">
+      <h2>Le aree di indagine</h2>
+      <div class="grid">
+        <div class="esame"><h3>Prelievi per esami del sangue</h3><p>Esami ematochimici e check-up completi: ci dicono come stanno funzionando gli organi principali, il metabolismo e il sistema ormonale.</p></div>
+        <div class="esame"><h3>Prelievi della longevità</h3><p>Pannelli avanzati sui marcatori dell'invecchiamento cellulare, organico, cerebrale, muscolo-scheletrico e cutaneo.</p></div>
+        <div class="esame"><h3>Infiammazione e citochine</h3><p>Il dosaggio delle citochine infiammatorie permette di individuare un'infiammazione cronica anche quando non dà ancora sintomi.</p></div>
+        <div class="esame"><h3>Valutazione cardiovascolare</h3><p>Profilo lipidico avanzato e marcatori del rischio cardiovascolare, per un quadro molto più preciso del solo colesterolo.</p></div>
       </div>
-      <div class="foto"><img src="img/provette.jpg" alt="Provette per esami del sangue"></div>
     </div>
   </section>
 
-  <section class="perche">
-    <div class="wrap grid">
-      <div>
-        <p class="kicker">Prevenzione</p>
-        <h2>Perché gli esami del sangue sono così importanti</h2>
-        <p class="citazione">Conoscere i propri valori è il primo passo per prendersi cura di sé nel tempo.</p>
-      </div>
-      <div>
+  <section class="blocchi">
+    <div class="wrap">
+      <div class="blocco">
+        <h2>Perché gli esami del sangue sono importanti</h2>
         <p>In medicina funzionale gli esami del sangue sono il punto di partenza. Il sintomo non è un problema isolato, ma un segnale: per capirne le cause dobbiamo guardare a come funziona l'organismo nel suo insieme.</p>
         <p>Molti squilibri, come un'infiammazione cronica di basso grado, un'alterazione del metabolismo o un aumento del rischio cardiovascolare, possono restare silenziosi per anni. Misurarli per tempo ci permette di intervenire prima, con strategie mirate di prevenzione, nutrizione e terapia.</p>
       </div>
+      <div class="blocco">
+        <h2>Gli esami della longevità</h2>
+        <p>La longevità non significa solo vivere più a lungo, ma vivere più a lungo in salute. Gli esami della longevità valutano i marcatori legati ai processi di invecchiamento e ci aiutano a capire a che punto è il tuo organismo e quali aree hanno bisogno di attenzione, per impostare un piano di prevenzione personalizzato.</p>
+        <p>L'infiammazione è una difesa naturale dell'organismo; quando però diventa cronica e silenziosa può contribuire nel tempo all'invecchiamento e a molti disturbi. Le citochine sono le molecole con cui le cellule del sistema immunitario comunicano tra loro: dosarle, insieme agli altri marcatori dell'infiammazione, permette di individuare uno stato infiammatorio anche quando non dà ancora sintomi evidenti.</p>
+      </div>
+      <div class="blocco">
+        <h2>Come funziona</h2>
+        <div class="passi">
+          <div class="passo"><b>1</b><h3>Prenota</h3><p>Prenota il prelievo online o per telefono: ti spieghiamo come prepararti, ad esempio se è richiesto il digiuno.</p></div>
+          <div class="passo"><b>2</b><h3>Vieni in studio</h3><p>Il prelievo si svolge in studio, a Milano o a Roma, in un ambiente riservato e accogliente.</p></div>
+          <div class="passo"><b>3</b><h3>Leggi i risultati con il medico</h3><p>Il medico ti spiega i risultati e li integra nel tuo percorso. Puoi anche programmare il prelievo prima della visita.</p></div>
+        </div>
+      </div>
+      <div class="blocco">
+        <p>Presso lo Studio Bonaccorso gli esami da eseguire vengono sempre scelti dal medico in base alla storia clinica e agli obiettivi di ciascun paziente. Con Bonaccorso Lab prelievo, risultato e lettura insieme al medico si svolgono in un unico luogo, per costruire passo dopo passo un percorso di prevenzione davvero su misura.</p>
+      </div>
     </div>
   </section>
 
-  <section class="servizi" id="servizi">
+  <section class="cta">
     <div class="wrap">
-      <div class="testa">
-        <p class="kicker">Gli esami</p>
-        <h2>Cosa puoi fare con Bonaccorso Lab</h2>
-        <p>Dagli esami di base per il controllo periodico della salute ai pannelli avanzati dedicati alla longevità e alla prevenzione.</p>
-      </div>
-      <div class="cards">
-        <article class="card">
-          <p class="num">01</p>
-          <h3>Prelievi per gli esami del sangue</h3>
-          <p>Gli esami ematochimici sono la base di ogni check-up: ci dicono come stanno funzionando gli organi principali, il metabolismo e il sistema ormonale. In studio puoi fare i prelievi per gli esami di routine e i check-up completi, oltre che per i profili ormonali e tiroidei.</p>
-          <div class="tags"><span>Check-up completi</span><span>Profilo ormonale</span><span>Tiroide</span></div>
-        </article>
-        <article class="card">
-          <p class="num">02</p>
-          <h3>Prelievi della longevità</h3>
-          <p>La longevità non significa solo vivere più a lungo, ma vivere più a lungo in salute. Pannelli avanzati che valutano i marcatori legati ai processi di invecchiamento cellulare, organico, cerebrale, muscolo-scheletrico e cutaneo, per impostare un piano di prevenzione personalizzato.</p>
-          <div class="tags"><span>Marcatori dell'invecchiamento</span><span>Prevenzione</span></div>
-        </article>
-        <article class="card">
-          <p class="num">03</p>
-          <h3>Infiammazione e citochine infiammatorie</h3>
-          <p>Quando l'infiammazione diventa cronica e silenziosa, può contribuire nel tempo all'invecchiamento e a molti disturbi. Dosare le citochine e gli altri marcatori dell'infiammazione permette di individuarla anche quando non dà ancora sintomi evidenti.</p>
-          <div class="tags"><span>Citochine</span><span>Infiammazione cronica</span></div>
-        </article>
-        <article class="card">
-          <p class="num">04</p>
-          <h3>Valutazione cardiovascolare</h3>
-          <p>Oltre al colesterolo totale, un profilo lipidico avanzato e i marcatori del rischio cardiovascolare offrono un quadro molto più preciso, utile per intervenire con alimentazione, stile di vita e, se necessario, terapie mirate.</p>
-          <div class="tags"><span>Profilo lipidico avanzato</span><span>Rischio cardiovascolare</span></div>
-        </article>
-      </div>
-      <p class="nota">Gli esami da eseguire vengono sempre scelti dal medico in base alla storia clinica e agli obiettivi di ciascun paziente.</p>
+      <p>Studio Bonaccorso è a disposizione per rispondere a tutte le domande.</p>
+      <a class="btn" href="https://studiobonaccorso.it/prenota-visita">Prenota il prelievo</a>
     </div>
   </section>
 
-  <section class="come" id="come-funziona">
-    <div class="wrap">
-      <p class="kicker">Come funziona</p>
-      <h2>Tre semplici passi</h2>
-      <div class="passi">
-        <div class="passo"><div class="n">1</div><h3>Prenota</h3><p>Prenota il prelievo online o per telefono: al momento della prenotazione ti spieghiamo come prepararti.</p></div>
-        <div class="passo"><div class="n">2</div><h3>Vieni in studio</h3><p>Il prelievo si svolge in studio, in un ambiente riservato e accogliente.</p></div>
-        <div class="passo"><div class="n">3</div><h3>Leggi i risultati con il medico</h3><p>Il medico ti spiega i risultati e li integra nel tuo percorso di prevenzione e cura.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="faq">
-    <div class="wrap grid">
-      <div>
-        <p class="kicker">Domande frequenti</p>
-        <h2>Prima del prelievo</h2>
-      </div>
-      <div>
-        <details open>
-          <summary>Devo essere a digiuno?</summary>
-          <p>Per molti esami del sangue è richiesto il digiuno. Al momento della prenotazione ti indichiamo con precisione come prepararti in base agli esami previsti.</p>
-        </details>
-        <details>
-          <summary>Posso abbinare il prelievo a una visita?</summary>
-          <p>Sì. Puoi programmare il prelievo prima della visita: così il medico avrà già a disposizione i risultati e potrà impostare subito il tuo percorso.</p>
-        </details>
-        <details>
-          <summary>Quando arrivano i risultati?</summary>
-          <p>I tempi dipendono dal tipo di esame. Ti comunichiamo i tempi previsti al momento del prelievo e, quando i risultati sono pronti, puoi leggerli insieme al medico.</p>
-        </details>
-        <details>
-          <summary>Chi sceglie gli esami da fare?</summary>
-          <p>Gli esami vengono sempre scelti dal medico in base alla tua storia clinica e ai tuoi obiettivi di salute.</p>
-        </details>
-      </div>
-    </div>
-  </section>
-
-  <section class="medico">
-    <div class="wrap grid">
-      <div class="foto"><img src="img/michele.jpg" alt="Dott. Michele Bonaccorso"></div>
-      <div>
-        <p class="kicker">Il fondatore</p>
-        <h2>Dott. Michele Bonaccorso</h2>
-        <p class="ruolo">Medico funzionale e della longevità</p>
-        <p>Medico anestesista, specializzato in medicina funzionale e della longevità, con particolare riferimento all'ossigeno-ozonoterapia e alla terapia del dolore. È tra i più qualificati esponenti di medicina funzionale e della longevità in Italia.</p>
-        <p>Relatore a congressi ed eventi dedicati alla longevità, fondatore del Longevity Tour, ha un'importante attività di divulgazione scientifica sui social, dove è seguito da più di 150.000 follower.</p>
-        <blockquote>Con Bonaccorso Lab possiamo prenderci cura della tua salute insieme, in un unico luogo.</blockquote>
-      </div>
-    </div>
-  </section>
 </main>
+<!-- ===== Fine contenuto della pagina servizio ===== -->
 
-<footer class="contatti" id="contatti">
+<!-- Footer del sito: anteprima, sulla pagina reale resta quello di WordPress -->
+<footer class="site-footer">
   <div class="wrap">
-    <p class="kicker">Contatti</p>
-    <h2>Prenota il tuo prelievo</h2>
-    <div class="cols">
-      <div>
-        <h4>Milano</h4>
-        <p>Via Luigi Settembrini 54<br>20124 Milano</p>
-      </div>
-      <div>
-        <h4>Roma</h4>
-        <p>Via Flaminia 489 (zona Ponte Milvio)<br>00191 Roma</p>
-        <h4>Telemedicina</h4>
-        <p>Visite a distanza</p>
-      </div>
-      <div>
-        <h4>Orari</h4>
-        <p>Lunedì – Venerdì 11:00 – 19:00<br>Sabato 10:00 – 17:00</p>
-      </div>
-      <div>
-        <h4>Telefono</h4>
-        <p><a href="tel:+390291766535">02 91766 535</a><br><a href="tel:+393457245102">345 7245102</a></p>
-        <h4>Online</h4>
-        <p><a href="https://studiobonaccorso.it">studiobonaccorso.it</a></p>
-      </div>
+    <img src="img/logo-studio-bonaccorso-bianco.png" alt="Studio Bonaccorso">
+    <div class="social">
+      <svg viewBox="0 0 24 24"><path d="M14 8h3V4h-3c-2.8 0-4 1.8-4 4.3V10H7v4h3v8h4v-8h3l1-4h-4V8.6c0-.4.3-.6.6-.6z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M12 7.2A4.8 4.8 0 1 0 12 16.8 4.8 4.8 0 0 0 12 7.2zm0 7.9a3.1 3.1 0 1 1 0-6.2 3.1 3.1 0 0 1 0 6.2zM17 5.8a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2zM12 2c-2.7 0-3.1 0-4.1.1C4.2 2.2 2.2 4.2 2.1 7.9 2 8.9 2 9.3 2 12s0 3.1.1 4.1c.1 3.7 2.1 5.7 5.8 5.8 1 .1 1.4.1 4.1.1s3.1 0 4.1-.1c3.7-.1 5.7-2.1 5.8-5.8.1-1 .1-1.4.1-4.1s0-3.1-.1-4.1c-.1-3.7-2.1-5.7-5.8-5.8C15.1 2 14.7 2 12 2z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M16.6 5.8A4.3 4.3 0 0 1 15.5 3h-3.1v12.4a2.6 2.6 0 1 1-2.6-2.6c.3 0 .5 0 .8.1V9.7a5.8 5.8 0 1 0 4.9 5.7V9.1a7.4 7.4 0 0 0 4.3 1.4V7.4a4.3 4.3 0 0 1-3.2-1.6z"/></svg>
     </div>
-    <div class="cta">
-      <a class="btn btn-pieno" href="https://studiobonaccorso.it/prenota-visita">Prenota online</a>
-      <a class="btn btn-linea" href="tel:+390291766535">Chiama lo studio</a>
-    </div>
-    <div class="fondo">
-      <img src="img/bonaccorso-lab-bianco.svg" alt="Bonaccorso Lab">
-      <span>© Studio Bonaccorso · Tutti i diritti riservati</span>
-    </div>
+    <div class="privacy">Privacy &amp; Cookie Policy</div>
   </div>
 </footer>
-
-<div class="barra">
-  <a href="tel:+390291766535">Chiama</a>
-  <a href="https://studiobonaccorso.it/prenota-visita">Prenota</a>
-</div>
 
 </body>
 </html>
