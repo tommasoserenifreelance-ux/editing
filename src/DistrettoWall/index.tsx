@@ -1,8 +1,6 @@
 import {
   AbsoluteFill,
-  Easing,
   Img,
-  interpolate,
   OffthreadVideo,
   staticFile,
   useCurrentFrame,
@@ -44,10 +42,6 @@ const CARD_W = 340;
 const CARD_H = 510;
 const GAP = 28;
 const PITCH = CARD_H + GAP;
-const PER_COL = 6;
-const LOOP = PER_COL * PITCH;
-
-const ease = Easing.bezier(0.22, 1, 0.36, 1);
 
 const Column: React.FC<{ col: number; cols: number; wallH: number }> = ({
   col,
@@ -55,11 +49,17 @@ const Column: React.FC<{ col: number; cols: number; wallH: number }> = ({
   wallH,
 }) => {
   const frame = useCurrentFrame();
+  const { durationInFrames } = useVideoConfig();
   const center = (cols - 1) / 2;
   const dist = Math.abs(col - center) / center; // 0 centre .. 1 edge
   const dir = col % 2 === 0 ? 1 : -1;
-  const speed = 2.2 + (col % 3) * 0.6;
-  const offset = (((frame * speed * dir + col * 173) % LOOP) + LOOP) % LOOP;
+  // Seamless loop: every column travels exactly one period of its cards over
+  // the whole video, so the last frame flows straight back into the first.
+  // Different period lengths give each column its own speed.
+  const perCol = 5 + ((col + 1) % 3);
+  const loop = perCol * PITCH;
+  const speed = loop / durationInFrames;
+  const offset = (((frame * speed * dir + col * 173) % loop) + loop) % loop;
   // Alternate depth planes: far columns sit back and go soft, like the
   // shallow depth of field in the reference.
   const depth = [0, -320, 90][col % 3];
@@ -76,11 +76,11 @@ const Column: React.FC<{ col: number; cols: number; wallH: number }> = ({
         filter: blur > 0.3 ? `blur(${blur.toFixed(1)}px)` : undefined,
       }}
     >
-      {Array.from({ length: PER_COL * 2 + 2 }, (_, r) => {
+      {Array.from({ length: perCol + 10 }, (_, r) => {
         const top = r * PITCH;
         // Skip cards that sit outside the wall this frame (saves decoding).
         if (top - offset > wallH || top - offset + CARD_H < 0) return null;
-        const slot = col * 11 + (r % PER_COL);
+        const slot = col * 11 + (r % perCol);
         const isVideo = slot % 3 === 1;
         const media = {
           width: "100%",
@@ -118,37 +118,18 @@ const Column: React.FC<{ col: number; cols: number; wallH: number }> = ({
 };
 
 export const DistrettoWall: React.FC = () => {
-  const frame = useCurrentFrame();
-  const { width, height, durationInFrames } = useVideoConfig();
+  const { width, height } = useVideoConfig();
   const vertical = height > width;
 
   const cols = 13;
   const wallW = cols * (CARD_W + GAP);
   const wallH = 2.4 * Math.max(width, height);
 
-  const intro = interpolate(frame, [0, 45], [0, 1], {
-    extrapolateRight: "clamp",
-    easing: ease,
-  });
-  const base = vertical ? 0.8 : 1;
-  const scale =
-    base *
-    interpolate(intro, [0, 1], [1.35, 1]) *
-    interpolate(frame, [45, durationInFrames], [1, 1.06], {
-      extrapolateLeft: "clamp",
-    });
-  const fadeIn = interpolate(frame, [0, 12], [0, 1], {
-    extrapolateRight: "clamp",
-  });
-  const fadeOut = interpolate(
-    frame,
-    [durationInFrames - 12, durationInFrames],
-    [1, 0],
-    { extrapolateLeft: "clamp" },
-  );
+  // No intro, zoom drift or fades: the clip is meant to loop forever.
+  const scale = vertical ? 0.8 : 1;
 
   return (
-    <AbsoluteFill style={{ background: "#0d0816", opacity: fadeIn * fadeOut }}>
+    <AbsoluteFill style={{ background: "#0d0816" }}>
       <AbsoluteFill style={{ perspective: 1800, overflow: "hidden" }}>
         <div
           style={{
