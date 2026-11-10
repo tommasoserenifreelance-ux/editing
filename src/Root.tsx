@@ -9,6 +9,7 @@ import {
 } from "./PilatesOverlay";
 import { PILATES_DURATION, PilatesReformer } from "./PilatesReformer";
 import { RAMATEX_DURATION, RAMATEX_FPS, RamatexVideo } from "./Ramatex";
+import { LINE_DURATION, LINE_FPS, RamatexLine } from "./RamatexLine";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -78,6 +79,14 @@ export const RemotionRoot: React.FC = () => {
         component={RamatexVideo}
         durationInFrames={RAMATEX_DURATION}
         fps={RAMATEX_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="RamatexLine"
+        component={RamatexLine}
+        durationInFrames={LINE_DURATION}
+        fps={LINE_FPS}
         width={1080}
         height={1920}
       />
