@@ -60,8 +60,8 @@ const SLIDES: SlideDef[] = [
         />
         <Point
           theme={t}
-          title="Perché conta"
-          text="È associata a un rischio più alto di malattie cardiovascolari, osteoporosi e mortalità prematura."
+          title="Per confronto"
+          text="In media la menopausa arriva intorno ai 50 anni."
         />
       </>
     ),
@@ -147,6 +147,10 @@ const SLIDES: SlideDef[] = [
         </div>
         <Tag>Vivere in zone rurali</Tag>
         <Tag>Reddito medio</Tag>
+        <Body size={32}>
+          Istruzione e autonomia delle ragazze non sono solo diritti: sono anche
+          salute.
+        </Body>
       </>
     ),
   },
@@ -155,15 +159,81 @@ const SLIDES: SlideDef[] = [
     render: (t) => (
       <>
         <Title theme={t}>
-          Cosa significa <Accent theme={t}>per te</Accent>
+          Perché <Accent theme={t}>conta</Accent>
         </Title>
         <Body size={38}>
-          Lo studio riguarda paesi a basso e medio reddito, ma il messaggio vale
-          per tutte: la menopausa prima dei 45 anni non riguarda solo il ciclo,
-          ma anche cuore e ossa.
+          Gli estrogeni non regolano solo il ciclo: aiutano a proteggere{" "}
+          <b>ossa, cuore e vasi sanguigni</b>.
           <br />
           <br />
-          Se il ciclo si ferma prima dei 45 anni, parlane con il tuo medico.
+          Quando la menopausa arriva prima, questa protezione si perde per più
+          anni. Per questo è associata a un rischio più alto di osteoporosi,
+          malattie cardiovascolari e mortalità prematura.
+        </Body>
+      </>
+    ),
+  },
+  {
+    theme: LIGHT,
+    render: (t) => (
+      <>
+        <Title theme={t} size={70}>
+          I segnali da <Accent theme={t}>non ignorare</Accent>
+        </Title>
+        <div style={{ marginTop: 50 }}>
+          <Tag>Ciclo irregolare o assente da mesi</Tag>
+          <Tag>Vampate e sudorazioni notturne</Tag>
+          <Tag>Secchezza vaginale</Tag>
+          <Tag>Sbalzi d&apos;umore e insonnia</Tag>
+          <Tag>Difficoltà a concepire</Tag>
+        </div>
+        <Body size={36}>
+          Se compaiono <b>prima dei 45 anni</b>, non aspettare e non pensare che
+          sia &quot;solo stress&quot;.
+        </Body>
+      </>
+    ),
+  },
+  {
+    theme: LIGHT,
+    render: (t) => (
+      <>
+        <Title theme={t} size={70}>
+          Cosa <Accent theme={t}>fare</Accent>
+        </Title>
+        <Point
+          theme={t}
+          title="Parlane con il ginecologo"
+          text="Valuterà la tua storia e, se serve, gli esami ormonali per capire cosa sta succedendo."
+        />
+        <Point
+          theme={t}
+          title="Proteggi ossa e cuore"
+          text="Controlli periodici, attività fisica (anche con i pesi), alimentazione equilibrata e niente fumo."
+        />
+        <Point
+          theme={t}
+          title="Valuta la terapia con il medico"
+          text="Nella menopausa prematura e precoce la terapia ormonale è spesso indicata fino all'età della menopausa naturale, se non ci sono controindicazioni."
+        />
+      </>
+    ),
+  },
+  {
+    theme: LIGHT,
+    render: (t) => (
+      <>
+        <Title theme={t}>
+          Da portare <Accent theme={t}>a casa</Accent>
+        </Title>
+        <Body size={38}>
+          La menopausa prima dei 45 anni non è rara e non riguarda solo il
+          ciclo. Riconoscerla presto significa proteggere la tua salute di
+          domani.
+          <br />
+          <br />
+          Lo sapevi che la menopausa precoce riguarda anche cuore e ossa?
+          Scrivilo nei commenti.
         </Body>
         <div style={{ marginTop: 60, fontSize: 22, color: colors.muted }}>
           Fonte: Islam RB et al. Prevalence and determinants of premature or
