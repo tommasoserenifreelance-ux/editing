@@ -1,5 +1,6 @@
 import { Composition, Folder } from "remotion";
 import { Cacao, CACAO_DURATION, CACAO_FPS } from "./Cacao";
+import { Esosomi, ESOSOMI_DURATION, ESOSOMI_FPS } from "./Esosomi";
 import { Geni, GENI_DURATION, GENI_FPS } from "./Geni";
 import { Prebiotici, PREBIOTICI_DURATION, PREBIOTICI_FPS } from "./Prebiotici";
 import { HelloWorld } from "./HelloWorld";
@@ -96,6 +97,14 @@ export const RemotionRoot: React.FC = () => {
         component={Geni}
         durationInFrames={GENI_DURATION}
         fps={GENI_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="Esosomi"
+        component={Esosomi}
+        durationInFrames={ESOSOMI_DURATION}
+        fps={ESOSOMI_FPS}
         width={1080}
         height={1920}
       />

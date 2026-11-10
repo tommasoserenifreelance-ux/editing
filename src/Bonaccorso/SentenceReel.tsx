@@ -3,6 +3,7 @@ import { slide } from "@remotion/transitions/slide";
 import {
   AbsoluteFill,
   Html5Audio,
+  Img,
   interpolate,
   OffthreadVideo,
   Sequence,
@@ -20,7 +21,24 @@ import { colors } from "./theme";
 // the source, laid end to end, with b-roll, emoji stickers, word-by-word
 // captions and sound effects on top.
 
-export type BRollCue = { src: string; from: number; to: number };
+export type BRollCue = {
+  src: string;
+  from: number;
+  to: number;
+  // "contain" shows a landscape clip whole, over a blurred copy of itself,
+  // instead of cropping a narrow slice out of it.
+  fit?: "cover" | "contain";
+  // Seconds into the clip to start from, to reuse a clip without repeats.
+  startFrom?: number;
+};
+// A study screenshot on a blue cutaway; `crop` is the region of the image
+// (in its own pixels) that shows the title block.
+export type CardCue = {
+  src: string;
+  crop: { x: number; y: number; w: number; h: number };
+  from: number;
+  to: number;
+};
 // Emojis popping in at the given frames, gone at `to`.
 export type StickerCue = { chars: string[]; delays: number[]; to: number };
 export type Sound = { at: number; file: string; volume: number };
@@ -64,20 +82,42 @@ const Take: React.FC<{
   );
 };
 
-const BRoll: React.FC<{ src: string }> = ({ src }) => {
+const BRoll: React.FC<Omit<BRollCue, "from" | "to">> = ({
+  src,
+  fit = "cover",
+  startFrom = 0,
+}) => {
   const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const video = (style: React.CSSProperties) => (
+    <OffthreadVideo
+      muted
+      src={staticFile(src)}
+      startFrom={Math.round(startFrom * fps)}
+      style={{ width: "100%", height: "100%", ...style }}
+    />
+  );
+  const push = `scale(${1.02 + frame * 0.0006})`;
   return (
     <AbsoluteFill style={{ backgroundColor: "black" }}>
-      <OffthreadVideo
-        muted
-        src={staticFile(src)}
-        style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          transform: `scale(${1.02 + frame * 0.0006})`,
-        }}
-      />
+      {fit === "cover" ? (
+        video({ objectFit: "cover", transform: push })
+      ) : (
+        <>
+          {video({
+            objectFit: "cover",
+            transform: "scale(1.2)",
+            filter: "blur(40px) brightness(0.6)",
+          })}
+          <AbsoluteFill style={{ justifyContent: "center", top: -180 }}>
+            {video({
+              objectFit: "contain",
+              transform: push,
+              filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.5))",
+            })}
+          </AbsoluteFill>
+        </>
+      )}
       {/* Darken the lower half so the captions stay readable. */}
       <AbsoluteFill
         style={{
@@ -197,6 +237,53 @@ const EmojiSticker: React.FC<{
   );
 };
 
+const CARD_WIDTH = 920;
+
+const StudyCard: React.FC<Omit<CardCue, "from" | "to">> = ({ src, crop }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const t = spring({ frame, fps, config: { damping: 12, mass: 0.6 } });
+  const scale = CARD_WIDTH / crop.w;
+  return (
+    // Fades in over the doctor, then hard-cuts to whatever follows.
+    <AbsoluteFill>
+      <AbsoluteFill
+        style={{
+          background: `radial-gradient(circle at 50% 35%, ${colors.blue}, ${colors.navy} 75%)`,
+          opacity: interpolate(frame, [0, 4], [0, 1], {
+            extrapolateRight: "clamp",
+          }),
+        }}
+      />
+      <AbsoluteFill style={{ alignItems: "center", paddingTop: 330 }}>
+        <div
+          style={{
+            width: CARD_WIDTH,
+            height: crop.h * scale,
+            overflow: "hidden",
+            borderRadius: 24,
+            background: "white",
+            border: `6px solid ${colors.blue}`,
+            boxShadow: "0 24px 60px rgba(0,0,0,0.45)",
+            opacity: Math.min(1, t * 3),
+            transform: `scale(${interpolate(t, [0, 1], [0.5, 1])}) rotate(${-2 * t}deg)`,
+          }}
+        >
+          <Img
+            src={staticFile(src)}
+            style={{
+              width: "auto",
+              height: "auto",
+              transform: `translate(${-crop.x * scale}px, ${-crop.y * scale}px) scale(${scale})`,
+              transformOrigin: "0 0",
+            }}
+          />
+        </div>
+      </AbsoluteFill>
+    </AbsoluteFill>
+  );
+};
+
 const Sfx: React.FC<Sound> = ({ at: from, file, volume }) => {
   const { fps } = useVideoConfig();
   return (
@@ -216,6 +303,7 @@ export const SentenceReel: React.FC<{
   phrases: Phrase[];
   brolls: BRollCue[];
   stickers: StickerCue[];
+  cards?: CardCue[];
   sounds?: Sound[];
   // Zoom on even and odd takes; alternating scales hide the jump cuts.
   zoom?: [number, number];
@@ -231,6 +319,7 @@ export const SentenceReel: React.FC<{
   phrases,
   brolls,
   stickers,
+  cards = [],
   sounds = [],
   zoom = [1.06, 1.12],
   drift = 0.02,
@@ -258,6 +347,7 @@ export const SentenceReel: React.FC<{
       [],
     ),
     ...brolls.map((b) => ({ at: b.from - 6, file: "whoosh", volume: 0.45 })),
+    ...cards.map((c) => ({ at: c.from, file: "pop", volume: 0.9 })),
     // A light whoosh under each slide between takes.
     ...(slideFrames
       ? clips.slice(1).map((_, i) => ({
@@ -310,7 +400,12 @@ export const SentenceReel: React.FC<{
       )}
       {brolls.map((b) => (
         <Sequence key={b.from} from={b.from} durationInFrames={b.to - b.from}>
-          <BRoll src={b.src} />
+          <BRoll src={b.src} fit={b.fit} startFrom={b.startFrom} />
+        </Sequence>
+      ))}
+      {cards.map((c) => (
+        <Sequence key={c.from} from={c.from} durationInFrames={c.to - c.from}>
+          <StudyCard src={c.src} crop={c.crop} />
         </Sequence>
       ))}
       {stickers.map((s) => (
