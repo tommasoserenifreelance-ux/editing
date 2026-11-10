@@ -7,6 +7,10 @@ import {
 } from "./BoccaMenopausa";
 import { CIBO_DURATION, CIBO_FPS, CiboMedicina } from "./CiboMedicina";
 import { HelloWorld } from "./HelloWorld";
+import {
+  MENOPAUSA_ITALIA_SLIDE_COUNT,
+  MenopausaItalia,
+} from "./MenopausaItalia";
 import { ACOG_SLIDE_COUNT, LineeGuidaACOG } from "./LineeGuidaACOG";
 import {
   MENTALI_DURATION,
@@ -132,6 +136,18 @@ export const RemotionRoot: React.FC = () => {
             key={i}
             id={`LineeGuidaACOG-${i + 1}`}
             component={LineeGuidaACOG}
+            width={SLIDE_WIDTH}
+            height={SLIDE_HEIGHT}
+            defaultProps={{ index: i }}
+          />
+        ))}
+      </Folder>
+      <Folder name="MenopausaItalia">
+        {Array.from({ length: MENOPAUSA_ITALIA_SLIDE_COUNT }, (_, i) => (
+          <Still
+            key={i}
+            id={`MenopausaItalia-${i + 1}`}
+            component={MenopausaItalia}
             width={SLIDE_WIDTH}
             height={SLIDE_HEIGHT}
             defaultProps={{ index: i }}
