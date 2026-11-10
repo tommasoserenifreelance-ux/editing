@@ -15,3 +15,6 @@ public/prebiotici/doctor/
 # Same for the geni take: download bonaccorso.geni.mp4 from the "prebiotici"
 # release into public/geni/doctor/geni.mp4.
 public/geni/doctor/
+# Same for the esosomi take: download bonaccorso.esosomi.mp4 from the
+# "bonaccorso esosomi" release into public/esosomi/doctor/esosomi.mp4.
+public/esosomi/doctor/
