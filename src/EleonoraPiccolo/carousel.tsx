@@ -119,6 +119,52 @@ export const Tag: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   </div>
 );
 
+export const Point: React.FC<{ theme: Theme; title: string; text: string }> = ({
+  theme,
+  title,
+  text,
+}) => (
+  <div style={{ marginTop: 40 }}>
+    <div style={{ fontSize: 40, fontWeight: 700, color: theme.accent }}>
+      {title}
+    </div>
+    <div style={{ fontSize: 33, lineHeight: 1.4, marginTop: 8 }}>{text}</div>
+  </div>
+);
+
+export const BigNumber: React.FC<{
+  theme: Theme;
+  children: React.ReactNode;
+}> = ({ theme, children }) => (
+  <div
+    style={{
+      fontSize: 150,
+      fontWeight: 700,
+      letterSpacing: -5,
+      lineHeight: 1,
+      color: theme.accent,
+      marginTop: 50,
+    }}
+  >
+    {children}
+  </div>
+);
+
+// A screenshot of the study, as a white card.
+export const StudyCard: React.FC<{ src: string }> = ({ src }) => (
+  <Img
+    src={staticFile(`img/${src}`)}
+    style={{
+      marginTop: 50,
+      width: "100%",
+      background: "#fff",
+      padding: 24,
+      borderRadius: 18,
+      boxShadow: "0 12px 40px rgba(110,63,99,0.18)",
+    }}
+  />
+);
+
 export type SlideDef = {
   theme: Theme;
   photo?: string;

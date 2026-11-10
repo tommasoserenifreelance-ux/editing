@@ -4,41 +4,11 @@ import {
   Body,
   Frame,
   LIGHT,
+  BigNumber,
+  Point,
   SlideDef,
-  Theme,
   Title,
 } from "../EleonoraPiccolo/carousel";
-
-const Point: React.FC<{ theme: Theme; title: string; text: string }> = ({
-  theme,
-  title,
-  text,
-}) => (
-  <div style={{ marginTop: 40 }}>
-    <div style={{ fontSize: 40, fontWeight: 700, color: theme.accent }}>
-      {title}
-    </div>
-    <div style={{ fontSize: 33, lineHeight: 1.4, marginTop: 8 }}>{text}</div>
-  </div>
-);
-
-const BigNumber: React.FC<{ theme: Theme; children: React.ReactNode }> = ({
-  theme,
-  children,
-}) => (
-  <div
-    style={{
-      fontSize: 150,
-      fontWeight: 700,
-      letterSpacing: -5,
-      lineHeight: 1,
-      color: theme.accent,
-      marginTop: 50,
-    }}
-  >
-    {children}
-  </div>
-);
 
 const SLIDES: SlideDef[] = [
   {

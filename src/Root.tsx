@@ -7,6 +7,7 @@ import {
 } from "./BoccaMenopausa";
 import { CIBO_DURATION, CIBO_FPS, CiboMedicina } from "./CiboMedicina";
 import { HelloWorld } from "./HelloWorld";
+import { MenopausaPrecoce, PRECOCE_SLIDE_COUNT } from "./MenopausaPrecoce";
 import {
   MENOPAUSA_ITALIA_SLIDE_COUNT,
   MenopausaItalia,
@@ -148,6 +149,18 @@ export const RemotionRoot: React.FC = () => {
             key={i}
             id={`MenopausaItalia-${i + 1}`}
             component={MenopausaItalia}
+            width={SLIDE_WIDTH}
+            height={SLIDE_HEIGHT}
+            defaultProps={{ index: i }}
+          />
+        ))}
+      </Folder>
+      <Folder name="MenopausaPrecoce">
+        {Array.from({ length: PRECOCE_SLIDE_COUNT }, (_, i) => (
+          <Still
+            key={i}
+            id={`MenopausaPrecoce-${i + 1}`}
+            component={MenopausaPrecoce}
             width={SLIDE_WIDTH}
             height={SLIDE_HEIGHT}
             defaultProps={{ index: i }}

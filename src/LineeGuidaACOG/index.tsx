@@ -1,27 +1,15 @@
-import { Img, staticFile } from "remotion";
 import { pinkColors as colors } from "../EleonoraPiccolo/brand";
 import {
   Accent,
   Body,
   Frame,
   LIGHT,
+  Point,
   SlideDef,
+  StudyCard,
   Tag,
   Title,
 } from "../EleonoraPiccolo/carousel";
-
-const Point: React.FC<{ theme: typeof LIGHT; title: string; text: string }> = ({
-  theme,
-  title,
-  text,
-}) => (
-  <div style={{ marginTop: 40 }}>
-    <div style={{ fontSize: 40, fontWeight: 700, color: theme.accent }}>
-      {title}
-    </div>
-    <div style={{ fontSize: 33, lineHeight: 1.4, marginTop: 8 }}>{text}</div>
-  </div>
-);
 
 const SLIDES: SlideDef[] = [
   {
@@ -47,17 +35,7 @@ const SLIDES: SlideDef[] = [
         <Title theme={t}>
           Lo <Accent theme={t}>studio</Accent>
         </Title>
-        <Img
-          src={staticFile("img/acog-studio.png")}
-          style={{
-            marginTop: 50,
-            width: "100%",
-            background: "#fff",
-            padding: 24,
-            borderRadius: 18,
-            boxShadow: "0 12px 40px rgba(110,63,99,0.18)",
-          }}
-        />
+        <StudyCard src="acog-studio.png" />
         <Body size={32}>
           Pubblicato su <b>Obstetrics &amp; Gynecology</b>, novembre 2026.
         </Body>
