@@ -20,6 +20,7 @@ export { DURATION as ESOSOMI_DURATION, FPS as ESOSOMI_FPS } from "./script";
 const take = (i: number) => (i < CLIPS.length ? at(i, 0) : DURATION);
 const broll = (file: string) => `esosomi/broll/${file}`;
 
+// Each clip is used once.
 const BROLLS: BRollCue[] = [
   // Skin for "la pelle si può rigenerare", then the plasma lamp for
   // "il vostro plasma". Both are landscape, so they are shown whole.
@@ -38,29 +39,25 @@ const BROLLS: BRollCue[] = [
   // A vesicle in the skin layers for "gli esosomi autologhi".
   { src: broll("clip-b.mp4"), from: wordFrame(1, "esosomi"), to: take(2) },
   // Collagen fibres for "sulle vescicole extracellulari nel ringiovanimento
-  // cutaneo", then skin again for "risultati incoraggianti sulla qualità della
-  // pelle".
+  // cutaneo", then a smiling portrait for "risultati incoraggianti sulla
+  // qualità della pelle".
   {
     src: broll("clip-a.mp4"),
     from: wordFrame(3, "sulle"),
     to: wordFrame(3, "evidenziando"),
   },
   {
-    src: broll("model.mp4"),
+    src: broll("portrait.mp4"),
     from: wordFrame(3, "risultati"),
     to: wordFrame(3, "proprio"),
     fit: "contain",
-    startFrom: 7,
   },
-  // The vesicle again for "ricchi di proteine, lipidi e segnali rigenerativi".
-  {
-    src: broll("clip-b.mp4"),
-    from: wordFrame(4, "ricchi"),
-    to: take(5),
-    startFrom: 5,
-  },
-  // Collagen again for "usare il potenziale del proprio corpo per rigenerarlo".
-  { src: broll("clip-a.mp4"), from: take(6), to: take(7), startFrom: 3.5 },
+  // A vesicle entering the skin for "ricchi di proteine, lipidi e segnali
+  // rigenerativi".
+  { src: broll("clip-c.mp4"), from: wordFrame(4, "ricchi"), to: take(5) },
+  // Skin smoothing out for "usare il potenziale del proprio corpo per
+  // rigenerarlo" (square, so shown whole).
+  { src: broll("clip-d.mp4"), from: take(6), to: take(7), fit: "contain" },
 ];
 
 // The PubMed page of the review he cites, from "Una review pubblicata" to
