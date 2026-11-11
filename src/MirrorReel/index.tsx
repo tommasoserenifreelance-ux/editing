@@ -18,25 +18,33 @@ export const MIRROR_FPS = 25;
 const SPEED = 0.8;
 const f = (sec: number) => Math.round(sec * MIRROR_FPS);
 
-type Shot = { clip: string; from: number; to: number; src: number };
+type Shot = {
+  clip: string;
+  from: number;
+  to: number;
+  src: number;
+  speed?: number;
+};
 
 // from/to = seconds in the edit, src = second in the source clip
 const SHOTS: Shot[] = [
-  // wide: walks in, grabs the headphones on the 1.93 s hit, then the glasses
-  { clip: "MIRROR.1.mov", from: 0, to: 5.83, src: 0.71 },
-  // face CU: glasses land on the 6.81 s accent
-  { clip: "MIRROR.1.1.mov", from: 5.83, to: 7.78, src: 24.12 },
-  // detail: loafers
-  { clip: "MIRROR.1.2.mov", from: 7.78, to: 8.75, src: 1.5 },
+  // wide: walks in, grabs the headphones on the 1.93 s hit; cut before the glasses
+  { clip: "MIRROR.1.mov", from: 0, to: 4.86, src: 0.71 },
+  // face CU: puts on the glasses (slower), they land on the 6.32 s hit
+  { clip: "MIRROR.1.1.mov", from: 4.86, to: 7.29, src: 23.92, speed: 0.671 },
+  // detail: loafers, foot move kept whole
+  { clip: "MIRROR.1.2.mov", from: 7.29, to: 9.74, src: 1.5 },
   // CU: tattooed hands on the tie
-  { clip: "MIRROR.1.1.mov", from: 8.75, to: 9.74, src: 3.0 },
-  // medium (after the camera rise): buttons the collar
-  { clip: "MIRROR.1.3.mov", from: 9.74, to: 11.69, src: 4.0 },
-  // wide: walks out, room empty on the final 14.62 s accent
-  { clip: "MIRROR.1.mov", from: 11.69, to: 14.85, src: 20.65 },
+  { clip: "MIRROR.1.1.mov", from: 9.74, to: 10.72, src: 3.0 },
+  // wide: both hands on the headphones, from the 10.72 s accent
+  { clip: "MIRROR.1.mov", from: 10.72, to: 12.67, src: 17.65 },
+  // CU: buttoning
+  { clip: "MIRROR.1.1.mov", from: 12.67, to: 13.64, src: 10.1 },
+  // wide: walks out, room empty, fade to black
+  { clip: "MIRROR.1.mov", from: 13.64, to: 15.3, src: 21.4 },
 ];
 
-const END_FRAME = f(14.85); // picture fully black
+const END_FRAME = f(15.3); // picture fully black
 const FADE_OUT = f(0.4);
 const LOGO_IN = END_FRAME;
 export const MIRROR_DURATION = f(18.44);
@@ -81,7 +89,7 @@ export const MirrorReel: React.FC = () => {
               <OffthreadVideo
                 src={staticFile(`mirror/${s.clip}`)}
                 trimBefore={Math.round(s.src * MIRROR_FPS)}
-                playbackRate={SPEED}
+                playbackRate={s.speed ?? SPEED}
                 muted
                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
               />
