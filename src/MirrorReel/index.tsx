@@ -31,14 +31,16 @@ type Shot = {
 
 // from/to = seconds in the edit, src = second in the source clip
 const SHOTS: Shot[] = [
-  // wide: walks in, grabs the headphones on the 1.93 s hit
-  { clip: "MIRROR.1.mov", from: 0, to: 2.9, src: 0.71 },
-  // headphones CU, cut on the 2.90 s accent while his hands are on them;
-  // MIRROR.1.4_slow.mp4 = 1.4 slowed to 0.625x with motion interpolation
-  { clip: "MIRROR.1.4_slow.mp4", from: 2.9, to: 6.81, src: 0, speed: 0.982 },
-  // detail: loafers from the 6.81 s accent, both foot taps kept whole - cut
+  // wide: walks in, grabs the headphones, head down... held until he looks
+  // up into the lens with both hands on the cups (src 5.2 s on the 5.35 s hit)
+  { clip: "MIRROR.1.mov", from: 0, to: 5.35, src: 0.92 },
+  // headphones CU matched on that pose (1.4 at ~0.85 s: head up, hands on
+  // the cups), runs to his head turn. MIRROR.1.4_slow.mp4 = 1.4 at 0.625x
+  // with motion interpolation, so 0.85 s real = 1.36 s in the slow file.
+  { clip: "MIRROR.1.4_slow.mp4", from: 5.35, to: 7.78, src: 1.36, speed: 1.02 },
+  // detail: loafers from the 7.78 s hit, both foot taps kept whole - cut
   // only once the foot is back on the floor
-  { clip: "MIRROR.1.2.mov", from: 6.81, to: 10.22, src: 1.11 },
+  { clip: "MIRROR.1.2.mov", from: 7.78, to: 10.22, src: 1.89 },
   // CU: both hands on the knot, one continuous take; this stretch is the
   // steadiest, and the tracked recentering keeps him dead centre
   {
