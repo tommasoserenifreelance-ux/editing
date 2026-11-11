@@ -36,12 +36,8 @@ const SHOTS: Shot[] = [
   // detail: loafers, both foot taps kept whole - cut only once the foot is
   // back on the floor
   { clip: "MIRROR.1.2.mov", from: 7.29, to: 10.22, src: 1.5 },
-  // CU: tattooed hands on the tie
-  { clip: "MIRROR.1.1.mov", from: 10.22, to: 10.72, src: 3.2 },
-  // wide: both hands on the headphones, from the 10.72 s accent
-  { clip: "MIRROR.1.mov", from: 10.72, to: 12.67, src: 17.65 },
-  // CU: buttoning
-  { clip: "MIRROR.1.1.mov", from: 12.67, to: 13.64, src: 10.1 },
+  // CU: the whole tie adjustment in one continuous take, until the hands drop
+  { clip: "MIRROR.1.1.mov", from: 10.22, to: 13.64, src: 6.5 },
   // wide: walks out, room empty, fade to black
   { clip: "MIRROR.1.mov", from: 13.64, to: 15.3, src: 21.4 },
 ];
@@ -67,7 +63,7 @@ const Logo: React.FC = () => {
       style={{ justifyContent: "center", alignItems: "center", opacity }}
     >
       <Img
-        src={staticFile("mirror/logo.jpg")}
+        src={staticFile("mirror/logo.svg")}
         style={{ width: 900, transform: `scale(${scale})` }}
       />
     </AbsoluteFill>
