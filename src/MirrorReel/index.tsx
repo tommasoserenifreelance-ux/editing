@@ -30,12 +30,14 @@ type Shot = {
 const SHOTS: Shot[] = [
   // wide: walks in, grabs the headphones on the 1.93 s hit; cut before the glasses
   { clip: "MIRROR.1.mov", from: 0, to: 4.86, src: 0.71 },
-  // face CU: puts on the glasses (slower), they land on the 6.32 s hit
-  { clip: "MIRROR.1.1.mov", from: 4.86, to: 7.29, src: 23.92, speed: 0.671 },
-  // detail: loafers, foot move kept whole
-  { clip: "MIRROR.1.2.mov", from: 7.29, to: 9.74, src: 1.5 },
+  // face CU: picks up the glasses gesture already under way (no repeat of
+  // the head turn seen in the wide), slower
+  { clip: "MIRROR.1.1.mov", from: 4.86, to: 7.29, src: 24.4, speed: 0.671 },
+  // detail: loafers, both foot taps kept whole - cut only once the foot is
+  // back on the floor
+  { clip: "MIRROR.1.2.mov", from: 7.29, to: 10.22, src: 1.5 },
   // CU: tattooed hands on the tie
-  { clip: "MIRROR.1.1.mov", from: 9.74, to: 10.72, src: 3.0 },
+  { clip: "MIRROR.1.1.mov", from: 10.22, to: 10.72, src: 3.2 },
   // wide: both hands on the headphones, from the 10.72 s accent
   { clip: "MIRROR.1.mov", from: 10.72, to: 12.67, src: 17.65 },
   // CU: buttoning
