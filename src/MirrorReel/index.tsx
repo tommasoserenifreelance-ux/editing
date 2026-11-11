@@ -10,38 +10,42 @@ import {
   useCurrentFrame,
 } from "remotion";
 
-// Edit modelled on the reference: wide master opens and closes (entrance /
-// exit), close-up inserts in between, hard cuts on the beat, everything
-// slightly slowed down. Music: public/mirror/music (123 BPM, original).
+// Edit synced to the reference track (public/mirror/music/reference_track.wav).
+// The track has a hit every 0.49 s and a short pause + accent every 2 bars
+// (2.90, 6.81, 10.72, 14.62 s): gestures and cuts are locked to those hits.
+// Wide master opens/closes, close-up inserts in between, all at 0.8x.
 export const MIRROR_FPS = 25;
-const BPM = 123;
-const BEAT = 60 / BPM;
 const SPEED = 0.8;
-const beatToFrame = (b: number) => Math.round(b * BEAT * MIRROR_FPS);
+const f = (sec: number) => Math.round(sec * MIRROR_FPS);
 
-type Shot = { clip: string; fromBeat: number; toBeat: number; src: number };
+type Shot = { clip: string; from: number; to: number; src: number };
 
-// src = second in the source clip where the shot starts
+// from/to = seconds in the edit, src = second in the source clip
 const SHOTS: Shot[] = [
-  { clip: "MIRROR.1.mov", fromBeat: 0, toBeat: 12, src: 0.5 }, // wide: walks in, headphones
-  { clip: "MIRROR.1.1.mov", fromBeat: 12, toBeat: 16, src: 23.85 }, // face CU: glasses
-  { clip: "MIRROR.1.2.mov", fromBeat: 16, toBeat: 19, src: 1.6 }, // detail: loafers
-  { clip: "MIRROR.1.1.mov", fromBeat: 19, toBeat: 22, src: 3.0 }, // CU: hands on the tie
-  { clip: "MIRROR.1.3.mov", fromBeat: 22, toBeat: 28, src: 3.0 }, // medium: to camera, collar
-  { clip: "MIRROR.1.1.mov", fromBeat: 28, toBeat: 30, src: 10.1 }, // CU: buttoning
-  { clip: "MIRROR.1.mov", fromBeat: 30, toBeat: 40, src: 19.25 }, // wide: walks out
+  // wide: walks in, grabs the headphones on the 1.93 s hit, then the glasses
+  { clip: "MIRROR.1.mov", from: 0, to: 5.83, src: 0.71 },
+  // face CU: glasses land on the 6.81 s accent
+  { clip: "MIRROR.1.1.mov", from: 5.83, to: 7.78, src: 24.12 },
+  // detail: loafers
+  { clip: "MIRROR.1.2.mov", from: 7.78, to: 8.75, src: 1.5 },
+  // CU: tattooed hands on the tie
+  { clip: "MIRROR.1.1.mov", from: 8.75, to: 9.74, src: 3.0 },
+  // medium (after the camera rise): buttons the collar
+  { clip: "MIRROR.1.3.mov", from: 9.74, to: 11.69, src: 4.0 },
+  // wide: walks out, room empty on the final 14.62 s accent
+  { clip: "MIRROR.1.mov", from: 11.69, to: 14.85, src: 20.65 },
 ];
 
-const END_FRAME = beatToFrame(40); // final hit: fade to black + logo
-const FADE_OUT = 10; // frames of picture fade to black before the hit
-const LOGO_IN = END_FRAME + 4;
-export const MIRROR_DURATION = beatToFrame(40) + Math.round(3.6 * MIRROR_FPS);
+const END_FRAME = f(14.85); // picture fully black
+const FADE_OUT = f(0.4);
+const LOGO_IN = END_FRAME;
+export const MIRROR_DURATION = f(18.44);
 
 const Logo: React.FC = () => {
   const frame = useCurrentFrame();
   const opacity = interpolate(
     frame,
-    [0, 14, MIRROR_DURATION - LOGO_IN - 12, MIRROR_DURATION - LOGO_IN],
+    [0, 12, MIRROR_DURATION - LOGO_IN - 15, MIRROR_DURATION - LOGO_IN],
     [0, 1, 1, 0],
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
   );
@@ -70,8 +74,8 @@ export const MirrorReel: React.FC = () => {
     <AbsoluteFill style={{ backgroundColor: "black" }}>
       <AbsoluteFill style={{ opacity: fade }}>
         {SHOTS.map((s, i) => {
-          const from = beatToFrame(s.fromBeat);
-          const dur = beatToFrame(s.toBeat) - from;
+          const from = f(s.from);
+          const dur = f(s.to) - from;
           return (
             <Sequence key={i} from={from} durationInFrames={dur}>
               <OffthreadVideo
@@ -88,7 +92,7 @@ export const MirrorReel: React.FC = () => {
       <Sequence from={LOGO_IN}>
         <Logo />
       </Sequence>
-      <Audio src={staticFile("mirror/music/mirror_track.wav")} />
+      <Audio src={staticFile("mirror/music/reference_track.wav")} />
     </AbsoluteFill>
   );
 };
