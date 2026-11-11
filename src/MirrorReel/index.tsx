@@ -31,14 +31,14 @@ type Shot = {
 
 // from/to = seconds in the edit, src = second in the source clip
 const SHOTS: Shot[] = [
-  // wide: walks in, grabs the headphones on the 1.93 s hit; cut before the glasses
-  { clip: "MIRROR.1.mov", from: 0, to: 4.86, src: 0.71 },
-  // face CU: picks up the glasses gesture already under way (no repeat of
-  // the head turn seen in the wide), slower
-  { clip: "MIRROR.1.1.mov", from: 4.86, to: 7.29, src: 24.4, speed: 0.671 },
-  // detail: loafers, both foot taps kept whole - cut only once the foot is
-  // back on the floor
-  { clip: "MIRROR.1.2.mov", from: 7.29, to: 10.22, src: 1.5 },
+  // wide: walks in, grabs the headphones on the 1.93 s hit
+  { clip: "MIRROR.1.mov", from: 0, to: 2.9, src: 0.71 },
+  // headphones CU, cut on the 2.90 s accent while his hands are on them;
+  // MIRROR.1.4_slow.mp4 = 1.4 slowed to 0.625x with motion interpolation
+  { clip: "MIRROR.1.4_slow.mp4", from: 2.9, to: 6.81, src: 0, speed: 0.982 },
+  // detail: loafers from the 6.81 s accent, both foot taps kept whole - cut
+  // only once the foot is back on the floor
+  { clip: "MIRROR.1.2.mov", from: 6.81, to: 10.22, src: 1.11 },
   // CU: both hands on the knot, one continuous take; this stretch is the
   // steadiest, and the tracked recentering keeps him dead centre
   {
