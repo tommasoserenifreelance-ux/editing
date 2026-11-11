@@ -9,6 +9,7 @@ import {
   staticFile,
   useCurrentFrame,
 } from "remotion";
+import tieTrack from "./tieTrack.json";
 
 // Edit synced to the reference track (public/mirror/music/reference_track.wav).
 // The track has a hit every 0.49 s and a short pause + accent every 2 bars
@@ -24,6 +25,8 @@ type Shot = {
   to: number;
   src: number;
   speed?: number;
+  // per-frame recentering (face tracked in the source, see tieTrack.json)
+  track?: { x: number[]; y: number[]; zoom: number };
 };
 
 // from/to = seconds in the edit, src = second in the source clip
@@ -36,8 +39,15 @@ const SHOTS: Shot[] = [
   // detail: loafers, both foot taps kept whole - cut only once the foot is
   // back on the floor
   { clip: "MIRROR.1.2.mov", from: 7.29, to: 10.22, src: 1.5 },
-  // CU: the whole tie adjustment in one continuous take, until the hands drop
-  { clip: "MIRROR.1.1.mov", from: 10.22, to: 13.64, src: 6.5 },
+  // CU: both hands on the knot, one continuous take; this stretch is the
+  // steadiest, and the tracked recentering keeps him dead centre
+  {
+    clip: "MIRROR.1.1.mov",
+    from: 10.22,
+    to: 13.64,
+    src: 16.5,
+    track: { ...tieTrack, zoom: 1.15 },
+  },
   // wide: walks out, room empty, fade to black
   { clip: "MIRROR.1.mov", from: 13.64, to: 15.3, src: 21.4 },
 ];
@@ -46,6 +56,33 @@ const END_FRAME = f(15.3); // picture fully black
 const FADE_OUT = f(0.4);
 const LOGO_IN = END_FRAME;
 export const MIRROR_DURATION = f(18.44);
+
+const ShotVideo: React.FC<{ shot: Shot }> = ({ shot }) => {
+  const frame = useCurrentFrame();
+  const video = (
+    <OffthreadVideo
+      src={staticFile(`mirror/${shot.clip}`)}
+      trimBefore={Math.round(shot.src * MIRROR_FPS)}
+      playbackRate={shot.speed ?? SPEED}
+      muted
+      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+    />
+  );
+  if (!shot.track) return video;
+  const { x, y, zoom } = shot.track;
+  const i = Math.min(frame, x.length - 1);
+  const maxX = ((zoom - 1) / zoom) * 540;
+  const maxY = ((zoom - 1) / zoom) * 960;
+  const tx = Math.max(-maxX, Math.min(maxX, x[i]));
+  const ty = Math.max(-maxY, Math.min(maxY, y[i] * 0.6));
+  return (
+    <AbsoluteFill
+      style={{ transform: `scale(${zoom}) translate(${tx}px, ${ty}px)` }}
+    >
+      {video}
+    </AbsoluteFill>
+  );
+};
 
 const Logo: React.FC = () => {
   const frame = useCurrentFrame();
@@ -84,13 +121,7 @@ export const MirrorReel: React.FC = () => {
           const dur = f(s.to) - from;
           return (
             <Sequence key={i} from={from} durationInFrames={dur}>
-              <OffthreadVideo
-                src={staticFile(`mirror/${s.clip}`)}
-                trimBefore={Math.round(s.src * MIRROR_FPS)}
-                playbackRate={s.speed ?? SPEED}
-                muted
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
+              <ShotVideo shot={s} />
             </Sequence>
           );
         })}
