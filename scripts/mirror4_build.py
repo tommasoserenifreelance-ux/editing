@@ -4,8 +4,8 @@ Usage: python3 mirror4_build.py MIRROR.4.mov MIRROR.4.1.mov OUT_DIR
    no frame where he is talking or pulling a face (lip tracking + review),
    mostly him tossing sheets away
  - MIRROR.4_b_sharp.mp4: MIRROR.4.1.mov (the re-cut ending) as shot, 1x:
-   throw and the camera's tilt down (0-47, cut as soon as the sheets read on
-   the floor), then him standing up and walking out (55-94, ends as he
+   throw and the camera's tilt down (0-47), easing to a stop on the sheets
+   (47-54, ~1 s on the floor in total), then him standing up and walking out (55-94, ends as he
    clears the frame - no re-centring of the camera)
 """
 import subprocess, sys, os
@@ -35,7 +35,15 @@ def read(path, extra=""):
                           "-f", "rawvideo", "-pix_fmt", "bgr24", "-"], capture_output=True, check=True).stdout
     return np.frombuffer(raw, np.uint8).reshape(-1, H, W, 3)
 E = read(END_SRC)                                             # 132 frames
+K = 8
+EI = read(END_SRC, f",trim=start_frame=47:end_frame=55,setpts=PTS-STARTPTS,"
+          f"minterpolate=fps={24 * K}:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1")
 out = [E[k] for k in range(0, 48)]                            # throw + tilt to the sheets
+NE, HOLD = 12, 6                                              # ~1 s on the sheets in total
+for j in range(1, NE + 1):                                    # the tilt eases to a stop
+    p_ = 7 * (1 - (1 - j / NE) ** 2)                          # 47 -> 54
+    out.append(EI[min(int(round(p_ * K)), len(EI) - 1)])
+out += [out[-1]] * HOLD
 out += [E[k] for k in range(55, 95)]                          # stands up, walks out
 enc = subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "bgr24",
     "-s", f"{W}x{H}", "-r", "24", "-i", "-", *ENC, os.path.join(OUT, "MIRROR.4_b_sharp.mp4")],
