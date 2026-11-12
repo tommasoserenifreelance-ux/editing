@@ -5,12 +5,12 @@ import sys, wave
 import numpy as np
 
 SR = 48000
-MOVE = 14 / 24                 # slider move length (14 frames @ 24 fps)
+MOVE = 16 / 24                 # fast part of the tilt down (16 frames @ 24 fps)
 PRE, TAIL = 0.12, 0.45
 N = int((PRE + MOVE + TAIL) * SR)
 t = np.arange(N) / SR - PRE
 u = np.clip(t / MOVE, 0, 1)
-speed = 1 + 3.5 * np.sin(np.pi * u) ** 1.5            # same speed curve as the picture
+speed = 1 + 3.5 * np.sin(np.pi * u) ** 2              # follows the camera's speed
 env = (speed - 1) / 3.5
 env = np.where(t < 0, np.exp(t / 0.05) * 0.08, env)  # short swell in
 env = np.where(t > MOVE, np.exp(-(t - MOVE) / 0.12) * env.max() * 0.0 + np.exp(-(t - MOVE) / 0.09) * 0.15, env)
