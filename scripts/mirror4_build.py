@@ -3,11 +3,11 @@ Usage: python3 mirror4_build.py MIRROR.4.mov MIRROR.4.1.mov OUT_DIR
  - MIRROR.4_a_sharp.mp4: jump-cut selects (frames listed in SELECTS), in order;
    no frame where he is talking or pulling a face (lip tracking + review),
    mostly him tossing sheets away
- - MIRROR.4_b_sharp.mp4: MIRROR.4.1.mov (the re-cut ending) reworked: throw
-   at 1x (0-17), the camera's tilt down to the floor (18-50) sped up as a
-   slider move (v = 1 + 2.5 sin^2, peak 3.5x, motion-interpolated blur),
-   landing at 1x (50-54), then him standing up and walking out (55-131) with
-   the handheld sway smoothed (vid.stab, smoothing 12, zoom 8%)
+ - MIRROR.4_b_sharp.mp4: MIRROR.4.1.mov (the re-cut ending) as shot, 1x:
+   throw and the camera's tilt down (0-43), then the end of the tilt (44-54)
+   eased out to a stop on the sheets (motion-interpolated), a short hold on
+   the sheets, then him standing up and walking out (55-94, ends as he
+   clears the frame - no re-centring of the camera)
 """
 import subprocess, sys, os
 import numpy as np
@@ -31,43 +31,25 @@ def cut(ranges, out):
                     "-map", "[v]", *ENC, out], check=True)
 
 cut(SELECTS, os.path.join(OUT, "MIRROR.4_a_sharp.mp4"))
-import cv2
 def read(path, extra=""):
     raw = subprocess.run(["ffmpeg", "-v", "error", "-i", path, "-an", "-vf", SHARP + extra,
                           "-f", "rawvideo", "-pix_fmt", "bgr24", "-"], capture_output=True, check=True).stdout
     return np.frombuffer(raw, np.uint8).reshape(-1, H, W, 3)
 E = read(END_SRC)                                             # 132 frames
-K = 4                                                         # in-betweens for the slider blur
-EI = read(END_SRC, f",trim=start_frame=16:end_frame=54,setpts=PTS-STARTPTS,"
+K = 8
+EI = read(END_SRC, f",trim=start_frame=44:end_frame=55,setpts=PTS-STARTPTS,"
           f"minterpolate=fps={24 * K}:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1")
-def sub(p):                                                   # source position -> image
-    j = int(round((p - 16) * K)); j = min(max(j, 0), len(EI) - 1)
-    return EI[j].astype(np.float32)
-out = []
-for k in range(0, 18): out.append(E[k].astype(np.float32))    # throw
-M0, M1, NM = 18, 50, 14
-v = np.array([1 + 2.5 * np.sin(np.pi * (j + 0.5) / NM) ** 2 for j in range(NM)])
-v *= (M1 - M0) / v.sum()
-p_ = M0 + np.concatenate([[0], np.cumsum(v)])
-for j in range(NM):                                           # slider: blend across the travel
-    qs = np.linspace(p_[j], p_[j] + v[j] * 0.5, max(2, int(np.ceil(v[j] * 0.5 * K)) + 1))
-    out.append(sum(sub(q) for q in qs) / len(qs))
-for k in range(M1, 55): out.append(E[k].astype(np.float32))   # landing
-# stand-up / walk-out (its own shot in MIRROR.4.1, frames 55-131): handheld
-# sway smoothed with vid.stab (smoothing 12, 8% zoom so no borders show)
-trf = os.path.join(OUT, ".mirror4_vs.trf")
-base = f"trim=start_frame=55,setpts=PTS-STARTPTS,"
-subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", END_SRC, "-an", "-vf",
-                base + f"vidstabdetect=shakiness=6:accuracy=15:result={trf}", "-f", "null", "-"], check=True)
-raw = subprocess.run(["ffmpeg", "-v", "error", "-i", END_SRC, "-an", "-vf",
-    base + f"vidstabtransform=input={trf}:smoothing=12:optzoom=0:zoom=8:interpol=bicubic,{SHARP}",
-    "-f", "rawvideo", "-pix_fmt", "bgr24", "-"], capture_output=True, check=True).stdout
-os.remove(trf)
-for img in np.frombuffer(raw, np.uint8).reshape(-1, H, W, 3): out.append(img.astype(np.float32))
-print("slider speeds", np.round(v, 2).tolist())
+out = [E[k] for k in range(0, 44)]                            # throw + tilt, as shot
+NE, HOLD = 16, 10
+for j in range(1, NE + 1):                                    # ease-out to a stop on the sheets
+    u = j / NE
+    p_ = 10 * (1 - (1 - u) ** 2)                              # 44 -> 54, speed 1.25 -> 0
+    out.append(EI[min(int(round(p_ * K)), len(EI) - 1)])
+out += [out[-1]] * HOLD                                       # hold on the sheets
+out += [E[k] for k in range(55, 95)]                          # stands up, walks out
 enc = subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "bgr24",
     "-s", f"{W}x{H}", "-r", "24", "-i", "-", *ENC, os.path.join(OUT, "MIRROR.4_b_sharp.mp4")],
     stdin=subprocess.PIPE)
-for img in out: enc.stdin.write(np.clip(img, 0, 255).round().astype(np.uint8).tobytes())
+for img in out: enc.stdin.write(np.ascontiguousarray(img).tobytes())
 enc.stdin.close(); enc.wait()
 print("ending frames", len(out))
