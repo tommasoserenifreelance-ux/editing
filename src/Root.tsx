@@ -3,6 +3,7 @@ import { ClassReel, REEL_DURATION, REEL_FPS } from "./ClassReel";
 import { DistrettoWall, WALL_DURATION, WALL_FPS } from "./DistrettoWall";
 import { HelloWorld } from "./HelloWorld";
 import { MIRROR_DURATION, MIRROR_FPS, MirrorReel } from "./MirrorReel";
+import { MIRROR2_DURATION, MIRROR2_FPS, Mirror2Reel } from "./Mirror2Reel";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
 import {
@@ -96,6 +97,14 @@ export const RemotionRoot: React.FC = () => {
         component={MirrorReel}
         durationInFrames={MIRROR_DURATION}
         fps={MIRROR_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="Mirror2Reel"
+        component={Mirror2Reel}
+        durationInFrames={MIRROR2_DURATION}
+        fps={MIRROR2_FPS}
         width={1080}
         height={1920}
       />
