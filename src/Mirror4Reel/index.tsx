@@ -18,22 +18,21 @@ import {
 // stop every 4 beats; hits after the stops at 9.25, 11.15, 13.05 s.
 // No shot where he is talking (lip tracking on the source); the selects show
 // him mostly tossing sheets away, a couple of him reading.
-// Extra shot for this one: he throws the whole stack in the air on the 9.25 s
-// hit (locked-off wide, him centred), then a fast vertical slider move - the
-// wide scrolls up and the floor shot scrolls in from below in 12 frames with
-// motion blur and a whoosh - landing at 1x on the sheets on the floor. No
-// slow motion. Cut to him standing up and walking out, empty room, black +
-// logo as the song closes (~14.3 s).
-// Sources (scripts/mirror4_build.py, all with the MIRROR 2 sharpening):
-// a = the 10 jump-cut selects back to back, ramp = throw + slider + landing
-// (MIRROR.4 1985-1995, 1996-2001 / 2022-2027 scrolled, 2028-2037),
-// c = frames 2038-2114. 24 fps, 1x.
+// Extra shot for this one, one continuous move on the real camera: locked
+// off (handheld drift removed, him centred) he throws the whole stack in the
+// air on the 9.25 s hit, then the camera's own tilt down to the floor, sped
+// up (peak ~4.5x, motion blur, whoosh) with the subject kept centred, landing
+// on the sheets on the floor. No slow motion. Cut on the 10.17 s beat to him
+// standing up and walking out, empty room, black + logo as the song closes.
+// Sources (scripts/mirror4_build.py, all sharpened):
+// a = the 10 jump-cut selects back to back, ramp = MIRROR.4 1970-2037
+// stabilised and retimed, c = frames 2038-2114. 24 fps.
 export const MIRROR4_FPS = 24;
 const f = (sec: number) => Math.round(sec * MIRROR4_FPS);
 
-const SELECTS_END = 219; // 9.125 s: last select runs straight into the throw
-const WHOOSH_AT = SELECTS_END + 11; // slider move starts (9.58 s)
-const RAMP_END = SELECTS_END + 33; // 10.5 s: cut to him standing up
+const SELECTS_END = 204; // 8.5 s: cut to the locked-off wide (throw on 9.25 s)
+const WHOOSH_AT = SELECTS_END + 26; // camera starts moving down (9.58 s)
+const RAMP_END = SELECTS_END + 40; // 10.17 s beat: cut to him standing up
 const C_LEN = 77;
 const END_FRAME = 343; // 14.3 s: black as the song closes
 const FADE_OUT = 9;
