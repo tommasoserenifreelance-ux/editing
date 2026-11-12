@@ -20,8 +20,8 @@ import {
 // Ending = MIRROR.4.1 as shot (no retiming of the move, no stabilisation):
 // he throws the whole stack in the air on the 9.25 s hit, the camera tilts
 // down with the sheets (whoosh on its fast part, music dipped under it),
-// eases to a stop and stays on the sheets for a moment, then he stands up
-// and walks out; as he clears the frame it fades to black and the MIRROR
+// cut as soon as the sheets read on the floor, then he stands up and walks
+// out; as he clears the frame it fades to black and the MIRROR
 // logo comes in. The camera re-centring after his exit is left out.
 // Sources (scripts/mirror4_build.py, all sharpened): a = the 13 jump-cut
 // selects back to back (extra cuts on the 1.68 / 3.09 / 5.47 s beats so
@@ -31,8 +31,8 @@ const f = (sec: number) => Math.round(sec * MIRROR4_FPS);
 
 const SELECTS_END = 217; // 9.04 s: cut to the ending (sheets fly on 9.25 s)
 const WHOOSH_AT = SELECTS_END + 27; // fast part of the tilt down
-const B_LEN = 110;
-const END_FRAME = SELECTS_END + B_LEN; // 13.6 s: black as he clears the frame
+const B_LEN = 88;
+const END_FRAME = SELECTS_END + B_LEN; // 12.7 s: black as he clears the frame
 const FADE_OUT = 9;
 const LOGO_IN = END_FRAME;
 export const MIRROR4_DURATION = END_FRAME + f(3.1);
