@@ -12,15 +12,16 @@ import {
 import cuTrack from "./cuTrack.json";
 import legsTrack from "./legsTrack.json";
 
-// MIRROR 2 - same structure, timing and pace as the reference reel
-// (public/mirror/music/reference_track_2.wav = its audio + reverb tail).
-// Reference: wide walk-in -> CU writing -> legs detail -> wide walk-out,
-// cuts at 3.64 / 6.56 / 9.44 s (kick hits, one bar apart at ~83 BPM),
-// black at 15.08 s, real-time movement with a smooth cadence. The snare hits
-// fall every 1.448 s from 1.46 s; in the last wide he looks into the lens on
-// the 11.58 s hit and leaves while the track fades out.
-// The clips are 24p: the edit runs at 24 fps and 1x, so every source frame
-// is shown exactly once (no repeated frames, no interpolation).
+// MIRROR 2 - same structure and movements as the reference reel
+// (public/mirror/music/reference_track_2.wav = its audio + reverb tail):
+// wide walk-in -> CU writing -> legs detail -> wide (closes the diary, walks
+// out) -> black + logo on the song's closing hit.
+// Track grid (~83 BPM): kicks every 1.448 s from 0.73 s (2.18, 3.63, 5.07,
+// 6.52, 7.97, 9.42, 10.87, 12.31), snares half a bar later (1.46, 2.90, ...).
+// The groove ends on the 12.31 s kick; after it only the last chord decays.
+// Clips are 24p: the edit runs at 24 fps and 1x, so every source frame is
+// shown exactly once (no repeated frames, no interpolation). *_sharp.mp4 =
+// the original clips with a two-radius unsharp pass (detail + local contrast).
 export const MIRROR2_FPS = 24;
 const f = (sec: number) => Math.round(sec * MIRROR2_FPS);
 
@@ -34,39 +35,41 @@ type Shot = {
   track?: Track & { zoom: number };
 };
 
-// from/to = edit frames (24 fps), src = second in the source clip
+// from/to = edit frames (24 fps), src = second in the (sharpened) clip.
+// MIRROR.2_in_sharp.mp4 = MIRROR.2.mov frames 12-95, _out_ = frames 336-471.
 const SHOTS: Shot[] = [
   // wide: enters from frame left (half body in on frame 0, like the
-  // reference), stops centre-frame and starts writing
-  { clip: "MIRROR.2.mov", from: 0, to: f(3.625), src: 29 / 24 },
-  // CU matched on the writing pose, head down; handheld -> stabilised,
-  // face pulled to centre with a slight zoom
+  // reference); cut on the 1.46 s snare while the smile is only a hint
+  // (it opens fully ~0.3 s later in the source)
+  { clip: "MIRROR.2_in_sharp.mp4", from: 0, to: f(1.46), src: 17 / 24 },
+  // CU writing, head down; handheld -> stabilised on a smooth path, face
+  // pulled to centre with a slight zoom. Runs to the 5.07 s kick.
   {
-    clip: "MIRROR.2.2.mov",
-    from: f(3.625),
-    to: f(6.542),
-    src: 1.0,
+    clip: "MIRROR.2.2_sharp.mp4",
+    from: f(1.46),
+    to: f(5.07),
+    src: 10 / 24,
     track: { ...cuTrack, zoom: 1.17 },
   },
   // legs: opens on the planted stance, keeps the whole foot pivot and the
-  // turn to three-quarters; cut only once he has settled
+  // turn to three-quarters; cut on the 7.97 s kick once he has settled
   {
-    clip: "MIRROR.2.1.mov",
-    from: f(6.542),
-    to: f(9.417),
-    src: 0.625,
+    clip: "MIRROR.2.1_sharp.mp4",
+    from: f(5.07),
+    to: f(7.97),
+    src: 15 / 24,
     track: { ...legsTrack, zoom: 1.05 },
   },
-  // wide: writing, looks up and holds the lens on the 11.58 s hit, turns as
-  // the track fades (~12.6 s) and walks out frame right, gone by ~14.5 s;
-  // short empty room, fade to black - same timing as the reference
-  { clip: "MIRROR.2.mov", from: f(9.417), to: f(15.083), src: 308 / 24 },
+  // wide (source 14.75 s): looks up from the diary and closes it straight
+  // away, as in the reference, turns and walks out frame right (gone by
+  // ~11.1 s); short empty room, fade to black on the closing kick
+  { clip: "MIRROR.2_out_sharp.mp4", from: f(7.97), to: f(12.31), src: 18 / 24 },
 ];
 
-const END_FRAME = f(15.083); // picture fully black (as in the reference)
+const END_FRAME = f(12.31); // black on the song's last kick -> logo
 const FADE_OUT = f(0.4);
 const LOGO_IN = END_FRAME;
-export const MIRROR2_DURATION = f(18.458);
+export const MIRROR2_DURATION = END_FRAME + f(3.1);
 
 const ShotVideo: React.FC<{ shot: Shot }> = ({ shot }) => {
   const frame = useCurrentFrame();

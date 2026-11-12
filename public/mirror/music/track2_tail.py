@@ -7,7 +7,7 @@ import numpy as np
 from scipy import signal
 
 SR = 44100
-TOTAL = 18.46          # >= MIRROR2_DURATION (443 frames @ 24 fps)
+TOTAL = 15.4           # >= MIRROR2_DURATION (369 frames @ 24 fps)
 SRC, OUT = sys.argv[1], sys.argv[2]
 raw = subprocess.run(["ffmpeg", "-v", "error", "-i", SRC, "-vn", "-ac", "2", "-ar", str(SR),
                       "-f", "f32le", "-"], capture_output=True, check=True).stdout
