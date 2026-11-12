@@ -2,6 +2,7 @@ import {
   AbsoluteFill,
   Audio,
   Easing,
+  Freeze,
   Img,
   interpolate,
   OffthreadVideo,
@@ -15,19 +16,25 @@ import {
 // sheets and letting them fly, on the reference's cut grid (0.32, 0.56,
 // 0.76, 2.16, 3.60, 4.56, 5.96, 6.88, 7.84 s). The track (~127 BPM) has a
 // stop every 4 beats; hits after the stops at 9.25, 11.15, 13.05 s.
-// Extra beat shot for this one: he throws the whole stack in the air on the
-// 9.25 s hit, the camera slides down with the falling sheets (speed ramp:
-// 1x throw -> 3x fall with motion blur -> eases to ~0.08x and settles on the
-// sheets on the floor), cut on 11.15 s to him standing up and walking out,
-// empty room, black + logo as the song closes (~14.3 s).
+// No shot where he is talking (lip tracking on the source); the selects show
+// him mostly tossing sheets away, a couple of him reading.
+// Extra shot for this one: he throws the whole stack in the air on the 9.25 s
+// hit (locked-off wide, him centred), then a fast vertical slider move - the
+// wide scrolls up and the floor shot scrolls in from below in 12 frames with
+// motion blur and a whoosh - landing at 1x on the sheets on the floor. No
+// slow motion. Cut to him standing up and walking out, empty room, black +
+// logo as the song closes (~14.3 s).
 // Sources (scripts/mirror4_build.py, all with the MIRROR 2 sharpening):
-// a = the 10 jump-cut selects back to back, ramp = MIRROR.4 frames
-// 1985-2037 retimed, c = frames 2038-2112. 24 fps, 1x except the ramp.
+// a = the 10 jump-cut selects back to back, ramp = throw + slider + landing
+// (MIRROR.4 1985-1995, 1996-2001 / 2022-2027 scrolled, 2028-2037),
+// c = frames 2038-2114. 24 fps, 1x.
 export const MIRROR4_FPS = 24;
 const f = (sec: number) => Math.round(sec * MIRROR4_FPS);
 
-const SELECTS_END = 219; // 9.125 s: last select runs straight into the ramp
-const RAMP_END = 268; // 11.15 s hit (49 retimed frames)
+const SELECTS_END = 219; // 9.125 s: last select runs straight into the throw
+const WHOOSH_AT = SELECTS_END + 11; // slider move starts (9.58 s)
+const RAMP_END = SELECTS_END + 33; // 10.5 s: cut to him standing up
+const C_LEN = 77;
 const END_FRAME = 343; // 14.3 s: black as the song closes
 const FADE_OUT = 9;
 const LOGO_IN = END_FRAME;
@@ -36,7 +43,7 @@ export const MIRROR4_DURATION = END_FRAME + f(3.1);
 const SHOTS = [
   { clip: "a", from: 0, to: SELECTS_END },
   { clip: "ramp", from: SELECTS_END, to: RAMP_END },
-  { clip: "c", from: RAMP_END, to: END_FRAME },
+  { clip: "c", from: RAMP_END, to: RAMP_END + C_LEN },
 ];
 
 const Logo: React.FC = () => {
@@ -79,11 +86,38 @@ export const Mirror4Reel: React.FC = () => {
             />
           </Sequence>
         ))}
+        {/* empty room: hold its last frame into the fade */}
+        <Sequence
+          from={RAMP_END + C_LEN}
+          durationInFrames={END_FRAME - RAMP_END - C_LEN}
+        >
+          <Freeze frame={C_LEN - 1}>
+            <OffthreadVideo
+              src={staticFile("mirror/MIRROR.4_c_sharp.mp4")}
+              muted
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          </Freeze>
+        </Sequence>
       </AbsoluteFill>
+      <Sequence from={WHOOSH_AT - 3}>
+        <Audio src={staticFile("mirror/music/whoosh.wav")} volume={0.8} />
+      </Sequence>
       <Sequence from={LOGO_IN}>
         <Logo />
       </Sequence>
-      <Audio src={staticFile("mirror/music/reference_track_4.wav")} />
+      <Audio
+        src={staticFile("mirror/music/reference_track_4.wav")}
+        // dip the music under the whoosh so the slider reads
+        volume={(fr) =>
+          interpolate(
+            fr,
+            [WHOOSH_AT - 4, WHOOSH_AT, WHOOSH_AT + 12, WHOOSH_AT + 20],
+            [1, 0.55, 0.55, 1],
+            { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+          )
+        }
+      />
     </AbsoluteFill>
   );
 };
