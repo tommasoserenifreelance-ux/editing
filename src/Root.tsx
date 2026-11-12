@@ -4,6 +4,7 @@ import { DistrettoWall, WALL_DURATION, WALL_FPS } from "./DistrettoWall";
 import { HelloWorld } from "./HelloWorld";
 import { MIRROR_DURATION, MIRROR_FPS, MirrorReel } from "./MirrorReel";
 import { MIRROR2_DURATION, MIRROR2_FPS, Mirror2Reel } from "./Mirror2Reel";
+import { MIRROR3_DURATION, MIRROR3_FPS, Mirror3Reel } from "./Mirror3Reel";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
 import {
@@ -105,6 +106,14 @@ export const RemotionRoot: React.FC = () => {
         component={Mirror2Reel}
         durationInFrames={MIRROR2_DURATION}
         fps={MIRROR2_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="Mirror3Reel"
+        component={Mirror3Reel}
+        durationInFrames={MIRROR3_DURATION}
+        fps={MIRROR3_FPS}
         width={1080}
         height={1920}
       />
