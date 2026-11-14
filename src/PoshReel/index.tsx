@@ -43,13 +43,14 @@ const A_SEGS: Seg[] = [
 ];
 // FLASHBACK: bar (clip nuova, bloccata), intera.
 const B_SEG: Seg = { src: "posh3.mp4", inF: 0, outF: 37 };
-// Biliardo: fino all'insegna "Sala Biliardo" | lei dentro | gira l'angolo |
-// in fondo, frontale alla camera (palle in primo piano). Poi Daisy's.
+// Biliardo (riferimenti ai secondi della v15): insegna "Sala Biliardo" (16s)
+// | lei tocca il tavolo (19s) | ha girato l'angolo (22s) | davanti alla camera
+// che si gira (25s, lasciata più lunga). Poi Daisy's.
 const C_SEGS: Seg[] = [
-  { src: "posh4.mp4", inF: 0, outF: 90 },
-  { src: "posh4.mp4", inF: 105, outF: 140 },
-  { src: "posh4.mp4", inF: 150, outF: 200 },
-  { src: "posh4.mp4", inF: 226, outF: 298 },
+  { src: "posh4.mp4", inF: 0, outF: 80 },
+  { src: "posh4.mp4", inF: 128, outF: 168 },
+  { src: "posh4.mp4", inF: 205, outF: 240 },
+  { src: "posh4.mp4", inF: 252, outF: 298 },
 ];
 // Reveal Daisy's: intera.
 const D_SEG: Seg = { src: "posh2.mp4", inF: 0, outF: 161 };
