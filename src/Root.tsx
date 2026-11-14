@@ -99,7 +99,7 @@ export const RemotionRoot: React.FC = () => {
         fps={POSH_FPS}
         width={1080}
         height={1920}
-        defaultProps={{ music: "", musicStart: 0 }}
+        defaultProps={{ music: "i-put-a-spell-on-you.mp3" }}
       />
       <Composition
         id="DistrettoWall-16x9"
