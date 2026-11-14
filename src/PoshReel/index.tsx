@@ -2,6 +2,9 @@ import React from "react";
 import {
   AbsoluteFill,
   Audio,
+  cancelRender,
+  continueRender,
+  delayRender,
   Img,
   interpolate,
   OffthreadVideo,
@@ -10,6 +13,16 @@ import {
   useCurrentFrame,
 } from "remotion";
 import { z } from "zod";
+// Font corsivo (Pinyon Script, OFL) incluso in public/fonts.
+const scriptFont = "PinyonScript";
+const fontHandle = delayRender("Carico il font corsivo");
+new FontFace(scriptFont, `url(${staticFile("fonts/PinyonScript.woff2")}) format("woff2")`)
+  .load()
+  .then((f) => {
+    document.fonts.add(f);
+    continueRender(fontHandle);
+  })
+  .catch((err) => cancelRender(err));
 
 export const POSH_FPS = 30;
 // Leggero slow motion su tutte le clip (video e passi).
@@ -40,7 +53,14 @@ const GAP_OUT = 3; // nero prima dello stacco sul biliardo
 
 // Finale: dissolvenza al nero e poi appare il logo Posh.
 const END_FADE = 18;
-const LOGO_DELAY = 12;
+// Dopo il nero: la data, poi il logo.
+const DATE_TEXT = "28.11.2026";
+const DATE_DELAY = 8;
+const DATE_IN = 20;
+const DATE_HOLD = 45;
+const DATE_OUT = 15;
+const DATE_LEN = DATE_DELAY + DATE_IN + DATE_HOLD + DATE_OUT;
+const LOGO_DELAY = 8;
 const LOGO_IN = 30;
 const LOGO_HOLD = 75;
 const LOGO_LEN = LOGO_DELAY + LOGO_IN + LOGO_HOLD;
@@ -49,7 +69,8 @@ const A_FROM = 0;
 const B_FROM = A_FROM + A_LEN + GAP_IN;
 const C_FROM = B_FROM + B_LEN + GAP_OUT;
 const D_FROM = C_FROM + C_LEN;
-const LOGO_FROM = D_FROM + D_LEN;
+const DATE_FROM = D_FROM + D_LEN;
+const LOGO_FROM = DATE_FROM + DATE_LEN;
 export const POSH_DURATION = LOGO_FROM + LOGO_LEN;
 
 // Appare la scritta "Daisy's" (≈ 2.3 s sorgente nella clip nuova).
@@ -113,7 +134,7 @@ const Grade: React.FC = () => (
 );
 
 // Inquadratura ferma come da girato: nessuno zoom o movimento aggiunto.
-const Clip: React.FC<{ src: string }> = ({ src }) => (
+const Clip: React.FC<{ src: string; filter?: string }> = ({ src, filter }) => (
   <AbsoluteFill>
     <OffthreadVideo
       src={staticFile(`posh/v/${src}`)}
@@ -123,7 +144,7 @@ const Clip: React.FC<{ src: string }> = ({ src }) => (
         width: "100%",
         height: "100%",
         objectFit: "cover",
-        filter: "contrast(1.1) saturate(0.95) brightness(0.98)",
+        filter: filter ?? "contrast(1.1) saturate(0.95) brightness(0.98)",
       }}
     />
   </AbsoluteFill>
@@ -146,6 +167,39 @@ const flashbackBlack = (frame: number) => {
   }
   if (frame >= bEnd && frame < C_FROM) return 1;
   return 0;
+};
+
+// Look "ricordo" sul bar: seppia, grana, vignetta, bordi morbidi e uno
+// sfarfallio di luce leggero. L'inquadratura resta ferma.
+const FLICKER = [0, 0.05, -0.03, 0.06, 0, -0.08, 0.03, 0, 0.07, -0.04, 0.02, -0.12, 0.04, 0, -0.05, 0.06];
+
+const Flashback: React.FC = () => {
+  const frame = useCurrentFrame();
+  const b = 1.04 + FLICKER[frame % FLICKER.length];
+  return (
+    <AbsoluteFill>
+      <Clip
+        src={CLIPS.B.src}
+        filter={`sepia(0.5) saturate(0.75) contrast(1.18) brightness(${b})`}
+      />
+      <AbsoluteFill
+        style={{
+          backdropFilter: "blur(10px)",
+          WebkitMaskImage: "radial-gradient(ellipse 60% 50% at 50% 50%, transparent 60%, black 100%)",
+          maskImage: "radial-gradient(ellipse 60% 50% at 50% 50%, transparent 60%, black 100%)",
+        }}
+      />
+      <AbsoluteFill
+        style={{
+          background:
+            "radial-gradient(circle at 15% 25%, rgba(255,140,60,0.35), rgba(255,60,90,0.1) 35%, transparent 60%)",
+          mixBlendMode: "screen",
+        }}
+      />
+      <Vignette strength={0.8} />
+      <Grain opacity={0.3} />
+    </AbsoluteFill>
+  );
 };
 
 // ---------- audio ----------
@@ -192,10 +246,21 @@ const Steps: React.FC<{ clipFrom: number; steps: number[]; volume: number }> = (
 export const PoshReel: React.FC<z.infer<typeof poshSchema>> = ({ music }) => {
   const frame = useCurrentFrame();
   const fadeFromBlack = interpolate(frame, [0, 10], [1, 0], { extrapolateRight: "clamp" });
-  const fadeToBlack = interpolate(frame, [LOGO_FROM - END_FADE, LOGO_FROM], [0, 1], {
+  const fadeToBlack = interpolate(frame, [DATE_FROM - END_FADE, DATE_FROM], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
+  const dateOpacity = interpolate(
+    frame,
+    [
+      DATE_FROM + DATE_DELAY,
+      DATE_FROM + DATE_DELAY + DATE_IN,
+      LOGO_FROM - DATE_OUT,
+      LOGO_FROM,
+    ],
+    [0, 1, 1, 0],
+    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+  );
   const logoOpacity = interpolate(
     frame,
     [LOGO_FROM + LOGO_DELAY, LOGO_FROM + LOGO_DELAY + LOGO_IN],
@@ -216,9 +281,6 @@ export const PoshReel: React.FC<z.infer<typeof poshSchema>> = ({ music }) => {
       <Sequence from={A_FROM} durationInFrames={A_LEN}>
         <Clip src={CLIPS.A.src} />
       </Sequence>
-      <Sequence from={B_FROM} durationInFrames={B_LEN}>
-        <Clip src={CLIPS.B.src} />
-      </Sequence>
       <Sequence from={C_FROM} durationInFrames={C_LEN}>
         <Clip src={CLIPS.C.src} />
       </Sequence>
@@ -230,7 +292,27 @@ export const PoshReel: React.FC<z.infer<typeof poshSchema>> = ({ music }) => {
       <Vignette strength={0.55} />
       <Grain opacity={0.12} />
 
+      <Sequence from={B_FROM} durationInFrames={B_LEN}>
+        <Flashback />
+      </Sequence>
+
       <AbsoluteFill style={{ backgroundColor: "black", opacity: black }} />
+
+      {/* data */}
+      <AbsoluteFill
+        style={{ justifyContent: "center", alignItems: "center", opacity: dateOpacity }}
+      >
+        <div
+          style={{
+            fontFamily: scriptFont,
+            color: "white",
+            fontSize: 150,
+            letterSpacing: 2,
+          }}
+        >
+          {DATE_TEXT}
+        </div>
+      </AbsoluteFill>
 
       {/* logo finale */}
       <AbsoluteFill
@@ -244,10 +326,12 @@ export const PoshReel: React.FC<z.infer<typeof poshSchema>> = ({ music }) => {
       <Steps clipFrom={C_FROM} steps={STEPS_C} volume={0.8} />
       <Steps clipFrom={D_FROM} steps={STEPS_D} volume={0.9} />
 
-
-      {/* suono bar: cin cin + ghiaccio */}
-      <Sequence from={B_FROM} durationInFrames={66}>
-        <Audio src={staticFile("posh/bar_clink.wav")} volume={0.55} />
+      {/* whoosh di entrata e uscita dal flashback */}
+      <Sequence from={B_FROM - 30} durationInFrames={36}>
+        <Audio src={staticFile("posh/flash_in.wav")} volume={0.5} />
+      </Sequence>
+      <Sequence from={C_FROM - 6} durationInFrames={30}>
+        <Audio src={staticFile("posh/flash_out.wav")} volume={0.45} />
       </Sequence>
 
       {music ? (

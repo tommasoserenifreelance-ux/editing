@@ -4,7 +4,7 @@
 set -euo pipefail
 IN=$1; OUT=$2
 START=114.2   # drop del brano (148.2 s) sul reveal di Daisy's (34.0 s nel video)
-LEN=43.1      # durata del video
+LEN=46.0      # durata del video
 LP_AT=38.6    # inizio dissolvenza al nero / logo
 LP_DUR=1.5
 ffmpeg -v error -y -ss "$START" -t "$LEN" -i "$IN" -filter_complex "
