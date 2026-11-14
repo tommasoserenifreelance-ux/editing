@@ -23,8 +23,8 @@ const srcFrame = (n: number) => n / SRC_FPS; // frame sorgente (24fps) -> second
 const CLIPS = {
   A: { src: "posh1.mp4", dur: 12.458 }, // corridoio + porta
   B: { src: "posh3.mp4", dur: 3.0 }, // FLASHBACK: bar
-  C: { src: "posh4.mp4", dur: 13.208 }, // sala biliardo
-  D: { src: "posh2.mp4", dur: 9.708 }, // reveal Daisy's
+  C: { src: "posh4.mp4", dur: 12.417 }, // sala biliardo (take nuova, più stabile)
+  D: { src: "posh2.mp4", dur: 9.708 }, // reveal Daisy's (stabilizzata)
 };
 
 const A_LEN = toComp(CLIPS.A.dur);
@@ -44,7 +44,8 @@ const REVEAL = D_FROM + toComp(5.6);
 // Appoggi del tacco, in frame sorgente (24fps), rilevati sul girato.
 // posh1: si ferma alla porta dopo l'ultimo passo.
 const STEPS_A = [9, 25, 41, 57, 73, 89, 104, 119, 133];
-const STEPS_C = [12, 28, 44, 57, 73, 90, 104, 119, 134, 150, 165, 180, 194, 208, 222, 237];
+// posh4 (take nuova): cammina fino a ~175, poi si ferma alla finestra.
+const STEPS_C = [4, 20, 35, 51, 66, 82, 97, 113, 128, 144, 159, 175];
 const STEPS_D = [2, 18, 31, 45, 58, 75, 90, 106, 120];
 
 // Musica: il drop del brano (2:28.2) cade sul reveal di Daisy's.
@@ -131,12 +132,6 @@ const flickerAt = (frame: number) => {
   }
   if (frame >= C_FROM && frame < C_FROM + 6) {
     return interpolate(frame, [C_FROM, C_FROM + 6], [1, 0]);
-  }
-  // Durante il flashback la luce "respira" con piccoli cali rapidi.
-  if (frame >= B_FROM && frame < C_FROM) {
-    const t = frame - B_FROM;
-    if (t === 34 || t === 35 || t === 70) return 0.7;
-    if (t === 52) return 0.45;
   }
   return 0;
 };
