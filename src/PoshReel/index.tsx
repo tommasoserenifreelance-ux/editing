@@ -169,12 +169,13 @@ const flashbackBlack = (frame: number) => {
   return 0;
 };
 
-// Flashback: colori normali, solo un leggero sfarfallio di luce. Inquadratura ferma.
-const FLICKER = [0, 0.05, -0.03, 0.06, 0, -0.08, 0.03, 0, 0.07, -0.04, 0.02, -0.12, 0.04, 0, -0.05, 0.06];
+// Flashback: colori normali; la luce si spegne e si riaccende due volte ("ta-ta").
+// Inquadratura ferma.
+const LIGHTS_OFF = [20, 21, 22, 31, 32];
 
 const Flashback: React.FC = () => {
   const frame = useCurrentFrame();
-  const b = 0.98 + FLICKER[frame % FLICKER.length];
+  const b = LIGHTS_OFF.includes(frame) ? 0.12 : 0.98;
   return (
     <Clip src={CLIPS.B.src} filter={`contrast(1.1) saturate(0.95) brightness(${b})`} />
   );
