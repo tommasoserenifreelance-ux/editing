@@ -45,18 +45,17 @@ const A_SEGS: Seg[] = [
 ];
 // FLASHBACK: bar (clip nuova, bloccata), intera.
 const B_SEG: Seg = { src: "posh3.mp4", inF: 0, outF: 37 };
-// Biliardo (riferimenti ai secondi della v15): insegna "Sala Biliardo" (16s)
-// | lei tocca il tavolo (19s) | ha girato l'angolo (22s) | davanti alla camera
-// che si gira (25s, lasciata più lunga). Poi Daisy's.
+// Biliardo, tagli a tempo con le battute del brano (una ogni ~1,036 s):
+// insegna "Sala Biliardo" | lei tocca il tavolo | ha girato l'angolo |
+// frontale alla camera (rallentata). Poi Daisy's, anch'essa su una battuta.
 const C_SEGS: Seg[] = [
-  { src: "posh4.mp4", inF: 0, outF: 80 },
-  { src: "posh4.mp4", inF: 128, outF: 168 },
-  { src: "posh4.mp4", inF: 205, outF: 240 },
-  // lei già frontale alla camera: poco girato, quindi rallentato un po' di più.
-  { src: "posh4.mp4", inF: 284, outF: 298, rate: 0.55 },
+  { src: "posh4.mp4", inF: 0, outF: 84 },
+  { src: "posh4.mp4", inF: 128, outF: 171 },
+  { src: "posh4.mp4", inF: 205, outF: 247 },
+  { src: "posh4.mp4", inF: 284, outF: 297, rate: 0.55 },
 ];
-// Reveal Daisy's: intera.
-const D_SEG: Seg = { src: "posh2.mp4", inF: 0, outF: 161 };
+// Reveal Daisy's: parte mezzo secondo più avanti per cadere sulla battuta.
+const D_SEG: Seg = { src: "posh2.mp4", inF: 13, outF: 161 };
 
 const sum = (gs: Seg[]) => gs.reduce((t, g) => t + segLen(g), 0);
 const A_LEN = sum(A_SEGS);
@@ -95,7 +94,7 @@ const LOGO_FROM = DATE_FROM + DATE_LEN;
 export const POSH_DURATION = LOGO_FROM + LOGO_LEN;
 
 // Appare la scritta "Daisy's" (≈ 2.3 s sorgente nella clip nuova).
-const REVEAL = D_FROM + toComp(2.3);
+const REVEAL = D_FROM + toComp(2.3 - D_SEG.inF / SRC_FPS);
 
 // Appoggi del tacco, in frame sorgente (24fps), rilevati sul girato.
 // Si sentono solo quelli che cadono dentro gli spezzoni usati.
@@ -105,7 +104,7 @@ const STEPS_D = [11, 27, 41];
 
 // Musica: base pre-mixata (public/posh/music_bed.wav) generata da
 // scripts/posh_music_bed.sh con i tempi stampati da scripts/posh_timing.py:
-// il drop del brano (2:28.2) cade sul reveal di Daisy's, passa-basso sul finale.
+// il drop del brano (2:28.32) cade sul reveal di Daisy's, passa-basso sul finale.
 
 export const poshSchema = z.object({
   music: z.string(),
@@ -217,8 +216,8 @@ const Segments: React.FC<{ from: number; segs: Seg[] }> = ({ from, segs }) => {
 
 // Prima camminata: solo tacchi. La musica parte piano dalla scena della porta.
 const DOOR_FROM = A_FROM + segLen(A_SEGS[0]);
-// La musica entra subito dopo il taglio sulla porta e sale gradualmente.
-const MUSIC_IN = DOOR_FROM + 12;
+// Ci si sofferma un attimo sulla porta, poi la musica entra e sale gradualmente.
+const MUSIC_IN = DOOR_FROM + 50;
 
 const musicVolume = (fr: number) =>
   interpolate(
