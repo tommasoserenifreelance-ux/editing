@@ -218,7 +218,9 @@ const musicVolume = (fr: number) =>
     fr,
     [
       0,
-      DOOR_FROM,
+      DOOR_FROM + 12,
+      DOOR_FROM + 60,
+      DOOR_FROM + 130,
       A_LEN - FADE,
       B_FROM,
       C_FROM - 4,
@@ -228,7 +230,7 @@ const musicVolume = (fr: number) =>
       LOGO_FROM + LOGO_DELAY + LOGO_IN,
       POSH_DURATION,
     ],
-    [0, 0, 0.4, 0.12, 0.12, 0.35, 0.75, 1, 0.9, 0],
+    [0, 0, 0.04, 0.15, 0.4, 0.12, 0.12, 0.35, 0.75, 1, 0.9, 0],
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
   );
 
