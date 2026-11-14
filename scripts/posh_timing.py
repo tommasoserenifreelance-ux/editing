@@ -3,7 +3,7 @@ Uso: python3 scripts/posh_timing.py  -> stampa START LEN LP_AT"""
 RATE, FPS, SRC = 0.85, 30, 24
 comp = lambda s: round(s / RATE * FPS)
 seg = lambda a, b, r=RATE: round((b - a) / SRC / r * FPS)
-A = seg(0, 50) + seg(120, 299)
+A = seg(0, 50) + seg(140, 299, 1)
 B = seg(0, 37)
 C = seg(0, 80) + seg(128, 168) + seg(205, 240) + seg(284, 298, 0.55)
 D = seg(0, 161)

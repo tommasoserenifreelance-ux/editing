@@ -40,7 +40,8 @@ const segLen = (g: Seg) => Math.round(((g.outF - g.inF) / SRC_FPS / segRate(g)) 
 // posh1: 3 passi -> taglio -> alla porta e dentro senza tagli (lineare).
 const A_SEGS: Seg[] = [
   { src: "posh1.mp4", inF: 0, outF: 50 },
-  { src: "posh1.mp4", inF: 120, outF: 299 },
+  // porta "Members Club" -> dentro: senza tagli, a velocità normale per non soffermarsi.
+  { src: "posh1.mp4", inF: 140, outF: 299, rate: 1 },
 ];
 // FLASHBACK: bar (clip nuova, bloccata), intera.
 const B_SEG: Seg = { src: "posh3.mp4", inF: 0, outF: 37 };
@@ -216,9 +217,8 @@ const Segments: React.FC<{ from: number; segs: Seg[] }> = ({ from, segs }) => {
 
 // Prima camminata: solo tacchi. La musica parte piano dalla scena della porta.
 const DOOR_FROM = A_FROM + segLen(A_SEGS[0]);
-// La musica entra dopo che si è vista la mano sulla porta con l'insegna a destra,
-// quando lei va avanti per entrare (≈ frame sorgente 200 di posh1).
-const MUSIC_IN = DOOR_FROM + toComp((200 - 120) / SRC_FPS);
+// La musica entra subito dopo il taglio sulla porta e sale gradualmente.
+const MUSIC_IN = DOOR_FROM + 12;
 
 const musicVolume = (fr: number) =>
   interpolate(
@@ -226,8 +226,8 @@ const musicVolume = (fr: number) =>
     [
       0,
       MUSIC_IN,
-      MUSIC_IN + 45,
-      MUSIC_IN + 95,
+      MUSIC_IN + 40,
+      MUSIC_IN + 90,
       A_LEN - FADE,
       B_FROM,
       C_FROM - 4,
