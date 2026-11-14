@@ -2,6 +2,7 @@ import React from "react";
 import {
   AbsoluteFill,
   Audio,
+  Img,
   interpolate,
   OffthreadVideo,
   Sequence,
@@ -22,9 +23,9 @@ const srcFrame = (n: number) => n / SRC_FPS; // frame sorgente (24fps) -> second
 // Clip intere, nessun taglio.
 const CLIPS = {
   A: { src: "posh1.mp4", dur: 12.458 }, // corridoio + porta
-  B: { src: "posh3.mp4", dur: 3.0 }, // FLASHBACK: bar
+  B: { src: "posh3.mp4", dur: 1.542 }, // FLASHBACK: bar (clip nuova, bloccata)
   C: { src: "posh4.mp4", dur: 12.417 }, // sala biliardo (take nuova, più stabile)
-  D: { src: "posh2.mp4", dur: 9.708 }, // reveal Daisy's (stabilizzata)
+  D: { src: "posh2.mp4", dur: 6.708 }, // reveal Daisy's (clip nuova, già stabile)
 };
 
 const A_LEN = toComp(CLIPS.A.dur);
@@ -32,21 +33,35 @@ const B_LEN = toComp(CLIPS.B.dur);
 const C_LEN = toComp(CLIPS.C.dur);
 const D_LEN = toComp(CLIPS.D.dur);
 
-const A_FROM = 0;
-const B_FROM = A_FROM + A_LEN;
-const C_FROM = B_FROM + B_LEN;
-const D_FROM = C_FROM + C_LEN;
-export const POSH_DURATION = D_FROM + D_LEN;
+// Flashback tranquillo: dissolvenza al nero, appare il bar, di nuovo nero, stacco.
+const FADE = 12; // durata delle dissolvenze del flashback
+const GAP_IN = 8; // nero prima del bar
+const GAP_OUT = 6; // nero prima dello stacco sul biliardo
 
-// Appare la scritta "Daisy's" (≈ 5.6 s sorgente in posh2).
-const REVEAL = D_FROM + toComp(5.6);
+// Finale: dissolvenza al nero e poi appare il logo Posh.
+const END_FADE = 18;
+const LOGO_DELAY = 12;
+const LOGO_IN = 30;
+const LOGO_HOLD = 75;
+const LOGO_LEN = LOGO_DELAY + LOGO_IN + LOGO_HOLD;
+
+const A_FROM = 0;
+const B_FROM = A_FROM + A_LEN + GAP_IN;
+const C_FROM = B_FROM + B_LEN + GAP_OUT;
+const D_FROM = C_FROM + C_LEN;
+const LOGO_FROM = D_FROM + D_LEN;
+export const POSH_DURATION = LOGO_FROM + LOGO_LEN;
+
+// Appare la scritta "Daisy's" (≈ 2.3 s sorgente nella clip nuova).
+const REVEAL = D_FROM + toComp(2.3);
 
 // Appoggi del tacco, in frame sorgente (24fps), rilevati sul girato.
 // posh1: si ferma alla porta dopo l'ultimo passo.
 const STEPS_A = [9, 25, 41, 57, 73, 89, 104, 119, 133];
 // posh4 (take nuova): cammina fino a ~175, poi si ferma alla finestra.
 const STEPS_C = [4, 20, 35, 51, 66, 82, 97, 113, 128, 144, 159, 175];
-const STEPS_D = [2, 18, 31, 45, 58, 75, 90, 106, 120];
+// posh2 (clip nuova): ultimi passi prima di fermarsi davanti al palco.
+const STEPS_D = [11, 27, 41];
 
 // Musica: il drop del brano (2:28.2) cade sul reveal di Daisy's.
 const SONG_DROP = 148.2;
@@ -115,24 +130,20 @@ const Clip: React.FC<{ src: string }> = ({ src }) => (
 
 // ---------- flashback "vedo / non vedo" ----------
 
-// Opacità del nero, un valore per frame: nero / colore / nero / colore veloce.
-const FLICKER_IN = [1, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0.85, 0, 0, 0, 0, 0.6, 0];
-const FLICKER_OUT = [0, 0.6, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1];
-
-const flickerAt = (frame: number) => {
-  // Ingresso nel flashback (ultimi frame di posh1 + primi di posh3).
-  const inStart = B_FROM - 4;
-  if (frame >= inStart && frame < inStart + FLICKER_IN.length) {
-    return FLICKER_IN[frame - inStart];
+// Opacità del nero: posh1 sfuma al nero, il bar riappare piano,
+// poi sfuma di nuovo al nero e si stacca sul biliardo.
+const flashbackBlack = (frame: number) => {
+  if (frame >= A_LEN - FADE && frame < B_FROM) {
+    return interpolate(frame, [A_LEN - FADE, A_LEN], [0, 1], { extrapolateRight: "clamp" });
   }
-  // Uscita: finisce sul nero e riparte posh4 dal nero.
-  const outStart = C_FROM - FLICKER_OUT.length;
-  if (frame >= outStart && frame < C_FROM) {
-    return FLICKER_OUT[frame - outStart];
+  const bEnd = B_FROM + B_LEN;
+  if (frame >= B_FROM && frame < bEnd) {
+    return Math.max(
+      interpolate(frame, [B_FROM, B_FROM + FADE], [1, 0], { extrapolateRight: "clamp" }),
+      interpolate(frame, [bEnd - FADE, bEnd], [0, 1], { extrapolateLeft: "clamp" }),
+    );
   }
-  if (frame >= C_FROM && frame < C_FROM + 6) {
-    return interpolate(frame, [C_FROM, C_FROM + 6], [1, 0]);
-  }
+  if (frame >= bEnd && frame < C_FROM) return 1;
   return 0;
 };
 
@@ -144,16 +155,16 @@ const musicVolume = (fr: number) =>
     [
       0,
       30,
-      B_FROM - 15,
-      B_FROM + 6,
-      C_FROM - 8,
+      A_LEN - FADE,
+      B_FROM,
+      C_FROM - 4,
       C_FROM + 30,
       D_FROM,
       REVEAL,
-      POSH_DURATION - 45,
+      LOGO_FROM + LOGO_DELAY + LOGO_IN,
       POSH_DURATION,
     ],
-    [0, 0.14, 0.4, 0.1, 0.1, 0.35, 0.75, 1, 1, 0],
+    [0, 0.14, 0.4, 0.12, 0.12, 0.35, 0.75, 1, 0.9, 0],
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
   );
 
@@ -180,9 +191,16 @@ const Steps: React.FC<{ clipFrom: number; steps: number[]; volume: number }> = (
 export const PoshReel: React.FC<z.infer<typeof poshSchema>> = ({ music }) => {
   const frame = useCurrentFrame();
   const fadeFromBlack = interpolate(frame, [0, 10], [1, 0], { extrapolateRight: "clamp" });
-  const fadeToBlack = interpolate(frame, [POSH_DURATION - 18, POSH_DURATION], [0, 1], {
+  const fadeToBlack = interpolate(frame, [LOGO_FROM - END_FADE, LOGO_FROM], [0, 1], {
     extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
   });
+  const logoOpacity = interpolate(
+    frame,
+    [LOGO_FROM + LOGO_DELAY, LOGO_FROM + LOGO_DELAY + LOGO_IN],
+    [0, 1],
+    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+  );
   // Passaggio biliardo -> Daisy's: rapido calo di luce, nessun frame tagliato.
   const dip = interpolate(
     frame,
@@ -190,7 +208,7 @@ export const PoshReel: React.FC<z.infer<typeof poshSchema>> = ({ music }) => {
     [0, 1, 0],
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
   );
-  const black = Math.max(fadeFromBlack, fadeToBlack, flickerAt(frame), dip);
+  const black = Math.max(fadeFromBlack, fadeToBlack, flashbackBlack(frame), dip);
 
   return (
     <AbsoluteFill style={{ backgroundColor: "black" }}>
@@ -213,17 +231,18 @@ export const PoshReel: React.FC<z.infer<typeof poshSchema>> = ({ music }) => {
 
       <AbsoluteFill style={{ backgroundColor: "black", opacity: black }} />
 
+      {/* logo finale */}
+      <AbsoluteFill
+        style={{ justifyContent: "center", alignItems: "center", opacity: logoOpacity }}
+      >
+        <Img src={staticFile("posh/logo.png")} style={{ width: 720 }} />
+      </AbsoluteFill>
+
       {/* --- AUDIO --- */}
       <Steps clipFrom={A_FROM} steps={STEPS_A} volume={0.9} />
       <Steps clipFrom={C_FROM} steps={STEPS_C} volume={0.8} />
       <Steps clipFrom={D_FROM} steps={STEPS_D} volume={0.9} />
 
-      <Sequence from={B_FROM - 30} durationInFrames={36}>
-        <Audio src={staticFile("posh/flash_in.wav")} volume={0.35} />
-      </Sequence>
-      <Sequence from={C_FROM - 6} durationInFrames={30}>
-        <Audio src={staticFile("posh/flash_out.wav")} volume={0.3} />
-      </Sequence>
 
       {music ? (
         <Audio
