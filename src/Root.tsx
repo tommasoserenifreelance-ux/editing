@@ -10,6 +10,7 @@ import {
   PilatesOverlay,
 } from "./PilatesOverlay";
 import { PILATES_DURATION, PilatesReformer } from "./PilatesReformer";
+import { POSH_DURATION, POSH_FPS, PoshReel, poshSchema } from "./PoshReel";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -89,6 +90,16 @@ export const RemotionRoot: React.FC = () => {
         fps={WALL_FPS}
         width={1080}
         height={1920}
+      />
+      <Composition
+        id="PoshReel"
+        component={PoshReel}
+        schema={poshSchema}
+        durationInFrames={POSH_DURATION}
+        fps={POSH_FPS}
+        width={1080}
+        height={1920}
+        defaultProps={{ music: "", musicStart: 0 }}
       />
       <Composition
         id="DistrettoWall-16x9"
