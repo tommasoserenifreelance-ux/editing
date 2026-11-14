@@ -332,7 +332,7 @@ export const PoshReel: React.FC<z.infer<typeof poshSchema>> = ({ music }) => {
           style={{
             fontFamily: scriptFont,
             color: BORDEAUX,
-            fontSize: 150,
+            fontSize: 124,
             letterSpacing: 2,
           }}
         >
@@ -344,7 +344,7 @@ export const PoshReel: React.FC<z.infer<typeof poshSchema>> = ({ music }) => {
       <AbsoluteFill
         style={{ justifyContent: "center", alignItems: "center", opacity: logoOpacity }}
       >
-        <Img src={staticFile("posh/logo_bordeaux.png")} style={{ width: 720 }} />
+        <Img src={staticFile("posh/logo_bordeaux.png")} style={{ width: 590 }} />
       </AbsoluteFill>
 
       {/* --- AUDIO --- */}
