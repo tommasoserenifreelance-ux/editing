@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Base musicale per PoshReel: segmento del brano + passa-basso finale sul logo.
 # Uso: scripts/posh_music_bed.sh public/posh/i-put-a-spell-on-you.mp3 public/posh/music_bed.wav
+# I tempi vengono da scripts/posh_timing.py.
 set -euo pipefail
 IN=$1; OUT=$2
-START=114.2   # drop del brano (148.2 s) sul reveal di Daisy's (34.0 s nel video)
-LEN=46.0      # durata del video
-LP_AT=38.6    # inizio dissolvenza al nero / logo
+read -r START LEN LP_AT < <(python3 "$(dirname "$0")/posh_timing.py")
+echo "START=$START LEN=$LEN LP_AT=$LP_AT"
 LP_DUR=1.5
 ffmpeg -v error -y -ss "$START" -t "$LEN" -i "$IN" -filter_complex "
   [0:a]asplit[d][w];

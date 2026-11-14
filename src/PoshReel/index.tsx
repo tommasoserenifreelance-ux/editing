@@ -31,30 +31,46 @@ const SRC_FPS = 24;
 
 // Secondi sorgente -> frame della composizione (rallentati).
 const toComp = (srcSeconds: number) => Math.round((srcSeconds / RATE) * POSH_FPS);
-const srcFrame = (n: number) => n / SRC_FPS; // frame sorgente (24fps) -> secondi
 
-// Clip intere, nessun taglio.
-const CLIPS = {
-  A: { src: "posh1.mp4", dur: 12.458 }, // corridoio + porta
-  B: { src: "posh3.mp4", dur: 1.542 }, // FLASHBACK: bar (clip nuova, bloccata)
-  C: { src: "posh4.mp4", dur: 12.417 }, // sala biliardo (take nuova, più stabile)
-  D: { src: "posh2.mp4", dur: 6.708 }, // reveal Daisy's (clip nuova, già stabile)
-};
+// Spezzoni [inizio, fine) in frame sorgente (24fps). Montaggio a tagli netti.
+type Seg = { src: string; inF: number; outF: number };
+const segLen = (g: Seg) => toComp((g.outF - g.inF) / SRC_FPS);
 
-const A_LEN = toComp(CLIPS.A.dur);
-const B_LEN = toComp(CLIPS.B.dur);
-const C_LEN = toComp(CLIPS.C.dur);
-const D_LEN = toComp(CLIPS.D.dur);
+// posh1: 3 passi -> già alla porta -> già dentro.
+const A_SEGS: Seg[] = [
+  { src: "posh1.mp4", inF: 0, outF: 50 },
+  { src: "posh1.mp4", inF: 120, outF: 205 },
+  { src: "posh1.mp4", inF: 220, outF: 299 },
+];
+// FLASHBACK: bar (clip nuova, bloccata), intera.
+const B_SEG: Seg = { src: "posh3.mp4", inF: 0, outF: 37 };
+// Biliardo: entra -> lungo il tavolo -> alla finestra / palle.
+const C_SEGS: Seg[] = [
+  { src: "posh4.mp4", inF: 0, outF: 48 },
+  { src: "posh4.mp4", inF: 105, outF: 168 },
+  { src: "posh4.mp4", inF: 204, outF: 298 },
+];
+// Reveal Daisy's: intera.
+const D_SEG: Seg = { src: "posh2.mp4", inF: 0, outF: 161 };
 
-// Flashback tranquillo: dissolvenza al nero, appare il bar, di nuovo nero, stacco.
-const FADE = 6; // durata delle dissolvenze del flashback
+const sum = (gs: Seg[]) => gs.reduce((t, g) => t + segLen(g), 0);
+const A_LEN = sum(A_SEGS);
+const B_LEN = segLen(B_SEG);
+const C_LEN = sum(C_SEGS);
+const D_LEN = segLen(D_SEG);
+
+// Flashback: posh1 sfuma al nero, il bar entra dal nero, esce al nero, stacco.
+const FADE = 6; // posh1 -> nero
 const GAP_IN = 4; // nero prima del bar
 const GAP_OUT = 3; // nero prima dello stacco sul biliardo
+const BAR_IN = 8; // il bar emerge dal nero
+const BAR_OUT = 3; // il bar va al nero
+const C_IN = 8; // il biliardo emerge dal nero
 
-// Finale: dissolvenza al nero e poi appare il logo Posh.
+// Finale: dissolvenza al nero, la data, poi il logo Posh.
 const END_FADE = 18;
-// Dopo il nero: la data, poi il logo.
 const DATE_TEXT = "28.11.2026";
+const BORDEAUX = "#7B1023"; // stesso colore del logo Posh
 const DATE_DELAY = 8;
 const DATE_IN = 20;
 const DATE_HOLD = 45;
@@ -77,16 +93,14 @@ export const POSH_DURATION = LOGO_FROM + LOGO_LEN;
 const REVEAL = D_FROM + toComp(2.3);
 
 // Appoggi del tacco, in frame sorgente (24fps), rilevati sul girato.
-// posh1: si ferma alla porta, poi riparte dopo averla attraversata.
+// Si sentono solo quelli che cadono dentro gli spezzoni usati.
 const STEPS_A = [9, 25, 41, 57, 73, 89, 104, 119, 133, 214, 231, 248, 265, 282];
-// posh4 (take nuova): cammina fino a ~175, poi si ferma alla finestra.
 const STEPS_C = [4, 20, 35, 51, 66, 82, 97, 113, 128, 144, 159, 175];
-// posh2 (clip nuova): ultimi passi prima di fermarsi davanti al palco.
 const STEPS_D = [11, 27, 41];
 
 // Musica: base pre-mixata (public/posh/music_bed.wav) generata da
-// scripts/posh_music_bed.sh: parte da 1:54.2 del brano così il drop (2:28.2)
-// cade sul reveal di Daisy's, e chiude con un passa-basso sul logo.
+// scripts/posh_music_bed.sh con i tempi stampati da scripts/posh_timing.py:
+// il drop del brano (2:28.2) cade sul reveal di Daisy's, passa-basso sul finale.
 
 export const poshSchema = z.object({
   music: z.string(),
@@ -134,10 +148,15 @@ const Grade: React.FC = () => (
 );
 
 // Inquadratura ferma come da girato: nessuno zoom o movimento aggiunto.
-const Clip: React.FC<{ src: string; filter?: string }> = ({ src, filter }) => (
+const Clip: React.FC<{ src: string; inF?: number; filter?: string }> = ({
+  src,
+  inF = 0,
+  filter,
+}) => (
   <AbsoluteFill>
     <OffthreadVideo
       src={staticFile(`posh/v/${src}`)}
+      trimBefore={Math.round((inF / SRC_FPS) * POSH_FPS)}
       playbackRate={RATE}
       muted
       style={{
@@ -152,34 +171,41 @@ const Clip: React.FC<{ src: string; filter?: string }> = ({ src, filter }) => (
 
 // ---------- flashback ----------
 
-// posh1 sfuma al nero, poi il bar entra con un flash bianco; alla fine del bar
-// un altro flash bianco e si riparte sul biliardo dal bianco.
 const flashbackBlack = (frame: number) => {
+  const bEnd = B_FROM + B_LEN;
   if (frame >= A_LEN - FADE && frame < B_FROM) {
     return interpolate(frame, [A_LEN - FADE, A_LEN], [0, 1], { extrapolateRight: "clamp" });
   }
-  return 0;
-};
-
-const FLASH_IN = 8; // il bianco svanisce in 8 frame
-const FLASH_UP = 3; // il bianco sale in 3 frame
-const flashWhite = (frame: number) => {
-  const bEnd = B_FROM + B_LEN;
-  if (frame >= B_FROM && frame < B_FROM + FLASH_IN) {
-    return interpolate(frame, [B_FROM, B_FROM + FLASH_IN], [1, 0]);
+  if (frame >= B_FROM && frame < B_FROM + BAR_IN) {
+    return interpolate(frame, [B_FROM, B_FROM + BAR_IN], [1, 0]);
   }
-  if (frame >= bEnd - FLASH_UP && frame < bEnd) {
-    return interpolate(frame, [bEnd - FLASH_UP, bEnd], [0, 1]);
+  if (frame >= bEnd - BAR_OUT && frame < bEnd) {
+    return interpolate(frame, [bEnd - BAR_OUT, bEnd], [0, 1]);
   }
   if (frame >= bEnd && frame < C_FROM) return 1;
-  if (frame >= C_FROM && frame < C_FROM + FLASH_IN) {
-    return interpolate(frame, [C_FROM, C_FROM + FLASH_IN], [1, 0]);
+  if (frame >= C_FROM && frame < C_FROM + C_IN) {
+    return interpolate(frame, [C_FROM, C_FROM + C_IN], [1, 0]);
   }
   return 0;
 };
 
-// Il bar resta com'è: colori normali, inquadratura ferma, nessuno sfarfallio.
-const Flashback: React.FC = () => <Clip src={CLIPS.B.src} />;
+// Sequenza di spezzoni a tagli netti, a partire da `from`.
+const Segments: React.FC<{ from: number; segs: Seg[] }> = ({ from, segs }) => {
+  let at = from;
+  return (
+    <>
+      {segs.map((g) => {
+        const start = at;
+        at += segLen(g);
+        return (
+          <Sequence key={`${g.src}-${g.inF}`} from={start} durationInFrames={segLen(g)}>
+            <Clip src={g.src} inF={g.inF} />
+          </Sequence>
+        );
+      })}
+    </>
+  );
+};
 
 // ---------- audio ----------
 
@@ -202,23 +228,34 @@ const musicVolume = (fr: number) =>
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
   );
 
-const Steps: React.FC<{ clipFrom: number; steps: number[]; volume: number }> = ({
-  clipFrom,
+const Steps: React.FC<{ from: number; segs: Seg[]; steps: number[]; volume: number }> = ({
+  from,
+  segs,
   steps,
   volume,
-}) => (
-  <>
-    {steps.map((n, i) => (
-      <Sequence key={n} from={clipFrom + toComp(srcFrame(n))} durationInFrames={20}>
-        <Audio
-          src={staticFile(`posh/step${(i % 2) + 1}.wav`)}
-          playbackRate={RATE}
-          volume={volume * (i % 2 ? 0.85 : 1)}
-        />
-      </Sequence>
-    ))}
-  </>
-);
+}) => {
+  const hits: number[] = [];
+  let at = from;
+  for (const g of segs) {
+    for (const n of steps) {
+      if (n >= g.inF && n < g.outF) hits.push(at + toComp((n - g.inF) / SRC_FPS));
+    }
+    at += segLen(g);
+  }
+  return (
+    <>
+      {hits.map((h, i) => (
+        <Sequence key={h} from={h} durationInFrames={20}>
+          <Audio
+            src={staticFile(`posh/step${(i % 2) + 1}.wav`)}
+            playbackRate={RATE}
+            volume={volume * (i % 2 ? 0.85 : 1)}
+          />
+        </Sequence>
+      ))}
+    </>
+  );
+};
 
 // ---------- composizione ----------
 
@@ -257,26 +294,17 @@ export const PoshReel: React.FC<z.infer<typeof poshSchema>> = ({ music }) => {
 
   return (
     <AbsoluteFill style={{ backgroundColor: "black" }}>
-      <Sequence from={A_FROM} durationInFrames={A_LEN}>
-        <Clip src={CLIPS.A.src} />
-      </Sequence>
-      <Sequence from={C_FROM} durationInFrames={C_LEN}>
-        <Clip src={CLIPS.C.src} />
-      </Sequence>
-      <Sequence from={D_FROM} durationInFrames={D_LEN}>
-        <Clip src={CLIPS.D.src} />
-      </Sequence>
+      <Segments from={A_FROM} segs={A_SEGS} />
+      <Segments from={C_FROM} segs={C_SEGS} />
+      <Segments from={D_FROM} segs={[D_SEG]} />
 
       <Grade />
       <Vignette strength={0.55} />
       <Grain opacity={0.12} />
 
-      <Sequence from={B_FROM} durationInFrames={B_LEN}>
-        <Flashback />
-      </Sequence>
+      <Segments from={B_FROM} segs={[B_SEG]} />
 
       <AbsoluteFill style={{ backgroundColor: "black", opacity: black }} />
-      <AbsoluteFill style={{ backgroundColor: "white", opacity: flashWhite(frame) }} />
 
       {/* data */}
       <AbsoluteFill
@@ -285,7 +313,7 @@ export const PoshReel: React.FC<z.infer<typeof poshSchema>> = ({ music }) => {
         <div
           style={{
             fontFamily: scriptFont,
-            color: "white",
+            color: BORDEAUX,
             fontSize: 150,
             letterSpacing: 2,
           }}
@@ -298,13 +326,13 @@ export const PoshReel: React.FC<z.infer<typeof poshSchema>> = ({ music }) => {
       <AbsoluteFill
         style={{ justifyContent: "center", alignItems: "center", opacity: logoOpacity }}
       >
-        <Img src={staticFile("posh/logo.png")} style={{ width: 720 }} />
+        <Img src={staticFile("posh/logo_bordeaux.png")} style={{ width: 720 }} />
       </AbsoluteFill>
 
       {/* --- AUDIO --- */}
-      <Steps clipFrom={A_FROM} steps={STEPS_A} volume={0.9} />
-      <Steps clipFrom={C_FROM} steps={STEPS_C} volume={0.8} />
-      <Steps clipFrom={D_FROM} steps={STEPS_D} volume={0.9} />
+      <Steps from={A_FROM} segs={A_SEGS} steps={STEPS_A} volume={0.9} />
+      <Steps from={C_FROM} segs={C_SEGS} steps={STEPS_C} volume={0.8} />
+      <Steps from={D_FROM} segs={[D_SEG]} steps={STEPS_D} volume={0.9} />
 
       {/* whoosh di entrata e uscita dal flashback */}
       <Sequence from={B_FROM - 30} durationInFrames={36}>
