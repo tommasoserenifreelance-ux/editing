@@ -36,19 +36,19 @@ const toComp = (srcSeconds: number) => Math.round((srcSeconds / RATE) * POSH_FPS
 type Seg = { src: string; inF: number; outF: number };
 const segLen = (g: Seg) => toComp((g.outF - g.inF) / SRC_FPS);
 
-// posh1: 3 passi -> già alla porta -> già dentro.
+// posh1: 3 passi -> taglio -> alla porta e dentro senza tagli (lineare).
 const A_SEGS: Seg[] = [
   { src: "posh1.mp4", inF: 0, outF: 50 },
-  { src: "posh1.mp4", inF: 120, outF: 205 },
-  { src: "posh1.mp4", inF: 220, outF: 299 },
+  { src: "posh1.mp4", inF: 120, outF: 299 },
 ];
 // FLASHBACK: bar (clip nuova, bloccata), intera.
 const B_SEG: Seg = { src: "posh3.mp4", inF: 0, outF: 37 };
-// Biliardo: lei che entra -> girato l'angolo, a metà tavolo
-// -> in fondo alla sala davanti alla camera (palle in primo piano).
+// Biliardo: fino all'insegna "Sala Biliardo" | lei dentro | gira l'angolo |
+// in fondo, frontale alla camera (palle in primo piano). Poi Daisy's.
 const C_SEGS: Seg[] = [
-  { src: "posh4.mp4", inF: 0, outF: 50 },
-  { src: "posh4.mp4", inF: 120, outF: 168 },
+  { src: "posh4.mp4", inF: 0, outF: 90 },
+  { src: "posh4.mp4", inF: 105, outF: 140 },
+  { src: "posh4.mp4", inF: 150, outF: 200 },
   { src: "posh4.mp4", inF: 226, outF: 298 },
 ];
 // Reveal Daisy's: intera.
@@ -210,15 +210,15 @@ const Segments: React.FC<{ from: number; segs: Seg[] }> = ({ from, segs }) => {
 
 // ---------- audio ----------
 
-// Camminata e porta: solo tacchi. La musica parte quando lei è entrata e sale piano.
-const INSIDE_FROM = A_FROM + segLen(A_SEGS[0]) + segLen(A_SEGS[1]);
+// Prima camminata: solo tacchi. La musica parte piano dalla scena della porta.
+const DOOR_FROM = A_FROM + segLen(A_SEGS[0]);
 
 const musicVolume = (fr: number) =>
   interpolate(
     fr,
     [
       0,
-      INSIDE_FROM,
+      DOOR_FROM,
       A_LEN - FADE,
       B_FROM,
       C_FROM - 4,
@@ -231,6 +231,11 @@ const musicVolume = (fr: number) =>
     [0, 0, 0.4, 0.12, 0.12, 0.35, 0.75, 1, 0.9, 0],
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
   );
+
+// 14 passi veri estratti dal file dei tacchi, alternati in modo irregolare
+// e con piccole differenze di volume, per un suono naturale.
+const HEELS = 14;
+const HEEL_GAIN = [1, 0.86, 0.95, 0.9, 1, 0.83, 0.97];
 
 const Steps: React.FC<{ from: number; segs: Seg[]; steps: number[]; volume: number }> = ({
   from,
@@ -251,9 +256,8 @@ const Steps: React.FC<{ from: number; segs: Seg[]; steps: number[]; volume: numb
       {hits.map((h, i) => (
         <Sequence key={h} from={h} durationInFrames={20}>
           <Audio
-            src={staticFile(`posh/step${(i % 2) + 1}.wav`)}
-            playbackRate={RATE}
-            volume={volume * (i % 2 ? 0.85 : 1)}
+            src={staticFile(`posh/heel${String(((h * 7 + i * 3) % HEELS) + 1).padStart(2, "0")}.wav`)}
+            volume={volume * HEEL_GAIN[(h + i) % HEEL_GAIN.length]}
           />
         </Sequence>
       ))}
