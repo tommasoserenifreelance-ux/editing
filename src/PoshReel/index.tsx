@@ -209,12 +209,15 @@ const Segments: React.FC<{ from: number; segs: Seg[] }> = ({ from, segs }) => {
 
 // ---------- audio ----------
 
+// Prima camminata: solo tacchi. La musica parte alla porta e sale piano.
+const DOOR_FROM = A_FROM + segLen(A_SEGS[0]);
+
 const musicVolume = (fr: number) =>
   interpolate(
     fr,
     [
       0,
-      30,
+      DOOR_FROM,
       A_LEN - FADE,
       B_FROM,
       C_FROM - 4,
@@ -224,7 +227,7 @@ const musicVolume = (fr: number) =>
       LOGO_FROM + LOGO_DELAY + LOGO_IN,
       POSH_DURATION,
     ],
-    [0, 0.14, 0.4, 0.12, 0.12, 0.35, 0.75, 1, 0.9, 0],
+    [0, 0, 0.4, 0.12, 0.12, 0.35, 0.75, 1, 0.9, 0],
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
   );
 
