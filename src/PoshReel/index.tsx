@@ -33,8 +33,9 @@ const SRC_FPS = 24;
 const toComp = (srcSeconds: number) => Math.round((srcSeconds / RATE) * POSH_FPS);
 
 // Spezzoni [inizio, fine) in frame sorgente (24fps). Montaggio a tagli netti.
-type Seg = { src: string; inF: number; outF: number };
-const segLen = (g: Seg) => toComp((g.outF - g.inF) / SRC_FPS);
+type Seg = { src: string; inF: number; outF: number; rate?: number };
+const segRate = (g: Seg) => g.rate ?? RATE;
+const segLen = (g: Seg) => Math.round(((g.outF - g.inF) / SRC_FPS / segRate(g)) * POSH_FPS);
 
 // posh1: 3 passi -> taglio -> alla porta e dentro senza tagli (lineare).
 const A_SEGS: Seg[] = [
@@ -50,7 +51,8 @@ const C_SEGS: Seg[] = [
   { src: "posh4.mp4", inF: 0, outF: 80 },
   { src: "posh4.mp4", inF: 128, outF: 168 },
   { src: "posh4.mp4", inF: 205, outF: 240 },
-  { src: "posh4.mp4", inF: 252, outF: 298 },
+  // lei già frontale alla camera: poco girato, quindi rallentato un po' di più.
+  { src: "posh4.mp4", inF: 284, outF: 298, rate: 0.55 },
 ];
 // Reveal Daisy's: intera.
 const D_SEG: Seg = { src: "posh2.mp4", inF: 0, outF: 161 };
@@ -150,16 +152,17 @@ const Grade: React.FC = () => (
 );
 
 // Inquadratura ferma come da girato: nessuno zoom o movimento aggiunto.
-const Clip: React.FC<{ src: string; inF?: number; filter?: string }> = ({
+const Clip: React.FC<{ src: string; inF?: number; rate?: number; filter?: string }> = ({
   src,
   inF = 0,
+  rate = RATE,
   filter,
 }) => (
   <AbsoluteFill>
     <OffthreadVideo
       src={staticFile(`posh/v/${src}`)}
       trimBefore={Math.round((inF / SRC_FPS) * POSH_FPS)}
-      playbackRate={RATE}
+      playbackRate={rate}
       muted
       style={{
         width: "100%",
@@ -201,7 +204,7 @@ const Segments: React.FC<{ from: number; segs: Seg[] }> = ({ from, segs }) => {
         at += segLen(g);
         return (
           <Sequence key={`${g.src}-${g.inF}`} from={start} durationInFrames={segLen(g)}>
-            <Clip src={g.src} inF={g.inF} />
+            <Clip src={g.src} inF={g.inF} rate={segRate(g)} />
           </Sequence>
         );
       })}
@@ -213,15 +216,18 @@ const Segments: React.FC<{ from: number; segs: Seg[] }> = ({ from, segs }) => {
 
 // Prima camminata: solo tacchi. La musica parte piano dalla scena della porta.
 const DOOR_FROM = A_FROM + segLen(A_SEGS[0]);
+// La musica entra dopo che si è vista la mano sulla porta con l'insegna a destra,
+// quando lei va avanti per entrare (≈ frame sorgente 200 di posh1).
+const MUSIC_IN = DOOR_FROM + toComp((200 - 120) / SRC_FPS);
 
 const musicVolume = (fr: number) =>
   interpolate(
     fr,
     [
       0,
-      DOOR_FROM + 12,
-      DOOR_FROM + 60,
-      DOOR_FROM + 130,
+      MUSIC_IN,
+      MUSIC_IN + 45,
+      MUSIC_IN + 95,
       A_LEN - FADE,
       B_FROM,
       C_FROM - 4,
@@ -250,7 +256,9 @@ const Steps: React.FC<{ from: number; segs: Seg[]; steps: number[]; volume: numb
   let at = from;
   for (const g of segs) {
     for (const n of steps) {
-      if (n >= g.inF && n < g.outF) hits.push(at + toComp((n - g.inF) / SRC_FPS));
+      if (n >= g.inF && n < g.outF) {
+        hits.push(at + Math.round(((n - g.inF) / SRC_FPS / segRate(g)) * POSH_FPS));
+      }
     }
     at += segLen(g);
   }
@@ -350,7 +358,7 @@ export const PoshReel: React.FC<z.infer<typeof poshSchema>> = ({ music }) => {
         <Audio src={staticFile("posh/flash_in.wav")} volume={0.5} />
       </Sequence>
       <Sequence from={C_FROM - 6} durationInFrames={30}>
-        <Audio src={staticFile("posh/flash_out.wav")} volume={0.32} />
+        <Audio src={staticFile("posh/flash_out.wav")} volume={0.18} />
       </Sequence>
 
       {music ? (
