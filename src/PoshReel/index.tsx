@@ -169,36 +169,14 @@ const flashbackBlack = (frame: number) => {
   return 0;
 };
 
-// Look "ricordo" sul bar: seppia, grana, vignetta, bordi morbidi e uno
-// sfarfallio di luce leggero. L'inquadratura resta ferma.
+// Flashback: colori normali, solo un leggero sfarfallio di luce. Inquadratura ferma.
 const FLICKER = [0, 0.05, -0.03, 0.06, 0, -0.08, 0.03, 0, 0.07, -0.04, 0.02, -0.12, 0.04, 0, -0.05, 0.06];
 
 const Flashback: React.FC = () => {
   const frame = useCurrentFrame();
-  const b = 1.04 + FLICKER[frame % FLICKER.length];
+  const b = 0.98 + FLICKER[frame % FLICKER.length];
   return (
-    <AbsoluteFill>
-      <Clip
-        src={CLIPS.B.src}
-        filter={`sepia(0.5) saturate(0.75) contrast(1.18) brightness(${b})`}
-      />
-      <AbsoluteFill
-        style={{
-          backdropFilter: "blur(10px)",
-          WebkitMaskImage: "radial-gradient(ellipse 60% 50% at 50% 50%, transparent 60%, black 100%)",
-          maskImage: "radial-gradient(ellipse 60% 50% at 50% 50%, transparent 60%, black 100%)",
-        }}
-      />
-      <AbsoluteFill
-        style={{
-          background:
-            "radial-gradient(circle at 15% 25%, rgba(255,140,60,0.35), rgba(255,60,90,0.1) 35%, transparent 60%)",
-          mixBlendMode: "screen",
-        }}
-      />
-      <Vignette strength={0.8} />
-      <Grain opacity={0.3} />
-    </AbsoluteFill>
+    <Clip src={CLIPS.B.src} filter={`contrast(1.1) saturate(0.95) brightness(${b})`} />
   );
 };
 
@@ -331,7 +309,7 @@ export const PoshReel: React.FC<z.infer<typeof poshSchema>> = ({ music }) => {
         <Audio src={staticFile("posh/flash_in.wav")} volume={0.5} />
       </Sequence>
       <Sequence from={C_FROM - 6} durationInFrames={30}>
-        <Audio src={staticFile("posh/flash_out.wav")} volume={0.45} />
+        <Audio src={staticFile("posh/flash_out.wav")} volume={0.22} />
       </Sequence>
 
       {music ? (
