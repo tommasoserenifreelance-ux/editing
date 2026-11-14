@@ -21,22 +21,41 @@ export const PHOTO: Theme = {
   accent: "#F6C1CC",
 };
 
-// `bare` shows the photo full-bleed without the dark overlay, anchored at the
-// top and fading into the theme background behind the text at the bottom.
-// Meant for light photos of a subject on a plain backdrop.
+// `bare` shows the photo without the dark overlay, fading into the theme
+// background behind the text. Meant for photos of a subject on a plain
+// backdrop. By default the photo fills the slide from the top and the text sits
+// at the bottom; with `textTop` the photo spans the width at the bottom and the
+// text sits in the space above it.
+const barePhotoStyle = (textTop: boolean): React.CSSProperties =>
+  textTop
+    ? { position: "absolute", left: 0, bottom: 0, width: "100%" }
+    : {
+        position: "absolute",
+        inset: 0,
+        width: "100%",
+        height: "100%",
+        objectFit: "cover",
+        objectPosition: "top",
+      };
+
 export const Frame: React.FC<{
   theme: Theme;
   photo?: string;
   bare?: boolean;
+  textTop?: boolean;
   children: React.ReactNode;
-}> = ({ theme, photo, bare, children }) => (
+}> = ({ theme, photo, bare, textTop = false, children }) => (
   <AbsoluteFill
     style={{
       background: theme.bg,
       fontFamily: inter,
       color: theme.text,
-      justifyContent: bare ? "flex-end" : "center",
-      padding: bare ? "0 100px 170px" : "0 100px 80px",
+      justifyContent: !bare ? "center" : textTop ? "flex-start" : "flex-end",
+      padding: !bare
+        ? "0 100px 80px"
+        : textTop
+          ? "80px 100px 0"
+          : "0 100px 170px",
       textShadow: photo && !bare ? "0 2px 14px rgba(0,0,0,0.45)" : undefined,
     }}
   >
@@ -44,20 +63,25 @@ export const Frame: React.FC<{
       <>
         <Img
           src={staticFile(`img/${photo}`)}
-          style={{
-            position: "absolute",
-            inset: 0,
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            objectPosition: bare ? "top" : "center",
-          }}
+          style={
+            bare
+              ? barePhotoStyle(textTop)
+              : {
+                  position: "absolute",
+                  inset: 0,
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }
+          }
         />
         <AbsoluteFill
           style={{
-            background: bare
-              ? `linear-gradient(transparent 50%, ${theme.bg} 80%)`
-              : "linear-gradient(rgba(40,20,35,0.35), rgba(40,20,35,0.6))",
+            background: !bare
+              ? "linear-gradient(rgba(40,20,35,0.35), rgba(40,20,35,0.6))"
+              : textTop
+                ? `linear-gradient(${theme.bg} 15%, transparent 35%)`
+                : `linear-gradient(transparent 50%, ${theme.bg} 80%)`,
           }}
         />
       </>
@@ -169,5 +193,6 @@ export type SlideDef = {
   theme: Theme;
   photo?: string;
   bare?: boolean;
+  textTop?: boolean;
   render: (t: Theme) => React.ReactNode;
 };

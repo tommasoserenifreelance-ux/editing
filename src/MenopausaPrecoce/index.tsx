@@ -5,6 +5,7 @@ import {
   Body,
   Frame,
   LIGHT,
+  PHOTO,
   Point,
   SlideDef,
   StudyCard,
@@ -14,16 +15,18 @@ import {
 
 const SLIDES: SlideDef[] = [
   {
-    theme: LIGHT,
+    // The photo's own dark grey backdrop, so the fade behind the text is seamless.
+    theme: { ...PHOTO, bg: "#2A2A2C" },
+    photo: "precoce-ovaio.jpg",
+    bare: true,
+    textTop: true,
     render: (t) => (
       <>
-        <Title theme={t} size={84}>
+        <Title theme={t} size={76}>
           Menopausa prima dei 45 anni: riguarda{" "}
-          <Accent theme={t}>1 donna su 14</Accent>
+          <Accent theme={t}>1&nbsp;donna su&nbsp;14</Accent>
         </Title>
-        <Body size={38}>
-          Il nuovo studio su 716.648 donne in 44 paesi a basso e medio reddito.
-        </Body>
+        <Body size={38}>Il nuovo studio su 716.648 donne in 44 paesi.</Body>
       </>
     ),
   },
@@ -249,7 +252,12 @@ export const PRECOCE_SLIDE_COUNT = SLIDES.length;
 export const MenopausaPrecoce: React.FC<{ index: number }> = ({ index }) => {
   const slide = SLIDES[index];
   return (
-    <Frame theme={slide.theme} photo={slide.photo} bare={slide.bare}>
+    <Frame
+      theme={slide.theme}
+      photo={slide.photo}
+      bare={slide.bare}
+      textTop={slide.textTop}
+    >
       {slide.render(slide.theme)}
     </Frame>
   );
