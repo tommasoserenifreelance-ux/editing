@@ -44,11 +44,11 @@ const A_SEGS: Seg[] = [
 ];
 // FLASHBACK: bar (clip nuova, bloccata), intera.
 const B_SEG: Seg = { src: "posh3.mp4", inF: 0, outF: 37 };
-// Biliardo: entra finché si legge "Sala Biliardo" -> lei dentro lungo il tavolo
-// -> lei in fondo alla sala davanti alla camera (palle in primo piano).
+// Biliardo: lei che entra -> girato l'angolo, a metà tavolo
+// -> in fondo alla sala davanti alla camera (palle in primo piano).
 const C_SEGS: Seg[] = [
-  { src: "posh4.mp4", inF: 0, outF: 90 },
-  { src: "posh4.mp4", inF: 105, outF: 168 },
+  { src: "posh4.mp4", inF: 0, outF: 50 },
+  { src: "posh4.mp4", inF: 120, outF: 168 },
   { src: "posh4.mp4", inF: 226, outF: 298 },
 ];
 // Reveal Daisy's: intera.
@@ -210,15 +210,15 @@ const Segments: React.FC<{ from: number; segs: Seg[] }> = ({ from, segs }) => {
 
 // ---------- audio ----------
 
-// Prima camminata: solo tacchi. La musica parte alla porta e sale piano.
-const DOOR_FROM = A_FROM + segLen(A_SEGS[0]);
+// Camminata e porta: solo tacchi. La musica parte quando lei è entrata e sale piano.
+const INSIDE_FROM = A_FROM + segLen(A_SEGS[0]) + segLen(A_SEGS[1]);
 
 const musicVolume = (fr: number) =>
   interpolate(
     fr,
     [
       0,
-      DOOR_FROM,
+      INSIDE_FROM,
       A_LEN - FADE,
       B_FROM,
       C_FROM - 4,
