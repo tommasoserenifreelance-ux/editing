@@ -150,36 +150,36 @@ const Clip: React.FC<{ src: string; filter?: string }> = ({ src, filter }) => (
   </AbsoluteFill>
 );
 
-// ---------- flashback "vedo / non vedo" ----------
+// ---------- flashback ----------
 
-// Opacità del nero: posh1 sfuma al nero, il bar riappare piano,
-// poi sfuma di nuovo al nero e si stacca sul biliardo.
+// posh1 sfuma al nero, poi il bar entra con un flash bianco; alla fine del bar
+// un altro flash bianco e si riparte sul biliardo dal bianco.
 const flashbackBlack = (frame: number) => {
   if (frame >= A_LEN - FADE && frame < B_FROM) {
     return interpolate(frame, [A_LEN - FADE, A_LEN], [0, 1], { extrapolateRight: "clamp" });
   }
-  const bEnd = B_FROM + B_LEN;
-  if (frame >= B_FROM && frame < bEnd) {
-    return Math.max(
-      interpolate(frame, [B_FROM, B_FROM + FADE], [1, 0], { extrapolateRight: "clamp" }),
-      interpolate(frame, [bEnd - FADE, bEnd], [0, 1], { extrapolateLeft: "clamp" }),
-    );
-  }
-  if (frame >= bEnd && frame < C_FROM) return 1;
   return 0;
 };
 
-// Flashback: colori normali; la luce si spegne e si riaccende due volte ("ta-ta").
-// Inquadratura ferma.
-const LIGHTS_OFF = [20, 21, 22, 31, 32];
-
-const Flashback: React.FC = () => {
-  const frame = useCurrentFrame();
-  const b = LIGHTS_OFF.includes(frame) ? 0.12 : 0.98;
-  return (
-    <Clip src={CLIPS.B.src} filter={`contrast(1.1) saturate(0.95) brightness(${b})`} />
-  );
+const FLASH_IN = 8; // il bianco svanisce in 8 frame
+const FLASH_UP = 3; // il bianco sale in 3 frame
+const flashWhite = (frame: number) => {
+  const bEnd = B_FROM + B_LEN;
+  if (frame >= B_FROM && frame < B_FROM + FLASH_IN) {
+    return interpolate(frame, [B_FROM, B_FROM + FLASH_IN], [1, 0]);
+  }
+  if (frame >= bEnd - FLASH_UP && frame < bEnd) {
+    return interpolate(frame, [bEnd - FLASH_UP, bEnd], [0, 1]);
+  }
+  if (frame >= bEnd && frame < C_FROM) return 1;
+  if (frame >= C_FROM && frame < C_FROM + FLASH_IN) {
+    return interpolate(frame, [C_FROM, C_FROM + FLASH_IN], [1, 0]);
+  }
+  return 0;
 };
+
+// Il bar resta com'è: colori normali, inquadratura ferma, nessuno sfarfallio.
+const Flashback: React.FC = () => <Clip src={CLIPS.B.src} />;
 
 // ---------- audio ----------
 
@@ -276,6 +276,7 @@ export const PoshReel: React.FC<z.infer<typeof poshSchema>> = ({ music }) => {
       </Sequence>
 
       <AbsoluteFill style={{ backgroundColor: "black", opacity: black }} />
+      <AbsoluteFill style={{ backgroundColor: "white", opacity: flashWhite(frame) }} />
 
       {/* data */}
       <AbsoluteFill
@@ -310,7 +311,7 @@ export const PoshReel: React.FC<z.infer<typeof poshSchema>> = ({ music }) => {
         <Audio src={staticFile("posh/flash_in.wav")} volume={0.5} />
       </Sequence>
       <Sequence from={C_FROM - 6} durationInFrames={30}>
-        <Audio src={staticFile("posh/flash_out.wav")} volume={0.22} />
+        <Audio src={staticFile("posh/flash_out.wav")} volume={0.32} />
       </Sequence>
 
       {music ? (
