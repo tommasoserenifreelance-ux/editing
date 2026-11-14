@@ -34,9 +34,9 @@ const C_LEN = toComp(CLIPS.C.dur);
 const D_LEN = toComp(CLIPS.D.dur);
 
 // Flashback tranquillo: dissolvenza al nero, appare il bar, di nuovo nero, stacco.
-const FADE = 12; // durata delle dissolvenze del flashback
-const GAP_IN = 8; // nero prima del bar
-const GAP_OUT = 6; // nero prima dello stacco sul biliardo
+const FADE = 6; // durata delle dissolvenze del flashback
+const GAP_IN = 4; // nero prima del bar
+const GAP_OUT = 3; // nero prima dello stacco sul biliardo
 
 // Finale: dissolvenza al nero e poi appare il logo Posh.
 const END_FADE = 18;
@@ -56,15 +56,16 @@ export const POSH_DURATION = LOGO_FROM + LOGO_LEN;
 const REVEAL = D_FROM + toComp(2.3);
 
 // Appoggi del tacco, in frame sorgente (24fps), rilevati sul girato.
-// posh1: si ferma alla porta dopo l'ultimo passo.
-const STEPS_A = [9, 25, 41, 57, 73, 89, 104, 119, 133];
+// posh1: si ferma alla porta, poi riparte dopo averla attraversata.
+const STEPS_A = [9, 25, 41, 57, 73, 89, 104, 119, 133, 214, 231, 248, 265, 282];
 // posh4 (take nuova): cammina fino a ~175, poi si ferma alla finestra.
 const STEPS_C = [4, 20, 35, 51, 66, 82, 97, 113, 128, 144, 159, 175];
 // posh2 (clip nuova): ultimi passi prima di fermarsi davanti al palco.
 const STEPS_D = [11, 27, 41];
 
-// Musica: il drop del brano (2:28.2) cade sul reveal di Daisy's.
-const SONG_DROP = 148.2;
+// Musica: base pre-mixata (public/posh/music_bed.wav) generata da
+// scripts/posh_music_bed.sh: parte da 1:54.2 del brano così il drop (2:28.2)
+// cade sul reveal di Daisy's, e chiude con un passa-basso sul logo.
 
 export const poshSchema = z.object({
   music: z.string(),
@@ -244,10 +245,14 @@ export const PoshReel: React.FC<z.infer<typeof poshSchema>> = ({ music }) => {
       <Steps clipFrom={D_FROM} steps={STEPS_D} volume={0.9} />
 
 
+      {/* suono bar: cin cin + ghiaccio */}
+      <Sequence from={B_FROM} durationInFrames={66}>
+        <Audio src={staticFile("posh/bar_clink.wav")} volume={0.55} />
+      </Sequence>
+
       {music ? (
         <Audio
           src={staticFile(`posh/${music}`)}
-          trimBefore={Math.round((SONG_DROP - REVEAL / POSH_FPS) * POSH_FPS)}
           volume={musicVolume}
         />
       ) : null}
