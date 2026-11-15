@@ -69,7 +69,7 @@ const FADE = 6; // posh1 -> nero
 const GAP_IN = 4; // nero prima del bar
 const GAP_OUT = 3; // nero prima dello stacco sul biliardo
 const BAR_IN = 8; // il bar emerge dal nero
-const BAR_OUT = 3; // il bar va al nero
+const BAR_OUT = 10; // il bar si spegne dolcemente al nero
 const C_IN = 8; // il biliardo emerge dal nero
 
 // Finale: Daisy's arriva all'ultimo fotogramma e si ferma; l'immagine si sfoca
