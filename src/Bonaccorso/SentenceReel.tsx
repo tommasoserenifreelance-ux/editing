@@ -30,6 +30,8 @@ export type BRollCue = {
   fit?: "cover" | "contain";
   // Seconds into the clip to start from, to reuse a clip without repeats.
   startFrom?: number;
+  // Speed-up, to fit a whole process into a short line.
+  playbackRate?: number;
 };
 // A study screenshot on a blue cutaway; `crop` is the region of the image
 // (in its own pixels) that shows the title block.
@@ -86,6 +88,7 @@ const BRoll: React.FC<Omit<BRollCue, "from" | "to">> = ({
   src,
   fit = "cover",
   startFrom = 0,
+  playbackRate = 1,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -94,6 +97,7 @@ const BRoll: React.FC<Omit<BRollCue, "from" | "to">> = ({
       muted
       src={staticFile(src)}
       startFrom={Math.round(startFrom * fps)}
+      playbackRate={playbackRate}
       style={{ width: "100%", height: "100%", ...style }}
     />
   );
@@ -400,7 +404,12 @@ export const SentenceReel: React.FC<{
       )}
       {brolls.map((b) => (
         <Sequence key={b.from} from={b.from} durationInFrames={b.to - b.from}>
-          <BRoll src={b.src} fit={b.fit} startFrom={b.startFrom} />
+          <BRoll
+            src={b.src}
+            fit={b.fit}
+            startFrom={b.startFrom}
+            playbackRate={b.playbackRate}
+          />
         </Sequence>
       ))}
       {cards.map((c) => (

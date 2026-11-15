@@ -63,15 +63,17 @@ const BROLLS: BRollCue[] = [
     startFrom: 2,
   },
   { src: broll("fase2-prp.mp4"), from: wordFrame(3, "ottenuti"), to: take(4) },
+  // The whole exosome cycle (cartridge in, program, timer) at 3x, over
+  // "vengono ricavati direttamente dal vostro plasma, ricchi di proteine,
+  // lipidi".
   {
     src: broll("fase3-esosomi.mp4"),
     from: take(4),
-    to: wordFrame(4, "ricchi"),
-    startFrom: 3,
+    to: wordFrame(4, "e"),
+    playbackRate: 3,
   },
-  // A vesicle entering the skin for "ricchi di proteine, lipidi e segnali
-  // rigenerativi".
-  { src: broll("clip-c.mp4"), from: wordFrame(4, "ricchi"), to: take(5) },
+  // A vesicle entering the skin for "e segnali rigenerativi".
+  { src: broll("clip-c.mp4"), from: wordFrame(4, "e"), to: take(5) },
   // Skin smoothing out for "usare il potenziale del proprio corpo per
   // rigenerarlo" (square, so shown whole).
   { src: broll("clip-d.mp4"), from: take(6), to: take(7), fit: "contain" },
