@@ -112,6 +112,16 @@ export const RemotionRoot: React.FC = () => {
         defaultProps={{ music: "music_bed.wav", titles: "white" as const }}
       />
       <Composition
+        id="PoshReel-BordeauxSemplice"
+        component={PoshReel}
+        schema={poshSchema}
+        durationInFrames={POSH_DURATION}
+        fps={POSH_FPS}
+        width={1080}
+        height={1920}
+        defaultProps={{ music: "music_bed.wav", titles: "plain" as const }}
+      />
+      <Composition
         id="DistrettoWall-16x9"
         component={DistrettoWall}
         durationInFrames={WALL_DURATION}

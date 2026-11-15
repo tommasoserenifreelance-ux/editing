@@ -118,7 +118,8 @@ export const poshSchema = z.object({
   music: z.string(),
   // "bordeaux": scritte bordeaux con bordino chiaro su velo crema;
   // "white": scritte bianche con ombra scura morbida, sfondo leggermente scurito.
-  titles: z.enum(["bordeaux", "white"]),
+  // "plain": scritte bordeaux senza rifiniture (niente velo, bordino o alone).
+  titles: z.enum(["bordeaux", "white", "plain"]),
 });
 
 // ---------- look ----------
@@ -292,6 +293,7 @@ const Steps: React.FC<{ from: number; segs: Seg[]; steps: number[]; volume: numb
 
 export const PoshReel: React.FC<z.infer<typeof poshSchema>> = ({ music, titles }) => {
   const white = titles === "white";
+  const plain = titles === "plain";
   const frame = useCurrentFrame();
   const fadeFromBlack = interpolate(frame, [0, 10], [1, 0], { extrapolateRight: "clamp" });
   const appear = (at: number, len: number) =>
@@ -320,7 +322,7 @@ export const PoshReel: React.FC<z.infer<typeof poshSchema>> = ({ music, titles }
       <Sequence from={HOLD_FROM} durationInFrames={HOLD_LEN}>
         <AbsoluteFill
           style={{
-            filter: `blur(${holdSoft * 5}px) brightness(${1 + holdSoft * (white ? -0.12 : 0.06)})`,
+            filter: `blur(${holdSoft * 5}px) brightness(${1 + holdSoft * (white ? -0.12 : plain ? 0 : 0.06)})`,
           }}
         >
           <Freeze frame={0}>
@@ -340,7 +342,7 @@ export const PoshReel: React.FC<z.infer<typeof poshSchema>> = ({ music, titles }
       {/* velo crema morbido dietro i titoli, per far leggere il bordeaux */}
       <AbsoluteFill
         style={{
-          opacity: white ? 0 : holdSoft,
+          opacity: white || plain ? 0 : holdSoft,
           background:
             "radial-gradient(ellipse 62% 17% at 50% 17%, rgba(255,244,238,0.62), rgba(255,244,238,0.3) 55%, rgba(255,244,238,0) 100%)",
         }}
@@ -352,7 +354,9 @@ export const PoshReel: React.FC<z.infer<typeof poshSchema>> = ({ music, titles }
             src={staticFile(white ? "posh/logo.png" : "posh/logo_bordeaux.png")}
             style={{
               width: 560,
-              filter: white
+              filter: plain
+                ? undefined
+                : white
                 ? "drop-shadow(0 0 3px rgba(40,0,8,0.55)) drop-shadow(0 0 16px rgba(40,0,8,0.45))"
                 : `${OUTLINE_FILTER} drop-shadow(0 0 14px rgba(255,236,236,0.55))`,
             }}
@@ -362,9 +366,11 @@ export const PoshReel: React.FC<z.infer<typeof poshSchema>> = ({ music, titles }
           style={{
             position: "absolute",
             top: 345,
-            WebkitTextStroke: white ? undefined : `2px ${OUTLINE}`,
+            WebkitTextStroke: white || plain ? undefined : `2px ${OUTLINE}`,
             paintOrder: "stroke fill",
-            textShadow: white
+            textShadow: plain
+              ? undefined
+              : white
               ? "0 0 3px rgba(40,0,8,0.6), 0 0 16px rgba(40,0,8,0.45)"
               : "0 0 16px rgba(255,236,236,0.7)",
             opacity: dateOpacity,
