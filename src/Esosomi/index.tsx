@@ -22,17 +22,11 @@ const broll = (file: string) => `esosomi/broll/${file}`;
 
 // Each clip is used once.
 const BROLLS: BRollCue[] = [
-  // Skin for "la pelle si può rigenerare", then the plasma lamp for
-  // "il vostro plasma". Both are landscape, so they are shown whole.
+  // Skin for "la pelle si può rigenerare usando solo il vostro plasma"
+  // (landscape, so shown whole).
   {
     src: broll("model.mp4"),
     from: wordFrame(0, "la"),
-    to: wordFrame(0, "il"),
-    fit: "contain",
-  },
-  {
-    src: broll("plasma.mp4"),
-    from: wordFrame(0, "il"),
     to: take(1),
     fit: "contain",
   },
@@ -52,12 +46,45 @@ const BROLLS: BRollCue[] = [
     to: wordFrame(3, "proprio"),
     fit: "contain",
   },
+  // The studio's own footage of the treatment, phase by phase, from "proprio
+  // nei protocolli con esosomi autologhi ottenuti da PRP attivato" to
+  // "vengono ricavati direttamente dal vostro plasma".
+  {
+    src: broll("fase1-prelievo.mp4"),
+    from: wordFrame(3, "proprio"),
+    to: wordFrame(3, "ottenuti"),
+  },
+  {
+    src: broll("fase2-prp.mp4"),
+    from: wordFrame(3, "ottenuti"),
+    to: take(4),
+  },
+  {
+    src: broll("fase3-esosomi.mp4"),
+    from: take(4),
+    to: wordFrame(4, "dal"),
+    startFrom: 3,
+  },
+  {
+    src: broll("fase4-pronti.mp4"),
+    from: wordFrame(4, "dal"),
+    to: wordFrame(4, "ricchi"),
+    startFrom: 2,
+  },
   // A vesicle entering the skin for "ricchi di proteine, lipidi e segnali
   // rigenerativi".
   { src: broll("clip-c.mp4"), from: wordFrame(4, "ricchi"), to: take(5) },
   // Skin smoothing out for "usare il potenziale del proprio corpo per
   // rigenerarlo" (square, so shown whole).
   { src: broll("clip-d.mp4"), from: take(6), to: take(7), fit: "contain" },
+  // The injection, phase 5, for the close: "il futuro della rigenerazione
+  // cutanea passa da qui, è già realtà".
+  {
+    src: broll("fase5-iniezione.mp4"),
+    from: wordFrame(7, "futuro"),
+    to: take(8),
+    startFrom: 4,
+  },
 ];
 
 // The PubMed page of the review he cites, from "Una review pubblicata" to
@@ -78,10 +105,6 @@ const single = (char: string, from: number) => ({
 
 const STICKERS: StickerCue[] = [
   { ...single("🩸", wordFrame(3, "PRP")), to: take(4) },
-  {
-    ...single("🩸", wordFrame(4, "vostro")),
-    to: wordFrame(4, "ricchi"),
-  },
   { ...single("✅", wordFrame(5, "100%")), to: wordFrame(5, "nessun") },
   { ...single("🛡️", wordFrame(5, "rigetto")), to: wordFrame(5, "massima") },
   {
