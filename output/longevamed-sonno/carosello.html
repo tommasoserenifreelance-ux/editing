@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=block" rel="stylesheet">
+<style>
+:root{--gold:#F3B556;--white:#fff;--dark:#0e0c0d;--muted:#cfc6bd}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#333;font-family:'Poppins',sans-serif}
+.slide{width:1080px;height:1350px;position:relative;overflow:hidden;color:#fff;margin:0 0 40px;
+  background:radial-gradient(120% 80% at 50% 25%,#4a3524 0%,#22180f 45%,#0b0909 100%)}
+.slide.photo{background-size:cover;background-position:center}
+.shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.25) 0%,rgba(0,0,0,0) 30%,rgba(0,0,0,.55) 62%,rgba(0,0,0,.92) 100%)}
+.logo{position:absolute;top:110px;left:50%;transform:translateX(-50%);text-align:left}
+.logo .w{font-weight:300;font-size:64px;letter-spacing:6px;line-height:1}
+.logo .u{display:flex;align-items:center;gap:10px;margin-top:6px}
+.logo .u i{display:block;height:6px;width:150px;background:#fff;border-radius:3px}
+.logo .u b{font-weight:500;font-size:13px;letter-spacing:2px;opacity:.85}
+.logo.sm{top:70px}.logo.sm .w{font-size:40px;letter-spacing:4px}.logo.sm .u i{width:95px;height:4px}.logo.sm .u b{font-size:9px}
+.count{position:absolute;top:70px;right:70px;font-size:24px;font-weight:500;background:rgba(255,255,255,.12);padding:8px 20px;border-radius:30px}
+.title{position:absolute;left:90px;right:90px;bottom:200px;font-weight:800;font-size:96px;line-height:1.02;letter-spacing:-2px}
+.g{color:var(--gold)}
+.moon{position:absolute;top:300px;left:50%;transform:translateX(-50%);width:420px;height:420px;border-radius:50%;
+  box-shadow:inset -70px -20px 0 0 var(--gold);filter:drop-shadow(0 0 60px rgba(243,181,86,.35));transform:translateX(-50%) rotate(-20deg)}
+.star{position:absolute;width:8px;height:8px;border-radius:50%;background:#fff;opacity:.6}
+.swipe{position:absolute;bottom:90px;left:90px;font-size:26px;font-weight:500;color:var(--muted);letter-spacing:1px}
+.content{position:absolute;left:90px;right:90px;top:250px}
+.kicker{font-size:28px;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:28px}
+h2{font-size:72px;font-weight:800;line-height:1.05;letter-spacing:-1.5px;margin-bottom:44px}
+p{font-size:36px;font-weight:400;line-height:1.45;color:#eee}
+p strong{color:var(--gold);font-weight:600}
+.src{position:absolute;bottom:70px;left:90px;font-size:22px;color:#9d948b}
+.big{font-size:300px;font-weight:900;line-height:.9;color:var(--gold);letter-spacing:-10px}
+.chart{margin-top:30px;display:flex;flex-direction:column;gap:34px}
+.row{display:grid;grid-template-columns:220px 1fr 90px;align-items:center;gap:24px;font-size:32px;font-weight:600}
+.bar{height:62px;border-radius:0 31px 31px 0;background:var(--gold)}
+.row .v{color:var(--gold);font-weight:700;text-align:right}
+.row.dim .bar{background:rgba(243,181,86,.45)}
+.tips{display:flex;flex-direction:column;gap:30px;margin-top:10px}
+.tip{display:flex;gap:30px;align-items:flex-start;background:rgba(255,255,255,.06);border-left:6px solid var(--gold);padding:30px 34px;border-radius:0 20px 20px 0}
+.tip .n{font-size:44px;font-weight:800;color:var(--gold);line-height:1;min-width:60px}
+.tip div{font-size:31px;line-height:1.4}.tip b{display:block;font-size:35px;font-weight:700;margin-bottom:4px}
+.cta{position:absolute;left:90px;right:90px;top:50%;transform:translateY(-45%);text-align:center}
+.cta h2{font-size:84px}
+.pill{display:inline-block;margin-top:40px;background:var(--gold);color:#1a1209;font-weight:700;font-size:34px;padding:22px 54px;border-radius:60px}
+</style></head><body>
+
+<!-- 1 COVER — per usare una foto: aggiungi class="photo" e style="background-image:url(foto.jpg)" -->
+<section class="slide" id="s1">
+  <span class="star" style="top:260px;left:180px"></span><span class="star" style="top:420px;left:880px"></span>
+  <span class="star" style="top:640px;left:240px;width:5px;height:5px"></span><span class="star" style="top:300px;left:760px;width:5px;height:5px"></span>
+  <div class="moon"></div>
+  <div class="shade"></div>
+  <div class="logo"><div class="w">LONGEVA</div><div class="u"><i></i><b>MED</b></div></div>
+  <div class="count">1/6</div>
+  <div class="title"><span class="g">Meno di 6 ore</span><br>di sonno? I tuoi<br><span class="g">organi invecchiano</span></div>
+  <div class="swipe">Scorri →</div>
+</section>
+
+<!-- 2 -->
+<section class="slide" id="s2">
+  <div class="logo sm"><div class="w">LONGEVA</div><div class="u"><i></i><b>MED</b></div></div>
+  <div class="count">2/6</div>
+  <div class="content" style="top:300px">
+    <div class="kicker">Lo studio</div>
+    <h2>Dormire poco non è solo <span class="g">stanchezza</span></h2>
+    <p>Una ricerca pubblicata su <strong>Nature</strong> ha misurato l'"età biologica" dei singoli organi.</p><br>
+    <p>Chi dorme <strong>meno di 6 ore a notte</strong> mostra un invecchiamento accelerato di organi vitali come cervello, cuore e pancreas.</p>
+  </div>
+  <div class="src">Fonte: Wen et al., Nature (2026)</div>
+</section>
+
+<!-- 3 -->
+<section class="slide" id="s3">
+  <div class="logo sm"><div class="w">LONGEVA</div><div class="u"><i></i><b>MED</b></div></div>
+  <div class="count">3/6</div>
+  <div class="content" style="top:260px">
+    <div class="kicker">Gli organi più colpiti</div>
+    <h2>Il <span class="g">cervello</span> paga il prezzo più alto</h2>
+    <div class="chart">
+      <div class="row"><span>Cervello</span><div class="bar" style="width:100%"></div><span class="v">~17%</span></div>
+      <div class="row"><span>Ormoni</span><div class="bar" style="width:70%"></div><span class="v">~12%</span></div>
+      <div class="row"><span>Cuore</span><div class="bar" style="width:53%"></div><span class="v">~9%</span></div>
+      <div class="row"><span>Pancreas</span><div class="bar" style="width:47%"></div><span class="v">~8%</span></div>
+      <div class="row dim"><span>Altri</span><div class="bar" style="width:36%"></div><span class="v">~6%</span></div>
+    </div>
+    <p style="font-size:26px;color:#a9a097;margin-top:40px">Impatto sull'invecchiamento dell'organo (%)</p>
+  </div>
+  <div class="src">Fonte: Wen et al., Nature (2026)</div>
+</section>
+
+<!-- 4 -->
+<section class="slide" id="s4">
+  <div class="logo sm"><div class="w">LONGEVA</div><div class="u"><i></i><b>MED</b></div></div>
+  <div class="count">4/6</div>
+  <div class="content" style="top:300px">
+    <div class="big">11</div>
+    <h2 style="margin-top:20px">"orologi biologici" <span class="g">diversi</span></h2>
+    <p>Undici organi, analizzati separatamente, mostravano <strong>tutti la stessa tendenza</strong>: con poco sonno, il loro invecchiamento accelera.</p>
+  </div>
+  <div class="src">Fonte: Wen et al., Nature (2026)</div>
+</section>
+
+<!-- 5 -->
+<section class="slide" id="s5">
+  <div class="logo sm"><div class="w">LONGEVA</div><div class="u"><i></i><b>MED</b></div></div>
+  <div class="count">5/6</div>
+  <div class="content" style="top:240px">
+    <div class="kicker">Cosa puoi fare</div>
+    <h2>Proteggi il tuo <span class="g">sonno</span></h2>
+    <div class="tips">
+      <div class="tip"><span class="n">01</span><div><b>Punta a 7–9 ore</b>Il range associato a una migliore salute a lungo termine.</div></div>
+      <div class="tip"><span class="n">02</span><div><b>Orari regolari</b>Stessa ora di sonno e risveglio, anche nel weekend.</div></div>
+      <div class="tip"><span class="n">03</span><div><b>Luce giusta</b>Luce naturale al mattino, schermi spenti la sera.</div></div>
+      <div class="tip"><span class="n">04</span><div><b>Cena leggera</b>Evita pasti abbondanti, alcol e caffeina a fine giornata.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="slide" id="s6">
+  <span class="star" style="top:200px;left:200px"></span><span class="star" style="top:330px;left:860px"></span>
+  <div class="logo"><div class="w">LONGEVA</div><div class="u"><i></i><b>MED</b></div></div>
+  <div class="count">6/6</div>
+  <div class="cta">
+    <h2>Il sonno è la tua prima <span class="g">terapia di longevità</span></h2>
+    <p>Salva il post e condividilo con chi dorme troppo poco.</p>
+    <div class="pill">Segui @longevamed_</div>
+  </div>
+</section>
+</body></html>
