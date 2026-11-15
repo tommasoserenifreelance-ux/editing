@@ -42,7 +42,7 @@ const segLen = (g: Seg) => Math.round(((g.outF - g.inF) / SRC_FPS / segRate(g)) 
 const A_SEGS: Seg[] = [
   { src: "posh1.mp4", inF: 0, outF: 50 },
   // porta "Members Club" -> dentro: senza tagli, accorciata in testa e in coda.
-  { src: "posh1.mp4", inF: 165, outF: 262, rate: 1 },
+  { src: "posh1.mp4", inF: 178, outF: 255, rate: 1.15 },
 ];
 // FLASHBACK: bar (clip nuova, bloccata), intera.
 const B_SEG: Seg = { src: "posh3.mp4", inF: 0, outF: 37 };
@@ -76,12 +76,13 @@ const C_IN = 8; // il biliardo emerge dal nero
 // leggermente, appare la data e poi il logo Posh. Restano entrambi.
 const DATE_TEXT = "28.11.2026";
 const BORDEAUX = "#7B1023"; // stesso colore del logo Posh
-const BLUR_IN = 24;
-const DATE_AT = 10;
-const DATE_IN = 20;
-const LOGO_AT = 38;
-const LOGO_IN = 24;
-const HOLD_LEN = 130;
+const SHARP_HOLD = 30; // "Daisy's" ferma e nitida, ben leggibile
+const BLUR_IN = 50; // poi si sfoca piano piano
+const DATE_AT = 50;
+const DATE_IN = 22;
+const LOGO_AT = 80;
+const LOGO_IN = 26;
+const HOLD_LEN = 165;
 
 const A_FROM = 0;
 const B_FROM = A_FROM + A_LEN + GAP_IN;
@@ -214,15 +215,17 @@ const Segments: React.FC<{ from: number; segs: Seg[] }> = ({ from, segs }) => {
 // La musica c'è di sottofondo, appena percepibile, già dai primi passi;
 // si alza quando lei entra nel locale (≈ frame sorgente 212 di posh1).
 const DOOR_FROM = A_FROM + segLen(A_SEGS[0]);
-const ENTER_AT = DOOR_FROM + toComp((212 - 165) / SRC_FPS);
+const ENTER_AT =
+  DOOR_FROM +
+  Math.round(((212 - A_SEGS[1].inF) / SRC_FPS / segRate(A_SEGS[1])) * POSH_FPS);
 
 const musicVolume = (fr: number) =>
   interpolate(
     fr,
     [
       0,
-      40,
-      ENTER_AT - 10,
+      DOOR_FROM,
+      ENTER_AT - 6,
       ENTER_AT + 40,
       A_LEN - FADE,
       B_FROM,
@@ -233,7 +236,7 @@ const musicVolume = (fr: number) =>
       HOLD_FROM + LOGO_AT + LOGO_IN,
       POSH_DURATION,
     ],
-    [0, 0.07, 0.09, 0.3, 0.4, 0.12, 0.12, 0.35, 0.75, 1, 0.9, 0],
+    [0, 0.04, 0.08, 0.3, 0.4, 0.12, 0.12, 0.35, 0.75, 1, 0.9, 0],
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
   );
 
@@ -284,7 +287,7 @@ export const PoshReel: React.FC<z.infer<typeof poshSchema>> = ({ music }) => {
     });
   const dateOpacity = appear(DATE_AT, DATE_IN);
   const logoOpacity = appear(LOGO_AT, LOGO_IN);
-  const holdSoft = appear(0, BLUR_IN);
+  const holdSoft = appear(SHARP_HOLD, BLUR_IN);
   // Passaggio biliardo -> Daisy's: rapido calo di luce, nessun frame tagliato.
   const dip = interpolate(
     frame,
@@ -302,7 +305,7 @@ export const PoshReel: React.FC<z.infer<typeof poshSchema>> = ({ music }) => {
       {/* fermo immagine sull'ultimo fotogramma di Daisy's, leggermente sfocato */}
       <Sequence from={HOLD_FROM} durationInFrames={HOLD_LEN}>
         <AbsoluteFill
-          style={{ filter: `blur(${holdSoft * 5}px) brightness(${1 - holdSoft * 0.15})` }}
+          style={{ filter: `blur(${holdSoft * 5}px) brightness(${1 + holdSoft * 0.06})` }}
         >
           <Freeze frame={0}>
             <Clip src={D_SEG.src} inF={D_SEG.outF - 1} />
@@ -318,19 +321,31 @@ export const PoshReel: React.FC<z.infer<typeof poshSchema>> = ({ music }) => {
 
       <AbsoluteFill style={{ backgroundColor: "black", opacity: black }} />
 
+      {/* velo crema morbido dietro i titoli, per far leggere il bordeaux */}
+      <AbsoluteFill
+        style={{
+          opacity: holdSoft,
+          background:
+            "radial-gradient(ellipse 62% 17% at 50% 17%, rgba(255,244,238,0.62), rgba(255,244,238,0.3) 55%, rgba(255,244,238,0) 100%)",
+        }}
+      />
       {/* titoli finali sul fermo immagine: logo Posh sopra, data sotto */}
       <AbsoluteFill style={{ alignItems: "center" }}>
-        <div style={{ position: "absolute", top: 110, opacity: logoOpacity }}>
-          <Img src={staticFile("posh/logo_bordeaux.png")} style={{ width: 560 }} />
+        <div style={{ position: "absolute", top: 90, opacity: logoOpacity }}>
+          <Img
+            src={staticFile("posh/logo_bordeaux.png")}
+            style={{ width: 560, filter: "drop-shadow(0 0 14px rgba(255,236,236,0.55))" }}
+          />
         </div>
         <div
           style={{
             position: "absolute",
-            top: 385,
+            top: 345,
+            textShadow: "0 0 16px rgba(255,236,236,0.7)",
             opacity: dateOpacity,
             fontFamily: scriptFont,
             color: BORDEAUX,
-            fontSize: 104,
+            fontSize: 116,
             letterSpacing: 2,
           }}
         >
@@ -343,13 +358,6 @@ export const PoshReel: React.FC<z.infer<typeof poshSchema>> = ({ music }) => {
       <Steps from={C_FROM} segs={C_SEGS} steps={STEPS_C} volume={0.8} />
       <Steps from={D_FROM} segs={[D_SEG]} steps={STEPS_D} volume={0.9} />
 
-      {/* whoosh di entrata e uscita dal flashback */}
-      <Sequence from={B_FROM - 30} durationInFrames={36}>
-        <Audio src={staticFile("posh/flash_in.wav")} volume={0.12} />
-      </Sequence>
-      <Sequence from={C_FROM - 6} durationInFrames={30}>
-        <Audio src={staticFile("posh/flash_out.wav")} volume={0.06} />
-      </Sequence>
 
       {music ? (
         <Audio
