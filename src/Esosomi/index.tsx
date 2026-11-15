@@ -20,15 +20,21 @@ export { DURATION as ESOSOMI_DURATION, FPS as ESOSOMI_FPS } from "./script";
 const take = (i: number) => (i < CLIPS.length ? at(i, 0) : DURATION);
 const broll = (file: string) => `esosomi/broll/${file}`;
 
-// Each clip is used once.
+// Each clip is used once. The studio's own treatment footage (fase1-5) is
+// spread from the opening seconds to the close.
 const BROLLS: BRollCue[] = [
-  // Skin for "la pelle si può rigenerare usando solo il vostro plasma"
-  // (landscape, so shown whole).
+  // Skin for "la pelle si può rigenerare" (landscape, so shown whole), then
+  // the blood draw for "usando solo il vostro plasma".
   {
     src: broll("model.mp4"),
     from: wordFrame(0, "la"),
-    to: take(1),
+    to: wordFrame(0, "usando"),
     fit: "contain",
+  },
+  {
+    src: broll("fase1-prelievo.mp4"),
+    from: wordFrame(0, "usando"),
+    to: take(1),
   },
   // A vesicle in the skin layers for "gli esosomi autologhi".
   { src: broll("clip-b.mp4"), from: wordFrame(1, "esosomi"), to: take(2) },
@@ -46,30 +52,22 @@ const BROLLS: BRollCue[] = [
     to: wordFrame(3, "proprio"),
     fit: "contain",
   },
-  // The studio's own footage of the treatment, phase by phase, from "proprio
-  // nei protocolli con esosomi autologhi ottenuti da PRP attivato" to
-  // "vengono ricavati direttamente dal vostro plasma".
+  // The doctor with the exosomes ready for "proprio nei protocolli con
+  // esosomi autologhi", the PRP separator for "ottenuti da PRP attivato",
+  // and the exosome device for "vengono ricavati direttamente dal vostro
+  // plasma".
   {
-    src: broll("fase1-prelievo.mp4"),
+    src: broll("fase4-pronti.mp4"),
     from: wordFrame(3, "proprio"),
     to: wordFrame(3, "ottenuti"),
+    startFrom: 2,
   },
-  {
-    src: broll("fase2-prp.mp4"),
-    from: wordFrame(3, "ottenuti"),
-    to: take(4),
-  },
+  { src: broll("fase2-prp.mp4"), from: wordFrame(3, "ottenuti"), to: take(4) },
   {
     src: broll("fase3-esosomi.mp4"),
     from: take(4),
-    to: wordFrame(4, "dal"),
-    startFrom: 3,
-  },
-  {
-    src: broll("fase4-pronti.mp4"),
-    from: wordFrame(4, "dal"),
     to: wordFrame(4, "ricchi"),
-    startFrom: 2,
+    startFrom: 3,
   },
   // A vesicle entering the skin for "ricchi di proteine, lipidi e segnali
   // rigenerativi".
@@ -77,8 +75,8 @@ const BROLLS: BRollCue[] = [
   // Skin smoothing out for "usare il potenziale del proprio corpo per
   // rigenerarlo" (square, so shown whole).
   { src: broll("clip-d.mp4"), from: take(6), to: take(7), fit: "contain" },
-  // The injection, phase 5, for the close: "il futuro della rigenerazione
-  // cutanea passa da qui, è già realtà".
+  // The injection for the close: "il futuro della rigenerazione cutanea
+  // passa da qui, è già realtà".
   {
     src: broll("fase5-iniezione.mp4"),
     from: wordFrame(7, "futuro"),
