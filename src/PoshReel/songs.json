@@ -1,0 +1,62 @@
+{
+  "spell": {
+    "title": "I Put a Spell on You",
+    "file": "i-put-a-spell-on-you.mp3",
+    "hit": 148.32,
+    "c": [
+      4.1176,
+      2.1078,
+      2.0588,
+      0.9848
+    ],
+    "d": 2.0686
+  },
+  "birthday": {
+    "title": "Birthday Sex",
+    "file": "songs/birthday_sex.mp3",
+    "hit": 45.04,
+    "c": [
+      3.9976,
+      1.9988,
+      1.9988,
+      0.9994
+    ],
+    "d": 1.9988
+  },
+  "backtoblack": {
+    "title": "Back to Black",
+    "file": "songs/back_to_black.mp3",
+    "hit": 54.33,
+    "c": [
+      3.888,
+      1.944,
+      1.944,
+      0.972
+    ],
+    "d": 1.944
+  },
+  "mbriacato": {
+    "title": "Me so' 'mbriacato",
+    "file": "songs/me_so_mbriacato.mp3",
+    "hit": 52.0,
+    "c": [
+      4.128,
+      2.064,
+      2.064,
+      1.032
+    ],
+    "d": 2.064
+  },
+  "trouble": {
+    "title": "Trouble Ahead",
+    "file": "songs/trouble_ahead.mp3",
+    "hit": 110.4,
+    "c": [
+      3.835,
+      2.301,
+      2.301,
+      1.1505
+    ],
+    "d": 2.301
+  }
+}

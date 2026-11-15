@@ -6,6 +6,7 @@ import {
   continueRender,
   delayRender,
   Freeze,
+  getInputProps,
   Img,
   interpolate,
   OffthreadVideo,
@@ -14,6 +15,12 @@ import {
   useCurrentFrame,
 } from "remotion";
 import { z } from "zod";
+import SONGS from "./songs.json";
+
+// Canzone scelta con --props '{"song":"..."}' (chiavi in songs.json).
+export type SongKey = keyof typeof SONGS;
+export const SONG_KEY = ((getInputProps() as { song?: string }).song ?? "spell") as SongKey;
+export const SONG = SONGS[SONG_KEY] ?? SONGS.spell;
 // Font corsivo (Pinyon Script, OFL) incluso in public/fonts.
 const scriptFont = "PinyonScript";
 const fontHandle = delayRender("Carico il font corsivo");
@@ -49,14 +56,18 @@ const B_SEG: Seg = { src: "posh3.mp4", inF: 0, outF: 37 };
 // Biliardo, tagli a tempo con le battute del brano (una ogni ~1,036 s):
 // insegna "Sala Biliardo" | lei tocca il tavolo | ha girato l'angolo |
 // frontale alla camera (rallentata). Poi Daisy's, anch'essa su una battuta.
+// Le durate (secondi) vengono da songs.json: multipli della battuta di ogni brano.
+const [C1, C2, C3, C4] = SONG.c;
 const C_SEGS: Seg[] = [
-  { src: "posh4.mp4", inF: 0, outF: 84 },
-  { src: "posh4.mp4", inF: 128, outF: 171 },
-  { src: "posh4.mp4", inF: 205, outF: 247 },
-  { src: "posh4.mp4", inF: 284, outF: 297, rate: 0.55 },
+  { src: "posh4.mp4", inF: 0, outF: C1 * RATE * SRC_FPS },
+  { src: "posh4.mp4", inF: 128, outF: 128 + C2 * RATE * SRC_FPS },
+  { src: "posh4.mp4", inF: 205, outF: 205 + C3 * RATE * SRC_FPS },
+  // frontale alla camera: poco girato, rallentato quanto serve per durare C4.
+  { src: "posh4.mp4", inF: 284, outF: 297, rate: 13 / SRC_FPS / C4 },
 ];
-// Reveal Daisy's: parte mezzo secondo più avanti per cadere sulla battuta.
-const D_SEG: Seg = { src: "posh2.mp4", inF: 13, outF: 161 };
+// Reveal Daisy's: l'attacco è anticipato/ritardato perché lo stacco cada sulla battuta
+// e la scritta (2.3 s sorgente) arrivi esattamente sul picco del brano.
+const D_SEG: Seg = { src: "posh2.mp4", inF: (2.3 - SONG.d * RATE) * SRC_FPS, outF: 161 };
 
 const sum = (gs: Seg[]) => gs.reduce((t, g) => t + segLen(g), 0);
 const A_LEN = sum(A_SEGS);

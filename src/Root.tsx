@@ -10,7 +10,7 @@ import {
   PilatesOverlay,
 } from "./PilatesOverlay";
 import { PILATES_DURATION, PilatesReformer } from "./PilatesReformer";
-import { POSH_DURATION, POSH_FPS, PoshReel, poshSchema } from "./PoshReel";
+import { POSH_DURATION, POSH_FPS, PoshReel, poshSchema, SONG_KEY } from "./PoshReel";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -99,7 +99,7 @@ export const RemotionRoot: React.FC = () => {
         fps={POSH_FPS}
         width={1080}
         height={1920}
-        defaultProps={{ music: "music_bed.wav", titles: "bordeaux" as const }}
+        defaultProps={{ music: `music_bed_${SONG_KEY}.wav`, titles: "bordeaux" as const }}
       />
       <Composition
         id="PoshReel-Bianco"
@@ -109,7 +109,7 @@ export const RemotionRoot: React.FC = () => {
         fps={POSH_FPS}
         width={1080}
         height={1920}
-        defaultProps={{ music: "music_bed.wav", titles: "white" as const }}
+        defaultProps={{ music: `music_bed_${SONG_KEY}.wav`, titles: "white" as const }}
       />
       <Composition
         id="PoshReel-BordeauxSemplice"
@@ -119,7 +119,7 @@ export const RemotionRoot: React.FC = () => {
         fps={POSH_FPS}
         width={1080}
         height={1920}
-        defaultProps={{ music: "music_bed.wav", titles: "plain" as const }}
+        defaultProps={{ music: `music_bed_${SONG_KEY}.wav`, titles: "plain" as const }}
       />
       <Composition
         id="DistrettoWall-16x9"
