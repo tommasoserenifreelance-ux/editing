@@ -76,6 +76,16 @@ const C_IN = 8; // il biliardo emerge dal nero
 // leggermente, appare la data e poi il logo Posh. Restano entrambi.
 const DATE_TEXT = "28.11.2026";
 const BORDEAUX = "#7B1023"; // stesso colore del logo Posh
+// Bordino chiaro sottile attorno a data e logo, per staccarli dallo sfondo.
+const OUTLINE = "#FFF3EC";
+const OUTLINE_FILTER = [
+  [2, 0],
+  [-2, 0],
+  [0, 2],
+  [0, -2],
+]
+  .map(([x, y]) => `drop-shadow(${x}px ${y}px 0 ${OUTLINE})`)
+  .join(" ");
 const SHARP_HOLD = 30; // "Daisy's" ferma e nitida, ben leggibile
 const BLUR_IN = 50; // poi si sfoca piano piano
 const DATE_AT = 50;
@@ -334,13 +344,18 @@ export const PoshReel: React.FC<z.infer<typeof poshSchema>> = ({ music }) => {
         <div style={{ position: "absolute", top: 90, opacity: logoOpacity }}>
           <Img
             src={staticFile("posh/logo_bordeaux.png")}
-            style={{ width: 560, filter: "drop-shadow(0 0 14px rgba(255,236,236,0.55))" }}
+            style={{
+              width: 560,
+              filter: `${OUTLINE_FILTER} drop-shadow(0 0 14px rgba(255,236,236,0.55))`,
+            }}
           />
         </div>
         <div
           style={{
             position: "absolute",
             top: 345,
+            WebkitTextStroke: `2px ${OUTLINE}`,
+            paintOrder: "stroke fill",
             textShadow: "0 0 16px rgba(255,236,236,0.7)",
             opacity: dateOpacity,
             fontFamily: scriptFont,
