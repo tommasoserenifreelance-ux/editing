@@ -1,6 +1,6 @@
-DSC02615.jpg,bokeh
-DSC02619.jpg,streaks
-DSC02640.jpg,neutral
+DSC02615.jpg,bokeh+df
+DSC02619.jpg,streaks+df
+DSC02640.jpg,neutral+df
 DSC02673.jpg,bokeh
 DSC02674.jpg,neutral
 DSC02689.jpg,bokeh
@@ -22,10 +22,10 @@ DSC03064.jpg,bokeh
 DSC03065.jpg,neutral
 DSC03088.jpg,bokeh
 DSC03123.jpg,bokeh
-DSC03130.jpg,bokeh
-DSC03131.jpg,streaks
-DSC03136.jpg,bokeh
-DSC03137.jpg,neutral
+DSC03130.jpg,bokeh+df
+DSC03131.jpg,streaks+df
+DSC03136.jpg,bokeh+df
+DSC03137.jpg,neutral+df
 DSC03158.jpg,bokeh
 DSC03162.jpg,bokeh
 DSC03167.jpg,bokeh
@@ -54,7 +54,7 @@ DSC03561.jpg,streaks
 DSC03626.jpg,bokeh
 DSC03655.jpg,bokeh
 DSC03683.jpg,bokeh
-DSC03684.jpg,neutral
+DSC03684.jpg,neutral+df
 DSC03725.jpg,bokeh
 DSC03741.jpg,bokeh
 DSC03746.jpg,streaks
@@ -78,9 +78,9 @@ DSC04494.jpg,bokeh
 DSC04508.jpg,neutral
 DSC04598.jpg,bokeh
 DSC04621.jpg,bokeh
-DSC04626.jpg,bokeh
-DSC04627.jpg,neutral
-DSC04688.jpg,bokeh
-DSC04724.jpg,bokeh
+DSC04626.jpg,bokeh+df
+DSC04627.jpg,neutral+df
+DSC04688.jpg,bokeh+df
+DSC04724.jpg,bokeh+df
 DSC04775-2.jpg,bokeh
 DSC04827.jpg,bokeh

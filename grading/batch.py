@@ -33,6 +33,7 @@ from star_flares import add_stars  # noqa: E402
 from grain import add_grain  # noqa: E402
 from light_trails import trails_from_mask  # noqa: E402
 from motion_blur import subject_motion  # noqa: E402
+from deflash import recover  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 def get_mask(img):
@@ -80,8 +81,16 @@ def process(row, in_dir, out_dir):
     icc, exif = im.info.get("icc_profile"), im.info.get("exif")
     rgb = im.convert("RGB")
     a0 = np.asarray(rgb).astype(np.float64) / 255.0
+    # "<style>+df": tone down harsh flash on the subject before grading
+    df = style.endswith("+df")
+    style = style.replace("+df", "")
+    pre_mask = None
+    if df:
+        pre_mask = get_mask(rgb)
+        a0 = recover(a0, np.asarray(pre_mask).astype(np.float64) / 255.0, 1.0)
     # approved base colour (DSC00618 v7b): warm natural skin, not brightened
-    a = grade(a0)
+    # (+df: lower skin target so the grade does not re-brighten the face)
+    a = grade(a0, skin_val=0.58) if df else grade(a0)
     bright = False
     seed = zlib.crc32(name.encode()) % 1000
     h, w, _ = a.shape
@@ -90,7 +99,7 @@ def process(row, in_dir, out_dir):
         if style == "crowd":
             m = np.zeros((h, w))
         else:
-            m = np.asarray(get_mask(rgb)).astype(np.float64) / 255.0
+            m = np.asarray(pre_mask if pre_mask is not None else get_mask(rgb)).astype(np.float64) / 255.0
         mask_img = Image.fromarray((m * 255).astype(np.uint8))
 
         if style == "bokeh":
@@ -127,7 +136,7 @@ def process(row, in_dir, out_dir):
     o = Image.fromarray(np.round(np.clip(a, 0, 1) * 255).astype(np.uint8))
     kw = {k: v for k, v in (("icc_profile", icc), ("exif", exif)) if v}
     o.save(out, quality=100, subsampling=0, **kw)
-    return name, style + (" +luminosa" if bright else "")
+    return name, style + (" +df" if df else "")
 
 
 def main():
