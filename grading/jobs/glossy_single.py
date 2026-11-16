@@ -4,7 +4,7 @@ import numpy as np
 from PIL import Image
 from batch import get_mask
 from deflash import recover
-from nightlife_grade import grade, highlight_knee, blur
+from nightlife_grade import grade, highlight_knee, blur, rgb_to_hsv, hsv_to_rgb
 from violet_background import violet_background
 from bokeh import add_bokeh, layout
 from skin_glow import glow
@@ -41,23 +41,32 @@ gx = np.abs(np.diff(G, axis=1, append=G[:, -1:])); gy = np.abs(np.diff(G, axis=0
 edges = np.clip(blur(gx + gy, 1.2 * k) * 14, 0, 1)            # strong local detail = features
 w_s = sk * (1 - edges) * smooth
 a = a + (sm - a) * w_s[..., None]
-# 2) sculpted contrast: deeper contours, brighter planes
-L = lum(a)
-Lc = np.clip(0.5 + (L - 0.5) * 1.25, 0, 1)
-a = a + ((Lc / np.maximum(L, 1e-4))[..., None] * a - a) * sk[..., None]
-# 3) bronze tan: warmer and more saturated
-a = a + (sk * 0.015)[..., None] * np.array([0.8, 0.25, -0.6])
-Lm = lum(a)[..., None]
-a = Lm + (a - Lm) * (1 + 0.12 * sk)[..., None]
+# 2) skin colour sampled from the CHIICAS reference: rosy hue ~10 deg,
+#    saturation ~0.42 in the mids falling to ~0.12 in the highlights, mids at V ~0.72
+REF_H = 10.0
+# keep the recolour off the hair: hair is full of fine strands (high local texture), skin is smooth
+Gt = lum(a)
+tex = blur(np.abs(Gt - blur(Gt, 1.5 * k)), 4 * k)
+face = sk * np.clip(1 - (tex - 0.012) / 0.02, 0, 1)
+face = np.clip(blur(face, 3 * k) * 1.2, 0, 1)
+hh, ss, vv = rgb_to_hsv(np.clip(a, 0, 1))
+med = np.median(vv[sk > 0.6]) if (sk > 0.6).sum() > 500 else 0.72
+v2 = np.clip(vv * (0.60 / max(med, 1e-3)), 0, 1)                    # less flash: lit skin down to ref level
+v2 = np.where(v2 > 0.74, 0.74 + (v2 - 0.74) * 0.5, v2)
+v2 = np.clip(0.5 + (v2 - 0.5) * 1.32, 0, 1)                         # sculpted contrast
+s_t = np.interp(v2, [0.0, 0.25, 0.5, 0.72, 0.88, 1.0], [0.60, 0.58, 0.52, 0.44, 0.34, 0.18])
+hd = ((REF_H - hh + 180) % 360) - 180
+skin_new = hsv_to_rgb(hh + hd, s_t, v2)
+a = a + (skin_new - a) * face[..., None]
 # 4) plastic gloss: broad specular sheets on the high planes (cheekbones, forehead, nose, shoulders) + bloom
 L = lum(a)
 thr = np.percentile(L[sk > 0.5], 72)
-spec = np.clip((L - thr) / 0.14, 0, 1) ** 1.3 * sk
+spec = np.clip((L - thr) / 0.14, 0, 1) ** 1.3 * face
 sheen = blur(spec, 4 * k)
-a = 1 - (1 - a) * (1 - (sheen * gloss)[..., None] * np.array([1.0, 0.96, 0.93]))
+a = 1 - (1 - a) * (1 - (sheen * gloss)[..., None] * np.array([1.0, 0.90, 0.90]))   # pink-white sheen like the reference
 core = np.clip((spec - 0.45) / 0.4, 0, 1)
 a = 1 - (1 - a) * (1 - (blur(core, 1.5 * k) * 0.55 * gloss)[..., None])
-a = 1 - (1 - a) * (1 - (blur(spec, 14 * k) * 0.22 * gloss)[..., None] * np.array([1.0, 0.92, 0.85]))
+a = 1 - (1 - a) * (1 - (blur(spec, 14 * k) * 0.22 * gloss)[..., None] * np.array([1.0, 0.82, 0.86]))
 a = highlight_knee(np.clip(a, 0, 1))
 bgw = (1 - np.clip(blur(np.clip((m - 0.15) / 0.7, 0, 1), 2), 0, 1))[..., None]
 a = a * (1 - bgw) + highlight_knee(a, knee=0.68, ceiling=0.90) * bgw
