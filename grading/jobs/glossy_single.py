@@ -50,6 +50,15 @@ tex = blur(np.abs(Gt - blur(Gt, 1.5 * k)), 4 * k)
 face = sk * np.clip(1 - (tex - 0.012) / 0.02, 0, 1)
 face = np.clip(blur(face, 3 * k) * 1.2, 0, 1)
 hh, ss, vv = rgb_to_hsv(np.clip(a, 0, 1))
+# objects that are not skin (the frosted glass, white fabric) are pale and nearly unsaturated
+face = face * np.clip((blur(ss, 2 * k) - 0.16) / 0.08, 0, 1)
+# held objects to leave untouched (x0,y0,x1,y1 boxes passed after the output path)
+from PIL import ImageDraw
+ex = Image.new('L', (w, h), 0); dx = ImageDraw.Draw(ex)
+for bx in sys.argv[5:]:
+    x0, y0, x1, y1 = map(int, bx.split(',')); dx.rounded_rectangle((x0, y0, x1, y1), radius=30, fill=255)
+exm = blur(np.asarray(ex).astype(np.float64) / 255.0, 6 * k)
+face = face * (1 - exm)
 med = np.median(vv[sk > 0.6]) if (sk > 0.6).sum() > 500 else 0.72
 v2 = np.clip(vv * (0.60 / max(med, 1e-3)), 0, 1)                    # less flash: lit skin down to ref level
 v2 = np.where(v2 > 0.74, 0.74 + (v2 - 0.74) * 0.5, v2)
