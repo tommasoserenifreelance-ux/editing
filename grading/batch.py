@@ -87,10 +87,10 @@ def process(row, in_dir, out_dir):
     pre_mask = None
     if df:
         pre_mask = get_mask(rgb)
-        a0 = recover(a0, np.asarray(pre_mask).astype(np.float64) / 255.0, 1.0)
+        a0 = recover(a0, np.asarray(pre_mask).astype(np.float64) / 255.0, 0.6)
     # approved base colour (DSC00618 v7b): warm natural skin, not brightened
     # (+df: lower skin target so the grade does not re-brighten the face)
-    a = grade(a0, skin_val=0.58) if df else grade(a0)
+    a = grade(a0, skin_val=0.62) if df else grade(a0)
     bright = False
     seed = zlib.crc32(name.encode()) % 1000
     h, w, _ = a.shape
