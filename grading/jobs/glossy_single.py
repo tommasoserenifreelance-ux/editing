@@ -62,11 +62,11 @@ face = face * (1 - exm)
 med = np.median(vv[sk > 0.6]) if (sk > 0.6).sum() > 500 else 0.72
 v2 = np.clip(vv * (0.60 / max(med, 1e-3)), 0, 1)                    # less flash: lit skin down to ref level
 v2 = np.where(v2 > 0.74, 0.74 + (v2 - 0.74) * 0.5, v2)
-v2 = np.clip(0.5 + (v2 - 0.5) * 1.32, 0, 1)                         # sculpted contrast
+v2 = np.clip(0.5 + (v2 - 0.5) * 1.15, 0, 1)                         # sculpted contrast
 s_t = np.interp(v2, [0.0, 0.25, 0.5, 0.72, 0.88, 1.0], [0.60, 0.58, 0.52, 0.44, 0.34, 0.18])
 hd = ((REF_H - hh + 180) % 360) - 180
 skin_new = hsv_to_rgb(hh + hd, s_t, v2)
-a = a + (skin_new - a) * face[..., None]
+a = a + (skin_new - a) * (face * 0.6)[..., None]          # partial: keeps the natural skin variation
 # 4) plastic gloss: broad specular sheets on the high planes (cheekbones, forehead, nose, shoulders) + bloom
 L = lum(a)
 thr = np.percentile(L[sk > 0.5], 72)
