@@ -1,7 +1,7 @@
 """MIRROR 04 split into one video per look (client: each outfit on its own).
 Usage: python3 mirror5_single_build.py MIRROR.5.1.mov MIRROR.5.2.mov MIRROR.5.mov OUT_DIR [look ...]
 Writes MIRROR.5_grigio_sharp.mp4, MIRROR.5_nero_sharp.mp4, MIRROR.5_marrone_sharp.mp4:
-five shots each, back to back, cut on the 120 BPM grid of reference 5
+four (grey), five (black) or three (brown) shots, back to back, cut on the 120 BPM grid of reference 5
 (beats at 0.06 + 0.5 k s). No frame where he is talking (lip tracking).
 Same grade as MIRROR 5: contrast curve, sharpening, flesh-tone reds on the
 grey/brown looks, highlight roll-off on the brown look.
@@ -19,11 +19,10 @@ ENC = ["-c:v", "libx264", "-crf", "11", "-preset", "slow", "-tune", "film", "-pi
 # (first source frame, frames, extra filter)
 LOOKS = {
     "grigio": (GREY, f"{WARM},", [
-        (158, 49, None),   # full body, buttons the jacket
-        (30, 24, None),    # wide-angle "mirror" shot, collar
+        (0, 49, None),     # wide-angle "mirror" shot, buttons the collar into the lens
         (312, 48, None),   # shoes, steps
-        (444, 48, None),   # tilt up trousers -> jacket
-        (526, 60, None),   # half body, tie, looks aside
+        (89, 48, None),    # wide-angle "mirror" shot, leans in (after he talks)
+        (148, 60, None),   # full body, steps back and fixes the tie
     ]),
     "nero": (BLACK, "", [
         (175, 49, None),   # full body, collar
@@ -34,10 +33,8 @@ LOOKS = {
     ]),
     "marrone": (BROWN, f"{HL},{WARM},", [
         (1020, 49, None),  # full body, hands in the jacket
-        (408, 48, None),   # looks aside, adjusts the collar
-        (626, 36, None),   # buttons the jacket
-        (504, 48, None),   # full body, scarf with both hands
-        (804, 48, None),   # full body, turns three-quarters and back
+        (329, 48, None),   # flicks the jacket open and closes it
+        (804, 60, None),   # full body, turns three-quarters and back
     ]),
 }
 for name, (src, pre, shots) in LOOKS.items():

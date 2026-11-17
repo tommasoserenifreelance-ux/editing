@@ -12,11 +12,11 @@ import {
 import { z } from "zod";
 
 // MIRROR 04 split into one video per look (client: each outfit on its own).
-// Five shots per look, cut on the 120 BPM grid of reference 5
+// Three to five shots per look, cut on the 120 BPM grid of reference 5
 // (public/mirror/music/reference_track_5.wav), then black + MIRROR logo.
 // Sources: scripts/mirror5_single_build.py -> MIRROR.5_<look>_sharp.mp4.
 export const MIRROR5_SINGLE_FPS = 24;
-export const LOOK_FRAMES = { grigio: 229, nero: 241, marrone: 229 } as const;
+export const LOOK_FRAMES = { grigio: 205, nero: 241, marrone: 157 } as const;
 const LOGO_LEN = 74; // 3.1 s
 const FADE_OUT = 9;
 
