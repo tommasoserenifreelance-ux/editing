@@ -36,21 +36,23 @@ const SHOTS: Shot[] = [
   // headphones CU matched on that pose (1.4 at ~0.85 s: head up, hands on
   // the cups), runs to his head turn. MIRROR.1.4_slow.mp4 = 1.4 at 0.625x
   // with motion interpolation, so 0.85 s real = 1.36 s in the slow file.
-  { clip: "MIRROR.1.4_slow.mp4", from: 5.35, to: 7.78, src: 1.36, speed: 1.02 },
-  // detail: loafers from the 7.78 s hit, both foot taps kept whole - cut
+  { clip: "MIRROR.1.4_slow.mp4", from: 5.35, to: 6.8, src: 1.36, speed: 1.02 },
+  // headphones close-up shortened by 2 beats (0.98 s, client); everything
+  // after moves up by the same amount, so cuts stay on the hits
+  // detail: loafers from the 6.80 s hit, both foot taps kept whole - cut
   // only once the foot is back on the floor
-  { clip: "MIRROR.1.2.mov", from: 7.78, to: 10.22, src: 1.89 },
+  { clip: "MIRROR.1.2.mov", from: 6.8, to: 9.24, src: 1.89 },
   // wide (client: fewer close-ups): adjusts collar and tie, hands on the
   // knot, same 0.8x pace; replaces the tie close-up
-  { clip: "MIRROR.1.mov", from: 10.22, to: 13.64, src: 9.6 },
+  { clip: "MIRROR.1.mov", from: 9.24, to: 12.66, src: 9.6 },
   // wide: walks out, room empty, fade to black
-  { clip: "MIRROR.1.mov", from: 13.64, to: 15.3, src: 21.4 },
+  { clip: "MIRROR.1.mov", from: 12.66, to: 14.32, src: 21.4 },
 ];
 
-const END_FRAME = f(15.3); // picture fully black
+const END_FRAME = f(14.32); // picture fully black
 const FADE_OUT = f(0.4);
 const LOGO_IN = END_FRAME;
-export const MIRROR_DURATION = f(18.44);
+export const MIRROR_DURATION = f(17.46);
 
 const ShotVideo: React.FC<{ shot: Shot }> = ({ shot }) => {
   const frame = useCurrentFrame();
@@ -87,9 +89,14 @@ const Logo: React.FC = () => {
     [0, 1, 1, 0],
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
   );
-  const scale = interpolate(frame, [0, MIRROR_DURATION - LOGO_IN], [0.96, 1.02], {
-    easing: Easing.out(Easing.quad),
-  });
+  const scale = interpolate(
+    frame,
+    [0, MIRROR_DURATION - LOGO_IN],
+    [0.96, 1.02],
+    {
+      easing: Easing.out(Easing.quad),
+    },
+  );
   return (
     <AbsoluteFill
       style={{ justifyContent: "center", alignItems: "center", opacity }}
@@ -124,7 +131,15 @@ export const MirrorReel: React.FC = () => {
       <Sequence from={LOGO_IN}>
         <Logo />
       </Sequence>
-      <Audio src={staticFile("mirror/music/reference_track.wav")} />
+      <Audio
+        src={staticFile("mirror/music/reference_track.wav")}
+        volume={(fr) =>
+          interpolate(fr, [MIRROR_DURATION - 30, MIRROR_DURATION - 1], [1, 0], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          })
+        }
+      />
     </AbsoluteFill>
   );
 };

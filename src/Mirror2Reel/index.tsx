@@ -47,7 +47,7 @@ const SHOTS: Shot[] = [
   {
     clip: "MIRROR.2.2_sharp.mp4",
     from: f(1.46),
-    to: f(3.63),
+    to: 61, // 2.54 s (eighth-note grid): close-up shortened again
     src: 10 / 24,
     track: { ...cuTrack, zoom: 1.17 },
   },
@@ -55,8 +55,8 @@ const SHOTS: Shot[] = [
   // turn to three-quarters; cut on the 7.97 s kick once he has settled
   {
     clip: "MIRROR.2.1_sharp.mp4",
-    from: f(3.63),
-    to: f(3.63) + 69,
+    from: 61,
+    to: 61 + 69,
     src: 15 / 24,
     track: { ...legsTrack, zoom: 1.05 },
   },
@@ -65,13 +65,13 @@ const SHOTS: Shot[] = [
   // soon as he has cleared the frame
   {
     clip: "MIRROR.2_out_sharp.mp4",
-    from: f(3.63) + 69,
-    to: f(3.63) + 69 + 82,
-    src: 18 / 24,
+    from: 61 + 69,
+    to: 61 + 69 + 42,
+    src: 40 / 24, // starts as he closes the diary, no standing still
   },
 ];
 
-const END_FRAME = f(3.63) + 69 + 82; // 9.9 s: black as he leaves -> logo
+const END_FRAME = 61 + 69 + 42; // 7.2 s: black as he leaves -> logo
 const FADE_OUT = f(0.4);
 const LOGO_IN = END_FRAME;
 export const MIRROR2_DURATION = END_FRAME + f(3.1);

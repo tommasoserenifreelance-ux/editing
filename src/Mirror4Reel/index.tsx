@@ -30,16 +30,19 @@ export const MIRROR4_FPS = 24;
 const f = (sec: number) => Math.round(sec * MIRROR4_FPS);
 
 const SELECTS_END = 217; // 9.04 s: cut to the ending (sheets fly on 9.25 s)
-const WHOOSH_AT = SELECTS_END + 27; // fast part of the tilt down
-const B_LEN = 106;
-const END_FRAME = SELECTS_END + B_LEN; // 13.5 s: black as he clears the frame
+// the ending skips its first second (he looks up while throwing): it opens
+// on the sheets already in the air, the camera tilting down
+const B_SKIP = 24;
+const WHOOSH_AT = SELECTS_END + 27 - B_SKIP; // fast part of the tilt down
+const B_LEN = 106 - B_SKIP;
+const END_FRAME = SELECTS_END + B_LEN; // 12.5 s: black as he clears the frame
 const FADE_OUT = 9;
 const LOGO_IN = END_FRAME;
 export const MIRROR4_DURATION = END_FRAME + f(3.1);
 
 const SHOTS = [
-  { clip: "a", from: 0, to: SELECTS_END },
-  { clip: "b", from: SELECTS_END, to: SELECTS_END + B_LEN },
+  { clip: "a", from: 0, to: SELECTS_END, skip: 0 },
+  { clip: "b", from: SELECTS_END, to: SELECTS_END + B_LEN, skip: B_SKIP },
 ];
 
 const Logo: React.FC = () => {
@@ -77,6 +80,7 @@ export const Mirror4Reel: React.FC = () => {
           <Sequence key={s.clip} from={s.from} durationInFrames={s.to - s.from}>
             <OffthreadVideo
               src={staticFile(`mirror/MIRROR.4_${s.clip}_sharp.mp4`)}
+              trimBefore={s.skip}
               muted
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
