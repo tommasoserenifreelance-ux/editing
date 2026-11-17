@@ -12,3 +12,5 @@ public/piatto/
 public/carosello/
 # Vibration plate source clip kept in a GitHub release
 public/pedana/
+# Elena green screen sources (re-upload to rebuild)
+public/elena/source/

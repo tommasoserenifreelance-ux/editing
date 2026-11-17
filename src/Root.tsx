@@ -6,6 +6,12 @@ import {
   VIDEO_SLIDE_DURATION,
   VIDEO_SLIDE_FPS,
 } from "./Pedana/VideoSlide";
+import {
+  ELENA_FPS,
+  ELENA_PANORAMA_DURATION,
+  ElenaPanorama,
+  PANORAMA_W,
+} from "./Elena";
 import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
@@ -131,6 +137,14 @@ export const RemotionRoot: React.FC = () => {
           />
         ),
       )}
+      <Composition
+        id="ElenaPanorama"
+        component={ElenaPanorama}
+        durationInFrames={ELENA_PANORAMA_DURATION}
+        fps={ELENA_FPS}
+        width={PANORAMA_W}
+        height={1350}
+      />
       <Composition
         id="CaroselloSlide1"
         component={Carosello}
