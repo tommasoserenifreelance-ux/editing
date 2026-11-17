@@ -4,7 +4,8 @@ Takes green screen frames 42-61 (already cut out by elena-compose.py) and
 normalises them: in the source Elena walks slightly towards the camera, so
 she grows ~6% during the stride and would visibly shrink every time the loop
 restarts. Each frame is rescaled to the size of the first one, put on the
-same floor line, and placed so her torso moves at constant speed.
+same floor line, and placed so her torso moves at constant speed; the
+brightness is evened out too, so the light on her does not jump.
 Usage: python3 scripts/elena-loop.py WORKDIR   (reads WORKDIR/rgba)
 """
 
@@ -34,6 +35,7 @@ data = [measure(FIRST + i) for i in range(N + 1)]
 _, top0, bot0, tor0 = data[0]
 _, topN, botN, torN = data[N]
 h0, hN = bot0 - top0, botN - topN
+frames = []
 for i in range(N):
     im, _, _, torso = data[i]
     f = i / N
@@ -46,7 +48,24 @@ for i in range(N):
     oy = round(bot0 - base * s)
     canvas = Image.new("RGBA", im.size, (0, 0, 0, 0))
     canvas.alpha_composite(scaled, (max(ox, 0), max(oy, 0)), (max(-ox, 0), max(-oy, 0)))
-    canvas.save(f"{out_dir}/{i + 1:04d}.png")
+    frames.append(canvas)
+
+# Even out the light: in the room the light on her changes as she walks, so
+# at every loop restart the brightness would jump. Each frame's colour is
+# scaled so her upper body (sweater, face, hair) matches the average.
+def upper_mean(img):
+    a = np.asarray(img).astype(np.float32)
+    m = a[..., 3] > 230
+    ys, _ = np.nonzero(m)
+    m[ys.min() + 600:] = False
+    return a[..., :3][m].mean(0)
+
+means = [upper_mean(c) for c in frames]
+target = np.mean(means, axis=0)
+for i, (c, mean) in enumerate(zip(frames, means)):
+    a = np.asarray(c).astype(np.float32)
+    a[..., :3] *= target / mean
+    Image.fromarray(a.clip(0, 255).astype(np.uint8), "RGBA").save(f"{out_dir}/{i + 1:04d}.png")
 print("stride px:", round(torN - tor0, 1), "scale range:", round(h0 / hN, 3))
 subprocess.run(
     ["ffmpeg", "-loglevel", "error", "-y", "-framerate", "24", "-i", f"{out_dir}/%04d.png",
