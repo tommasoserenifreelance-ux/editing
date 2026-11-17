@@ -67,6 +67,8 @@ export const PANORAMA_W = SLIDE_W * ELENA_SLIDES.length;
 // slide k's walk starts when slide k-1's ends, so in the panorama she passes
 // straight from one slide into the next.
 export const WALK = 58; // frames
+const ENTER_END = 10; // last frame cut by the cutout's left edge
+const EXIT_START = 43; // first frame cut by its right edge
 // Clip is 1080×1400 (source rows 150–1550) with a baked contact shadow.
 const CUT_W = 1080;
 const CUT_H = 1400;
@@ -77,14 +79,13 @@ export const ELENA_PANORAMA_DURATION = WALK * ELENA_SLIDES.length;
 
 const Walk: React.FC<{ index: number }> = ({ index }) => {
   const frame = useCurrentFrame();
-  // The clip's own edges cut her when she enters/leaves; slide the clip so
-  // those edges sit on the slide's edges at those moments.
-  const drift = interpolate(frame, [0, WALK - 1], [0, SLIDE_W - W]);
-  // Soft exit: she fades out over the last steps instead of being eaten by
-  // the edge of the cutout.
-  const opacity = interpolate(frame, [WALK - 14, WALK - 2], [1, 0], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
+  // The cutout's own edges cut her while she enters (walk frames 0-10) and
+  // leaves (43-57). The clip slides at constant speed so those edges stay
+  // outside the slide: she walks straight in from the left edge of the slide
+  // and straight out of its right edge, and reappears on the next slide.
+  const drift = interpolate(frame, [ENTER_END, EXIT_START], [0, SLIDE_W - W], {
+    extrapolateLeft: "extend",
+    extrapolateRight: "extend",
   });
   const h = CUT_H * CUT_SCALE;
   return (
@@ -98,7 +99,6 @@ const Walk: React.FC<{ index: number }> = ({ index }) => {
         height: h,
         left: index * SLIDE_W + drift,
         top: FLOOR_Y - h + 60,
-        opacity,
       }}
     />
   );
