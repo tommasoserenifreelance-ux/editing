@@ -22,8 +22,8 @@ import { sans } from "../PilatesReformer/theme";
 export const COLAZIONE_FPS = 24;
 const s = (seconds: number) => Math.round(seconds * COLAZIONE_FPS);
 
-// Skin smoothed with scripts/skin-smooth.py.
-const SRC = "colazione/colazione_glossy.mp4";
+// Original footage (scripts/skin-smooth.py has an optional glossy skin pass).
+const SRC = "colazione/colazione.mp4";
 // Cut: the repeated "e sono certa che il vostro intestino ringrazierà" and
 // the pause after it.
 const CUT_FROM = 64.5;
