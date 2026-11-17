@@ -17,13 +17,16 @@ import { sans } from "../PilatesReformer/theme";
 // watermark, whoosh on the cut, pop on every sticker) without the black &
 // white / red reveal. Stickers sit in the right column, clear of her face.
 // Source: GitHub release (colazione.santa.mov) → public/colazione/colazione.mp4.
-// The ~4.5 s pause before "piccolo trucchetto" is cut out.
+// The repeated line at the end of the recipe and the pause are cut out.
 
 export const COLAZIONE_FPS = 24;
 const s = (seconds: number) => Math.round(seconds * COLAZIONE_FPS);
 
-const SRC = "colazione/colazione.mp4";
-const CUT_FROM = 68.3; // pause in the source
+// Skin smoothed with scripts/skin-smooth.py.
+const SRC = "colazione/colazione_glossy.mp4";
+// Cut: the repeated "e sono certa che il vostro intestino ringrazierà" and
+// the pause after it.
+const CUT_FROM = 64.5;
 const CUT_TO = 72.85;
 const PART1 = s(CUT_FROM);
 const PART2 = s(85.875) - s(CUT_TO);
@@ -54,8 +57,7 @@ const CAPTIONS: [number, number, string][] = [
   [49.5, 53.0, "più antiossidanti e dolcezza naturale"],
   [53.82, 58.4, "Poi aggiungiamo due cucchiaini rasi di semi di lino"],
   [58.44, 62.6, "e raggiungiamo 24 grammi di proteine"],
-  [62.66, 64.6, "e 7 grammi di fibre"],
-  [64.64, 67.9, "e sono certa che il vostro intestino ringrazierà"],
+  [62.66, 64.45, "e 7 grammi di fibre"],
   [72.95, 75.0, "Un piccolo trucchetto:"],
   [75.0, 76.7, "arriverai a pranzo più sazia"],
   [76.74, 80.9, "magari spezzando la fame con 3-4 mandorle"],
@@ -70,7 +72,7 @@ const TAGS: { from: number; to: number; text: string; color: string }[] = [
   { from: 38.04, to: 53.0, text: "Mirtilli\n60 g", color: "#D9C4F1" },
   {
     from: 56.66,
-    to: 67.9,
+    to: 64.45,
     text: "Semi di lino\n2 cucchiaini",
     color: "#EEF7A3",
   },
@@ -82,7 +84,7 @@ const TOTALS: { from: number; to: number; protein: number; fibre?: number }[] =
     { from: 30.76, to: 44.0, protein: 22 },
     { from: 44.02, to: 47.8, protein: 23 },
     { from: 47.82, to: 60.88, protein: 23, fibre: 5 },
-    { from: 60.88, to: 67.9, protein: 24, fibre: 7 },
+    { from: 60.88, to: 64.45, protein: 24, fibre: 7 },
   ];
 
 const YELLOW = "#EEF7A3";
@@ -104,10 +106,15 @@ const pill: React.CSSProperties = {
 };
 
 // Hook stickers, same look and place as "Sfatiamo i / Falsi miti".
+// Shown only during the intro, so it never covers her mouth later on.
+const HOOK_END = 12.9;
+
 const Hook: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const enter = spring({ frame, fps, config: { damping: 12, mass: 0.6 } });
+  const enter =
+    spring({ frame, fps, config: { damping: 12, mass: 0.6 } }) *
+    interpolate(frame, [s(HOOK_END) - 8, s(HOOK_END)], [1, 0], clamp);
   return (
     <AbsoluteFill style={{ padding: "750px 0 0 56px" }}>
       <div
