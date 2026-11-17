@@ -12,6 +12,7 @@ import {
   ElenaPanorama,
   PANORAMA_W,
 } from "./Elena";
+import { COLAZIONE_DURATION, COLAZIONE_FPS, Colazione } from "./Colazione";
 import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
@@ -139,6 +140,14 @@ export const RemotionRoot: React.FC = () => {
           />
         ),
       )}
+      <Composition
+        id="Colazione"
+        component={Colazione}
+        durationInFrames={COLAZIONE_DURATION}
+        fps={COLAZIONE_FPS}
+        width={1080}
+        height={1920}
+      />
       <Composition
         id="TrueFalse2"
         component={TrueFalse2}
