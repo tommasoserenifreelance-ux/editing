@@ -14,7 +14,8 @@ import { sans } from "../PilatesReformer/theme";
 
 // "La mia colazione anti picco glicemico": same editing style as the
 // collagen myths reel (stickers hook, white outlined subtitles, logo
-// watermark, whoosh on the cut) without the black & white / red reveal.
+// watermark, whoosh on the cut, pop on every sticker) without the black &
+// white / red reveal. Stickers sit in the right column, clear of her face.
 // Source: GitHub release (colazione.santa.mov) → public/colazione/colazione.mp4.
 // The ~4.5 s pause before "piccolo trucchetto" is cut out.
 
@@ -64,13 +65,13 @@ const CAPTIONS: [number, number, string][] = [
 
 // Ingredient tags, shown when she adds each one (source seconds).
 const TAGS: { from: number; to: number; text: string; color: string }[] = [
-  { from: 16.4, to: 29.0, text: "Yogurt greco · 150-200 g", color: "#EEF7A3" },
-  { from: 21.98, to: 29.0, text: "Semi di chia · 10 g", color: "#D9C4F1" },
-  { from: 38.04, to: 53.0, text: "Mirtilli · 60 g", color: "#D9C4F1" },
+  { from: 16.4, to: 29.0, text: "Yogurt greco\n150-200 g", color: "#EEF7A3" },
+  { from: 21.98, to: 29.0, text: "Semi di chia\n10 g", color: "#D9C4F1" },
+  { from: 38.04, to: 53.0, text: "Mirtilli\n60 g", color: "#D9C4F1" },
   {
     from: 56.66,
     to: 67.9,
-    text: "Semi di lino · 2 cucchiaini",
+    text: "Semi di lino\n2 cucchiaini",
     color: "#EEF7A3",
   },
 ];
@@ -235,26 +236,34 @@ export const Colazione: React.FC = () => (
     </Sequence>
 
     <Hook />
+    <Sequence from={2}>
+      <Audio src={staticFile("sfx/pop.wav")} volume={0.4} />
+    </Sequence>
 
     {TAGS.map((t, i) => (
       <Timed key={t.text} from={t.from} to={t.to}>
         {(d) => (
           <AbsoluteFill
-            style={{ alignItems: "flex-end", padding: "430px 50px 0 0" }}
+            style={{ alignItems: "flex-end", padding: "420px 40px 0 0" }}
           >
             <Pop
               duration={d}
               style={{
                 ...pill,
                 background: t.color,
-                fontSize: 44,
-                padding: "10px 32px",
-                marginTop: (i % 2) * 90,
+                fontSize: 38,
+                padding: "12px 28px",
+                borderRadius: 32,
+                textAlign: "center",
+                whiteSpace: "pre-line",
+                lineHeight: 1.15,
+                marginTop: (i % 2) * 150,
                 transform: "rotate(-3deg)",
               }}
             >
               {t.text}
             </Pop>
+            <Audio src={staticFile("sfx/pop.wav")} volume={0.4} />
           </AbsoluteFill>
         )}
       </Timed>
@@ -264,14 +273,14 @@ export const Colazione: React.FC = () => (
       <Timed key={`${t.from}`} from={t.from} to={t.to}>
         {(d) => (
           <AbsoluteFill
-            style={{ alignItems: "flex-end", padding: "620px 50px 0 0" }}
+            style={{ alignItems: "flex-end", padding: "1040px 40px 0 0" }}
           >
             <Pop
               duration={d}
               style={{
                 ...pill,
                 background: "white",
-                fontSize: 46,
+                fontSize: 40,
                 padding: "12px 30px",
                 textAlign: "right",
                 lineHeight: 1.3,
@@ -285,6 +294,7 @@ export const Colazione: React.FC = () => (
                 </>
               ) : null}
             </Pop>
+            <Audio src={staticFile("sfx/pop.wav")} volume={0.3} />
           </AbsoluteFill>
         )}
       </Timed>
