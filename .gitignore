@@ -14,3 +14,6 @@ public/carosello/
 public/pedana/
 # Elena green screen sources (re-upload to rebuild)
 public/elena/source/
+# Part 2 / breakfast sources kept in a GitHub release
+public/collagene2/
+public/colazione/

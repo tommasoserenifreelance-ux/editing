@@ -25,6 +25,8 @@ import { PEDANA_DURATION, PEDANA_FPS, Pedana } from "./Pedana";
 import { PIATTO_DURATION, PIATTO_FPS, Piatto } from "./Piatto";
 import { PILATES_DURATION, PilatesReformer } from "./PilatesReformer";
 import { TRUE_FALSE_DURATION, TrueFalse } from "./TrueFalse";
+import { TRUE_FALSE_2_DURATION, TrueFalse2 } from "./TrueFalse2";
+import { FPS as TRUE_FALSE_2_FPS } from "./TrueFalse2/config";
 import { Cover } from "./TrueFalse/Cover";
 import { FPS as TRUE_FALSE_FPS } from "./TrueFalse/config";
 
@@ -137,6 +139,14 @@ export const RemotionRoot: React.FC = () => {
           />
         ),
       )}
+      <Composition
+        id="TrueFalse2"
+        component={TrueFalse2}
+        durationInFrames={TRUE_FALSE_2_DURATION}
+        fps={TRUE_FALSE_2_FPS}
+        width={1080}
+        height={1920}
+      />
       <Composition
         id="ElenaPanorama"
         component={ElenaPanorama}
