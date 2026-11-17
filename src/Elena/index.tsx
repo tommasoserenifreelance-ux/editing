@@ -1,9 +1,11 @@
 import {
   AbsoluteFill,
   Img,
+  interpolate,
   OffthreadVideo,
   Sequence,
   staticFile,
+  useCurrentFrame,
 } from "remotion";
 import { sans, serif } from "../PilatesReformer/theme";
 
@@ -12,9 +14,7 @@ import { sans, serif } from "../PilatesReformer/theme";
 // in which Elena walks continuously from the first slide to the last;
 // scripts/split-elena.py then cuts each slide out of it, so she visibly
 // passes from one slide into the next.
-// Walk: public/elena/walk_loop.webm (VP9 with alpha) = one stride, green
-// screen frames 42-60, cut out with scripts/elena-matte.py + elena-compose.py
-// and normalised with scripts/elena-loop.py.
+// Cutout made with scripts/elena-matte.py + scripts/elena-compose.py.
 
 export const ELENA_FPS = 24;
 
@@ -61,39 +61,36 @@ export const ELENA_SLIDES: {
 const SLIDE_W = 1080;
 export const PANORAMA_W = SLIDE_W * ELENA_SLIDES.length;
 
-// One stride whose last pose matches the first: replaying it shifted by one
-// stride gives a natural, endless walk with no sliding feet.
-export const LOOP = 19;
+// Walk: the original, uninterrupted green screen walk (frames 21-78,
+// public/elena/walk_full.webm) — no repeated stride, so nothing jumps.
+// In every slide she enters at the left edge and leaves at the right edge;
+// slide k's walk starts when slide k-1's ends, so in the panorama she passes
+// straight from one slide into the next.
+export const WALK = 58; // frames
 // Clip is 1080×1400 (source rows 150–1550) with a baked contact shadow.
 const CUT_W = 1080;
 const CUT_H = 1400;
 const CUT_SCALE = 0.7;
 const FLOOR_Y = 1300;
-// Frames are normalised by scripts/elena-loop.py (same size, same floor line,
-// torso at constant speed), so the loop restarts without any jolt.
-export const STRIDE = 347 * CUT_SCALE; // torso travel per loop, px
-// Body sits ~202–437 px from the clip's left edge at the start of a loop.
-export const BODY_LEFT = 202;
-export const BODY_W = 235;
-export const START_X = -BODY_LEFT - BODY_W - 20; // fully off the first slide
-export const LOOPS = Math.ceil(
-  (PANORAMA_W + 20 - START_X - BODY_LEFT) / STRIDE,
-);
-export const ELENA_PANORAMA_DURATION = LOOPS * LOOP;
+const W = CUT_W * CUT_SCALE;
+export const ELENA_PANORAMA_DURATION = WALK * ELENA_SLIDES.length;
 
-const Stride: React.FC<{ index: number }> = ({ index }) => {
-  const w = CUT_W * CUT_SCALE;
+const Walk: React.FC<{ index: number }> = ({ index }) => {
+  const frame = useCurrentFrame();
+  // The clip's own edges cut her when she enters/leaves; slide the clip so
+  // those edges sit on the slide's edges at those moments.
+  const drift = interpolate(frame, [0, WALK - 1], [0, SLIDE_W - W]);
   const h = CUT_H * CUT_SCALE;
   return (
     <OffthreadVideo
-      src={staticFile("elena/walk_loop.webm")}
+      src={staticFile("elena/walk_full.webm")}
       transparent
       muted
       style={{
         position: "absolute",
-        width: w,
+        width: W,
         height: h,
-        left: START_X + index * STRIDE,
+        left: index * SLIDE_W + drift,
         top: FLOOR_Y - h + 60,
       }}
     />
@@ -168,14 +165,14 @@ export const ElenaPanorama: React.FC = () => (
     {ELENA_SLIDES.map((_, i) => (
       <SlidePage key={`p${i}`} index={i} />
     ))}
-    {Array.from({ length: LOOPS }, (_, i) => (
+    {ELENA_SLIDES.map((_, i) => (
       <Sequence
-        key={`s${i}`}
-        from={i * LOOP}
-        durationInFrames={LOOP}
+        key={`w${i}`}
+        from={i * WALK}
+        durationInFrames={WALK}
         layout="none"
       >
-        <Stride index={i} />
+        <Walk index={i} />
       </Sequence>
     ))}
   </AbsoluteFill>
