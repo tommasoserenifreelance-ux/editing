@@ -73,9 +73,10 @@ export const PANORAMA_W = SLIDE_W * ELENA_SLIDES.length;
 // In every slide she enters at the left edge and leaves at the right edge;
 // slide k's walk starts when slide k-1's ends, so in the panorama she passes
 // straight from one slide into the next.
-// Played 20% slower (walk_slow.webm: frames re-timed with blending).
-export const WALK = 72; // frames
-const ENTER_END = 13; // last frame cut by the cutout's left edge
+// Played 30% slower (walk_slow.webm: frames re-timed with blending by
+// scripts/elena-slow.py; walk_slow80.webm is the 20% slower variant, 72 frames).
+export const WALK = 82; // frames
+const ENTER_END = 14; // last frame cut by the cutout's left edge
 // In the last walk frame what is left of her starts 570 px into the clip:
 // push it past the slide edge so she is completely gone at the end.
 const OFF_RIGHT = SLIDE_W - 570 * 0.7 + 10;

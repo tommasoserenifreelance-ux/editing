@@ -12,7 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "out" / "elena-panorama.mp4"
 OUT = ROOT / "export" / "elena"
-FPS, SLIDE_W, SLIDES, WALK = 24, 1080, 6, 72
+FPS, SLIDE_W, SLIDES, WALK = 24, 1080, 6, 82
 
 OUT.mkdir(parents=True, exist_ok=True)
 for k in range(SLIDES):
