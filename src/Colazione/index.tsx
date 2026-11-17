@@ -27,7 +27,7 @@ const SRC = "colazione/colazione_glossy.mp4";
 // Cut: the repeated "e sono certa che il vostro intestino ringrazierà" and
 // the pause after it.
 const CUT_FROM = 64.5;
-const CUT_TO = 72.85;
+const CUT_TO = 72.4; // just before "con questo piccolo trucchetto"
 const PART1 = s(CUT_FROM);
 const PART2 = s(85.875) - s(CUT_TO);
 export const COLAZIONE_DURATION = PART1 + PART2;
@@ -58,7 +58,7 @@ const CAPTIONS: [number, number, string][] = [
   [53.82, 58.4, "Poi aggiungiamo due cucchiaini rasi di semi di lino"],
   [58.44, 62.6, "e raggiungiamo 24 grammi di proteine"],
   [62.66, 64.45, "e 7 grammi di fibre"],
-  [72.95, 75.0, "Un piccolo trucchetto:"],
+  [72.45, 75.0, "Con questo piccolo trucchetto"],
   [75.0, 76.7, "arriverai a pranzo più sazia"],
   [76.74, 80.9, "magari spezzando la fame con 3-4 mandorle"],
   [80.94, 82.7, "o un pezzetto di cioccolato"],
