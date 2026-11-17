@@ -7,6 +7,11 @@ import {
 } from "./BoccaMenopausa";
 import { CIBO_DURATION, CIBO_FPS, CiboMedicina } from "./CiboMedicina";
 import { HelloWorld } from "./HelloWorld";
+import {
+  ORMONALE_DURATION,
+  ORMONALE_FPS,
+  TerapiaOrmonale,
+} from "./TerapiaOrmonale";
 import { OVAIE_SLIDE_COUNT, OvaieImmunitarie } from "./OvaieImmunitarie";
 import { MenopausaPrecoce, PRECOCE_SLIDE_COUNT } from "./MenopausaPrecoce";
 import {
@@ -117,6 +122,14 @@ export const RemotionRoot: React.FC = () => {
         component={SintomiMentali}
         durationInFrames={MENTALI_DURATION}
         fps={MENTALI_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="TerapiaOrmonale"
+        component={TerapiaOrmonale}
+        durationInFrames={ORMONALE_DURATION}
+        fps={ORMONALE_FPS}
         width={1080}
         height={1920}
       />
