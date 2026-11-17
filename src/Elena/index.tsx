@@ -8,9 +8,10 @@ import {
   useCurrentFrame,
 } from "remotion";
 import { sans, serif } from "../PilatesReformer/theme";
+import { Seasons } from "./Seasons";
 
-// "Elena's story" slide-crossing carousel (4:5), one Santa Longevity pastel
-// per slide, black text. Rendered as ONE panorama (all slides side by side)
+// "Elena's story" slide-crossing carousel (4:5) over an illustrated
+// "4 stagioni" landscape (./Seasons), black text. Rendered as ONE panorama (all slides side by side)
 // in which Elena walks continuously from the first slide to the last;
 // scripts/split-elena.py then cuts each slide out of it, so she visibly
 // passes from one slide into the next.
@@ -116,7 +117,6 @@ const SlidePage: React.FC<{ index: number }> = ({ index }) => {
         top: 0,
         width: SLIDE_W,
         height: 1350,
-        backgroundColor: slide.color,
       }}
     >
       <AbsoluteFill style={{ alignItems: "center", paddingTop: 50 }}>
@@ -171,6 +171,7 @@ const SlidePage: React.FC<{ index: number }> = ({ index }) => {
 
 export const ElenaPanorama: React.FC = () => (
   <AbsoluteFill style={{ backgroundColor: "white", overflow: "hidden" }}>
+    <Seasons />
     {ELENA_SLIDES.map((_, i) => (
       <SlidePage key={`p${i}`} index={i} />
     ))}
