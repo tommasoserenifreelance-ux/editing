@@ -80,6 +80,12 @@ const Walk: React.FC<{ index: number }> = ({ index }) => {
   // The clip's own edges cut her when she enters/leaves; slide the clip so
   // those edges sit on the slide's edges at those moments.
   const drift = interpolate(frame, [0, WALK - 1], [0, SLIDE_W - W]);
+  // Soft exit: she fades out over the last steps instead of being eaten by
+  // the edge of the cutout.
+  const opacity = interpolate(frame, [WALK - 14, WALK - 2], [1, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
   const h = CUT_H * CUT_SCALE;
   return (
     <OffthreadVideo
@@ -92,6 +98,7 @@ const Walk: React.FC<{ index: number }> = ({ index }) => {
         height: h,
         left: index * SLIDE_W + drift,
         top: FLOOR_Y - h + 60,
+        opacity,
       }}
     />
   );
