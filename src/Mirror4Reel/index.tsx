@@ -9,6 +9,7 @@ import {
   staticFile,
   useCurrentFrame,
 } from "remotion";
+import { z } from "zod";
 
 // MIRROR 4 - cut like reference 4 (public/mirror/music/reference_track_4.wav
 // = its audio + reverb tail): one wide, jump cuts of him going through the
@@ -30,24 +31,25 @@ export const MIRROR4_FPS = 24;
 const f = (sec: number) => Math.round(sec * MIRROR4_FPS);
 
 const SELECTS_END = 217; // 9.04 s: cut to the ending (sheets fly on 9.25 s)
-// the ending skips its first second (he looks up while throwing): it opens
-// on the sheets already in the air, the camera tilting down
-const B_SKIP = 24;
-const WHOOSH_AT = SELECTS_END + 27 - B_SKIP; // fast part of the tilt down
-const B_LEN = 106 - B_SKIP;
-const END_FRAME = SELECTS_END + B_LEN; // 12.5 s: black as he clears the frame
+// default ending skips its first second (he looks up while throwing): it
+// opens on the sheets already in the air, the camera tilting down.
+// Option "lancio" (client's alternative) keeps the whole throw, him looking
+// up included.
 const FADE_OUT = 9;
-const LOGO_IN = END_FRAME;
-export const MIRROR4_DURATION = END_FRAME + f(3.1);
-
-const SHOTS = [
-  { clip: "a", from: 0, to: SELECTS_END, skip: 0 },
-  { clip: "b", from: SELECTS_END, to: SELECTS_END + B_LEN, skip: B_SKIP },
-];
+const LOGO_LEN = f(3.1);
+const timing = (lancio: boolean) => {
+  const skip = lancio ? 0 : 24;
+  const bLen = 106 - skip;
+  const end = SELECTS_END + bLen; // black as he clears the frame
+  return { skip, bLen, end, whoosh: SELECTS_END + 27 - skip, total: end + LOGO_LEN };
+};
+export const mirror4Schema = z.object({ lancio: z.boolean() });
+export const mirror4Duration = (lancio: boolean) => timing(lancio).total;
+export const MIRROR4_DURATION = mirror4Duration(false);
 
 const Logo: React.FC = () => {
   const frame = useCurrentFrame();
-  const len = MIRROR4_DURATION - LOGO_IN;
+  const len = LOGO_LEN;
   const opacity = interpolate(frame, [0, 12, len - 15, len], [0, 1, 1, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
@@ -67,8 +69,17 @@ const Logo: React.FC = () => {
   );
 };
 
-export const Mirror4Reel: React.FC = () => {
+export const Mirror4Reel: React.FC<z.infer<typeof mirror4Schema>> = ({
+  lancio,
+}) => {
   const frame = useCurrentFrame();
+  const { skip, bLen, end: END_FRAME, whoosh: WHOOSH_AT, total } =
+    timing(lancio);
+  const LOGO_IN = END_FRAME;
+  const SHOTS = [
+    { clip: "a", from: 0, to: SELECTS_END, skip: 0 },
+    { clip: "b", from: SELECTS_END, to: SELECTS_END + bLen, skip },
+  ];
   const fade = interpolate(frame, [END_FRAME - FADE_OUT, END_FRAME], [1, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
@@ -104,8 +115,8 @@ export const Mirror4Reel: React.FC = () => {
               WHOOSH_AT,
               WHOOSH_AT + 16,
               WHOOSH_AT + 22,
-              MIRROR4_DURATION - 30,
-              MIRROR4_DURATION - 1,
+              total - 30,
+              total - 1,
             ],
             [1, 0.55, 0.55, 1, 1, 0],
             { extrapolateLeft: "clamp", extrapolateRight: "clamp" },

@@ -5,7 +5,13 @@ import { HelloWorld } from "./HelloWorld";
 import { MIRROR_DURATION, MIRROR_FPS, MirrorReel } from "./MirrorReel";
 import { MIRROR2_DURATION, MIRROR2_FPS, Mirror2Reel } from "./Mirror2Reel";
 import { MIRROR3_DURATION, MIRROR3_FPS, Mirror3Reel } from "./Mirror3Reel";
-import { MIRROR4_DURATION, MIRROR4_FPS, Mirror4Reel } from "./Mirror4Reel";
+import {
+  MIRROR4_DURATION,
+  MIRROR4_FPS,
+  Mirror4Reel,
+  mirror4Duration,
+  mirror4Schema,
+} from "./Mirror4Reel";
 import { MIRROR5_DURATION, MIRROR5_FPS, Mirror5Reel } from "./Mirror5Reel";
 import { MIRROR6_DURATION, MIRROR6_FPS, Mirror6Reel } from "./Mirror6Reel";
 import {
@@ -129,7 +135,19 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="Mirror4Reel"
         component={Mirror4Reel}
+        schema={mirror4Schema}
+        defaultProps={{ lancio: false }}
         durationInFrames={MIRROR4_DURATION}
+        fps={MIRROR4_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="Mirror4Lancio"
+        component={Mirror4Reel}
+        schema={mirror4Schema}
+        defaultProps={{ lancio: true }}
+        durationInFrames={mirror4Duration(true)}
         fps={MIRROR4_FPS}
         width={1080}
         height={1920}
