@@ -68,7 +68,9 @@ export const PANORAMA_W = SLIDE_W * ELENA_SLIDES.length;
 // straight from one slide into the next.
 export const WALK = 58; // frames
 const ENTER_END = 10; // last frame cut by the cutout's left edge
-const EXIT_START = 43; // first frame cut by its right edge
+// In the last walk frame what is left of her starts 570 px into the clip:
+// push it past the slide edge so she is completely gone at the end.
+const OFF_RIGHT = SLIDE_W - 570 * 0.7 + 10;
 // Clip is 1080×1400 (source rows 150–1550) with a baked contact shadow.
 const CUT_W = 1080;
 const CUT_H = 1400;
@@ -82,8 +84,8 @@ const Walk: React.FC<{ index: number }> = ({ index }) => {
   // The cutout's own edges cut her while she enters (walk frames 0-10) and
   // leaves (43-57). The clip slides at constant speed so those edges stay
   // outside the slide: she walks straight in from the left edge of the slide
-  // and straight out of its right edge, and reappears on the next slide.
-  const drift = interpolate(frame, [ENTER_END, EXIT_START], [0, SLIDE_W - W], {
+  // and fully out of its right edge, and reappears on the next slide.
+  const drift = interpolate(frame, [ENTER_END, WALK - 1], [0, OFF_RIGHT], {
     extrapolateLeft: "extend",
     extrapolateRight: "extend",
   });

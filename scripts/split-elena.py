@@ -18,9 +18,9 @@ OUT.mkdir(parents=True, exist_ok=True)
 for k in range(SLIDES):
     t_s, t_e = k * WALK, (k + 1) * WALK
     subprocess.run(
-        ["ffmpeg", "-loglevel", "error", "-y", "-ss", f"{t_s / FPS:.3f}",
-         "-i", str(SRC), "-t", f"{(t_e - t_s) / FPS:.3f}",
-         "-vf", f"crop={SLIDE_W}:1350:{k * SLIDE_W}:0", "-an",
+        ["ffmpeg", "-loglevel", "error", "-y", "-i", str(SRC),
+         "-vf", f"select=between(n\\,{t_s}\\,{t_e - 1}),setpts=N/{FPS}/TB,"
+                f"crop={SLIDE_W}:1350:{k * SLIDE_W}:0", "-an",
          "-c:v", "libx264", "-crf", "16", "-pix_fmt", "yuv420p",
          str(OUT / f"slide-0{k + 1}.mp4")], check=True)
 subprocess.run(
