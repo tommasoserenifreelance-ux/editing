@@ -16,7 +16,7 @@ import { z } from "zod";
 // (public/mirror/music/reference_track_5.wav), then black + MIRROR logo.
 // Sources: scripts/mirror5_single_build.py -> MIRROR.5_<look>_sharp.mp4.
 export const MIRROR5_SINGLE_FPS = 24;
-export const LOOK_FRAMES = { grigio: 205, nero: 241, marrone: 157 } as const;
+export const LOOK_FRAMES = { grigio: 240, nero: 241, marrone: 205 } as const;
 const LOGO_LEN = 74; // 3.1 s
 const FADE_OUT = 9;
 
