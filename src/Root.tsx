@@ -23,6 +23,7 @@ import {
 import { NADIG_DURATION, NADIG_FPS, NadInstagram } from "./NadIG";
 import { ESTRO_DURATION, ESTRO_FPS, Estrogeni } from "./Estrogeni";
 import { TIR_DURATION, TIR_FPS, Tiroide } from "./Tiroide";
+import { Dhea, DHEA_DURATION, DHEA_FPS } from "./Dhea";
 import {
   IV_DURATION,
   IV_FPS,
@@ -140,6 +141,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition id="LongevaIvTherapyYouTube" component={IvTherapyYouTube} durationInFrames={IV_YT_DURATION} fps={IV_FPS} width={1920} height={1080} />
       <Composition id="LongevaIvTherapyInstagram" component={IvTherapyInstagram} durationInFrames={IV_V_DURATION} fps={IV_FPS} width={1080} height={1920} />
       <Composition id="LongevaTiroide" component={Tiroide} durationInFrames={TIR_DURATION} fps={TIR_FPS} width={1080} height={1920} />
+      <Composition id="LongevaDhea" component={Dhea} durationInFrames={DHEA_DURATION} fps={DHEA_FPS} width={1080} height={1920} />
     </>
   );
 };
