@@ -3,7 +3,7 @@ S='/tmp/claude-0/-home-user-editing/80a2e44c-55fb-5633-9cd2-a538b271aca0/scratch
 SRC=S+'dhea_src/'; OUT=sys.argv[1]; SPEED=float(sys.argv[2]); DRY=len(sys.argv)>3
 db=np.load(SRC+'db.npy'); SEAM=69.24
 TH=-40; MIN=22; KEEP_AFTER=0.13; KEEP_BEFORE=0.08
-SECT=[[(5.64,9.95),(10.78,12.55)],[(18.71,22.69),(23.38,25.25)],[(42.28,50.62)],[(68.2,79.62)],[(123.3,136.12)]]
+SECT=[[(5.64,9.95),(10.78,12.55)],[(18.71,22.69),(23.38,25.25),(28.05,32.7)],[(42.28,50.62)],[(68.2,79.62)],[(81.16,92.36)],[(123.667,136.12)]]
 pieces=[]
 for k,sec in enumerate(SECT):
     z=k%2
@@ -25,8 +25,8 @@ pieces=[[q30(a),q30(b),z] for a,b,z in pieces if q30(b)-q30(a)>=2/30]
 tot=sum(b-a for a,b,z in pieces); print(len(pieces),'pieces raw',round(tot,2),'-> out',round(tot/SPEED,2))
 json.dump(pieces,open(S+'dhea/pieces.json','w'))
 if DRY: sys.exit()
-WIDE="crop=1216:2160:1274:0,scale=1080:1920:flags=lanczos"
-CLOSE="crop=900:1600:1432:180,scale=1080:1920:flags=lanczos"
+WIDE="crop=900:1600:1432:180,scale=1080:1920:flags=lanczos"
+CLOSE="crop=780:1387:1492:230,scale=1080:1920:flags=lanczos"
 L=open(S+'dhea/list.txt','w'); n=0
 for a,b,z in pieces:
     segs=[('dhea1.mp4',a,b)] if b<=SEAM else ([('dhea2.mp4',a-SEAM,b-SEAM)] if a>=SEAM else [('dhea1.mp4',a,SEAM),('dhea2.mp4',0,b-SEAM)])
