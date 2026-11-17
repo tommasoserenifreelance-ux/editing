@@ -16,7 +16,14 @@ import { z } from "zod";
 // (public/mirror/music/reference_track_5.wav), then black + MIRROR logo.
 // Sources: scripts/mirror5_single_build.py -> MIRROR.5_<look>_sharp.mp4.
 export const MIRROR5_SINGLE_FPS = 24;
-export const LOOK_FRAMES = { grigio: 240, nero: 241, marrone: 205 } as const;
+export const LOOK_FRAMES = { grigio: 240, nero: 229, marrone: 197 } as const;
+// grey keeps the reference 5 track; black and brown have their own songs
+// (client): cuts follow each song's hits. start = seconds skipped at the head.
+const MUSIC = {
+  grigio: { src: "reference_track_5.wav", start: 0 },
+  nero: { src: "track_nero.wav", start: 20 / 24 }, // first downbeat at 0.83 s
+  marrone: { src: "track_marrone.wav", start: 0 },
+} as const;
 const LOGO_LEN = 74; // 3.1 s
 const FADE_OUT = 9;
 
@@ -74,7 +81,8 @@ export const Mirror5Single: React.FC<z.infer<typeof mirror5SingleSchema>> = ({
         <Logo />
       </Sequence>
       <Audio
-        src={staticFile("mirror/music/reference_track_5.wav")}
+        src={staticFile(`mirror/music/${MUSIC[look].src}`)}
+        trimBefore={Math.round(MUSIC[look].start * MIRROR5_SINGLE_FPS)}
         volume={(fr) =>
           interpolate(fr, [total - 30, total - 1], [1, 0], {
             extrapolateLeft: "clamp",

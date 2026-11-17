@@ -23,17 +23,17 @@ LOOKS = {
         (312, 60, None),   # shoes, steps
         (89, 119, None),   # one take: leans into the mirror, steps back, full body, tie
     ]),
-    "nero": (BLACK, "", [
-        (175, 49, None),   # full body, collar
-        (554, 48, None),   # tie detail, hands
-        (1279, 48, None),  # shoes
-        (300, 48, None),   # full body
-        (500, 48, None),   # full body, turns to profile
+    "nero": (BLACK, "", [    # cut every 2 beats of track_nero (~63 BPM half-time)
+        (175, 46, None),   # full body, collar
+        (554, 45, None),   # tie detail, hands
+        (1279, 46, None),  # shoes
+        (300, 46, None),   # full body
+        (500, 46, None),   # full body, turns to profile
     ]),
-    "marrone": (BROWN, f"{HL},{WARM},", [
-        (1020, 73, None),  # full body, hands in the jacket
-        (318, 60, None),   # flicks the jacket open and closes it
-        (804, 72, None),   # full body, turns three-quarters and back, hands on hips
+    "marrone": (BROWN, f"{HL},{WARM},", [  # cuts on track_marrone hits 2.59 / 5.63 / 8.21 s
+        (1020, 62, None),  # full body, hands in the jacket
+        (804, 73, None),   # full body, turns three-quarters and back, hands on hips
+        (316, 62, None),   # flicks the jacket open and closes it
     ]),
 }
 for name, (src, pre, shots) in LOOKS.items():
