@@ -8,6 +8,12 @@ import { MIRROR3_DURATION, MIRROR3_FPS, Mirror3Reel } from "./Mirror3Reel";
 import { MIRROR4_DURATION, MIRROR4_FPS, Mirror4Reel } from "./Mirror4Reel";
 import { MIRROR5_DURATION, MIRROR5_FPS, Mirror5Reel } from "./Mirror5Reel";
 import { MIRROR6_DURATION, MIRROR6_FPS, Mirror6Reel } from "./Mirror6Reel";
+import {
+  MIRROR5_SINGLE_FPS,
+  Mirror5Single,
+  mirror5SingleDuration,
+  mirror5SingleSchema,
+} from "./Mirror5Single";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
 import {
@@ -141,6 +147,36 @@ export const RemotionRoot: React.FC = () => {
         component={Mirror6Reel}
         durationInFrames={MIRROR6_DURATION}
         fps={MIRROR6_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="Mirror5Grigio"
+        component={Mirror5Single}
+        schema={mirror5SingleSchema}
+        defaultProps={{ look: "grigio" as const }}
+        durationInFrames={mirror5SingleDuration("grigio")}
+        fps={MIRROR5_SINGLE_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="Mirror5Nero"
+        component={Mirror5Single}
+        schema={mirror5SingleSchema}
+        defaultProps={{ look: "nero" as const }}
+        durationInFrames={mirror5SingleDuration("nero")}
+        fps={MIRROR5_SINGLE_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="Mirror5Marrone"
+        component={Mirror5Single}
+        schema={mirror5SingleSchema}
+        defaultProps={{ look: "marrone" as const }}
+        durationInFrames={mirror5SingleDuration("marrone")}
+        fps={MIRROR5_SINGLE_FPS}
         width={1080}
         height={1920}
       />
