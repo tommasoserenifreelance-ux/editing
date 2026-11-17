@@ -28,8 +28,8 @@
   .wm small { display: block; text-transform: none; letter-spacing: .42em; font-size: .36em; margin-top: .45em; }
 
   .h { text-transform: uppercase; color: var(--slate); font-weight: 500; letter-spacing: .03em; line-height: 1.15; }
-  .kicker { text-transform: uppercase; letter-spacing: .3em; font-size: 7.5pt; color: var(--slate); font-weight: 500; }
-  .footer { position: absolute; left: 18mm; right: 18mm; bottom: 10mm; display: flex; justify-content: space-between; font-size: 7.5pt; letter-spacing: .2em; text-transform: uppercase; color: var(--slate); }
+  .kicker { text-transform: uppercase; letter-spacing: .24em; font-size: 10pt; color: var(--slate); font-weight: 500; }
+  .footer { position: absolute; left: 18mm; right: 18mm; bottom: 10mm; display: flex; justify-content: space-between; font-size: 10pt; letter-spacing: .2em; text-transform: uppercase; color: var(--slate); }
 
   /* ---------- 1 · COPERTINA ---------- */
   .cover { background: var(--powder); }
@@ -44,74 +44,66 @@
   .cover .riga { width: 26mm; height: .6mm; background: var(--navy); margin: 8mm 0 5mm; }
   .cover .dott { font-size: 15pt; font-weight: 500; color: var(--navy); }
   .cover .dott span { display: block; font-size: 11.5pt; font-weight: 400; color: var(--slate); margin-top: .5mm; }
-  .cover .base { position: absolute; left: 0; right: 0; bottom: 0; height: 22mm; background: var(--navy); color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 18mm; font-size: 10pt; letter-spacing: .06em; }
+  .cover .base { position: absolute; left: 0; right: 0; bottom: 0; height: 22mm; font-weight: 500; background: var(--navy); color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 18mm; font-size: 10pt; letter-spacing: .06em; }
 
   /* ---------- 2 · STUDIO + DOTTORE ---------- */
-  .p2 .alto { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 100%; height: 108mm; }
+  .p2 .alto { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 100%; height: 120mm; }
   .p2 .alto > div { min-height: 0; overflow: hidden; }
-  .p2 .alto .txt { background: var(--powder); padding: 12mm 10mm 6mm 18mm; }
-  .p2 .alto .txt p { margin-top: 2.6mm; font-size: 8.9pt; line-height: 1.5; }
-  .p2 h2 { font-size: 18pt; margin-top: 2mm; }
+  .p2 .alto .txt { background: var(--powder); padding: 18mm 10mm 8mm 18mm; }
+  .p2 .alto .txt p:not(.kicker) { margin-top: 5mm; font-size: 12pt; line-height: 1.5; }
+  .p2 h2 { font-size: 22pt; margin-top: 3mm; }
   .p2 .metodo { display: grid; grid-template-columns: repeat(5, 1fr); margin: 0 18mm; border-bottom: .3mm solid var(--powder); }
-  .p2 .metodo div { padding: 3.5mm 2mm; text-align: center; font-size: 9pt; font-weight: 500; letter-spacing: .18em; text-transform: uppercase; color: var(--navy); border-right: .3mm solid var(--powder); }
+  .p2 .metodo div { padding: 6mm 1mm; text-align: center; font-size: 10pt; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--navy); border-right: .3mm solid var(--powder); }
   .p2 .metodo div:last-child { border-right: 0; }
-  .p2 .metodo b { display: block; font-weight: 300; font-size: 15pt; color: var(--slate); letter-spacing: 0; margin-bottom: 1mm; }
-  .p2 .dott { padding: 7mm 18mm 0; }
-  .p2 .dott .foto { float: left; width: 50mm; height: 68mm; margin: 0 7mm 3mm 0; overflow: hidden; }
-  .p2 .dott h3 { font-size: 14pt; }
-  .p2 .dott .ruolo { font-size: 8pt; color: var(--slate); letter-spacing: .14em; text-transform: uppercase; margin-top: .6mm; }
-  .p2 .dott p:not(.kicker):not(.ruolo) { margin-top: 2mm; font-size: 8.3pt; line-height: 1.48; text-align: justify; hyphens: auto; }
+  .p2 .metodo b { display: block; font-weight: 300; font-size: 18pt; color: var(--slate); letter-spacing: 0; margin-bottom: 1mm; }
+  .p2 .dott { display: grid; grid-template-columns: 62mm 1fr; gap: 10mm; align-items: center; padding: 12mm 18mm 0; }
+  .p2 .dott .foto { height: 84mm; overflow: hidden; }
+  .p2 .dott h3 { font-size: 18pt; margin-top: 3mm; }
+  .p2 .dott .ruolo { font-size: 11pt; color: var(--slate); letter-spacing: .08em; text-transform: uppercase; margin-top: 1.5mm; font-weight: 500; }
+  .p2 .dott p:not(.kicker):not(.ruolo) { margin-top: 6mm; font-size: 12pt; line-height: 1.55; }
 
   /* ---------- 3 · SERVIZI ---------- */
   .p3 { padding: 16mm 18mm 0; }
-  .p3 h2 { font-size: 20pt; margin-top: 2mm; }
-  .p3 .intro { margin-top: 3mm; font-size: 9.4pt; max-width: 160mm; }
-  .sez { margin-top: 7mm; display: flex; align-items: center; gap: 4mm; }
-  .sez .h { font-size: 11pt; white-space: nowrap; }
+  .p3 h2 { font-size: 22pt; margin-top: 2mm; }
+  .sez { margin-top: 8mm; display: flex; align-items: center; gap: 4mm; }
+  .sez .h { font-size: 14pt; white-space: nowrap; }
   .sez::after { content: ""; flex: 1; height: .3mm; background: var(--mid); }
-  .grid-serv { margin-top: 4mm; display: grid; grid-template-columns: repeat(3, 1fr); gap: 3mm; }
-  .serv { background: var(--powder); padding: 3.6mm 4mm; }
-  .serv h5 { font-weight: 500; text-transform: uppercase; color: var(--navy); font-size: 8.4pt; letter-spacing: .06em; }
-  .serv p { font-size: 7.9pt; margin-top: .8mm; line-height: 1.4; }
-  .serv.span3 { grid-column: span 3; display: flex; align-items: baseline; gap: 4mm; }
-  .serv.span3 p { margin-top: 0; }
-  .lab { margin-top: 6mm; background: var(--navy); color: #fff; display: grid; grid-template-columns: 48mm 1fr; }
+  .grid-serv { margin-top: 4mm; display: grid; grid-template-columns: repeat(2, 1fr); gap: 2.5mm 4mm; }
+  .serv { background: var(--powder); padding: 3mm 5mm; font-weight: 500; text-transform: uppercase; color: var(--navy); font-size: 11pt; letter-spacing: .04em; }
+  .lab { margin-top: 7mm; background: var(--navy); color: #fff; display: grid; grid-template-columns: 52mm 1fr; }
   .lab-img { min-height: 0; overflow: hidden; }
-  .lab-body { padding: 5.5mm 6mm 5mm; }
-  .lab .tag { font-size: 6.8pt; letter-spacing: .2em; text-transform: uppercase; color: var(--mid); }
-  .lab h4 { font-weight: 500; text-transform: uppercase; letter-spacing: .08em; font-size: 14pt; margin-top: 1mm; }
-  .lab-intro { font-size: 8.6pt; color: rgba(255,255,255,.85); margin-top: 1.5mm; line-height: 1.45; }
-  .lab-grid { margin-top: 3.5mm; display: grid; grid-template-columns: 1fr 1fr; gap: 3mm 5mm; }
-  .lab-grid div { border-top: .3mm solid rgba(255,255,255,.3); padding-top: 2mm; }
-  .lab-grid h5 { font-weight: 500; text-transform: uppercase; letter-spacing: .06em; font-size: 8pt; }
-  .lab-grid p { font-size: 7.8pt; color: rgba(255,255,255,.8); margin-top: .6mm; line-height: 1.4; }
-  .duo { margin-top: 4mm; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; }
-  .duo .item { display: grid; grid-template-columns: 1fr; gap: 2.5mm; align-content: start; }
-  .duo .item .f { height: 28mm; overflow: hidden; }
-  .duo h5 { font-weight: 500; text-transform: uppercase; color: var(--navy); font-size: 8.4pt; letter-spacing: .06em; }
-  .duo p { font-size: 7.9pt; margin-top: 1mm; line-height: 1.45; }
+  .lab-body { padding: 6mm 7mm; }
+  .lab .tag { font-size: 10pt; letter-spacing: .1em; text-transform: uppercase; color: var(--mid); font-weight: 500; }
+  .lab h4 { font-weight: 500; text-transform: uppercase; letter-spacing: .06em; font-size: 18pt; margin-top: 1.5mm; }
+  .lab-intro { font-size: 11pt; color: rgba(255,255,255,.9); margin-top: 2mm; line-height: 1.4; }
+  .lab-list { margin-top: 3.5mm; list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 2mm 5mm; }
+  .lab-list li { border-top: .3mm solid rgba(255,255,255,.35); padding-top: 1.8mm; font-size: 11pt; font-weight: 500; }
+  .duo { margin-top: 4mm; display: grid; grid-template-columns: repeat(3, 1fr); gap: 5mm; }
+  .duo .item .f { height: 30mm; overflow: hidden; margin-bottom: 3mm; }
+  .duo h5 { font-weight: 500; text-transform: uppercase; color: var(--navy); font-size: 11pt; letter-spacing: .04em; line-height: 1.25; }
+  .duo p { font-size: 10.5pt; margin-top: 1mm; line-height: 1.4; }
 
   /* ---------- 4 · TEAM + CONTATTI ---------- */
   .p4 { padding: 16mm 18mm 0; }
-  .p4 h2 { font-size: 20pt; margin-top: 2mm; }
-  .team { margin-top: 12mm; display: grid; grid-template-columns: repeat(5, 1fr); gap: 11mm 4mm; }
+  .p4 h2 { font-size: 22pt; margin-top: 2mm; }
+  .team { margin-top: 9mm; display: grid; grid-template-columns: repeat(5, 1fr); gap: 7mm 3mm; }
   .membro { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 2.5mm; }
   .membro .f img { object-position: 50% 12%; }
-  .membro .f { flex: none; width: 30mm; height: 30mm; border-radius: 50%; overflow: hidden; background: var(--cielo); }
-  .membro b { display: block; font-weight: 500; color: var(--navy); font-size: 9pt; line-height: 1.25; }
-  .membro span { display: block; font-size: 7.9pt; color: var(--slate); line-height: 1.3; margin-top: .6mm; }
+  .membro .f { flex: none; width: 26mm; height: 26mm; border-radius: 50%; overflow: hidden; background: var(--cielo); }
+  .membro b { display: block; font-weight: 500; color: var(--navy); font-size: 10pt; line-height: 1.25; }
+  .membro span { display: block; font-size: 10pt; color: var(--slate); line-height: 1.3; margin-top: .6mm; }
   .contatti { position: absolute; left: 0; right: 0; bottom: 0; height: 136mm; background: var(--navy); color: #fff; padding: 14mm 18mm 0; }
-  .contatti .msg { font-size: 13pt; font-weight: 300; color: #fff; letter-spacing: .02em; }
-  .contatti .cols { margin-top: 9mm; display: grid; grid-template-columns: 1.25fr 1fr 1fr; gap: 8mm; }
-  .contatti h6 { font-weight: 500; font-size: 8pt; letter-spacing: .24em; text-transform: uppercase; color: var(--mid); margin-bottom: 2.5mm; }
-  .contatti p { font-size: 9pt; line-height: 1.6; color: rgba(255,255,255,.92); }
+  .contatti .msg { font-size: 14pt; font-weight: 300; color: #fff; letter-spacing: .02em; }
+  .contatti .cols { margin-top: 8mm; display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 6mm; }
+  .contatti h6 { font-weight: 500; font-size: 10pt; letter-spacing: .24em; text-transform: uppercase; color: var(--mid); margin-bottom: 2.5mm; }
+  .contatti p { font-size: 11pt; line-height: 1.6; color: rgba(255,255,255,.92); }
   .contatti p + h6 { margin-top: 6mm; }
   .contatti .cta { margin-top: 9mm; display: flex; align-items: center; justify-content: space-between; border-top: .3mm solid rgba(255,255,255,.25); padding-top: 7mm; }
-  .contatti .cta .btn { border: .3mm solid #fff; padding: 3mm 6mm; font-size: 8pt; letter-spacing: .24em; text-transform: uppercase; }
-  .contatti .social { display: flex; gap: 4mm; align-items: center; font-size: 8.5pt; color: rgba(255,255,255,.85); }
+  .contatti .cta .btn { border: .3mm solid #fff; padding: 3mm 6mm; font-size: 10pt; letter-spacing: .24em; text-transform: uppercase; }
+  .contatti .social { display: flex; gap: 5mm; margin-top: 3mm; }
   .contatti .social svg { width: 4.5mm; height: 4.5mm; fill: #fff; }
-  .contatti .logo { position: absolute; left: 18mm; bottom: 13mm; width: 62mm; height: auto; }
-  .contatti .legal { position: absolute; right: 18mm; bottom: 14mm; font-size: 7.5pt; color: rgba(255,255,255,.6); }
+  .contatti .logo { width: 62mm; height: auto; }
+  .contatti .legal { position: absolute; right: 18mm; bottom: 14mm; font-size: 10pt; color: rgba(255,255,255,.6); }
 
   /* ---------- VERSIONE STAMPA: abbondanza 3 mm per lato (216 × 303 mm) ---------- */
   html.bleed, html.bleed body { background: #fff; }
@@ -120,12 +112,10 @@
   html.bleed .page { margin: 0; overflow: visible; break-after: auto; background: transparent; }
   html.bleed .cover .img { inset: -3mm -3mm auto -3mm; height: 193mm; }
   html.bleed .cover .base { left: -3mm; right: -3mm; bottom: -3mm; height: 25mm; padding: 0 21mm 3mm; }
-  html.bleed .p2 .alto { margin: -3mm -3mm 0; height: 111mm; }
-  html.bleed .p2 .alto .txt { padding: 15mm 10mm 6mm 21mm; }
+  html.bleed .p2 .alto { margin: -3mm -3mm 0; height: 123mm; }
+  html.bleed .p2 .alto .txt { padding: 21mm 10mm 8mm 21mm; }
   html.bleed .contatti { left: -3mm; right: -3mm; bottom: -3mm; height: 139mm; padding: 14mm 21mm 0; }
-  html.bleed .contatti .logo { left: 21mm; bottom: 16mm; }
-  html.bleed .contatti .legal { right: 21mm; bottom: 16mm; }
-</style>
+    </style>
 </head>
 <body>
 
@@ -151,9 +141,8 @@
     <div class="txt">
       <p class="kicker">Chi siamo</p>
       <h2 class="h">Studio Bonaccorso</h2>
-      <p>Lo Studio Bonaccorso nasce dalla volontà del <b>dott. Michele Bonaccorso</b> di creare un luogo dove l'approccio alle necessità del paziente parta da una visione funzionalista della medicina, nella quale la cura del sintomo è il punto di partenza per indagare le cause sottese al malessere.</p>
-      <p>La clinica si distingue per l'applicazione dei principi della medicina funzionale e antiaging, con un focus su prevenzione, stimolazione dei processi naturali di rigenerazione cellulare e rallentamento dell'invecchiamento.</p>
-      <p>A supporto di questa missione opera un team di professionisti altamente qualificati, che si impegna a migliorare la qualità della vita dei pazienti.</p>
+      <p>Un centro di medicina funzionale e antiaging: il sintomo è il punto di partenza per capire le cause del malessere.</p>
+      <p>Prevenzione, rigenerazione e un team di specialisti per la tua qualità di vita.</p>
     </div>
     <div><img src="img/ozono_flebo.jpg" alt="" style="object-position: 50% 35%"></div>
   </div>
@@ -166,16 +155,12 @@
   </div>
   <div class="dott">
     <div class="foto"><img src="img/dottore.jpg" alt="Dott. Michele Bonaccorso" style="object-position: 50% 20%"></div>
-    <p class="kicker">Il fondatore</p>
-    <h3 class="h" style="margin-top:2mm">Dott. Michele Bonaccorso</h3>
-    <p class="ruolo">Medico funzionale e della longevità</p>
-    <p>Il dottor Michele Bonaccorso è medico anestesista, specializzato in medicina funzionale e della longevità, con particolare riferimento all'ossigeno-ozonoterapia e alla terapia del dolore. Il suo virtuoso percorso di studi gli ha permesso di essere oggi tra i più qualificati esponenti di medicina funzionale e della longevità in Italia.</p>
-    <p>Si è laureato con il massimo dei voti presso l'Università degli Studi di Catania, con una tesi dal titolo "Dolore da fratture vertebrali osteoporotiche: la cifoplastica".</p>
-    <p>Da oltre 10 anni pratica con successo l'ossigeno-ozonoterapia per la cura delle patologie muscolo-scheletriche, nel trattamento delle malattie neurodegenerative e infiammatorie, e come tecnica di prevenzione e rallentamento dell'invecchiamento.</p>
-    <p>Ha frequentato la scuola di medicina antiaging AMIA (Associazione Medici Italiani Antiaging). Ha conseguito il diploma presso la scuola dell'AIMF HEALTH (Associazione Italiana di Medicina Funzionale), diventando medico funzionalista, e ha conseguito il Master di II livello in Terapia del Dolore presso l'Università degli Studi di Parma. Ha ricoperto il ruolo di responsabile della terapia del dolore presso l'Istituto Ospedaliero di Castellanza del gruppo Multimedica.</p>
-    <p>Il dottor Bonaccorso segue con costanza congressi nazionali e internazionali e partecipa regolarmente ai principali congressi di settore negli Stati Uniti, per rimanere sempre aggiornato sulle ultime novità in campo funzionale e antiaging. È relatore invitato a congressi ed eventi dedicati alla longevità, tra cui il Kalemana Festival (4.500 partecipanti). È inoltre fondatore del Longevity Tour (500 partecipanti), ed è frequentatore abituale dell'A4M (American Academy of Anti-Aging Medicine), il congresso di medicina della longevità più importante al mondo.</p>
-    <p>Il dottor Bonaccorso ha un'importante attività di divulgazione scientifica sui social, dove è seguito da più di 150.000 follower. È ospite frequente di podcast dedicati alla salute e al benessere, ed è stato protagonista de La Clinica della Longevità, in onda su Real Time.</p>
-    <p>Dalla sua volontà è nato lo Studio Bonaccorso, un luogo in cui si seguono i principi della medicina funzionale e antiaging, secondo cui il paziente va trattato e curato come un unicum, valutandolo nella sua totalità. L'obiettivo è promuovere la prevenzione, stimolare i processi naturali di rigenerazione e rallentare l'invecchiamento cellulare.</p>
+    <div>
+      <p class="kicker">Il fondatore</p>
+      <h3 class="h">Dott. Michele Bonaccorso</h3>
+      <p class="ruolo">Medico funzionale e della longevità</p>
+      <p>Medico anestesista, specializzato in medicina funzionale e della longevità, ossigeno-ozonoterapia e terapia del dolore. Relatore ai principali congressi sulla longevità e divulgatore scientifico seguito da oltre 150.000 follower.</p>
+    </div>
   </div>
   <div class="footer"><span>Studio Bonaccorso</span><span>02</span></div>
 </section>
@@ -184,41 +169,41 @@
 <section class="page p3">
   <p class="kicker">I nostri servizi</p>
   <h2 class="h">Prevenzione, diagnosi e cura</h2>
-  <p class="intro">La medicina funzionale adotta una visione olistica del corpo: il sintomo è il punto di partenza per individuare le cause del disagio, con un metodo personalizzato che agisce sui processi di invecchiamento.</p>
 
   <div class="lab">
     <div class="lab-img"><img src="img/analisi.jpg" alt="" style="object-position: 55% 50%"></div>
     <div class="lab-body">
       <p class="tag">Centro prelievi per gli esami della longevità</p>
       <h4>Studio Bonaccorso Lab</h4>
-      <p class="lab-intro">I prelievi per gli esami del sangue e della longevità si fanno direttamente in studio, con i risultati letti e integrati nel tuo percorso di medicina funzionale.</p>
-      <div class="lab-grid">
-        <div><h5>Prelievi per esami del sangue</h5><p>Esami ematochimici, check-up completi, profilo ormonale e tiroideo.</p></div>
-        <div><h5>Prelievi della longevità</h5><p>Pannelli avanzati sui marcatori dell'invecchiamento per prevenire per tempo.</p></div>
-        <div><h5>Infiammazione e citochine</h5><p>Dosaggio delle citochine infiammatorie e dei marcatori dell'infiammazione cronica.</p></div>
-        <div><h5>Valutazione cardiovascolare</h5><p>Profilo lipidico avanzato e marcatori del rischio cardiovascolare.</p></div>
-      </div>
+      <p class="lab-intro">Prelievi direttamente in studio, risultati letti con il medico.</p>
+      <ul class="lab-list">
+        <li>Esami del sangue</li>
+        <li>Esami della longevità</li>
+        <li>Infiammazione e citochine</li>
+        <li>Valutazione cardiovascolare</li>
+      </ul>
     </div>
   </div>
 
   <div class="sez"><span class="h">Medicina funzionale &amp; antiaging</span></div>
   <div class="grid-serv">
-    <div class="serv"><h5>Ossigeno-ozono terapia</h5><p>Effetti antinfiammatori e antiossidanti per dolore e prevenzione.</p></div>
-    <div class="serv"><h5>Flebo multivitaminiche</h5><p>Vitamine e minerali per energia e difese immunitarie.</p></div>
-    <div class="serv"><h5>Ormoni bioidentici</h5><p>Riequilibrio ormonale personalizzato per donna e uomo.</p></div>
-    <div class="serv"><h5>Stress ossidativo</h5><p>Test dello stress ossidativo con prelievo presso Studio Bonaccorso Lab.</p></div>
-    <div class="serv"><h5>PRP</h5><p>Plasma ricco di piastrine per la rigenerazione dei tessuti.</p></div>
-    <div class="serv"><h5>Esosomi autologhi</h5><p>Vescicole rigenerative ottenute dal proprio sangue per pelle e tessuti.</p></div>
-    <div class="serv"><h5>Idrocolonterapia</h5><p>Riequilibrio della flora e del benessere intestinale.</p></div>
-    <div class="serv"><h5>Terapia chelante</h5><p>Eliminazione dei metalli pesanti dall'organismo.</p></div>
-    <div class="serv"><h5>Neuralterapia</h5><p>Anestetico locale a basso dosaggio per dolore e infiammazione.</p></div>
-    <div class="serv span3"><h5>Terapia del dolore</h5><p>Percorsi su misura per il dolore acuto e cronico.</p></div>
+    <div class="serv">Ossigeno-ozonoterapia</div>
+    <div class="serv">Flebo multivitaminiche</div>
+    <div class="serv">Ormoni bioidentici</div>
+    <div class="serv">Stress ossidativo</div>
+    <div class="serv">PRP</div>
+    <div class="serv">Esosomi autologhi</div>
+    <div class="serv">Idrocolonterapia</div>
+    <div class="serv">Terapia chelante</div>
+    <div class="serv">Neuralterapia</div>
+    <div class="serv">Terapia del dolore</div>
   </div>
+
   <div class="sez"><span class="h">Donna, estetica &amp; nutrizione</span></div>
   <div class="duo">
-    <div class="item"><div class="f" style="background: #009ecd"><img src="img/team_piccolo.jpg" alt="Dott.ssa Eleonora Piccolo" style="object-fit: contain; object-position: 50% 100%"></div><div><h5>Visita ginecologica</h5><p>Con la Dott.ssa Eleonora Piccolo, ginecologa esperta in ormoni bioidentici: menopausa, ciclo e salute ormonale.</p></div></div>
-    <div class="item"><div class="f"><img src="img/estetica.jpg" alt=""></div><div><h5>Medicina estetica corpo e viso</h5><p>Cellulite, adiposità, lassità cutanea, macchie e segni dell'invecchiamento.</p></div></div>
-    <div class="item"><div class="f"><img src="img/liposcultura.jpg" alt=""></div><div><h5>Liposcultura alimentare</h5><p>Gestione personalizzata del peso e della composizione corporea.</p></div></div>
+    <div class="item"><div class="f" style="background: #009ecd"><img src="img/team_piccolo.jpg" alt="Dott.ssa Eleonora Piccolo" style="object-fit: contain; object-position: 50% 100%"></div><h5>Visita ginecologica</h5><p>Ormoni bioidentici e menopausa</p></div>
+    <div class="item"><div class="f"><img src="img/estetica.jpg" alt=""></div><h5>Medicina estetica</h5><p>Trattamenti corpo e viso</p></div>
+    <div class="item"><div class="f"><img src="img/liposcultura.jpg" alt=""></div><h5>Liposcultura alimentare</h5><p>Peso e composizione corporea</p></div>
   </div>
   <div class="footer"><span>Studio Bonaccorso</span><span>03</span></div>
 </section>
@@ -237,7 +222,7 @@
     <div class="membro"><div class="f"><img src="img/team_lacagnina.jpg" alt=""></div><div><b>Dott. Stefano Lacagnina</b><span>Idrocolonterapia Dephura</span></div></div>
     <div class="membro"><div class="f"><img src="img/team_neroni.jpg" alt=""></div><div><b>Dott.ssa Elena Neroni</b><span>Idrocolonterapia Dephura</span></div></div>
     <div class="membro"><div class="f"><img src="img/team_lombardi.jpg" alt=""></div><div><b>Dott.ssa Martina Lombardi</b><span>Fisioterapia dermofunzionale</span></div></div>
-    <div class="membro"><div class="f"><img src="img/team_morelli.jpg" alt=""></div><div><b>Dott.ssa Maria Luisa Morelli</b><span>Osteopatia · Medicina cinese e facetaping</span></div></div>
+    <div class="membro"><div class="f"><img src="img/team_morelli.jpg" alt=""></div><div><b>Dott.ssa Maria Luisa Morelli</b><span>Osteopatia · Medicina cinese</span></div></div>
   </div>
 
   <div class="contatti">
@@ -259,19 +244,15 @@
         <p>02 91766 535<br>345 7245102</p>
         <h6>Online</h6>
         <p>studiobonaccorso.it</p>
+        <div class="social"><svg viewBox="0 0 24 24"><path d="M14 8h3V4h-3c-2.8 0-4 1.8-4 4.3V10H7v4h3v8h4v-8h3l1-4h-4V8.6c0-.4.3-.6.6-.6z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 7.2A4.8 4.8 0 1 0 12 16.8 4.8 4.8 0 0 0 12 7.2zm0 7.9a3.1 3.1 0 1 1 0-6.2 3.1 3.1 0 0 1 0 6.2zM17 5.8a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2zM12 3.6c2.7 0 3 0 4.1.1 2.8.1 4.1 1.4 4.2 4.2.1 1.1.1 1.4.1 4.1s0 3-.1 4.1c-.1 2.8-1.4 4.1-4.2 4.2-1.1.1-1.4.1-4.1.1s-3 0-4.1-.1c-2.8-.1-4.1-1.4-4.2-4.2C3.6 15 3.6 14.7 3.6 12s0-3 .1-4.1C3.8 5.1 5.1 3.8 7.9 3.7 9 3.6 9.3 3.6 12 3.6zM12 2c-2.7 0-3.1 0-4.1.1C4.2 2.2 2.2 4.2 2.1 7.9 2 8.9 2 9.3 2 12s0 3.1.1 4.1c.1 3.7 2.1 5.7 5.8 5.8 1 .1 1.4.1 4.1.1s3.1 0 4.1-.1c3.7-.1 5.7-2.1 5.8-5.8.1-1 .1-1.4.1-4.1s0-3.1-.1-4.1c-.1-3.7-2.1-5.7-5.8-5.8C15.1 2 14.7 2 12 2z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M16.6 5.8A4.3 4.3 0 0 1 15.5 3h-3.1v12.4a2.6 2.6 0 1 1-2.6-2.6c.3 0 .5 0 .8.1V9.7a5.8 5.8 0 1 0 4.9 5.7V9.1a7.4 7.4 0 0 0 4.3 1.4V7.4a4.3 4.3 0 0 1-3.2-1.6z"/></svg></div>
       </div>
     </div>
     <div class="cta">
       <span class="btn">Prenota la tua visita</span>
-      <div class="social">
-        <svg viewBox="0 0 24 24"><path d="M14 8h3V4h-3c-2.8 0-4 1.8-4 4.3V10H7v4h3v8h4v-8h3l1-4h-4V8.6c0-.4.3-.6.6-.6z"/></svg>
-        <svg viewBox="0 0 24 24"><path d="M12 7.2A4.8 4.8 0 1 0 12 16.8 4.8 4.8 0 0 0 12 7.2zm0 7.9a3.1 3.1 0 1 1 0-6.2 3.1 3.1 0 0 1 0 6.2zM17 5.8a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2zM12 3.6c2.7 0 3 0 4.1.1 2.8.1 4.1 1.4 4.2 4.2.1 1.1.1 1.4.1 4.1s0 3-.1 4.1c-.1 2.8-1.4 4.1-4.2 4.2-1.1.1-1.4.1-4.1.1s-3 0-4.1-.1c-2.8-.1-4.1-1.4-4.2-4.2C3.6 15 3.6 14.7 3.6 12s0-3 .1-4.1C3.8 5.1 5.1 3.8 7.9 3.7 9 3.6 9.3 3.6 12 3.6zM12 2c-2.7 0-3.1 0-4.1.1C4.2 2.2 2.2 4.2 2.1 7.9 2 8.9 2 9.3 2 12s0 3.1.1 4.1c.1 3.7 2.1 5.7 5.8 5.8 1 .1 1.4.1 4.1.1s3.1 0 4.1-.1c3.7-.1 5.7-2.1 5.8-5.8.1-1 .1-1.4.1-4.1s0-3.1-.1-4.1c-.1-3.7-2.1-5.7-5.8-5.8C15.1 2 14.7 2 12 2z"/></svg>
-        <svg viewBox="0 0 24 24"><path d="M16.6 5.8A4.3 4.3 0 0 1 15.5 3h-3.1v12.4a2.6 2.6 0 1 1-2.6-2.6c.3 0 .5 0 .8.1V9.7a5.8 5.8 0 1 0 4.9 5.7V9.1a7.4 7.4 0 0 0 4.3 1.4V7.4a4.3 4.3 0 0 1-3.2-1.6z"/></svg>
-        <span>Seguici sui social</span>
-      </div>
+      <img class="logo" src="img/logo-bianco.png" alt="Studio Bonaccorso – centro di medicina innovativa">
     </div>
-    <img class="logo" src="img/logo-bianco.png" alt="Studio Bonaccorso – centro di medicina innovativa">
-    <div class="legal">studiobonaccorso.it/prenota-visita</div>
   </div>
 </section>
 
