@@ -52,6 +52,7 @@ export const ELENA_SLIDES: {
   },
   {
     title: "Fun fact",
+    photo: "tisana.jpg",
     body: "Ogni mattina bevo una tisana tiepida e mi ripeto: «Oggi sarà una grande giornata!»… anche quando non lo sarà 😂",
     color: "#F6DCC8",
   },
