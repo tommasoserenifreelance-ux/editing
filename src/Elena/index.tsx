@@ -4,7 +4,6 @@ import {
   OffthreadVideo,
   Sequence,
   staticFile,
-  useCurrentFrame,
 } from "remotion";
 import { sans, serif } from "../PilatesReformer/theme";
 
@@ -14,7 +13,8 @@ import { sans, serif } from "../PilatesReformer/theme";
 // scripts/split-elena.py then cuts each slide out of it, so she visibly
 // passes from one slide into the next.
 // Walk: public/elena/walk_loop.webm (VP9 with alpha) = one stride, green
-// screen frames 42-60, cut out with scripts/elena-matte.py + elena-compose.py.
+// screen frames 42-60, cut out with scripts/elena-matte.py + elena-compose.py
+// and normalised with scripts/elena-loop.py.
 
 export const ELENA_FPS = 24;
 
@@ -69,16 +69,9 @@ const CUT_W = 1080;
 const CUT_H = 1400;
 const CUT_SCALE = 0.7;
 const FLOOR_Y = 1300;
-// Torso x (source px) in green screen frames 42-61. She slows down at the end
-// of the stride, so each frame is nudged to make the torso move at constant
-// speed: no jolt when the loop restarts.
-const TORSO = [
-  436.4, 454.4, 472.6, 491.0, 510.3, 529.3, 548.9, 567.7, 587.9, 607.9, 628.2,
-  648.1, 667.4, 686.7, 704.9, 722.4, 738.4, 754.4, 769.2, 783.6,
-];
-const evenTorso = (i: number) =>
-  TORSO[0] + ((TORSO[LOOP] - TORSO[0]) * i) / LOOP;
-export const STRIDE = (TORSO[LOOP] - TORSO[0]) * CUT_SCALE; // px per loop
+// Frames are normalised by scripts/elena-loop.py (same size, same floor line,
+// torso at constant speed), so the loop restarts without any jolt.
+export const STRIDE = 347 * CUT_SCALE; // torso travel per loop, px
 // Body sits ~202–437 px from the clip's left edge at the start of a loop.
 export const BODY_LEFT = 202;
 export const BODY_W = 235;
@@ -89,8 +82,6 @@ export const LOOPS = Math.ceil(
 export const ELENA_PANORAMA_DURATION = LOOPS * LOOP;
 
 const Stride: React.FC<{ index: number }> = ({ index }) => {
-  const frame = Math.min(useCurrentFrame(), LOOP - 1);
-  const nudge = (evenTorso(frame) - TORSO[frame]) * CUT_SCALE;
   const w = CUT_W * CUT_SCALE;
   const h = CUT_H * CUT_SCALE;
   return (
@@ -102,7 +93,7 @@ const Stride: React.FC<{ index: number }> = ({ index }) => {
         position: "absolute",
         width: w,
         height: h,
-        left: START_X + index * STRIDE + nudge,
+        left: START_X + index * STRIDE,
         top: FLOOR_Y - h + 60,
       }}
     />
