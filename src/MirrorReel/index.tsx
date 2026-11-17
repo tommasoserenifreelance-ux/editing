@@ -9,7 +9,6 @@ import {
   staticFile,
   useCurrentFrame,
 } from "remotion";
-import tieTrack from "./tieTrack.json";
 
 // Edit synced to the reference track (public/mirror/music/reference_track.wav).
 // The track has a hit every 0.49 s and a short pause + accent every 2 bars
@@ -25,7 +24,7 @@ type Shot = {
   to: number;
   src: number;
   speed?: number;
-  // per-frame recentering (face tracked in the source, see tieTrack.json)
+  // optional per-frame recentering (x/y offsets per frame + zoom)
   track?: { x: number[]; y: number[]; zoom: number };
 };
 
@@ -41,15 +40,9 @@ const SHOTS: Shot[] = [
   // detail: loafers from the 7.78 s hit, both foot taps kept whole - cut
   // only once the foot is back on the floor
   { clip: "MIRROR.1.2.mov", from: 7.78, to: 10.22, src: 1.89 },
-  // CU: both hands on the knot, one continuous take; this stretch is the
-  // steadiest, and the tracked recentering keeps him dead centre
-  {
-    clip: "MIRROR.1.1.mov",
-    from: 10.22,
-    to: 13.64,
-    src: 16.5,
-    track: { ...tieTrack, zoom: 1.15 },
-  },
+  // wide (client: fewer close-ups): adjusts collar and tie, hands on the
+  // knot, same 0.8x pace; replaces the tie close-up
+  { clip: "MIRROR.1.mov", from: 10.22, to: 13.64, src: 9.6 },
   // wide: walks out, room empty, fade to black
   { clip: "MIRROR.1.mov", from: 13.64, to: 15.3, src: 21.4 },
 ];

@@ -34,26 +34,25 @@ type Shot = { clip: string; from: number; to: number; src: number };
 
 // from/to = edit frames, src = frame inside the segment file
 const SHOTS: Shot[] = [
-  // walks in from frame left, bare lid, settles centre-frame (source 1.75 s)
-  { clip: "a", from: 0, to: f(2.56), src: 6 },
-  // #1: brings the first post-it up and sticks it top right (0 -> 1)
-  { clip: "d", from: f(2.56), to: f(5.28), src: 0 },
-  // #2: sticks the second in the centre (1 -> 2)
-  { clip: "d", from: f(5.28), to: f(6.6), src: 120 },
-  // #3 in three quick jumps: brings it up, presses it on the left (2 -> 3)
-  { clip: "b1", from: f(6.6), to: f(6.88), src: 0 },
-  { clip: "b1", from: f(6.88), to: f(7.32), src: 18 },
-  { clip: "b1", from: 176, to: 179, src: 36 }, // 3 frames each, as in
-  { clip: "f", from: 179, to: 182, src: 4 }, // the reference
-  // #4 and #5 down the right side (3 -> 5)
-  { clip: "f", from: 182, to: f(9.32), src: 34 },
+  // smoother cut (client): seven shots of 1.2-3 s on the beats, no stutter
+  // cuts; every new post-it still seen going on, same count across each cut
+  // walks in from frame left, bare lid, settles centre-frame
+  { clip: "a", from: 0, to: 51, src: 6 },
+  // #1 top right (0 -> 1)
+  { clip: "d", from: 51, to: 103, src: 14 },
+  // #2 centre (1 -> 2)
+  { clip: "d", from: 103, to: 140, src: 120 },
+  // #3 left (2 -> 3)
+  { clip: "b1", from: 140, to: 176, src: 0 },
+  // #4 and #5 down the right side in one take (3 -> 5)
+  { clip: "f", from: 176, to: 248, src: 4 },
   // #6: the redone one, top left (5 -> 6)
-  { clip: "g", from: f(9.32), to: f(10.5), src: 20 },
-  // hand at his glasses, walks out frame right (source 49.63 s), gone ~11.85 s
-  { clip: "c", from: f(10.5), to: f(11.875), src: 3 },
+  { clip: "g", from: 248, to: 277, src: 20 },
+  // hand at his glasses, walks out frame right
+  { clip: "c", from: 277, to: 310, src: 3 },
 ];
 
-const END_FRAME = f(11.875); // black as he clears frame and the song closes
+const END_FRAME = 310; // 12.9 s: black as he clears frame
 const FADE_OUT = 9;
 const LOGO_IN = END_FRAME;
 export const MIRROR3_DURATION = END_FRAME + f(3.1);
@@ -103,7 +102,20 @@ export const Mirror3Reel: React.FC = () => {
       <Sequence from={LOGO_IN}>
         <Logo />
       </Sequence>
-      <Audio src={staticFile("mirror/music/reference_track_3.wav")} />
+      <Audio
+        src={staticFile("mirror/music/reference_track_3.wav")}
+        volume={(fr) =>
+          interpolate(
+            fr,
+            [MIRROR3_DURATION - 30, MIRROR3_DURATION - 1],
+            [1, 0],
+            {
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp",
+            },
+          )
+        }
+      />
     </AbsoluteFill>
   );
 };

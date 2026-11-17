@@ -43,11 +43,11 @@ const SHOTS: Shot[] = [
   // (it opens fully ~0.3 s later in the source)
   { clip: "MIRROR.2_in_sharp.mp4", from: 0, to: f(1.46), src: 17 / 24 },
   // CU writing, head down; handheld -> stabilised on a smooth path, face
-  // pulled to centre with a slight zoom. Runs to the 5.07 s kick.
+  // pulled to centre with a slight zoom. Kept short (client): to the 3.63 s kick.
   {
     clip: "MIRROR.2.2_sharp.mp4",
     from: f(1.46),
-    to: f(5.07),
+    to: f(3.63),
     src: 10 / 24,
     track: { ...cuTrack, zoom: 1.17 },
   },
@@ -55,18 +55,23 @@ const SHOTS: Shot[] = [
   // turn to three-quarters; cut on the 7.97 s kick once he has settled
   {
     clip: "MIRROR.2.1_sharp.mp4",
-    from: f(5.07),
-    to: f(7.97),
+    from: f(3.63),
+    to: f(3.63) + 69,
     src: 15 / 24,
     track: { ...legsTrack, zoom: 1.05 },
   },
   // wide (source 14.75 s): looks up from the diary and closes it straight
-  // away, as in the reference, turns and walks out frame right (gone by
-  // ~11.1 s); short empty room, fade to black on the closing kick
-  { clip: "MIRROR.2_out_sharp.mp4", from: f(7.97), to: f(12.31), src: 18 / 24 },
+  // away, turns and walks out frame right; shortened (client): black as
+  // soon as he has cleared the frame
+  {
+    clip: "MIRROR.2_out_sharp.mp4",
+    from: f(3.63) + 69,
+    to: f(3.63) + 69 + 82,
+    src: 18 / 24,
+  },
 ];
 
-const END_FRAME = f(12.31); // black on the song's last kick -> logo
+const END_FRAME = f(3.63) + 69 + 82; // 9.9 s: black as he leaves -> logo
 const FADE_OUT = f(0.4);
 const LOGO_IN = END_FRAME;
 export const MIRROR2_DURATION = END_FRAME + f(3.1);
@@ -139,7 +144,20 @@ export const Mirror2Reel: React.FC = () => {
       <Sequence from={LOGO_IN}>
         <Logo />
       </Sequence>
-      <Audio src={staticFile("mirror/music/reference_track_2.wav")} />
+      <Audio
+        src={staticFile("mirror/music/reference_track_2.wav")}
+        volume={(fr) =>
+          interpolate(
+            fr,
+            [MIRROR2_DURATION - 30, MIRROR2_DURATION - 1],
+            [1, 0],
+            {
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp",
+            },
+          )
+        }
+      />
     </AbsoluteFill>
   );
 };

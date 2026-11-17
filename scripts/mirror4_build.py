@@ -17,8 +17,10 @@ SHARP = "unsharp=7:7:1.0:7:7:0,unsharp=3:3:0.6:3:3:0"
 ENC = ["-c:v", "libx264", "-crf", "8", "-preset", "slow", "-tune", "film", "-pix_fmt", "yuv420p",
        "-color_primaries", "bt709", "-color_trc", "bt709", "-colorspace", "bt709", "-r", "24", "-write_tmcd", "0"]
 # (first source frame, number of frames) - edit cuts follow reference 4
-SELECTS = [(1186, 8), (592, 5), (864, 5), (1611, 22), (87, 12), (476, 22),
-           (1294, 12), (240, 23), (1708, 22), (1396, 12), (1022, 22), (924, 23), (312, 29)]
+# head down in every select (client: face looks puffy when he looks up);
+# head pitch from face landmarks kept below about -24 deg
+SELECTS = [(1186, 8), (592, 5), (864, 5), (1611, 22), (87, 12), (166, 22),
+           (1318, 12), (240, 23), (816, 22), (1396, 12), (1022, 22), (1750, 23), (312, 29)]
 
 def cut(ranges, out):
     # trim + concat keeps the list order (select would sort by source frame)
