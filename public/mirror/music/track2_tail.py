@@ -3,7 +3,8 @@ convolution-reverb tail so the logo sits over a decaying wash (as in v1).
 Usage: python3 track2_tail.py reference.mp4 OUT.wav [TOTAL_S SEND_FROM_S]
 (MIRROR 2: defaults; MIRROR 3: reference3.mp4 reference_track_3.wav 15.0 9.0;
  MIRROR 4: reference4.mp4 reference_track_4.wav 17.5 12.5;
- MIRROR 5: reference5.mp4 reference_track_5.wav 16.8 11.5)
+ MIRROR 5: reference5.mp4 reference_track_5.wav 16.8 11.5;
+ MIRROR 6: reference6.mp4 reference_track_6.wav 13.5 8.5)
 """
 import subprocess, sys, wave
 import numpy as np

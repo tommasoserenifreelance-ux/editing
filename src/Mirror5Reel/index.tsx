@@ -15,11 +15,11 @@ import {
 // first 3.93 s (two full-body looks side by side on top, a medium shot
 // below), then single shots cut at 3.93 / 6.50 / 7.47 / 8.63 / 10.10 /
 // 11.23 s, ending on a full body at 13.6 s. Same grid here:
-//   split screen: grey look full body | brown look full body / brown medium
-//   adjusts his collar into the lens -> turns his head -> shoe step ->
-//   buttons the jacket -> tilt up trousers to jacket -> full body, collar
+//   split screen: grey full body | black full body / brown medium
+//   black tie close-up -> grey collar into the lens (mirror) -> shoe step
+//   -> buttons the jacket -> black look shoes -> full body
 // then black + MIRROR logo. Sources: scripts/mirror5_build.py (sharpened,
-// no talking). 24 fps, 1x except the top-left panel (0.65x).
+// no talking). 24 fps, 1x except the top-left panel (0.43x).
 export const MIRROR5_FPS = 24;
 const f = (sec: number) => Math.round(sec * MIRROR5_FPS);
 
