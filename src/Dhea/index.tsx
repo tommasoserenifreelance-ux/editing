@@ -95,7 +95,7 @@ const SCENES: Scene[] = [
       <Card>
         <Lead words={lead(t0, "il DHEA")} top={0.08} />
         <Big text="CALA" at={at(t0, "cala")} top={0.19} color={ref.red} size={170} boom />
-        <Decline at={at(t0, "cala") + 3} top={0.33} dur={sec(25.4 - 22.95)} />
+        <Decline at={at(t0, "cala")} top={0.33} dur={sec(25.6 - 22.95)} />
         <Lead words={lead(t0, "progressivamente, di anno in anno.")} top={0.8} color={ref.yellow} size={58} />
       </Card>
     ),

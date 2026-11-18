@@ -24,11 +24,13 @@ const Label: React.FC<{ text: string; frame: number; at: number; size: number; c
 export const BrickSplit: React.FC<{ at: number; leftAt: number; rightAt: number; top: number }> = ({ at, leftAt, rightAt, top }) => {
   const frame = useCurrentFrame();
   const { fps, width, height } = useVideoConfig();
-  const drop = spring({ frame: frame - at, fps, config: { damping: 12, mass: 0.7 } });
+  const drop = spring({ frame: frame - at, fps, config: { damping: 17, mass: 0.8 } });
   const cy = height * top;
   const bw = 520;
   const bh = 230;
-  const branch = (from: number) => interpolate(frame, [from, from + 8], [0, 1], clamp);
+  const ease = (x: number) => 1 - Math.pow(1 - x, 3);
+  const branch = (from: number) => ease(interpolate(frame, [from, from + 10], [0, 1], clamp));
+  const pop = (from: number) => spring({ frame: frame - from - 6, fps, config: { damping: 14, mass: 0.6 } });
   const L = branch(leftAt);
   const R = branch(rightAt);
   const chip = (k: number, x: number, text: string, color: string, rot: number, fg: string) =>
@@ -37,7 +39,7 @@ export const BrickSplit: React.FC<{ at: number; leftAt: number; rightAt: number;
         style={{
           position: "absolute",
           left: x - 230,
-          top: cy + 330,
+          top: cy + 400,
           width: 460,
           textAlign: "center",
           background: color,
@@ -48,8 +50,8 @@ export const BrickSplit: React.FC<{ at: number; leftAt: number; rightAt: number;
           fontSize: 66,
           padding: "22px 0",
           borderRadius: 18,
-          transform: `scale(${0.6 + 0.4 * k}) rotate(${rot}deg)`,
-          opacity: k,
+          transform: `translateY(${(1 - k) * 40}px) scale(${0.7 + 0.3 * k}) rotate(${rot * k}deg)`,
+          opacity: Math.min(1, k * 1.5),
           boxShadow: "0 18px 40px rgba(0,0,0,0.5)",
         }}
       >
@@ -61,27 +63,36 @@ export const BrickSplit: React.FC<{ at: number; leftAt: number; rightAt: number;
   const y0 = cy + bh / 2 + 10;
   const xl = width * 0.27;
   const xr = width * 0.73;
-  const y1 = cy + 320;
+  const y1 = cy + 360; // arrow tips stop above the chips
   return (
     <>
       <svg width={width} height={height} style={{ position: "absolute", left: 0, top: 0 }}>
         {[
           { k: L, x: xl },
           { k: R, x: xr },
-        ].map(({ k, x }, i) =>
-          k > 0 ? (
+        ].map(({ k, x }, i) => {
+          if (k <= 0) return null;
+          const tx = x0 + (x - x0) * k;
+          const ty = y0 + (y1 - y0) * k;
+          const ang = Math.atan2(y1 - y0, x - x0);
+          const head = 34;
+          // shaft stops at the base of the head so the tip stays sharp
+          const bx = tx - Math.cos(ang) * head * 0.8;
+          const by = ty - Math.sin(ang) * head * 0.8;
+          return (
             <g key={i}>
-              <line x1={x0} y1={y0} x2={x0 + (x - x0) * k} y2={y0 + (y1 - y0) * k} stroke={ref.yellow} strokeWidth={10} strokeLinecap="round" />
-              {k > 0.95 ? (
-                <polygon
-                  points="-24,-6 24,-6 0,26"
-                  fill={ref.yellow}
-                  transform={`translate(${x} ${y1 - 14}) rotate(${(Math.atan2(y1 - y0, x - x0) * 180) / Math.PI - 90})`}
-                />
-              ) : null}
+              <line x1={x0} y1={y0} x2={bx} y2={by} stroke={ref.yellow} strokeWidth={10} strokeLinecap="round" />
+              <polygon
+                points={`0,0 ${-head},${-head * 0.55} ${-head},${head * 0.55}`}
+                fill={ref.yellow}
+                strokeLinejoin="round"
+                stroke={ref.yellow}
+                strokeWidth={4}
+                transform={`translate(${tx} ${ty}) rotate(${(ang * 180) / Math.PI})`}
+              />
             </g>
-          ) : null,
-        )}
+          );
+        })}
       </svg>
       {/* the brick */}
       <div
@@ -106,8 +117,8 @@ export const BrickSplit: React.FC<{ at: number; leftAt: number; rightAt: number;
         <div style={{ position: "absolute", left: "66%", top: "50%", width: 6, height: "50%", background: "rgba(0,0,0,0.12)" }} />
         <div style={{ position: "relative", fontFamily: mont, fontWeight: 900, fontStyle: "italic", fontSize: 130, color: "#141416", letterSpacing: "-0.02em" }}>DHEA</div>
       </div>
-      {chip(L, xl, "ESTROGENI", ref.red, -4, "#fff")}
-      {chip(R, xr, "ANDROGENI", "#fff", 4, "#141416")}
+      {chip(pop(leftAt), xl, "ESTROGENI", ref.red, -4, "#fff")}
+      {chip(pop(rightAt), xr, "ANDROGENI", "#fff", 4, "#141416")}
       <Sfx at={at + 4} name="impact" volume={0.18} />
       <Sfx at={leftAt} name="pop2" volume={0.2} />
       <Sfx at={rightAt} name="pop3" volume={0.2} />
@@ -126,16 +137,19 @@ export const Decline: React.FC<{ at: number; top: number; dur?: number }> = ({ a
   const H = 620;
   const x0 = (width - W) / 2;
   const y0 = height * top;
-  const p = interpolate(frame, [at, at + dur], [0, 1], { ...clamp, easing: (t) => 1 - Math.pow(1 - t, 2) });
+  // smooth in-out sweep; nothing (dot, counter) shows before it starts
+  const p = interpolate(frame, [at, at + dur], [0, 1], { ...clamp, easing: (t) => 0.75 * t + 0.25 * (1 - Math.cos(Math.PI * t)) / 2 });
+  const started = frame >= at;
   const ap = interpolate(frame, [at - 6, at], [0, 1], clamp);
   // level vs age (relative to the peak at 25): roughly -2%/year, ~10-20% at 85
   const level = (age: number) => (age <= 25 ? 0.92 + (age - 20) * 0.016 : 1 * Math.exp(-(age - 25) / 30));
-  const ages = Array.from({ length: 66 }, (_, i) => 20 + i);
+  const age = 20 + 65 * p;
+  const ages = [...Array.from({ length: 131 }, (_, i) => 20 + i * 0.5).filter((a) => a < age), age];
   const X = (age: number) => x0 + ((age - 20) / 65) * W;
   const Y = (v: number) => y0 + H - v * H * 0.9;
-  const shown = ages.filter((a) => (a - 20) / 65 <= p);
+  const shown = started ? ages : [];
   const d = shown.map((a, i) => `${i ? "L" : "M"}${X(a).toFixed(1)} ${Y(level(a)).toFixed(1)}`).join(" ");
-  const last = shown[shown.length - 1] ?? 20;
+  const last = age;
   const area = shown.length > 1 ? `${d} L${X(last)} ${y0 + H} L${X(20)} ${y0 + H} Z` : "";
   return (
     <>
@@ -168,8 +182,9 @@ export const Decline: React.FC<{ at: number; top: number; dur?: number }> = ({ a
         <div
           style={{
             position: "absolute",
-            left: Math.min(X(last) - 90, x0 + W - 220),
-            top: Y(level(last)) - 130,
+            left: Math.min(X(last) + 34, x0 + W - 230),
+            top: Y(level(last)) - 96,
+            opacity: interpolate(frame, [at + 2, at + 7], [0, 1], clamp),
             fontFamily: mont,
             fontWeight: 900,
             fontStyle: "italic",
@@ -179,7 +194,7 @@ export const Decline: React.FC<{ at: number; top: number; dur?: number }> = ({ a
             whiteSpace: "nowrap",
           }}
         >
-          {last} anni
+          {Math.round(last)} anni
         </div>
       ) : null}
       <Sfx at={at} name="whoosh_down" volume={0.16} />
