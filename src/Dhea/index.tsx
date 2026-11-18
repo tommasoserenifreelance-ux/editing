@@ -6,7 +6,7 @@ import { FPS, sec } from "../Testosterone/theme";
 import { ColorBars, Grain, ref, Room, Smoke, Vignette } from "../IvTherapy/fx";
 import { chunksOf, Kinetic, Word } from "../IvTherapy/kinetic";
 import { Big, BrollWord, Card, Lead, Studies } from "../Tiroide/mg";
-import { BrickSplit, Decline, NotEqual, Target } from "./mg";
+import { Adrenals, BrickSplit, Decline, NotEqual, Target } from "./mg";
 import words from "./words.json";
 
 /*
@@ -69,7 +69,11 @@ const SCENES: Scene[] = [
   {
     from: f("Il", 5.6),
     render: (t0) => (
-      <BrollWord src="dhea/b_surrenali.mp4" word={"GHIANDOLE\nSURRENALI"} at={at(t0, "ghiandole")} lead={lead(t0, "il DHEA è prodotto dalle")} />
+      <Card>
+        <Lead words={lead(t0, "il DHEA è prodotto dalle")} top={0.1} />
+        <Adrenals at={at(t0, "ghiandole")} top={0.5} />
+        <Big text={"GHIANDOLE\nSURRENALI"} at={at(t0, "ghiandole")} top={0.82} size={130} />
+      </Card>
     ),
   },
   { from: f("ed", 9.4), speaker: true, render: (t0) => <Speaker start={t0} punch={["precursore"]} /> },

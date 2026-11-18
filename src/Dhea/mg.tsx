@@ -245,3 +245,56 @@ export const NotEqual: React.FC<{ at: number; top: number; left: string; right: 
     </div>
   );
 };
+
+/**
+ * Body silhouette with the two adrenal glands lighting up (no organs
+ * shown): outline figure on the dark room, the camera pushes in towards two
+ * glowing yellow points above the waist, either side of the spine.
+ */
+export const Adrenals: React.FC<{ at: number; top: number }> = ({ at, top }) => {
+  const frame = useCurrentFrame();
+  const { fps, width, height } = useVideoConfig();
+  const draw = interpolate(frame, [0, 18], [0, 1], { ...clamp, easing: (t) => 1 - Math.pow(1 - t, 3) });
+  const on = spring({ frame: frame - at, fps, config: { damping: 12, mass: 0.6 } });
+  const pulse = frame >= at ? 0.5 + 0.5 * Math.sin(((frame - at) / fps) * Math.PI * 2.2) : 0;
+  const push = interpolate(frame, [at, at + 70], [1, 1.12], { ...clamp, easing: (t) => t * (2 - t) });
+  const size = 1250;
+  // figure in a 200x400 box; adrenals near (90,192) and (110,192), just above the waist
+  const body =
+    "M100 8 a26 26 0 1 1 -0.1 0 Z " +
+    "M74 78 Q100 70 126 78 L150 92 Q160 98 162 112 L172 210 Q174 222 166 224 Q158 226 156 214 L146 128 L140 132 L144 230 Q146 250 140 260 L134 392 Q133 400 122 400 Q112 400 112 390 L104 270 L96 270 L88 390 Q88 400 78 400 Q67 400 66 392 L60 260 Q54 250 56 230 L60 132 L54 128 L44 214 Q42 226 34 224 Q26 222 28 210 L38 112 Q40 98 50 92 Z";
+  const len = 2600;
+  const dot = (x: number) => (
+    <g>
+      <circle cx={x} cy={192} r={11 + 4 * pulse} fill={ref.yellow} opacity={0.18 * on} />
+      <circle cx={x} cy={192} r={6 + 1.5 * pulse} fill={ref.yellow} opacity={0.4 * on} />
+    </g>
+  );
+  return (
+    <>
+      <svg
+        width={size / 2}
+        height={size}
+        viewBox="0 0 200 400"
+        style={{ position: "absolute", left: width / 2 - size / 4, top: height * top - size / 2, transform: `scale(${push})`, transformOrigin: "50% 48%", overflow: "visible" }}
+      >
+        <defs>
+          <filter id="adrGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3" />
+          </filter>
+        </defs>
+        <path d={body} fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.85)" strokeWidth={1.6} strokeDasharray={len} strokeDashoffset={len * (1 - draw)} strokeLinejoin="round" />
+        {/* spine hint */}
+        <line x1={100} y1={86} x2={100} y2={250} stroke="rgba(255,255,255,0.18)" strokeWidth={1.2} strokeDasharray="3 4" opacity={draw} />
+        <g filter="url(#adrGlow)" opacity={on}>
+          <circle cx={90} cy={192} r={5} fill={ref.yellow} />
+          <circle cx={110} cy={192} r={5} fill={ref.yellow} />
+        </g>
+        {dot(90)}
+        {dot(110)}
+      </svg>
+      <Sfx at={2} name="draw" volume={0.14} />
+      <Sfx at={at} name="pop2" volume={0.2} />
+    </>
+  );
+};
