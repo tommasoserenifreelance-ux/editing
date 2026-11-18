@@ -26,7 +26,7 @@ LOOKS = {
     "nero": (BLACK, "", [    # cut every 2 beats of track_nero (~63 BPM half-time)
         (175, 46, None),   # full body, collar
         (554, 45, None),   # tie detail, hands
-        (1279, 46, None),  # shoes
+        (1304, 46, None),  # shoes: foot settled, turns the toe (no tap), tilt up
         (300, 46, None),   # full body
         (500, 46, None),   # full body, turns to profile
     ]),

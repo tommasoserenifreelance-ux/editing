@@ -33,18 +33,12 @@ const SHOTS: Shot[] = [
   // wide: walks in, grabs the headphones, head down... held until he looks
   // up into the lens with both hands on the cups (src 5.2 s on the 5.35 s hit)
   { clip: "MIRROR.1.mov", from: 0, to: 5.35, src: 0.92 },
-  // headphones CU matched on that pose (1.4 at ~0.85 s: head up, hands on
-  // the cups), runs to his head turn. MIRROR.1.4_slow.mp4 = 1.4 at 0.625x
-  // with motion interpolation, so 0.85 s real = 1.36 s in the slow file.
-  { clip: "MIRROR.1.4_slow.mp4", from: 5.35, to: 6.8, src: 1.36, speed: 1.02 },
-  // headphones close-up shortened by 2 beats (0.98 s, client); everything
-  // after moves up by the same amount, so cuts stay on the hits
-  // detail: loafers from the 6.80 s hit, both foot taps kept whole - cut
-  // only once the foot is back on the floor
-  { clip: "MIRROR.1.2.mov", from: 6.8, to: 9.24, src: 1.89 },
-  // wide (client: fewer close-ups): adjusts collar and tie, hands on the
-  // knot, same 0.8x pace; replaces the tie close-up
-  { clip: "MIRROR.1.mov", from: 9.24, to: 12.66, src: 9.6 },
+  // client: no headphones close-up, no foot tap. Legs standing still, the
+  // camera tilts up to the cardigan and stops before the face
+  // (MIRROR.1.3 0-2.34 s), cut on the 8.28 s hit
+  { clip: "MIRROR.1.3.mov", from: 5.35, to: 8.28, src: 0 },
+  // wide: adjusts collar and tie, hands on the knot (same pace)
+  { clip: "MIRROR.1.mov", from: 8.28, to: 12.66, src: 8.83 },
   // wide: walks out, room empty, fade to black
   { clip: "MIRROR.1.mov", from: 12.66, to: 14.32, src: 21.4 },
 ];

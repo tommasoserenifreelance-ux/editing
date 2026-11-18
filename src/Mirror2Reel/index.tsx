@@ -9,7 +9,6 @@ import {
   staticFile,
   useCurrentFrame,
 } from "remotion";
-import cuTrack from "./cuTrack.json";
 import legsTrack from "./legsTrack.json";
 
 // MIRROR 2 - same structure and movements as the reference reel
@@ -42,15 +41,9 @@ const SHOTS: Shot[] = [
   // reference); cut on the 1.46 s snare while the smile is only a hint
   // (it opens fully ~0.3 s later in the source)
   { clip: "MIRROR.2_in_sharp.mp4", from: 0, to: f(1.46), src: 17 / 24 },
-  // CU writing, head down; handheld -> stabilised on a smooth path, face
-  // pulled to centre with a slight zoom. Kept short (client): to the 3.63 s kick.
-  {
-    clip: "MIRROR.2.2_sharp.mp4",
-    from: f(1.46),
-    to: 61, // 2.54 s (eighth-note grid): close-up shortened again
-    src: 10 / 24,
-    track: { ...cuTrack, zoom: 1.17 },
-  },
+  // wide again (client: no face close-up): far shot of him writing, head
+  // down (MIRROR.2_mid_sharp.mp4 = MIRROR.2.mov frames 120-149)
+  { clip: "MIRROR.2_mid_sharp.mp4", from: f(1.46), to: 61, src: 0 },
   // legs: opens on the planted stance, keeps the whole foot pivot and the
   // turn to three-quarters; cut on the 7.97 s kick once he has settled
   {
