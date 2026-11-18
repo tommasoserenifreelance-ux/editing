@@ -247,27 +247,45 @@ export const NotEqual: React.FC<{ at: number; top: number; left: string; right: 
 };
 
 /**
- * Body silhouette with the two adrenal glands lighting up (no organs
- * shown): outline figure on the dark room, the camera pushes in towards two
- * glowing yellow points above the waist, either side of the spine.
+ * Female silhouette with the two adrenal glands lighting up (no organs
+ * shown). Dynamic: the figure springs in while its outline draws, a scan
+ * line sweeps down, then the two glands pop with shock-wave rings and the
+ * camera punches in on them.
  */
 export const Adrenals: React.FC<{ at: number; top: number }> = ({ at, top }) => {
   const frame = useCurrentFrame();
   const { fps, width, height } = useVideoConfig();
-  const draw = interpolate(frame, [0, 18], [0, 1], { ...clamp, easing: (t) => 1 - Math.pow(1 - t, 3) });
-  const on = spring({ frame: frame - at, fps, config: { damping: 12, mass: 0.6 } });
-  const pulse = frame >= at ? 0.5 + 0.5 * Math.sin(((frame - at) / fps) * Math.PI * 2.2) : 0;
-  const push = interpolate(frame, [at, at + 70], [1, 1.12], { ...clamp, easing: (t) => t * (2 - t) });
+  const enter = spring({ frame, fps, config: { damping: 14, mass: 0.7 } });
+  const draw = interpolate(frame, [0, 14], [0, 1], { ...clamp, easing: (t) => 1 - Math.pow(1 - t, 3) });
+  // scan passes repeat until the glands light up
+  const scan = frame >= 6 && frame < at ? ((frame - 6) % 30) / 30 : 0;
+  const on = spring({ frame: frame - at, fps, config: { damping: 9, mass: 0.5 } });
+  const punch = spring({ frame: frame - at, fps, config: { damping: 16, mass: 0.9 } });
+  const drift = interpolate(frame, [at, at + 90], [0, 0.06], clamp);
+  const zoom = (0.85 + 0.15 * enter) * (1 + 0.22 * punch + drift);
+  const shake = frame >= at && frame < at + 6 ? Math.sin((frame - at) * 2.6) * (6 - (frame - at)) * 2 : 0;
   const size = 1250;
-  // figure in a 200x400 box; adrenals near (90,192) and (110,192), just above the waist
+  const GY = 168; // adrenal height in the 200x400 figure box: upper abdomen, above the waist
+  const hair = "M76 44 Q72 8 100 8 Q128 8 124 44 Q126 60 132 72 Q118 74 111 63 L89 63 Q82 74 68 72 Q74 60 76 44 Z";
   const body =
-    "M100 8 a26 26 0 1 1 -0.1 0 Z " +
-    "M74 78 Q100 70 126 78 L150 92 Q160 98 162 112 L172 210 Q174 222 166 224 Q158 226 156 214 L146 128 L140 132 L144 230 Q146 250 140 260 L134 392 Q133 400 122 400 Q112 400 112 390 L104 270 L96 270 L88 390 Q88 400 78 400 Q67 400 66 392 L60 260 Q54 250 56 230 L60 132 L54 128 L44 214 Q42 226 34 224 Q26 222 28 210 L38 112 Q40 98 50 92 Z";
+    "M92 70 L108 70 L111 80 Q130 82 140 92 Q148 100 148 112 L156 200 Q158 214 150 216 Q142 218 140 206 L132 126 " +
+    "Q128 152 126 176 Q122 194 124 204 Q140 228 142 256 L130 392 Q129 400 118 400 Q108 400 108 390 L103 282 L97 282 " +
+    "L92 390 Q92 400 82 400 Q71 400 70 392 L58 256 Q60 228 76 204 Q78 194 74 176 Q72 152 68 126 L60 206 Q58 218 50 216 " +
+    "Q42 214 44 200 L52 112 Q52 100 60 92 Q70 82 89 80 Z";
   const len = 2600;
-  const dot = (x: number) => (
-    <g>
-      <circle cx={x} cy={192} r={11 + 4 * pulse} fill={ref.yellow} opacity={0.18 * on} />
-      <circle cx={x} cy={192} r={6 + 1.5 * pulse} fill={ref.yellow} opacity={0.4 * on} />
+  const sy = 10 + scan * 390;
+  const rings = [0, 12, 24, 36].map((d) => {
+    const k = (frame - at - d) / 22;
+    return k > 0 && k < 1 ? k : null;
+  });
+  const gland = (x: number) => (
+    <g key={x}>
+      {rings.map((k, i) =>
+        k === null ? null : <circle key={i} cx={x} cy={GY} r={6 + 26 * k} fill="none" stroke={ref.yellow} strokeWidth={1.4 * (1 - k)} opacity={1 - k} />,
+      )}
+      <circle cx={x} cy={GY} r={13 * on} fill={ref.yellow} opacity={0.22} />
+      <circle cx={x} cy={GY} r={5.5 * on} fill={ref.yellow} filter="url(#adrGlow)" />
+      <circle cx={x} cy={GY} r={4 * on} fill="#fff7cc" />
     </g>
   );
   return (
@@ -276,25 +294,47 @@ export const Adrenals: React.FC<{ at: number; top: number }> = ({ at, top }) => 
         width={size / 2}
         height={size}
         viewBox="0 0 200 400"
-        style={{ position: "absolute", left: width / 2 - size / 4, top: height * top - size / 2, transform: `scale(${push})`, transformOrigin: "50% 48%", overflow: "visible" }}
+        style={{
+          position: "absolute",
+          left: width / 2 - size / 4 + shake,
+          top: height * top - size / 2 + (1 - enter) * 260,
+          opacity: interpolate(frame, [0, 4], [0, 1], clamp),
+          transform: `scale(${zoom}) rotate(${(1 - enter) * -6}deg)`,
+          transformOrigin: `50% ${(GY / 400) * 100}%`,
+          overflow: "visible",
+        }}
       >
         <defs>
-          <filter id="adrGlow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="3" />
+          <filter id="adrGlow" x="-200%" y="-200%" width="500%" height="500%">
+            <feGaussianBlur stdDeviation="2.4" />
           </filter>
+          <linearGradient id="adrScan" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor={ref.yellow} stopOpacity={0} />
+            <stop offset="1" stopColor={ref.yellow} stopOpacity={0.35} />
+          </linearGradient>
+          <clipPath id="adrClip">
+            <path d={body} />
+            <path d={hair} />
+            <circle cx={100} cy={38} r={24} />
+          </clipPath>
         </defs>
-        <path d={body} fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.85)" strokeWidth={1.6} strokeDasharray={len} strokeDashoffset={len * (1 - draw)} strokeLinejoin="round" />
-        {/* spine hint */}
-        <line x1={100} y1={86} x2={100} y2={250} stroke="rgba(255,255,255,0.18)" strokeWidth={1.2} strokeDasharray="3 4" opacity={draw} />
-        <g filter="url(#adrGlow)" opacity={on}>
-          <circle cx={90} cy={192} r={5} fill={ref.yellow} />
-          <circle cx={110} cy={192} r={5} fill={ref.yellow} />
-        </g>
-        {dot(90)}
-        {dot(110)}
+        <path d={hair} fill="rgba(255,255,255,0.10)" stroke="rgba(255,255,255,0.85)" strokeWidth={1.5} strokeDasharray={len} strokeDashoffset={len * (1 - draw)} />
+        <circle cx={100} cy={38} r={22} fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.85)" strokeWidth={1.5} strokeDasharray={len} strokeDashoffset={len * (1 - draw)} />
+        <path d={body} fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.9)" strokeWidth={1.6} strokeDasharray={len} strokeDashoffset={len * (1 - draw)} strokeLinejoin="round" />
+        <line x1={100} y1={84} x2={100} y2={250} stroke="rgba(255,255,255,0.18)" strokeWidth={1.1} strokeDasharray="3 4" opacity={draw} />
+        {/* scan sweep inside the figure */}
+        {scan > 0 && scan < 1 ? (
+          <g clipPath="url(#adrClip)">
+            <rect x={0} y={sy - 40} width={200} height={40} fill="url(#adrScan)" />
+            <line x1={0} x2={200} y1={sy} y2={sy} stroke={ref.yellow} strokeWidth={1.6} />
+          </g>
+        ) : null}
+        {frame >= at ? [gland(91), gland(109)] : null}
       </svg>
-      <Sfx at={2} name="draw" volume={0.14} />
-      <Sfx at={at} name="pop2" volume={0.2} />
+      <Sfx at={0} name="whoosh" volume={0.14} />
+      <Sfx at={6} name="riser_short" volume={0.1} />
+      <Sfx at={at} name="impact" volume={0.2} />
+      <Sfx at={at + 1} name="pop2" volume={0.18} />
     </>
   );
 };

@@ -71,7 +71,7 @@ const SCENES: Scene[] = [
     render: (t0) => (
       <Card>
         <Lead words={lead(t0, "il DHEA è prodotto dalle")} top={0.1} />
-        <Adrenals at={at(t0, "ghiandole")} top={0.5} />
+        <Adrenals at={at(t0, "ghiandole")} top={0.53} />
         <Big text={"GHIANDOLE\nSURRENALI"} at={at(t0, "ghiandole")} top={0.82} size={130} />
       </Card>
     ),
