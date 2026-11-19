@@ -28,8 +28,8 @@
   .wm small { display: block; text-transform: none; letter-spacing: .42em; font-size: .36em; margin-top: .45em; }
 
   .h { text-transform: uppercase; color: var(--slate); font-weight: 500; letter-spacing: .03em; line-height: 1.15; }
-  .kicker { text-transform: uppercase; letter-spacing: .24em; font-size: 10pt; color: var(--slate); font-weight: 500; }
-  .footer { position: absolute; left: 18mm; right: 18mm; bottom: 10mm; display: flex; justify-content: space-between; font-size: 10pt; letter-spacing: .2em; text-transform: uppercase; color: var(--slate); }
+  .kicker { text-transform: uppercase; letter-spacing: .2em; font-size: 11pt; color: var(--slate); font-weight: 500; }
+  .footer { position: absolute; left: 18mm; right: 18mm; bottom: 10mm; display: flex; justify-content: space-between; font-size: 11pt; letter-spacing: .2em; text-transform: uppercase; color: var(--slate); }
 
   /* ---------- 1 · COPERTINA ---------- */
   .cover { background: var(--powder); }
@@ -50,57 +50,58 @@
   .p2 .alto { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 100%; height: 120mm; }
   .p2 .alto > div { min-height: 0; overflow: hidden; }
   .p2 .alto .txt { background: var(--powder); padding: 18mm 10mm 8mm 18mm; }
-  .p2 .alto .txt p:not(.kicker) { margin-top: 5mm; font-size: 12pt; line-height: 1.5; }
-  .p2 h2 { font-size: 22pt; margin-top: 3mm; }
+  .p2 .alto .txt p:not(.kicker) { margin-top: 5mm; font-size: 14pt; line-height: 1.5; }
+  .p2 h2 { font-size: 26pt; margin-top: 3mm; }
   .p2 .metodo { display: grid; grid-template-columns: repeat(5, 1fr); margin: 0 18mm; border-bottom: .3mm solid var(--powder); }
-  .p2 .metodo div { padding: 6mm 1mm; text-align: center; font-size: 10pt; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--navy); border-right: .3mm solid var(--powder); }
+  .p2 .metodo div { padding: 6mm 1mm; text-align: center; font-size: 11pt; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--navy); border-right: .3mm solid var(--powder); }
   .p2 .metodo div:last-child { border-right: 0; }
-  .p2 .metodo b { display: block; font-weight: 300; font-size: 18pt; color: var(--slate); letter-spacing: 0; margin-bottom: 1mm; }
+  .p2 .metodo b { display: block; font-weight: 300; font-size: 20pt; color: var(--slate); letter-spacing: 0; margin-bottom: 1mm; }
   .p2 .dott { display: grid; grid-template-columns: 62mm 1fr; gap: 10mm; align-items: center; padding: 12mm 18mm 0; }
   .p2 .dott .foto { height: 84mm; overflow: hidden; }
-  .p2 .dott h3 { font-size: 18pt; margin-top: 3mm; }
-  .p2 .dott .ruolo { font-size: 11pt; color: var(--slate); letter-spacing: .08em; text-transform: uppercase; margin-top: 1.5mm; font-weight: 500; }
-  .p2 .dott p:not(.kicker):not(.ruolo) { margin-top: 6mm; font-size: 12pt; line-height: 1.55; }
+  .p2 .dott h3 { font-size: 20pt; margin-top: 3mm; }
+  .p2 .dott .ruolo { font-size: 12pt; color: var(--slate); letter-spacing: .08em; text-transform: uppercase; margin-top: 1.5mm; font-weight: 500; }
+  .p2 .dott p:not(.kicker):not(.ruolo) { margin-top: 6mm; font-size: 14pt; line-height: 1.55; }
 
   /* ---------- 3 · SERVIZI ---------- */
-  .p3 { padding: 16mm 18mm 0; }
-  .p3 h2 { font-size: 22pt; margin-top: 2mm; }
-  .sez { margin-top: 8mm; display: flex; align-items: center; gap: 4mm; }
-  .sez .h { font-size: 14pt; white-space: nowrap; }
+  .p3 { padding: 14mm 18mm 0; }
+  .p3 h2 { font-size: 24pt; margin-top: 2mm; }
+  .sez { margin-top: 6mm; display: flex; align-items: center; gap: 4mm; }
+  .sez .h { font-size: 16pt; white-space: nowrap; }
   .sez::after { content: ""; flex: 1; height: .3mm; background: var(--mid); }
-  .grid-serv { margin-top: 4mm; display: grid; grid-template-columns: repeat(2, 1fr); gap: 2.5mm 4mm; }
-  .serv { background: var(--powder); padding: 3mm 5mm; font-weight: 500; text-transform: uppercase; color: var(--navy); font-size: 11pt; letter-spacing: .04em; }
-  .lab { margin-top: 7mm; background: var(--navy); color: #fff; display: grid; grid-template-columns: 52mm 1fr; }
+  .grid-serv { margin-top: 3.5mm; display: grid; grid-template-columns: repeat(2, 1fr); gap: 2mm 4mm; }
+  .serv.span2 { grid-column: span 2; }
+  .serv { background: var(--powder); padding: 2.1mm 5mm; font-weight: 500; text-transform: uppercase; color: var(--navy); font-size: 12.5pt; letter-spacing: .04em; }
+  .lab { margin-top: 5mm; background: var(--navy); color: #fff; display: grid; grid-template-columns: 52mm 1fr; }
   .lab-img { min-height: 0; overflow: hidden; }
-  .lab-body { padding: 6mm 7mm; }
-  .lab .tag { font-size: 10pt; letter-spacing: .1em; text-transform: uppercase; color: var(--mid); font-weight: 500; }
-  .lab h4 { font-weight: 500; text-transform: uppercase; letter-spacing: .06em; font-size: 18pt; margin-top: 1.5mm; }
-  .lab-intro { font-size: 11pt; color: rgba(255,255,255,.9); margin-top: 2mm; line-height: 1.4; }
+  .lab-body { padding: 5mm 7mm; }
+  .lab .tag { font-size: 11pt; letter-spacing: .04em; text-transform: uppercase; color: var(--mid); font-weight: 500; }
+  .lab h4 { font-weight: 500; text-transform: uppercase; letter-spacing: .06em; font-size: 22pt; margin-top: 1.5mm; }
+  .lab-intro { font-size: 13pt; color: rgba(255,255,255,.9); margin-top: 2mm; line-height: 1.4; }
   .lab-list { margin-top: 3.5mm; list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 2mm 5mm; }
   .lab-list li.full { grid-column: span 2; }
-  .lab-list li { border-top: .3mm solid rgba(255,255,255,.35); padding-top: 1.8mm; font-size: 11pt; font-weight: 500; }
+  .lab-list li { border-top: .3mm solid rgba(255,255,255,.35); padding-top: 1.8mm; font-size: 13pt; font-weight: 500; }
   .duo { margin-top: 4mm; display: grid; grid-template-columns: repeat(3, 1fr); gap: 5mm; }
-  .duo .item .f { height: 30mm; overflow: hidden; margin-bottom: 3mm; }
-  .duo h5 { font-weight: 500; text-transform: uppercase; color: var(--navy); font-size: 11pt; letter-spacing: .04em; line-height: 1.25; }
-  .duo p { font-size: 10.5pt; margin-top: 1mm; line-height: 1.4; }
+  .duo .item .f { height: 32mm; overflow: hidden; margin-bottom: 3mm; }
+  .duo h5 { font-weight: 500; text-transform: uppercase; color: var(--navy); font-size: 13pt; letter-spacing: .04em; line-height: 1.25; }
+  .duo p { font-size: 12.5pt; margin-top: 1mm; line-height: 1.4; }
 
   /* ---------- 4 · TEAM + CONTATTI ---------- */
   .p4 { padding: 16mm 18mm 0; }
-  .p4 h2 { font-size: 22pt; margin-top: 2mm; }
+  .p4 h2 { font-size: 24pt; margin-top: 2mm; }
   .team { margin-top: 9mm; display: grid; grid-template-columns: repeat(5, 1fr); gap: 7mm 3mm; }
   .membro { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 2.5mm; }
   .membro .f img { object-position: 50% 12%; }
   .membro .f { flex: none; width: 26mm; height: 26mm; border-radius: 50%; overflow: hidden; background: var(--cielo); }
-  .membro b { display: block; font-weight: 500; color: var(--navy); font-size: 10pt; line-height: 1.25; }
-  .membro span { display: block; font-size: 10pt; color: var(--slate); line-height: 1.3; margin-top: .6mm; }
+  .membro b { display: block; font-weight: 500; color: var(--navy); font-size: 11pt; line-height: 1.25; }
+  .membro span { display: block; font-size: 10.5pt; color: var(--slate); line-height: 1.3; margin-top: .6mm; }
   .contatti { position: absolute; left: 0; right: 0; bottom: 0; height: 136mm; background: var(--navy); color: #fff; padding: 14mm 18mm 0; }
-  .contatti .msg { font-size: 14pt; font-weight: 300; color: #fff; letter-spacing: .02em; }
+  .contatti .msg { font-size: 16pt; font-weight: 300; color: #fff; letter-spacing: .02em; }
   .contatti .cols { margin-top: 8mm; display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 6mm; }
-  .contatti h6 { font-weight: 500; font-size: 10pt; letter-spacing: .24em; text-transform: uppercase; color: var(--mid); margin-bottom: 2.5mm; }
-  .contatti p { font-size: 11pt; line-height: 1.6; color: rgba(255,255,255,.92); }
+  .contatti h6 { font-weight: 500; font-size: 11pt; letter-spacing: .24em; text-transform: uppercase; color: var(--mid); margin-bottom: 2.5mm; }
+  .contatti p { font-size: 12.5pt; line-height: 1.6; color: rgba(255,255,255,.92); }
   .contatti p + h6 { margin-top: 6mm; }
   .contatti .cta { margin-top: 9mm; display: flex; align-items: center; justify-content: space-between; border-top: .3mm solid rgba(255,255,255,.25); padding-top: 7mm; }
-  .contatti .cta .btn { border: .3mm solid #fff; padding: 3mm 6mm; font-size: 10pt; letter-spacing: .24em; text-transform: uppercase; }
+  .contatti .cta .btn { border: .3mm solid #fff; padding: 3mm 6mm; font-size: 11pt; letter-spacing: .24em; text-transform: uppercase; }
   .contatti .social { display: flex; gap: 5mm; margin-top: 3mm; }
   .contatti .social svg { width: 4.5mm; height: 4.5mm; fill: #fff; }
   .contatti .logo { width: 62mm; height: auto; }
@@ -175,13 +176,12 @@
     <div class="lab-img"><img src="img/analisi.jpg" alt="" style="object-position: 55% 50%"></div>
     <div class="lab-body">
       <p class="tag">Centro prelievi per gli esami della longevità</p>
-      <h4>Studio Bonaccorso Lab</h4>
-      <p class="lab-intro">Prelievi direttamente in studio, risultati letti con il medico.</p>
+      <h4>Bonaccorso Lab</h4>
+      <p class="lab-intro">Prelievi direttamente in studio e a domicilio, risultati letti con il medico.</p>
       <ul class="lab-list">
         <li>Esami del sangue</li>
-        <li>Test genetici</li>
+        <li>Test DNA</li>
         <li class="full">Esami per prevenzione e rallentamento dell'invecchiamento</li>
-        <li class="full">Infiammazione e citochine</li>
       </ul>
     </div>
   </div>
@@ -198,13 +198,14 @@
     <div class="serv">Terapia chelante</div>
     <div class="serv">Neuralterapia</div>
     <div class="serv">Terapia del dolore</div>
+    <div class="serv span2">Protocolli terapeutici con farmaci GLP-1</div>
   </div>
 
-  <div class="sez"><span class="h">Donna, estetica &amp; nutrizione</span></div>
+  <div class="sez"><span class="h">Estetica &amp; nutrizione</span></div>
   <div class="duo">
-    <div class="item"><div class="f" style="background: #009ecd"><img src="img/team_piccolo.jpg" alt="Dott.ssa Eleonora Piccolo" style="object-fit: contain; object-position: 50% 100%"></div><h5>Visita ginecologica</h5><p>Ormoni bioidentici e menopausa</p></div>
-    <div class="item"><div class="f"><img src="img/estetica.jpg" alt=""></div><h5>Medicina estetica</h5><p>Trattamenti corpo e viso</p></div>
-    <div class="item"><div class="f"><img src="img/liposcultura.jpg" alt=""></div><h5>Liposcultura alimentare</h5><p>Peso e composizione corporea</p></div>
+    <div class="item"><div class="f"><img src="img/ormonali.jpg" alt="Dott. Michele Bonaccorso e Dott.ssa Eleonora Piccolo" style="object-position: 50% 30%"></div><h5>Terapie ormonali</h5><p>Per uomo e donna</p></div>
+    <div class="item"><div class="f"><img src="img/estetica.jpg" alt=""></div><h5>Medicina estetica</h5><p>Corpo e viso</p></div>
+    <div class="item"><div class="f"><img src="img/liposcultura.jpg" alt=""></div><h5>Nutrizione</h5><p>Liposcultura alimentare</p></div>
   </div>
   <div class="footer"><span>Studio Bonaccorso</span><span>03</span></div>
 </section>
