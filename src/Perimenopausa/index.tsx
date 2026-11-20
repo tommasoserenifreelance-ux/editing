@@ -21,10 +21,10 @@ import {
 
 export const PERI_FPS = 30;
 // Fluffed words cut out, keeping the correct take (source seconds):
-// the first "prendi il magnesio," and a stumble after "grasso".
+// the first "prendi il magnesio," and the fluffed first "il grasso".
 const CUTS: [number, number][] = [
   [26.09, 26.73],
-  [36.45, 37.45],
+  [35.74, 36.72], // "monitora il grasso… il grasso addominale": keep the retake
 ];
 const SOURCE_END = 63.6;
 const KEEP: [number, number][] = CUTS.reduce<[number, number][]>(
@@ -84,7 +84,11 @@ type DoodleName =
   | "pill"
   | "dumbbell"
   | "heart"
-  | "moon";
+  | "moon"
+  | "flask"
+  | "plate"
+  | "chip"
+  | "leaf";
 
 const POPS: {
   from: number;
@@ -159,6 +163,57 @@ const POPS: {
     y: 1420,
     doodle: "dumbbell",
     tilt: 3,
+  },
+  {
+    from: 38.47,
+    to: 40.6,
+    text: "check ormoni",
+    color: PINK,
+    y: 1380,
+    doodle: "flask",
+    tilt: -4,
+  },
+  {
+    from: 40.67,
+    to: 42.0,
+    text: "proteine + carboidrati",
+    color: BLUE,
+    y: 1440,
+    doodle: "plate",
+    tilt: 3,
+  },
+  { from: 42.05, to: 43.4, text: "pochi latticini", color: PINK, y: 1380 },
+  {
+    from: 44.97,
+    to: 46.4,
+    text: "niente triangolini\ndi mais",
+    color: BLUE,
+    y: 1420,
+    doodle: "chip",
+    tilt: -3,
+  },
+  {
+    from: 46.49,
+    to: 47.8,
+    text: "prima la verdura",
+    color: PINK,
+    y: 1380,
+    doodle: "leaf",
+    tilt: 4,
+  },
+  {
+    from: 47.83,
+    to: 48.85,
+    text: "no bibite zuccherate",
+    color: BLUE,
+    y: 1440,
+  },
+  {
+    from: 48.91,
+    to: 50.4,
+    text: "via le persone negative",
+    color: PINK,
+    y: 1380,
   },
   {
     from: 50.47,
@@ -359,6 +414,40 @@ const Doodle: React.FC<{ name: DoodleName; color: string }> = ({
         {...p}
         fill="#FFE1EE"
       />
+    ),
+    flask: (
+      <>
+        <path
+          d="M48 18 L72 18 M52 18 L52 50 L28 96 Q24 106 36 106 L84 106 Q96 106 92 96 L68 50 L68 18"
+          {...p}
+          fill="#F6E6FF"
+        />
+        <path d="M36 82 L84 82" {...p} />
+      </>
+    ),
+    plate: (
+      <>
+        <circle cx={60} cy={62} r={42} {...p} fill="#FFFDF5" />
+        <circle cx={60} cy={62} r={26} {...p} />
+        <path
+          d="M16 18 L16 44 M10 18 L10 36 Q10 44 16 44 Q22 44 22 36 L22 18 M104 18 Q94 30 98 50 L104 50 L104 106"
+          {...p}
+          transform="translate(0 0) scale(0.95)"
+        />
+      </>
+    ),
+    chip: (
+      <>
+        <path d="M24 96 L60 22 L96 96 Z" {...p} fill="#FFE6A8" />
+        <path d="M46 70 L48 72 M66 60 L68 62 M62 84 L64 86" {...p} />
+        <path d="M20 20 L100 100" {...p} stroke="#E25555" />
+      </>
+    ),
+    leaf: (
+      <>
+        <path d="M22 98 Q20 30 98 22 Q100 98 22 98 Z" {...p} fill="#E4F4DC" />
+        <path d="M22 98 Q56 62 84 36" {...p} />
+      </>
     ),
     moon: (
       <>
