@@ -23,36 +23,15 @@ LENGTH = float(sys.argv[2]) if len(sys.argv) > 2 else 28.0
 
 # (time of the peak, sound id, level 0-1, extra render args)
 CUES = [
-    # Opening: "MSC ci ha invitati a bordo"
-    (0.05, "impact/deep", 0.55, ["--dur", "2.5"]),
-    (2.20, "whoosh_fast/tight", 0.45, ["--apex", "0.3"]),
-    # "Una delle navi più grandi al mondo": big swell into the title, hit on the reveal
-    (3.40, "pro_whoosh_big/swell", 0.55, []),
-    (4.60, "impact/classic", 0.50, ["--dur", "2.0"]),
-    (5.60, "swish/bright", 0.35, []),
-    # MSC logo card
-    (6.60, "logo_sting/whoosh_glass", 0.45, []),
-    # Drop into the event: conference
-    (7.60, "impact/deep", 0.70, ["--dur", "2.5"]),
-    (8.00, "sub_drop/pro", 0.45, []),  # peak 0.4 s in: starts on the drop
-    (8.80, "whoosh_fast/crisp", 0.40, ["--apex", "0.3"]),
-    # "Ma la parte migliore?" -> swell into "la visita"
-    (11.40, "reverse_swell/cymbal", 0.50, []),
-    (11.40, "pro_impact/deep", 0.55, []),
-    (12.60, "whoosh_fast/tight", 0.35, ["--apex", "0.3", "--seed", "7"]),
-    (13.80, "swish/bright", 0.35, ["--seed", "3"]),
-    (15.00, "pro_impact/deep", 0.45, []),
-    (16.20, "whoosh_fast/crisp", 0.35, ["--apex", "0.3", "--seed", "5"]),
-    (17.40, "swish/bright", 0.30, ["--seed", "9"]),
-    # "La guardiamo come..." -> "UN PALCO"
-    (19.80, "pro_whoosh_big/swell", 0.55, ["--seed", "4"]),
-    (19.80, "impact/classic", 0.65, ["--dur", "2.2"]),
-    (21.60, "whoosh_fast/tight", 0.40, ["--apex", "0.3", "--seed", "11"]),
-    # "Potrebbe essere il tuo"
-    (23.60, "pro_impact/deep", 0.50, []),
-    # End logo
-    (25.60, "reverse_swell/cymbal", 0.45, ["--seed", "2"]),
-    (25.75, "logo_sting/whoosh_glass", 0.55, ["--seed", "6"]),
+    # Only the four high points of the story.
+    # 1. "Una delle navi più grandi al mondo": big swell into the title
+    (3.40, "pro_whoosh_big/swell", 0.60, []),
+    # 2. The music drops into the event (conference)
+    (7.60, "impact/deep", 0.75, ["--dur", "2.5"]),
+    # 3. "UN PALCO"
+    (19.80, "impact/classic", 0.75, ["--dur", "2.2"]),
+    # 4. End logo
+    (25.75, "logo_sting/whoosh_glass", 0.60, []),
 ]
 
 
