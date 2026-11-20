@@ -292,7 +292,7 @@ export const TapisVs: React.FC = () => {
                 seed={i + 1}
               />
             </div>
-            <Audio src={staticFile("sfx/capcut_pop.wav")} volume={0.45} />
+            <Audio src={staticFile("sfx/pop_a.wav")} volume={0.45} />
           </Sequence>
         );
       })}
@@ -316,7 +316,7 @@ export const TapisVs: React.FC = () => {
                 seed={i + 11}
               />
             </div>
-            <Audio src={staticFile("sfx/capcut_pop.wav")} volume={0.45} />
+            <Audio src={staticFile("sfx/pop_a.wav")} volume={0.45} />
           </Sequence>
         );
       })}

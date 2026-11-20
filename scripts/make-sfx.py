@@ -220,6 +220,20 @@ def capcut_pop():
     return np.stack([y, y], axis=1)
 
 
+def mouth_pop(f0=620, f1=420, decay=45):
+    """Classic "pop!" (finger-in-cheek / cork): a tiny burst exciting a
+    resonant cavity whose pitch drops slightly. Round and natural."""
+    n = int(SR * 0.12)
+    t = np.arange(n) / SR
+    freq = f1 + (f0 - f1) * np.exp(-t * 70)
+    phase = 2 * np.pi * np.cumsum(freq) / SR
+    y = np.sin(phase) * np.exp(-t * decay) * (1 - np.exp(-t * 6000))
+    burst = signal.sosfilt(signal.butter(2, [300, 2500], "band", fs=SR, output="sos"),
+                           rng.standard_normal(n)) * np.exp(-t * 1500) * 0.6
+    y = np.tanh(2.0 * (y + burst)) / np.tanh(2.0)
+    return np.stack([y, y], axis=1)
+
+
 OUT.mkdir(parents=True, exist_ok=True)
 save("whoosh.wav", whoosh())
 save("wrong.wav", wrong())
@@ -235,3 +249,6 @@ save("paper_swish.wav", paper_swish())
 save("soft_chime.wav", soft_chime())
 save("soft_bloop.wav", soft_bloop())
 save("capcut_pop.wav", capcut_pop())
+save("pop_a.wav", mouth_pop(620, 420, 45))
+save("pop_b.wav", mouth_pop(900, 520, 55))
+save("pop_c.wav", mouth_pop(480, 330, 38))
