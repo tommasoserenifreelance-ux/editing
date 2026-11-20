@@ -35,25 +35,38 @@ type Cap = { from: number; to: number; text: string; big?: boolean; sub?: string
 
 // Times are the cuts of the edit (seconds).
 const CAPS: Cap[] = [
-  { from: 0, to: 2.2, text: "MSC CI HA\nINVITATI\nA BORDO", big: true },
-  { from: 2.2, to: 3.4, text: "DELLA MSC WORLD EUROPA" },
-  { from: 3.4, to: 5.6, text: "UNA DELLE NAVI\nPIÙ GRANDI\nAL MONDO", big: true },
-  { from: 5.6, to: 6.6, text: "WELCOME COCKTAIL" },
-  { from: 6.6, to: 7.6, text: "ROADSHOW MICE" },
-  { from: 7.6, to: 8.8, text: "CON MY FIRST E TAP PORTUGAL" },
-  { from: 8.8, to: 10.0, text: "INCONTRI ONE TO ONE" },
-  { from: 10.0, to: 11.4, text: "MA LA PARTE\nMIGLIORE?", big: true },
-  { from: 11.4, to: 12.6, text: "LA VISITA", big: true },
-  { from: 12.6, to: 13.8, text: "PERCHÉ NOI UNA NAVE" },
-  { from: 13.8, to: 15.0, text: "NON LA GUARDIAMO" },
-  { from: 15.0, to: 16.2, text: "DA TURISTI" },
-  { from: 16.2, to: 17.4, text: "OGNI SPAZIO" },
-  { from: 17.4, to: 18.6, text: "OGNI PONTE" },
+  { from: 0, to: 2.2, text: "MSC CI HA\nINVITATI\n*A BORDO*", big: true },
+  { from: 2.2, to: 3.4, text: "DELLA *MSC WORLD EUROPA*" },
+  { from: 3.4, to: 5.6, text: "UNA DELLE NAVI\n*PIÙ GRANDI*\nAL MONDO", big: true },
+  { from: 5.6, to: 6.6, text: "*WELCOME* COCKTAIL" },
+  { from: 6.6, to: 7.6, text: "ROADSHOW *MICE*" },
+  { from: 7.6, to: 8.8, text: "CON *MY FIRST*\nE *TAP PORTUGAL*" },
+  { from: 8.8, to: 10.0, text: "INCONTRI *ONE TO ONE*" },
+  { from: 10.0, to: 11.4, text: "MA LA PARTE\n*MIGLIORE?*", big: true },
+  { from: 11.4, to: 12.6, text: "LA *VISITA*", big: true },
+  { from: 12.6, to: 13.8, text: "PERCHÉ NOI UNA *NAVE*" },
+  { from: 13.8, to: 15.0, text: "*NON* LA GUARDIAMO" },
+  { from: 15.0, to: 16.2, text: "DA *TURISTI*" },
+  { from: 16.2, to: 17.4, text: "OGNI *SPAZIO*" },
+  { from: 17.4, to: 18.6, text: "OGNI *PONTE*" },
   { from: 18.6, to: 19.8, text: "LA GUARDIAMO COME…" },
-  { from: 19.8, to: 21.6, text: "UN PALCO", big: true },
-  { from: 21.6, to: 23.6, text: "IL PROSSIMO EVENTO\nA BORDO?" },
-  { from: 23.6, to: 25.6, text: "POTREBBE ESSERE\nIL TUO", big: true },
+  { from: 19.8, to: 21.6, text: "UN *PALCO*", big: true },
+  { from: 21.6, to: 23.6, text: "IL PROSSIMO *EVENTO*\nA BORDO?" },
+  { from: 23.6, to: 25.6, text: "POTREBBE ESSERE\n*IL TUO*", big: true },
 ];
+
+// Words between *asterisks* are the key words, in the Setup Events red.
+const RED = "#E3262B";
+const renderText = (text: string) =>
+  text.split(/(\*[^*]+\*)/).map((part, i) =>
+    part.startsWith("*") ? (
+      <span key={i} style={{ color: RED }}>
+        {part.slice(1, -1)}
+      </span>
+    ) : (
+      part
+    ),
+  );
 
 const shadow = "0 4px 30px rgba(0,0,0,0.45), 0 2px 6px rgba(0,0,0,0.35)";
 
@@ -92,7 +105,7 @@ const Caption: React.FC<{ cap: Cap; frames: number }> = ({ cap, frames }) => {
           textShadow: shadow,
         }}
       >
-        {cap.text}
+        {renderText(cap.text)}
       </div>
     </AbsoluteFill>
   );
@@ -137,7 +150,7 @@ const EndCard: React.FC = () => {
       <div style={{ opacity: a, transform: `scale(${1.04 - 0.04 * a})`, textAlign: "center" }}>
         <div style={{ fontFamily: font, fontWeight: 900, fontSize: 118, letterSpacing: "-0.04em", lineHeight: 1 }}>
           <span style={{ color: "white" }}>SETUP</span>
-          <span style={{ color: "#E3262B" }}>EVENTS</span>
+          <span style={{ color: RED }}>EVENTS</span>
         </div>
         <div style={{ marginTop: 18, fontFamily: font, fontWeight: 500, fontSize: 26, letterSpacing: "0.62em", color: "white" }}>
           WE SET THE MOMENT
