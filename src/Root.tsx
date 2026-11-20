@@ -14,6 +14,7 @@ import {
 } from "./Elena";
 import { COLAZIONE_DURATION, COLAZIONE_FPS, Colazione } from "./Colazione";
 import { HelloWorld } from "./HelloWorld";
+import { PERI_DURATION, PERI_FPS, Perimenopausa } from "./Perimenopausa";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
 import {
@@ -140,6 +141,14 @@ export const RemotionRoot: React.FC = () => {
           />
         ),
       )}
+      <Composition
+        id="Perimenopausa"
+        component={Perimenopausa}
+        durationInFrames={PERI_DURATION}
+        fps={PERI_FPS}
+        width={1080}
+        height={1920}
+      />
       <Composition
         id="Colazione"
         component={Colazione}
