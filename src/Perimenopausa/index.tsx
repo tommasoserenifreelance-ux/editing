@@ -252,7 +252,10 @@ const Pop: React.FC<{
   );
 };
 
-export const Perimenopausa: React.FC = () => (
+// withEmoji=false renders the text-only version, for adding emoji on the phone.
+export const Perimenopausa: React.FC<{ withEmoji?: boolean }> = ({
+  withEmoji = true,
+}) => (
   <AbsoluteFill style={{ backgroundColor: "black" }}>
     <OffthreadVideo
       src={staticFile("hook/elena.mp4")}
@@ -263,7 +266,7 @@ export const Perimenopausa: React.FC = () => (
       const d = s(p.to) - s(p.from);
       return (
         <Sequence key={p.text} from={s(p.from)} durationInFrames={d}>
-          <Pop {...p} duration={d} />
+          <Pop {...p} emoji={withEmoji ? p.emoji : undefined} duration={d} />
           <Audio src={staticFile("sfx/pop.wav")} volume={0.35} />
         </Sequence>
       );
