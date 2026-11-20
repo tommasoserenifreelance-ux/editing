@@ -6,6 +6,7 @@ import {
   SLIDE_WIDTH,
 } from "./BoccaMenopausa";
 import { CIBO_DURATION, CIBO_FPS, CiboMedicina } from "./CiboMedicina";
+import { ESAMI_DURATION, ESAMI_FPS, EsamiMenopausa } from "./EsamiMenopausa";
 import { HelloWorld } from "./HelloWorld";
 import {
   ORMONALE_DURATION,
@@ -130,6 +131,14 @@ export const RemotionRoot: React.FC = () => {
         component={TerapiaOrmonale}
         durationInFrames={ORMONALE_DURATION}
         fps={ORMONALE_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="EsamiMenopausa"
+        component={EsamiMenopausa}
+        durationInFrames={ESAMI_DURATION}
+        fps={ESAMI_FPS}
         width={1080}
         height={1920}
       />
