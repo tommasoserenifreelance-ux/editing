@@ -19,3 +19,5 @@ public/collagene2/
 public/colazione/
 # Hook video sources kept in a GitHub release
 public/hook/
+# Treadmill clips (uploaded in chat)
+public/tapis/
