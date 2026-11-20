@@ -4,7 +4,7 @@ Seven bars sit between the drop (first full kick) and the end-logo hit, which
 gives ~125 BPM for the Maskhim double-cam reel. Before the drop the groove runs
 through a closing low-pass filter; a snare roll and a riser lead into the hit.
 
-Usage: python3 scripts/make_techhouse_music.py out.wav [length] [drop] [logo_hit]
+Usage: python3 scripts/make_techhouse_music.py out.wav [length] [drop] [logo_hit] [bars]
 """
 
 import sys
@@ -20,7 +20,8 @@ DROP = float(sys.argv[3]) if len(sys.argv) > 3 else 3.37
 LOGO_HIT = float(sys.argv[4]) if len(sys.argv) > 4 else 16.82
 rng = np.random.default_rng(23)
 
-BAR = (LOGO_HIT - DROP) / 7
+BARS = float(sys.argv[5]) if len(sys.argv) > 5 else 7
+BAR = (LOGO_HIT - DROP) / BARS
 BEAT = BAR / 4
 S16 = BEAT / 4
 T0 = DROP - 2 * BAR
