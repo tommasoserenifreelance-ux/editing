@@ -43,6 +43,7 @@ export type CardCue = {
 };
 // Emojis popping in at the given frames, gone at `to`.
 export type StickerCue = { chars: string[]; delays: number[]; to: number };
+export type ExtraCue = { from: number; to: number; node: React.ReactNode };
 export type Sound = { at: number; file: string; volume: number };
 
 // Emoji stickers, in the style of the coffee intro: they spin in with a
@@ -59,7 +60,8 @@ const Take: React.FC<{
   frames: number;
   scale: number;
   drift: number;
-}> = ({ src, start, frames, scale, drift: driftTo }) => {
+  focus: string;
+}> = ({ src, start, frames, scale, drift: driftTo, focus }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const drift = interpolate(frame, [0, frames], [0, driftTo]);
@@ -75,6 +77,7 @@ const Take: React.FC<{
         width: "100%",
         height: "100%",
         objectFit: "cover",
+        objectPosition: focus,
         // Pivot on the bottom edge so zooming lifts the face clear of the
         // stickers and captions.
         transform: `scale(${scale + drift})`,
@@ -308,6 +311,11 @@ export const SentenceReel: React.FC<{
   brolls: BRollCue[];
   stickers: StickerCue[];
   cards?: CardCue[];
+  // Custom animations, drawn over the take and b-roll, under the captions.
+  extras?: ExtraCue[];
+  // Which part of a landscape take a vertical frame keeps (CSS
+  // object-position), e.g. "35% 50%" when the speaker stands left of centre.
+  focus?: string;
   sounds?: Sound[];
   // Zoom on even and odd takes; alternating scales hide the jump cuts.
   zoom?: [number, number];
@@ -324,6 +332,8 @@ export const SentenceReel: React.FC<{
   brolls,
   stickers,
   cards = [],
+  extras = [],
+  focus = "50% 50%",
   sounds = [],
   zoom = [1.06, 1.12],
   drift = 0.02,
@@ -372,6 +382,7 @@ export const SentenceReel: React.FC<{
       frames={clips[i]}
       scale={zoom[i % 2]}
       drift={drift}
+      focus={focus}
     />
   );
   return (
@@ -428,6 +439,11 @@ export const SentenceReel: React.FC<{
             delays={s.delays.map((d) => d - s.delays[0])}
             duration={s.to - s.delays[0]}
           />
+        </Sequence>
+      ))}
+      {extras.map((x) => (
+        <Sequence key={x.from} from={x.from} durationInFrames={x.to - x.from}>
+          {x.node}
         </Sequence>
       ))}
       <Captions phrases={phrases} zones={zones} />
