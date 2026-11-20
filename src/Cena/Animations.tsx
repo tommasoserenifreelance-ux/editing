@@ -17,19 +17,22 @@ const useDraw = (start: number, dur = 16) => {
   });
 };
 
-// Glucose after the same dinner at two times: the early curve draws first,
-// the late one rises higher, then it is flagged as worse.
+// Glucose after the same dinner at two times: the early curve draws on "stessa
+// cena", the late one rises higher on "orari diversi", and on "più tardi" the
+// late curve pulses and its area lights up.
 export const GlucoseCurves: React.FC<{
-  atTimes: number;
+  atEarly: number;
   atLate: number;
+  atRhythm: number;
+  atHighlight: number;
   atWorse: number;
   atTolerance: number;
-}> = ({ atTimes, atLate, atWorse, atTolerance }) => {
+}> = ({ atEarly, atLate, atRhythm, atHighlight, atWorse, atTolerance }) => {
   const frame = useCurrentFrame();
-  const early = useDraw(atTimes);
-  const late = useDraw(atLate);
-  const worse = useIn(atWorse, 10);
-  const pulse = 1 + Math.sin((frame - atWorse) / 4) * 0.02 * worse;
+  const early = useDraw(atEarly, 8);
+  const late = useDraw(atLate, 8);
+  const worse = useIn(atHighlight, 8);
+  const pulse = 1 + Math.sin((frame - atHighlight) / 3) * 0.025 * worse;
   // Chart box: x 140-940, y 430-900 (baseline at 900).
   const curve = (peak: number) =>
     `M 140 860 C 260 860, 330 ${860 - peak}, 430 ${860 - peak} C 560 ${860 - peak}, 640 ${860 - peak * 0.35}, 940 840`;
@@ -61,8 +64,8 @@ export const GlucoseCurves: React.FC<{
           opacity={0.5}
         />
         <text
-          x={150}
-          y={420}
+          x={160}
+          y={470}
           fontFamily={sans}
           fontWeight={700}
           fontSize={30}
@@ -123,8 +126,23 @@ export const GlucoseCurves: React.FC<{
           gap: 14,
         }}
       >
-        <Chip text="Cena presto" at={atTimes + 4} size={34} />
-        <Chip text="Cena tardi" at={atLate + 4} light size={34} />
+        <Chip text="Cena presto" at={atEarly + 3} size={34} />
+        <Chip text="Cena tardi" at={atLate + 3} light size={34} />
+      </div>
+      <div
+        style={{
+          position: "absolute",
+          top: 330,
+          width: "100%",
+          textAlign: "center",
+        }}
+      >
+        <Chip
+          text="⏰ rispetto al tuo ritmo abituale"
+          at={atRhythm}
+          light
+          size={32}
+        />
       </div>
       <div
         style={{

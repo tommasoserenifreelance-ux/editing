@@ -75,8 +75,10 @@ const EXTRAS: ExtraCue[] = [
     to: wordFrame(1, "perché"),
     node: (
       <GlucoseCurves
-        atTimes={wordFrame(1, "orari") - curvesFrom}
-        atLate={wordFrame(1, "tardi") - curvesFrom}
+        atEarly={wordFrame(1, "stessa") - curvesFrom}
+        atLate={wordFrame(1, "diversi") - curvesFrom}
+        atRhythm={wordFrame(1, "ritmo") - curvesFrom}
+        atHighlight={wordFrame(1, "tardi") - curvesFrom}
         atWorse={wordFrame(1, "peggio") - curvesFrom}
         atTolerance={wordFrame(1, "peggiora") - curvesFrom}
       />
@@ -115,8 +117,10 @@ const tick = (at: number) => ({ at, file: "tick", volume: 0.55 });
 const SOUNDS = [
   pop(take(1)),
   tick(take(1) + 10),
-  tick(wordFrame(1, "orari")),
-  pop(wordFrame(1, "tardi")),
+  pop(wordFrame(1, "stessa"), 0.6),
+  pop(wordFrame(1, "diversi")),
+  tick(wordFrame(1, "ritmo")),
+  tick(wordFrame(1, "tardi")),
   tick(wordFrame(1, "peggio")),
   tick(wordFrame(1, "peggiora")),
   tick(wordFrame(2, "MTNR1B")),
