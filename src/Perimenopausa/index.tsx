@@ -24,7 +24,7 @@ export const PERI_FPS = 30;
 // the first "prendi il magnesio," the fluffed first "il grasso" and "evita".
 const CUTS: [number, number][] = [
   [26.09, 26.73],
-  [35.74, 37.1], // "monitora il grasso… ehh… il grasso addominale": keep the retake
+  [35.77, 37.17], // "monitora il grasso… ehh… il grasso addominale": keep the retake
   [44.42, 44.94], // fluffed first "evita"
 ];
 const SOURCE_END = 63.6;
@@ -37,6 +37,8 @@ const KEEP: [number, number][] = CUTS.reduce<[number, number][]>(
   },
   [[0, SOURCE_END]],
 );
+// Zoom per kept segment: a slight punch-in masks the jump cut.
+const PUNCH = [1, 1, 1.08, 1];
 // Output-timeline seconds for a source time.
 const at = (t: number) =>
   t - CUTS.filter(([, b]) => b <= t).reduce((sum, [a, b]) => sum + b - a, 0);
@@ -559,19 +561,37 @@ const Pop: React.FC<{
 
 export const Perimenopausa: React.FC = () => (
   <AbsoluteFill style={{ backgroundColor: "black" }}>
-    {KEEP.map(([a, b]) => (
-      <Sequence
-        key={a}
-        from={Math.round(at(a) * PERI_FPS)}
-        durationInFrames={Math.round((b - a) * PERI_FPS)}
-      >
-        <OffthreadVideo
-          src={staticFile("hook/elena.mp4")}
-          trimBefore={Math.round(a * PERI_FPS)}
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-        />
-      </Sequence>
-    ))}
+    {KEEP.map(([a, b], i) => {
+      const len = Math.round((b - a) * PERI_FPS);
+      return (
+        <Sequence
+          key={a}
+          from={Math.round(at(a) * PERI_FPS)}
+          durationInFrames={len}
+        >
+          <OffthreadVideo
+            src={staticFile("hook/elena.mp4")}
+            trimBefore={Math.round(a * PERI_FPS)}
+            // one-frame audio fades so the joins do not click
+            volume={(f) =>
+              interpolate(
+                f,
+                [0, 1, len - 2, len - 1],
+                [i ? 0 : 1, 1, 1, i < KEEP.length - 1 ? 0 : 1],
+                clamp,
+              )
+            }
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              // punch-in after the "grasso addominale" cut hides the jump
+              transform: `scale(${PUNCH[i] ?? 1})`,
+            }}
+          />
+        </Sequence>
+      );
+    })}
     <Hook />
     <Audio src={staticFile("sfx/whoosh.wav")} volume={0.35} />
     <Sequence from={10}>
