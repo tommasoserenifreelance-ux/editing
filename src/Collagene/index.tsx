@@ -22,19 +22,13 @@ export { DURATION as COLLAGENE_DURATION, FPS as COLLAGENE_FPS } from "./script";
 const take = (i: number) => (i < CLIPS.length ? at(i, 0) : DURATION);
 const broll = (file: string) => `c0108/broll/${file}`;
 
-// Each clip is used once.
+// Each clip is used once. The doctor asked for no shots of women or filler
+// injections, so he stays on screen where those clips were.
 const BROLLS: BRollCue[] = [
-  // An injection for "un filler riempie", then a particle stream for "un
-  // collagen booster costruisce".
-  // Starts on the first frame so the video opens on the injection.
-  { src: broll("cosmetic.mp4"), from: 0, to: wordFrame(0, "un") },
+  // A particle stream for "un collagen booster costruisce".
   { src: broll("abstract-3d.mp4"), from: wordFrame(0, "un"), to: take(1) },
-  // A woman at the mirror for "e la differenza si vede nel tempo".
-  { src: broll("woman.mp4"), from: take(1), to: wordFrame(1, "gli") },
   // The microscope for "biopsie eseguite a tre mesi dal trattamento".
   { src: broll("objective.mp4"), from: take(2), to: wordFrame(2, "mostrano") },
-  // A close-up of skin for "pelle più tonica, più elastica, più strutturata".
-  { src: broll("vertical.mp4"), from: take(7), to: wordFrame(7, "con") },
 ];
 
 // The JDD page of the split-face study, on "gli studi istologici … parlano
