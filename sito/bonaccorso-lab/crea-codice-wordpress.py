@@ -4,14 +4,15 @@ import base64, os, re, sys
 
 here = os.path.dirname(os.path.abspath(__file__))
 s = open(os.path.join(here, 'index.html'), encoding='utf-8').read()
-css = re.search(r'<style>(.*?)</style>', s, re.S).group(1)
+css = re.sub(r'/\*.*?\*/', '', re.search(r'<style>(.*?)</style>', s, re.S).group(1), flags=re.S)
 main = re.search(r'<main>(.*?)</main>', s, re.S).group(1)
 
-drop = ('.site-header', '.burger', '.site-footer', 'body', 'html', '*', ':root')
+drop = ('.site-header', '.burger', '.site-footer', 'body', 'html', '*', ':root', 'img', 'a ', '.lista')
 def scope(sel):
     return ', '.join('.bl-page ' + x.strip() for x in sel.split(','))
 def keep(sel):
-    return not any(sel.strip().startswith(d) for d in drop)
+    sel = sel.strip() + ' '
+    return not any(sel.startswith(d) for d in drop)
 
 out = []
 for blk in re.findall(r'@media[^{]+\{(?:[^{}]*\{[^{}]*\})*\s*\}|[^{}@]+\{[^{}]*\}', css):
