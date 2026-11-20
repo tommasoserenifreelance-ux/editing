@@ -157,6 +157,50 @@ def record_scratch():
     return np.stack([y, y], axis=1)
 
 
+def marimba():
+    """Soft wooden marimba pluck: gentle, warm, not electronic."""
+    n = int(SR * 0.5)
+    t = np.arange(n) / SR
+    f = 523.25
+    y = (np.sin(2 * np.pi * f * t) + 0.25 * np.sin(2 * np.pi * f * 4 * t) * np.exp(-t * 30))
+    y *= np.exp(-t * 9) * (1 - np.exp(-t * 900))
+    return np.stack([y, y], axis=1)
+
+
+def paper_swish():
+    """Quiet airy swish, like a sheet of paper sliding in."""
+    n = int(SR * 0.35)
+    t = np.arange(n) / SR
+    y = signal.sosfilt(signal.butter(2, [1500, 6000], "band", fs=SR, output="sos"),
+                       rng.standard_normal(n))
+    y *= np.sin(np.pi * (t / t[-1]) ** 0.7) ** 2
+    return np.stack([y * 0.9, y], axis=1)
+
+
+def soft_chime():
+    """Two warm, soft chime notes (no metallic overtones)."""
+    parts = []
+    for k, note in enumerate((76, 83)):
+        f = 440 * 2 ** ((note - 69) / 12)
+        m = int(SR * 1.2)
+        tt = np.arange(m) / SR
+        tone = (np.sin(2 * np.pi * f * tt) + 0.15 * np.sin(2 * np.pi * 2 * f * tt)) * np.exp(-tt * 3.5)
+        tone *= 1 - np.exp(-tt * 300)
+        parts.append(np.concatenate([np.zeros(int(SR * 0.12 * k)), tone]))
+    length = max(len(p) for p in parts)
+    y = sum(np.pad(p, (0, length - len(p))) for p in parts)
+    return np.stack([y, y], axis=1)
+
+
+def soft_bloop():
+    """Playful but gentle "bloop" for funny lines (rising, round)."""
+    n = int(SR * 0.22)
+    t = np.arange(n) / SR
+    freq = 260 + 380 * (t / t[-1]) ** 1.5
+    y = np.sin(2 * np.pi * np.cumsum(freq) / SR) * np.sin(np.pi * t / t[-1]) ** 1.2
+    return np.stack([y, y], axis=1)
+
+
 OUT.mkdir(parents=True, exist_ok=True)
 save("whoosh.wav", whoosh())
 save("wrong.wav", wrong())
@@ -167,3 +211,7 @@ save("slide_whistle.wav", slide_whistle_down())
 save("boing.wav", boing())
 save("twinkle.wav", twinkle())
 save("scratch.wav", record_scratch())
+save("marimba.wav", marimba())
+save("paper_swish.wav", paper_swish())
+save("soft_chime.wav", soft_chime())
+save("soft_bloop.wav", soft_bloop())

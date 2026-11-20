@@ -271,7 +271,7 @@ export const TapisVs: React.FC = () => {
         }}
       />
       <Header />
-      <Audio src={staticFile("sfx/whoosh.wav")} volume={0.35} />
+      <Audio src={staticFile("sfx/paper_swish.wav")} volume={0.3} />
       {WALK.map((w, i) => {
         const start = s(FIRST + i * EVERY);
         return (
@@ -292,7 +292,7 @@ export const TapisVs: React.FC = () => {
                 seed={i + 1}
               />
             </div>
-            <Audio src={staticFile("sfx/pop_soft.wav")} volume={0.5} />
+            <Audio src={staticFile("sfx/marimba.wav")} volume={0.35} />
           </Sequence>
         );
       })}
@@ -316,13 +316,13 @@ export const TapisVs: React.FC = () => {
                 seed={i + 11}
               />
             </div>
-            <Audio src={staticFile("sfx/pop_soft.wav")} volume={0.5} />
+            <Audio src={staticFile("sfx/marimba.wav")} volume={0.35} />
           </Sequence>
         );
       })}
       <Sequence from={s(FIRST + WALK.length * EVERY + 0.6)}>
         <Closing />
-        <Audio src={staticFile("sfx/twinkle.wav")} volume={0.35} />
+        <Audio src={staticFile("sfx/soft_chime.wav")} volume={0.35} />
       </Sequence>
     </AbsoluteFill>
   );

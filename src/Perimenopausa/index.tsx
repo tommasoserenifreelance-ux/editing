@@ -117,7 +117,7 @@ const POPS: {
     from: 9.63,
     to: 11.6,
     text: "niente telefono",
-    sfx: "boing",
+    sfx: "soft_bloop",
     color: BLUE,
     y: 1460,
   },
@@ -222,7 +222,7 @@ const POPS: {
     from: 50.47,
     to: 52.3,
     text: "non arrabbiarti",
-    sfx: "boing",
+    sfx: "soft_bloop",
     color: BLUE,
     y: 1440,
   },
@@ -239,7 +239,7 @@ const POPS: {
     from: 59.01,
     to: 60.4,
     text: "sorridi",
-    sfx: "twinkle",
+    sfx: "soft_chime",
     color: BLUE,
     y: 1420,
   },
@@ -593,9 +593,9 @@ export const Perimenopausa: React.FC = () => (
       );
     })}
     <Hook />
-    <Audio src={staticFile("sfx/whoosh.wav")} volume={0.35} />
+    <Audio src={staticFile("sfx/paper_swish.wav")} volume={0.3} />
     <Sequence from={10}>
-      <Audio src={staticFile("sfx/twinkle.wav")} volume={0.3} />
+      <Audio src={staticFile("sfx/soft_chime.wav")} volume={0.3} />
     </Sequence>
     {POPS.map((p, i) => {
       const d = s(at(p.to)) - s(at(p.from));
@@ -603,8 +603,8 @@ export const Perimenopausa: React.FC = () => (
         <Sequence key={p.text} from={s(at(p.from))} durationInFrames={d}>
           <Pop {...p} duration={d} seed={i + 1} />
           <Audio
-            src={staticFile(`sfx/${p.sfx ?? "pop_soft"}.wav`)}
-            volume={p.sfx ? 0.45 : 0.5}
+            src={staticFile(`sfx/${p.sfx ?? "marimba"}.wav`)}
+            volume={p.sfx ? 0.35 : 0.3}
           />
         </Sequence>
       );
