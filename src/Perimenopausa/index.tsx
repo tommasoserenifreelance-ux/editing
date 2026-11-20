@@ -75,6 +75,7 @@ const POPS: {
   y: number;
   doodle?: DoodleName;
   tilt?: number;
+  sfx?: string; // comic sound for the funny lines (default: soft pop)
 }[] = [
   { from: 5.85, to: 7.4, text: "3 semplici mosse", color: BLUE, y: 1380 },
   {
@@ -86,7 +87,14 @@ const POPS: {
     doodle: "alarm",
     tilt: -5,
   },
-  { from: 9.63, to: 11.6, text: "niente telefono", color: BLUE, y: 1460 },
+  {
+    from: 9.63,
+    to: 11.6,
+    text: "niente telefono",
+    sfx: "boing",
+    color: BLUE,
+    y: 1460,
+  },
   {
     from: 12.19,
     to: 13.15,
@@ -133,8 +141,22 @@ const POPS: {
     doodle: "dumbbell",
     tilt: 3,
   },
-  { from: 35.5, to: 38.3, text: "erano solo 3…", color: PINK, y: 1380 },
-  { from: 50.47, to: 52.3, text: "non arrabbiarti", color: BLUE, y: 1440 },
+  {
+    from: 35.5,
+    to: 38.3,
+    text: "erano solo 3…",
+    sfx: "slide_whistle",
+    color: PINK,
+    y: 1380,
+  },
+  {
+    from: 50.47,
+    to: 52.3,
+    text: "non arrabbiarti",
+    sfx: "boing",
+    color: BLUE,
+    y: 1440,
+  },
   {
     from: 57.29,
     to: 59.0,
@@ -144,11 +166,19 @@ const POPS: {
     doodle: "heart",
     tilt: -3,
   },
-  { from: 59.01, to: 60.4, text: "sorridi", color: BLUE, y: 1420 },
+  {
+    from: 59.01,
+    to: 60.4,
+    text: "sorridi",
+    sfx: "twinkle",
+    color: BLUE,
+    y: 1420,
+  },
   {
     from: 61.05,
     to: 63.5,
     text: "a letto alle 22:30",
+    sfx: "scratch",
     color: PINK,
     y: 1380,
     doodle: "moon",
@@ -167,31 +197,35 @@ const rnd = (i: number) => {
   return x - Math.floor(x);
 };
 
-// Hook: on screen from the very first frame (so it is the thumbnail), lilac
-// hand-written caps with a white outline and the reference's "boiling"
-// hand-drawn wobble: each letter shifts a little every 4 frames.
+// Hook: as in the reference, the words rise up from below into place at
+// the very start (letter by letter), then stay still for the rest.
 const HOOK = ["come vivo la perimenopausa", "al meglio"];
 
-const BoilLine: React.FC<{ text: string; size: number; seed: number }> = ({
+const RiseLine: React.FC<{ text: string; size: number; delay: number }> = ({
   text,
   size,
-  seed,
+  delay,
 }) => {
   const frame = useCurrentFrame();
-  const step = Math.floor(frame / 4);
+  const { fps } = useVideoConfig();
   return (
     <div style={{ ...hand(LILAC, size), whiteSpace: "pre" }}>
       {text.split("").map((c, i) => {
-        const k = seed * 100 + i * 7 + step * 13;
+        const p = spring({
+          frame: frame - delay - i * 0.8,
+          fps,
+          config: { damping: 13, mass: 0.5 },
+        });
         return (
           <span
             key={i}
             style={{
               display: "inline-block",
-              transform: `translate(${(rnd(k) - 0.5) * 3}px, ${(rnd(k + 1) - 0.5) * 3}px) rotate(${(rnd(k + 2) - 0.5) * 4}deg)`,
+              opacity: Math.min(1, p * 1.5),
+              transform: `translateY(${interpolate(p, [0, 1], [70, 0])}px)`,
             }}
           >
-            {c === " " ? " " : c}
+            {c === " " ? "\u00a0" : c}
           </span>
         );
       })}
@@ -201,8 +235,8 @@ const BoilLine: React.FC<{ text: string; size: number; seed: number }> = ({
 
 const Hook: React.FC = () => (
   <AbsoluteFill style={{ alignItems: "center", paddingTop: 110 }}>
-    <BoilLine text={HOOK[0]} size={80} seed={1} />
-    <BoilLine text={HOOK[1]} size={92} seed={2} />
+    <RiseLine text={HOOK[0]} size={80} delay={0} />
+    <RiseLine text={HOOK[1]} size={92} delay={14} />
   </AbsoluteFill>
 );
 
@@ -367,7 +401,10 @@ const Pop: React.FC<{
   const { fps } = useVideoConfig();
   const pop = spring({ frame, fps, config: { damping: 9, mass: 0.5 } });
   const out = interpolate(frame, [duration - 5, duration], [1, 0], clamp);
-  const rise = interpolate(frame, [0, duration], [20, -25]);
+  // rise from below, like the reference words lifting with her hands
+  const rise =
+    interpolate(pop, [0, 1], [180, 0]) +
+    interpolate(frame, [0, duration], [0, -40]);
   const content = doodle ? (
     // torn-paper sticker: white paper, soft shadow, slight tilt
     <div
@@ -432,7 +469,10 @@ export const Perimenopausa: React.FC = () => (
       return (
         <Sequence key={p.text} from={s(p.from)} durationInFrames={d}>
           <Pop {...p} duration={d} seed={i + 1} />
-          <Audio src={staticFile("sfx/pop_soft.wav")} volume={0.5} />
+          <Audio
+            src={staticFile(`sfx/${p.sfx ?? "pop_soft"}.wav`)}
+            volume={p.sfx ? 0.45 : 0.5}
+          />
         </Sequence>
       );
     })}

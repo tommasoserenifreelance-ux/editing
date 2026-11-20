@@ -100,9 +100,70 @@ def pop_soft():
     return np.stack([y, y], axis=1)
 
 
+def slide_whistle_down():
+    """Cartoon "fail" slide whistle going down, for a funny beat."""
+    n = int(SR * 0.9)
+    t = np.arange(n) / SR
+    freq = 1500 * np.exp(-t * 1.6) * (1 + 0.03 * np.sin(2 * np.pi * 6 * t))
+    y = np.sin(2 * np.pi * np.cumsum(freq) / SR)
+    y += 0.25 * np.sin(4 * np.pi * np.cumsum(freq) / SR)
+    breath = signal.sosfilt(signal.butter(2, [800, 3000], "band", fs=SR, output="sos"),
+                            rng.standard_normal(n)) * 0.08
+    y = (y + breath) * env(n, 0.03, 0.25)
+    return np.stack([y, y], axis=1)
+
+
+def boing():
+    """Spring "boing": a wobbling pitch that settles, like a cartoon spring."""
+    n = int(SR * 0.6)
+    t = np.arange(n) / SR
+    freq = 220 + 160 * np.exp(-t * 6) * np.sin(2 * np.pi * 14 * t) + 120 * np.exp(-t * 8)
+    y = np.sin(2 * np.pi * np.cumsum(freq) / SR) * np.exp(-t * 5.5)
+    y += 0.3 * np.sin(4 * np.pi * np.cumsum(freq) / SR) * np.exp(-t * 7)
+    return np.stack([y, y], axis=1)
+
+
+def twinkle():
+    """Bright magical twinkle: quick rising bell notes with shimmer."""
+    parts = []
+    for k, note in enumerate((88, 91, 95, 100)):
+        f = 440 * 2 ** ((note - 69) / 12)
+        m = int(SR * 0.7)
+        tt = np.arange(m) / SR
+        bell = (np.sin(2 * np.pi * f * tt) + 0.4 * np.sin(2 * np.pi * f * 2.76 * tt)) * np.exp(-tt * 7)
+        parts.append(np.concatenate([np.zeros(int(SR * 0.06 * k)), bell]))
+    length = max(len(p) for p in parts)
+    y = sum(np.pad(p, (0, length - len(p))) for p in parts)
+    return np.stack([y, np.roll(y, int(SR * 0.004))], axis=1)
+
+
+def record_scratch():
+    """Vinyl record scratch: two fast filtered noise sweeps."""
+    out = []
+    for dur, up in ((0.16, True), (0.22, False)):
+        n = int(SR * dur)
+        t = np.arange(n) / SR
+        noise = rng.standard_normal(n)
+        lo, hi = (600, 3500) if up else (3500, 400)
+        centre = lo + (hi - lo) * (t / dur) ** 0.7
+        y = np.zeros(n)
+        hop = 256
+        for i in range(0, n, hop):
+            c = float(centre[min(i, n - 1)])
+            sos = signal.butter(2, [c * 0.6, min(c * 1.6, SR / 2 - 100)], "band", fs=SR, output="sos")
+            y[i:i + hop] = signal.sosfilt(sos, noise[i:i + hop])
+        out.append(y * env(n, 0.01, 0.3))
+    y = np.concatenate(out)
+    return np.stack([y, y], axis=1)
+
+
 OUT.mkdir(parents=True, exist_ok=True)
 save("whoosh.wav", whoosh())
 save("wrong.wav", wrong())
 save("correct.wav", correct())
 save("pop.wav", pop())
 save("pop_soft.wav", pop_soft())
+save("slide_whistle.wav", slide_whistle_down())
+save("boing.wav", boing())
+save("twinkle.wav", twinkle())
+save("scratch.wav", record_scratch())
