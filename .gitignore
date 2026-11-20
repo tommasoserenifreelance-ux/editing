@@ -18,3 +18,6 @@ public/geni/doctor/
 # Same for the esosomi take: download bonaccorso.esosomi.mp4 from the
 # "bonaccorso esosomi" release into public/esosomi/doctor/esosomi.mp4.
 public/esosomi/doctor/
+# Same for the C0108 take (collagen biostimulators): download C0108.MP4 from
+# the "bonaccorso" release into public/c0108/doctor/take.mp4.
+public/c0108/doctor/
