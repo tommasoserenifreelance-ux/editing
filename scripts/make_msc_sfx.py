@@ -16,6 +16,7 @@ import tempfile
 
 import numpy as np
 import soundfile as sf
+from scipy.signal import butter, sosfiltfilt
 
 SR = 48000
 OUT = sys.argv[1]
@@ -23,13 +24,14 @@ LENGTH = float(sys.argv[2]) if len(sys.argv) > 2 else 28.0
 
 # (time of the peak, sound id, level 0-1, extra render args)
 CUES = [
-    # Music comes later (added on TikTok): only a few whooshes under key titles.
-    (0.40, "pro_whoosh_big/tonal", 0.55, []),  # MSC logo + "MSC ci ha invitati a bordo"
-    (2.20, "whoosh_fast/crisp", 0.45, ["--apex", "0.3"]),  # "Della MSC World Europa"
-    (3.40, "pro_whoosh_big/swell", 0.60, []),  # "Una delle navi più grandi al mondo"
-    (10.00, "whoosh_fast/tight", 0.50, ["--apex", "0.3"]),  # "Ma la parte migliore?"
-    (19.80, "pro_whoosh_big/swell", 0.60, ["--seed", "4"]),  # "Un palco"
-    (23.60, "whoosh_fast/tight", 0.50, ["--apex", "0.3", "--seed", "11"]),  # "Potrebbe essere il tuo"
+    # Music comes later (added on TikTok): only soft, smooth whooshes under key
+    # titles. Kept low and band-limited so nothing sounds harsh or crackly.
+    (0.40, "pro_whoosh_big/tonal", 0.30, []),  # MSC logo + "MSC ci ha invitati a bordo"
+    (2.20, "whoosh_big/swell", 0.28, []),  # "Della MSC World Europa"
+    (3.40, "pro_whoosh_big/swell", 0.32, []),  # "Una delle navi più grandi al mondo"
+    (10.00, "whoosh_big/swell", 0.30, ["--seed", "3"]),  # "Ma la parte migliore?"
+    (19.80, "pro_whoosh_big/swell", 0.32, ["--seed", "4"]),  # "Un palco"
+    (23.60, "pro_whoosh_big/tonal", 0.30, ["--seed", "5"]),  # "Potrebbe essere il tuo"
 ]
 
 
@@ -55,6 +57,9 @@ with tempfile.TemporaryDirectory() as tmp:
         buf[start : start + len(mono), 0] += mono * (1 - p)
         buf[start : start + len(mono), 1] += mono * (1 + p)
         print(f"{t:6.2f}s  {sound:28s} peak@{peak:.3f}s level {level}")
+
+# Gentle band-limit: no rumble, no fizzy top end.
+buf = sosfiltfilt(butter(2, [70, 7000], "bandpass", fs=SR, output="sos"), buf, axis=0)
 
 peak = np.abs(buf).max()
 if peak > 0.89:
