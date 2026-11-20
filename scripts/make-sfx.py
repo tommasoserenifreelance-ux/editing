@@ -201,6 +201,25 @@ def soft_bloop():
     return np.stack([y, y], axis=1)
 
 
+def capcut_pop():
+    """Short, round "bubble" pop in the style of CapCut's pop: a very quick
+    downward pitch flick with a tiny transient, gone in ~80 ms."""
+    n = int(SR * 0.09)
+    t = np.arange(n) / SR
+    freq = 260 + 1100 * np.exp(-t * 160)
+    body = np.sin(2 * np.pi * np.cumsum(freq) / SR)
+    body *= np.exp(-t * 60) * (1 - np.exp(-t * 4000))
+    click = signal.sosfilt(signal.butter(2, [2000, 7000], "band", fs=SR, output="sos"),
+                           rng.standard_normal(n)) * np.exp(-t * 900) * 0.25
+    y = np.tanh(1.6 * (body + click)) / np.tanh(1.6)
+    tail = np.zeros(int(SR * 0.04))
+    y = np.concatenate([y, tail])
+    # a touch of tiny-room reverb so it sounds "real", not synthetic
+    ir = np.exp(-np.arange(int(SR * 0.05)) / SR * 90) * rng.standard_normal(int(SR * 0.05)) * 0.08
+    y = y + signal.fftconvolve(y, ir)[: len(y)]
+    return np.stack([y, y], axis=1)
+
+
 OUT.mkdir(parents=True, exist_ok=True)
 save("whoosh.wav", whoosh())
 save("wrong.wav", wrong())
@@ -215,3 +234,4 @@ save("marimba.wav", marimba())
 save("paper_swish.wav", paper_swish())
 save("soft_chime.wav", soft_chime())
 save("soft_bloop.wav", soft_bloop())
+save("capcut_pop.wav", capcut_pop())
