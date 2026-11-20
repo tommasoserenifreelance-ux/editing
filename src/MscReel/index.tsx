@@ -3,6 +3,7 @@ import {
   Audio,
   continueRender,
   delayRender,
+  Img,
   interpolate,
   OffthreadVideo,
   Sequence,
@@ -161,6 +162,26 @@ const EndCard: React.FC = () => {
   );
 };
 
+// MSC emblem in white above the opening title.
+const MscLogo: React.FC<{ frames: number }> = ({ frames }) => {
+  const f = useCurrentFrame();
+  const inT = interpolate(f, [0, 10], [0, 1], { extrapolateRight: "clamp" });
+  const outT = interpolate(f, [frames - 4, frames], [1, 0], { extrapolateLeft: "clamp" });
+  return (
+    <AbsoluteFill style={{ alignItems: "center", paddingTop: 230 }}>
+      <Img
+        src={staticFile("msc/msc_logo_white.png")}
+        style={{
+          height: 300,
+          opacity: inT * outT,
+          transform: `translateY(${(1 - inT) * 20}px) scale(${1.05 - 0.05 * inT})`,
+          filter: "drop-shadow(0 4px 24px rgba(0,0,0,0.45))",
+        }}
+      />
+    </AbsoluteFill>
+  );
+};
+
 export const MscReel: React.FC = () => {
   const s = (t: number) => Math.round(t * MSC_FPS);
   return (
@@ -168,6 +189,9 @@ export const MscReel: React.FC = () => {
       <Sequence durationInFrames={s(CLIP_END)}>
         <OffthreadVideo src={staticFile("msc/nuda.mp4")} muted />
         <Footer />
+        <Sequence durationInFrames={s(2.2)}>
+          <MscLogo frames={s(2.2)} />
+        </Sequence>
         {CAPS.map((c) => (
           <Sequence key={c.from} from={s(c.from)} durationInFrames={s(c.to) - s(c.from)}>
             <Caption cap={c} frames={s(c.to) - s(c.from)} />
