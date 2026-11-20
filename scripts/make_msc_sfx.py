@@ -23,15 +23,11 @@ LENGTH = float(sys.argv[2]) if len(sys.argv) > 2 else 28.0
 
 # (time of the peak, sound id, level 0-1, extra render args)
 CUES = [
-    # Only the four high points of the story.
-    # 1. "Una delle navi più grandi al mondo": big swell into the title
-    (3.40, "pro_whoosh_big/swell", 0.60, []),
-    # 2. The music drops into the event (conference)
-    (7.60, "impact/deep", 0.75, ["--dur", "2.5"]),
-    # 3. "UN PALCO"
-    (19.80, "impact/classic", 0.75, ["--dur", "2.2"]),
-    # 4. End logo
-    (25.75, "logo_sting/whoosh_glass", 0.60, []),
+    # Music comes later (added on TikTok): only a few whooshes under key titles.
+    (3.40, "pro_whoosh_big/swell", 0.60, []),  # "Una delle navi più grandi al mondo"
+    (10.00, "whoosh_fast/tight", 0.50, ["--apex", "0.3"]),  # "Ma la parte migliore?"
+    (19.80, "pro_whoosh_big/swell", 0.60, ["--seed", "4"]),  # "Un palco"
+    (23.60, "whoosh_fast/tight", 0.50, ["--apex", "0.3", "--seed", "11"]),  # "Potrebbe essere il tuo"
 ]
 
 
