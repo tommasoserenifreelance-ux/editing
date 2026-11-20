@@ -26,11 +26,8 @@ const broll = (file: string) => `c0108/broll/${file}`;
 const BROLLS: BRollCue[] = [
   // An injection for "un filler riempie", then a particle stream for "un
   // collagen booster costruisce".
-  {
-    src: broll("cosmetic.mp4"),
-    from: wordFrame(0, "Un"),
-    to: wordFrame(0, "un"),
-  },
+  // Starts on the first frame so the video opens on the injection.
+  { src: broll("cosmetic.mp4"), from: 0, to: wordFrame(0, "un") },
   { src: broll("abstract-3d.mp4"), from: wordFrame(0, "un"), to: take(1) },
   // A woman at the mirror for "e la differenza si vede nel tempo".
   { src: broll("woman.mp4"), from: take(1), to: wordFrame(1, "gli") },
@@ -51,19 +48,31 @@ const CARDS: CardCue[] = [
   },
 ];
 
+// Each animation starts exactly where the previous shot ends, so the doctor
+// never flashes on screen for a few frames in between.
 const timelineFrom = wordFrame(2, "mostrano");
-const fibroFrom = wordFrame(4, "attivano");
+const fibroFrom = take(4);
 const sessionsFrom = take(5);
+const rel = (from: number) => (f: number) => f - from;
+const tl = rel(timelineFrom);
+const fb = rel(fibroFrom);
+const se = rel(sessionsFrom);
+const SESSION_CUES = [
+  sessionsFrom + 4,
+  wordFrame(5, "seduta", 1),
+  wordFrame(5, "invece"),
+];
 const EXTRAS: ExtraCue[] = [
   {
     from: timelineFrom,
     to: take(4),
     node: (
       <CollagenTimeline
-        at3={0}
-        atCollagen={wordFrame(2, "collagene") - timelineFrom}
-        at12={wordFrame(3, "12") - timelineFrom}
-        at18={wordFrame(3, "18") - timelineFrom}
+        atCollagen={tl(wordFrame(2, "collagene"))}
+        atType1={tl(wordFrame(2, "1"))}
+        atType3={tl(wordFrame(2, "3"))}
+        at12={tl(wordFrame(3, "12"))}
+        at18={tl(wordFrame(3, "18"))}
       />
     ),
   },
@@ -72,8 +81,8 @@ const EXTRAS: ExtraCue[] = [
     to: take(5),
     node: (
       <Fibroblasts
-        atActivate={0}
-        atBuild={wordFrame(4, "costruire") - fibroFrom}
+        atActivate={fb(wordFrame(4, "attivano"))}
+        atBuild={fb(wordFrame(4, "costruire"))}
       />
     ),
   },
@@ -82,12 +91,8 @@ const EXTRAS: ExtraCue[] = [
     to: take(6),
     node: (
       <Sessions
-        atSessions={[
-          0,
-          wordFrame(5, "seduta", 1) - sessionsFrom,
-          wordFrame(5, "invece") - sessionsFrom,
-        ]}
-        atFiller={wordFrame(5, "occupare") - sessionsFrom}
+        atSessions={SESSION_CUES.map(se)}
+        atFiller={se(wordFrame(5, "occupare"))}
       />
     ),
   },
@@ -105,6 +110,27 @@ const STICKERS: StickerCue[] = [
   { ...single("✨", wordFrame(9, "giovane")), to: take(10) },
 ];
 
+// Sound effects on each beat of the animations, matched to what he says.
+const pop = (at: number, volume = 0.8) => ({ at, file: "pop", volume });
+const tick = (at: number) => ({ at, file: "tick", volume: 0.55 });
+const SOUNDS = [
+  // Timeline: a pop as each stop lands, ticks for the collagen chips, and a
+  // ding on the last stop.
+  pop(timelineFrom + 4),
+  tick(wordFrame(2, "collagene")),
+  tick(wordFrame(2, "1")),
+  tick(wordFrame(2, "3")),
+  pop(wordFrame(3, "12")),
+  pop(wordFrame(3, "18")),
+  { at: wordFrame(3, "18"), file: "ding", volume: 0.4 },
+  // Fibroblasts: a soft pop as they light up, a tick as the fibres spin out.
+  pop(wordFrame(4, "attivano"), 0.6),
+  tick(wordFrame(4, "costruire")),
+  // Sessions: a pop for each bar, a tick when the filler appears.
+  ...SESSION_CUES.map((at) => pop(at, 0.7)),
+  tick(wordFrame(5, "occupare")),
+];
+
 export const Collagene: React.FC = () => (
   <SentenceReel
     source="c0108/doctor/take.mp4"
@@ -115,10 +141,7 @@ export const Collagene: React.FC = () => (
     stickers={STICKERS}
     cards={CARDS}
     extras={EXTRAS}
-    sounds={[
-      ...EXTRAS.map((x) => ({ at: x.from - 6, file: "whoosh", volume: 0.45 })),
-      { at: wordFrame(3, "18"), file: "ding", volume: 0.45 },
-    ]}
+    sounds={SOUNDS}
     zoom={[1, 1]}
     drift={0}
     slideFrames={TRANSITION}

@@ -2,6 +2,7 @@ import { linearTiming, TransitionSeries } from "@remotion/transitions";
 import { slide } from "@remotion/transitions/slide";
 import {
   AbsoluteFill,
+  Easing,
   Html5Audio,
   Img,
   interpolate,
@@ -291,6 +292,52 @@ const StudyCard: React.FC<Omit<CardCue, "from" | "to">> = ({ src, crop }) => {
   );
 };
 
+// Every change of shot (take, b-roll, card, animation) moves the same way:
+// the new shot pushes in from the right with this curve.
+const SLIDE_EASING = Easing.inOut(Easing.cubic);
+
+// An overlay shot on [from, to). With slides on, it pushes in from the right
+// (unless it opens the video) and pushes out to the left over the `slide`
+// frames after `to`, in step with whatever replaces it.
+const Shot: React.FC<{
+  from: number;
+  to: number;
+  slide: number;
+  children: React.ReactNode;
+}> = ({ from, to, slide, children }) => (
+  <Sequence from={from} durationInFrames={to - from + slide}>
+    <ShotMotion enter={slide > 0 && from > 0} slide={slide} length={to - from}>
+      {children}
+    </ShotMotion>
+  </Sequence>
+);
+
+const ShotMotion: React.FC<{
+  enter: boolean;
+  slide: number;
+  length: number;
+  children: React.ReactNode;
+}> = ({ enter, slide, length, children }) => {
+  const frame = useCurrentFrame();
+  if (!slide) return <AbsoluteFill>{children}</AbsoluteFill>;
+  const opts = {
+    easing: SLIDE_EASING,
+    extrapolateLeft: "clamp" as const,
+    extrapolateRight: "clamp" as const,
+  };
+  const x =
+    frame < length
+      ? enter
+        ? interpolate(frame, [0, slide], [100, 0], opts)
+        : 0
+      : interpolate(frame, [length, length + slide], [0, -100], opts);
+  return (
+    <AbsoluteFill style={{ transform: `translateX(${x}%)` }}>
+      {children}
+    </AbsoluteFill>
+  );
+};
+
 const Sfx: React.FC<Sound> = ({ at: from, file, volume }) => {
   const { fps } = useVideoConfig();
   return (
@@ -344,6 +391,25 @@ export const SentenceReel: React.FC<{
     to: s.to,
     top: STICKER_TOP + STICKER_HEIGHT + 15,
   }));
+  // Frames where the picture visibly changes shot: take cuts not hidden under
+  // an overlay, and overlay starts and ends.
+  const overlays = [...brolls, ...cards, ...extras];
+  const takeStarts = clips
+    .slice(1)
+    .map(
+      (_, i) =>
+        clips.slice(0, i + 1).reduce((a, b) => a + b, 0) -
+        (i + 1) * slideFrames,
+    );
+  const covered = (f: number) =>
+    overlays.some((o) => o.from < f && o.to > f + slideFrames);
+  const shotChanges = [
+    ...takeStarts.filter((f) => !covered(f)),
+    ...overlays.map((o) => o.from).filter((f) => f > 0),
+    ...overlays.map((o) => o.to),
+  ]
+    .sort((a, b) => a - b)
+    .filter((f, i, all) => i === 0 || f - all[i - 1] > 3);
   const allSounds: Sound[] = [
     // A soft tick whenever a blue box lands.
     ...phrases.reduce<Sound[]>(
@@ -360,19 +426,11 @@ export const SentenceReel: React.FC<{
         acc.concat(s.delays.map((d) => ({ at: d, file: "pop", volume: 0.9 }))),
       [],
     ),
-    ...brolls.map((b) => ({ at: b.from - 6, file: "whoosh", volume: 0.45 })),
     ...cards.map((c) => ({ at: c.from, file: "pop", volume: 0.9 })),
-    // A light whoosh under each slide between takes.
     ...(slideFrames
-      ? clips.slice(1).map((_, i) => ({
-          at:
-            clips.slice(0, i + 1).reduce((a, b) => a + b, 0) -
-            (i + 1) * slideFrames -
-            3,
-          file: "whoosh",
-          volume: 0.3,
-        }))
-      : []),
+      ? // One light whoosh for every visible change of shot.
+        shotChanges.map((f) => ({ at: f - 2, file: "whoosh", volume: 0.35 }))
+      : brolls.map((b) => ({ at: b.from - 6, file: "whoosh", volume: 0.45 }))),
     ...sounds,
   ];
   const take = (i: number) => (
@@ -393,10 +451,11 @@ export const SentenceReel: React.FC<{
             i > 0 ? (
               <TransitionSeries.Transition
                 key={`t${i}`}
-                presentation={slide({
-                  direction: i % 2 ? "from-right" : "from-left",
+                presentation={slide({ direction: "from-right" })}
+                timing={linearTiming({
+                  durationInFrames: slideFrames,
+                  easing: SLIDE_EASING,
                 })}
-                timing={linearTiming({ durationInFrames: slideFrames })}
               />
             ) : null,
             <TransitionSeries.Sequence key={i} durationInFrames={frames}>
@@ -414,19 +473,19 @@ export const SentenceReel: React.FC<{
         </Series>
       )}
       {brolls.map((b) => (
-        <Sequence key={b.from} from={b.from} durationInFrames={b.to - b.from}>
+        <Shot key={b.from} from={b.from} to={b.to} slide={slideFrames}>
           <BRoll
             src={b.src}
             fit={b.fit}
             startFrom={b.startFrom}
             playbackRate={b.playbackRate}
           />
-        </Sequence>
+        </Shot>
       ))}
       {cards.map((c) => (
-        <Sequence key={c.from} from={c.from} durationInFrames={c.to - c.from}>
+        <Shot key={c.from} from={c.from} to={c.to} slide={slideFrames}>
           <StudyCard src={c.src} crop={c.crop} />
-        </Sequence>
+        </Shot>
       ))}
       {stickers.map((s) => (
         <Sequence
@@ -442,9 +501,9 @@ export const SentenceReel: React.FC<{
         </Sequence>
       ))}
       {extras.map((x) => (
-        <Sequence key={x.from} from={x.from} durationInFrames={x.to - x.from}>
+        <Shot key={x.from} from={x.from} to={x.to} slide={slideFrames}>
           {x.node}
-        </Sequence>
+        </Shot>
       ))}
       <Captions phrases={phrases} zones={zones} />
       {allSounds.map((s, i) => (
