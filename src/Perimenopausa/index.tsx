@@ -21,10 +21,11 @@ import {
 
 export const PERI_FPS = 30;
 // Fluffed words cut out, keeping the correct take (source seconds):
-// the first "prendi il magnesio," and the fluffed first "il grasso".
+// the first "prendi il magnesio," the fluffed first "il grasso" and "evita".
 const CUTS: [number, number][] = [
   [26.09, 26.73],
-  [35.74, 36.72], // "monitora il grasso… il grasso addominale": keep the retake
+  [35.74, 37.1], // "monitora il grasso… ehh… il grasso addominale": keep the retake
+  [44.42, 44.94], // fluffed first "evita"
 ];
 const SOURCE_END = 63.6;
 const KEEP: [number, number][] = CUTS.reduce<[number, number][]>(
@@ -104,7 +105,7 @@ const POPS: {
   {
     from: 7.53,
     to: 9.5,
-    text: "sveglia alle 7",
+    text: "sveglia alle 6",
     color: PINK,
     y: 1330,
     doodle: "alarm",
@@ -572,6 +573,10 @@ export const Perimenopausa: React.FC = () => (
       </Sequence>
     ))}
     <Hook />
+    <Audio src={staticFile("sfx/whoosh.wav")} volume={0.35} />
+    <Sequence from={10}>
+      <Audio src={staticFile("sfx/twinkle.wav")} volume={0.3} />
+    </Sequence>
     {POPS.map((p, i) => {
       const d = s(at(p.to)) - s(at(p.from));
       return (
