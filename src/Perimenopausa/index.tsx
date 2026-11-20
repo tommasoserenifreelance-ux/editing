@@ -3,7 +3,6 @@ import {
   Audio,
   continueRender,
   delayRender,
-  Img,
   interpolate,
   OffthreadVideo,
   Sequence,
@@ -437,15 +436,5 @@ export const Perimenopausa: React.FC = () => (
         </Sequence>
       );
     })}
-    <AbsoluteFill style={{ alignItems: "flex-end", padding: "330px 70px 0 0" }}>
-      <Img
-        src={staticFile("logo.png")}
-        style={{
-          width: 110,
-          opacity: 0.8,
-          filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.35))",
-        }}
-      />
-    </AbsoluteFill>
   </AbsoluteFill>
 );
