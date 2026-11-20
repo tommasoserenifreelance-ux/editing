@@ -20,7 +20,26 @@ import {
 // Source: GitHub release (33DC2C2F...MP4) → public/hook/elena.mp4.
 
 export const PERI_FPS = 30;
-export const PERI_DURATION = 1908; // 63.6 s
+// Fluffed words cut out, keeping the correct take (source seconds):
+// the first "prendi il magnesio," and a stumble after "grasso".
+const CUTS: [number, number][] = [
+  [26.09, 26.73],
+  [36.45, 37.45],
+];
+const SOURCE_END = 63.6;
+const KEEP: [number, number][] = CUTS.reduce<[number, number][]>(
+  (acc, [a, b]) => {
+    const last = acc[acc.length - 1];
+    acc[acc.length - 1] = [last[0], a];
+    acc.push([b, SOURCE_END]);
+    return acc;
+  },
+  [[0, SOURCE_END]],
+);
+// Output-timeline seconds for a source time.
+const at = (t: number) =>
+  t - CUTS.filter(([, b]) => b <= t).reduce((sum, [a, b]) => sum + b - a, 0);
+export const PERI_DURATION = Math.round(at(SOURCE_END) * 30);
 const s = (seconds: number) => Math.round(seconds * PERI_FPS);
 
 const HAND = "Caveat Brush";
@@ -142,14 +161,6 @@ const POPS: {
     tilt: 3,
   },
   {
-    from: 35.5,
-    to: 38.3,
-    text: "erano solo 3…",
-    sfx: "slide_whistle",
-    color: PINK,
-    y: 1380,
-  },
-  {
     from: 50.47,
     to: 52.3,
     text: "non arrabbiarti",
@@ -178,7 +189,6 @@ const POPS: {
     from: 61.05,
     to: 63.5,
     text: "a letto alle 22:30",
-    sfx: "scratch",
     color: PINK,
     y: 1380,
     doodle: "moon",
@@ -459,15 +469,24 @@ const Pop: React.FC<{
 
 export const Perimenopausa: React.FC = () => (
   <AbsoluteFill style={{ backgroundColor: "black" }}>
-    <OffthreadVideo
-      src={staticFile("hook/elena.mp4")}
-      style={{ width: "100%", height: "100%", objectFit: "cover" }}
-    />
+    {KEEP.map(([a, b]) => (
+      <Sequence
+        key={a}
+        from={Math.round(at(a) * PERI_FPS)}
+        durationInFrames={Math.round((b - a) * PERI_FPS)}
+      >
+        <OffthreadVideo
+          src={staticFile("hook/elena.mp4")}
+          trimBefore={Math.round(a * PERI_FPS)}
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        />
+      </Sequence>
+    ))}
     <Hook />
     {POPS.map((p, i) => {
-      const d = s(p.to) - s(p.from);
+      const d = s(at(p.to)) - s(at(p.from));
       return (
-        <Sequence key={p.text} from={s(p.from)} durationInFrames={d}>
+        <Sequence key={p.text} from={s(at(p.from))} durationInFrames={d}>
           <Pop {...p} duration={d} seed={i + 1} />
           <Audio
             src={staticFile(`sfx/${p.sfx ?? "pop_soft"}.wav`)}
