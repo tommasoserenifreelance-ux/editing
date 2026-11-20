@@ -1,5 +1,6 @@
 import { Composition, Folder } from "remotion";
 import { Cacao, CACAO_DURATION, CACAO_FPS } from "./Cacao";
+import { Cena, CENA_DURATION, CENA_FPS } from "./Cena";
 import { Collagene, COLLAGENE_DURATION, COLLAGENE_FPS } from "./Collagene";
 import { Esosomi, ESOSOMI_DURATION, ESOSOMI_FPS } from "./Esosomi";
 import { Geni, GENI_DURATION, GENI_FPS } from "./Geni";
@@ -114,6 +115,14 @@ export const RemotionRoot: React.FC = () => {
         component={Collagene}
         durationInFrames={COLLAGENE_DURATION}
         fps={COLLAGENE_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="Cena"
+        component={Cena}
+        durationInFrames={CENA_DURATION}
+        fps={CENA_FPS}
         width={1080}
         height={1920}
       />
