@@ -16,7 +16,7 @@ import {
 // "Come vivo la perimenopausa al meglio… in 3 semplici mosse" (ironic list).
 // Text style from the reference reel: hand-written pastel caps, a fixed hook
 // at the top and "* WORD *" pop-ups that appear with what she says, plus a
-// few themed 3D emoji (not on every line). Everything sits above her head or
+// few torn-paper stickers with hand-drawn doodles (not on every line). Everything sits above her head or
 // on her sweater, never on her face. No subtitles.
 // Source: GitHub release (33DC2C2F...MP4) → public/hook/elena.mp4.
 
@@ -37,6 +37,7 @@ new FontFace(
   });
 
 const PINK = "#F27FB2";
+const LILAC = "#D9A8F0";
 const BLUE = "#4FB3E6";
 
 const hand = (color: string, size: number): React.CSSProperties => ({
@@ -52,14 +53,29 @@ const hand = (color: string, size: number): React.CSSProperties => ({
   filter: "drop-shadow(0 4px 10px rgba(120,40,80,0.35))",
 });
 
-// Pop-ups, in source seconds. y is the vertical centre in px.
+// Pop-ups, in source seconds. y is the vertical centre in px. Lines with a
+// doodle become a torn-paper sticker; the others are plain "* WORD *" text,
+// as in the reference.
+type DoodleName =
+  | "alarm"
+  | "phone"
+  | "sun"
+  | "cup"
+  | "sparkle"
+  | "drop"
+  | "pill"
+  | "dumbbell"
+  | "heart"
+  | "moon";
+
 const POPS: {
   from: number;
   to: number;
   text: string;
   color: string;
   y: number;
-  emoji?: string;
+  doodle?: DoodleName;
+  tilt?: number;
 }[] = [
   { from: 5.85, to: 7.4, text: "3 semplici mosse", color: BLUE, y: 1380 },
   {
@@ -67,24 +83,19 @@ const POPS: {
     to: 9.5,
     text: "sveglia alle 7",
     color: PINK,
-    y: 1300,
-    emoji: "alarm_clock",
+    y: 1330,
+    doodle: "alarm",
+    tilt: -5,
   },
-  {
-    from: 9.63,
-    to: 11.6,
-    text: "niente telefono",
-    color: BLUE,
-    y: 1460,
-    emoji: "no_mobile_phones",
-  },
+  { from: 9.63, to: 11.6, text: "niente telefono", color: BLUE, y: 1460 },
   {
     from: 12.19,
     to: 13.15,
     text: "sole all'alba",
     color: PINK,
-    y: 1320,
-    emoji: "sun",
+    y: 1340,
+    doodle: "sun",
+    tilt: 4,
   },
   {
     from: 13.19,
@@ -92,23 +103,18 @@ const POPS: {
     text: "tisana tiepida",
     color: BLUE,
     y: 1460,
-    emoji: "teacup_without_handle",
+    doodle: "cup",
+    tilt: -3,
   },
-  {
-    from: 18.23,
-    to: 19.95,
-    text: "ringrazia",
-    color: PINK,
-    y: 1360,
-    emoji: "sparkles",
-  },
+  { from: 18.23, to: 19.95, text: "ringrazia", color: PINK, y: 1380 },
   {
     from: 23.79,
     to: 25.25,
     text: "2 litri d'acqua",
     color: BLUE,
     y: 1400,
-    emoji: "droplet",
+    doodle: "drop",
+    tilt: 5,
   },
   {
     from: 25.31,
@@ -116,7 +122,8 @@ const POPS: {
     text: "collagene\nmagnesio\nvitamine",
     color: PINK,
     y: 1380,
-    emoji: "pill",
+    doodle: "pill",
+    tilt: -4,
   },
   {
     from: 30.81,
@@ -124,46 +131,29 @@ const POPS: {
     text: "pilates & pesi",
     color: BLUE,
     y: 1420,
-    emoji: "flexed_biceps",
+    doodle: "dumbbell",
+    tilt: 3,
   },
-  {
-    from: 35.5,
-    to: 38.3,
-    text: "erano solo 3…",
-    color: PINK,
-    y: 1360,
-    emoji: "grinning_face_with_sweat",
-  },
-  {
-    from: 50.47,
-    to: 52.3,
-    text: "non arrabbiarti",
-    color: BLUE,
-    y: 1440,
-    emoji: "face_with_steam_from_nose",
-  },
+  { from: 35.5, to: 38.3, text: "erano solo 3…", color: PINK, y: 1380 },
+  { from: 50.47, to: 52.3, text: "non arrabbiarti", color: BLUE, y: 1440 },
   {
     from: 57.29,
     to: 59.0,
     text: "la tua versione migliore",
     color: PINK,
     y: 1380,
+    doodle: "heart",
+    tilt: -3,
   },
-  {
-    from: 59.01,
-    to: 60.4,
-    text: "sorridi",
-    color: BLUE,
-    y: 1420,
-    emoji: "grinning_squinting_face",
-  },
+  { from: 59.01, to: 60.4, text: "sorridi", color: BLUE, y: 1420 },
   {
     from: 61.05,
     to: 63.5,
     text: "a letto alle 22:30",
     color: PINK,
     y: 1380,
-    emoji: "zzz",
+    doodle: "moon",
+    tilt: 4,
   },
 ];
 
@@ -172,102 +162,278 @@ const clamp = {
   extrapolateRight: "clamp",
 } as const;
 
-const Hook: React.FC = () => {
+// Deterministic jitter, so the hand-drawn wobble is the same on every render.
+const rnd = (i: number) => {
+  const x = Math.sin(i * 127.1 + 311.7) * 43758.5453;
+  return x - Math.floor(x);
+};
+
+// Hook: on screen from the very first frame (so it is the thumbnail), lilac
+// hand-written caps with a white outline and the reference's "boiling"
+// hand-drawn wobble: each letter shifts a little every 4 frames.
+const HOOK = ["come vivo la perimenopausa", "al meglio"];
+
+const BoilLine: React.FC<{ text: string; size: number; seed: number }> = ({
+  text,
+  size,
+  seed,
+}) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-  const line = (delay: number) =>
-    spring({ frame: frame - delay, fps, config: { damping: 11, mass: 0.6 } });
-  const a = line(2);
-  const b = line(9);
+  const step = Math.floor(frame / 4);
   return (
-    <AbsoluteFill style={{ alignItems: "center", paddingTop: 110 }}>
-      <div
-        style={{
-          ...hand(PINK, 84),
-          opacity: a,
-          transform: `translateY(${interpolate(a, [0, 1], [-30, 0])}px) rotate(-2deg)`,
-        }}
-      >
-        come vivo la perimenopausa
-      </div>
-      <div
-        style={{
-          ...hand(PINK, 96),
-          opacity: b,
-          transform: `translateY(${interpolate(b, [0, 1], [-30, 0])}px) rotate(-2deg)`,
-        }}
-      >
-        al meglio ✨
-      </div>
-    </AbsoluteFill>
+    <div style={{ ...hand(LILAC, size), whiteSpace: "pre" }}>
+      {text.split("").map((c, i) => {
+        const k = seed * 100 + i * 7 + step * 13;
+        return (
+          <span
+            key={i}
+            style={{
+              display: "inline-block",
+              transform: `translate(${(rnd(k) - 0.5) * 3}px, ${(rnd(k + 1) - 0.5) * 3}px) rotate(${(rnd(k + 2) - 0.5) * 4}deg)`,
+            }}
+          >
+            {c === " " ? " " : c}
+          </span>
+        );
+      })}
+    </div>
   );
+};
+
+const Hook: React.FC = () => (
+  <AbsoluteFill style={{ alignItems: "center", paddingTop: 110 }}>
+    <BoilLine text={HOOK[0]} size={80} seed={1} />
+    <BoilLine text={HOOK[1]} size={92} seed={2} />
+  </AbsoluteFill>
+);
+
+// Simple hand-drawn doodles (own artwork), stroked like a marker.
+const Doodle: React.FC<{ name: DoodleName; color: string }> = ({
+  name,
+  color,
+}) => {
+  const p = {
+    fill: "none",
+    stroke: color,
+    strokeWidth: 7,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+  };
+  const shapes: Record<DoodleName, React.ReactNode> = {
+    alarm: (
+      <>
+        <circle cx={60} cy={64} r={36} {...p} />
+        <path
+          d="M60 64 L60 44 M60 64 L74 72 M28 34 L40 24 M92 34 L80 24 M38 98 L30 108 M82 98 L90 108"
+          {...p}
+        />
+      </>
+    ),
+    phone: <rect x={36} y={18} width={48} height={86} rx={10} {...p} />,
+    sun: (
+      <>
+        <circle cx={60} cy={60} r={22} {...p} fill="#FFE08A" />
+        {Array.from({ length: 8 }, (_, i) => {
+          const a = (i * Math.PI) / 4;
+          return (
+            <path
+              key={i}
+              d={`M${60 + Math.cos(a) * 34} ${60 + Math.sin(a) * 34} L${60 + Math.cos(a) * 48} ${60 + Math.sin(a) * 48}`}
+              {...p}
+            />
+          );
+        })}
+      </>
+    ),
+    cup: (
+      <>
+        <path
+          d="M26 50 L34 100 Q36 106 44 106 L76 106 Q84 106 86 100 L94 50 Z"
+          {...p}
+          fill="#FFF3E0"
+        />
+        <path d="M92 60 Q110 62 106 78 Q102 90 88 88" {...p} />
+        <path
+          d="M48 38 Q42 28 50 18 M62 38 Q56 28 64 18 M76 38 Q70 28 78 18"
+          {...p}
+        />
+      </>
+    ),
+    sparkle: (
+      <path
+        d="M60 14 Q66 54 106 60 Q66 66 60 106 Q54 66 14 60 Q54 54 60 14 Z"
+        {...p}
+      />
+    ),
+    drop: (
+      <path
+        d="M60 14 Q96 60 92 78 Q88 104 60 104 Q32 104 28 78 Q24 60 60 14 Z"
+        {...p}
+        fill="#DDF1FB"
+      />
+    ),
+    pill: (
+      <>
+        <rect
+          x={20}
+          y={44}
+          width={80}
+          height={34}
+          rx={17}
+          transform="rotate(-25 60 61)"
+          {...p}
+          fill="#FFE1EE"
+        />
+        <path d="M60 46 L60 78" transform="rotate(-25 60 61)" {...p} />
+      </>
+    ),
+    dumbbell: (
+      <>
+        <path d="M30 60 L90 60" {...p} />
+        <rect
+          x={16}
+          y={38}
+          width={16}
+          height={44}
+          rx={5}
+          {...p}
+          fill="#E5F3FB"
+        />
+        <rect
+          x={88}
+          y={38}
+          width={16}
+          height={44}
+          rx={5}
+          {...p}
+          fill="#E5F3FB"
+        />
+      </>
+    ),
+    heart: (
+      <path
+        d="M60 100 Q14 68 24 40 Q34 18 60 36 Q86 18 96 40 Q106 68 60 100 Z"
+        {...p}
+        fill="#FFE1EE"
+      />
+    ),
+    moon: (
+      <>
+        <path
+          d="M74 18 Q40 26 40 60 Q40 94 76 102 Q46 106 30 84 Q14 58 30 36 Q46 16 74 18 Z"
+          {...p}
+          fill="#FFF6CF"
+        />
+        <path d="M80 40 L96 40 L80 56 L96 56" {...p} />
+      </>
+    ),
+  };
+  return (
+    <svg
+      width={120}
+      height={120}
+      viewBox="0 0 120 120"
+      style={{ flexShrink: 0 }}
+    >
+      {shapes[name]}
+    </svg>
+  );
+};
+
+// Torn paper edge: a jagged polygon all around the box, fixed per sticker.
+const tornClip = (seed: number) => {
+  const pts: string[] = [];
+  const side = (n: number, f: (u: number, j: number) => string) => {
+    for (let i = 0; i <= n; i++) {
+      pts.push(f(i / n, rnd(seed * 97 + pts.length) * 3.2));
+    }
+  };
+  side(22, (u, j) => `${u * 100}% ${j}%`);
+  side(10, (u, j) => `${100 - j}% ${u * 100}%`);
+  side(22, (u, j) => `${100 - u * 100}% ${100 - j}%`);
+  side(10, (u, j) => `${j}% ${100 - u * 100}%`);
+  return `polygon(${pts.join(", ")})`;
 };
 
 const Pop: React.FC<{
   text: string;
   color: string;
   y: number;
-  emoji?: string;
+  doodle?: DoodleName;
+  tilt?: number;
   duration: number;
-}> = ({ text, color, y, emoji, duration }) => {
+  seed: number;
+}> = ({ text, color, y, doodle, tilt = 0, duration, seed }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const pop = spring({ frame, fps, config: { damping: 9, mass: 0.5 } });
   const out = interpolate(frame, [duration - 5, duration], [1, 0], clamp);
-  // gentle float upwards, like the reference words rising with her hands
   const rise = interpolate(frame, [0, duration], [20, -25]);
-  return (
-    <AbsoluteFill
+  const content = doodle ? (
+    // torn-paper sticker: white paper, soft shadow, slight tilt
+    <div
       style={{
-        alignItems: "center",
-        justifyContent: "center",
-        top: y - 960,
+        filter: "drop-shadow(0 10px 14px rgba(70,30,50,0.28))",
+        transform: `rotate(${tilt}deg)`,
       }}
     >
       <div
         style={{
           display: "flex",
           alignItems: "center",
-          gap: 18,
+          gap: 14,
+          padding: "26px 40px 26px 30px",
+          background: "#FFFDF8",
+          clipPath: tornClip(seed),
+        }}
+      >
+        <Doodle name={doodle} color={color} />
+        <div
+          style={{
+            ...hand(color, 78),
+            WebkitTextStroke: "0px",
+            filter: "none",
+            whiteSpace: "pre-line",
+          }}
+        >
+          {text}
+        </div>
+      </div>
+    </div>
+  ) : (
+    <div style={{ ...hand(color, 92), whiteSpace: "pre-line" }}>
+      {`* ${text} *`}
+    </div>
+  );
+  return (
+    <AbsoluteFill
+      style={{ alignItems: "center", justifyContent: "center", top: y - 960 }}
+    >
+      <div
+        style={{
           opacity: Math.min(1, pop * 2) * out,
           transform: `translateY(${rise}px) scale(${0.6 + 0.4 * pop})`,
         }}
       >
-        <div style={{ ...hand(color, 92), whiteSpace: "pre-line" }}>
-          {`* ${text} *`}
-        </div>
-        {emoji ? (
-          // Fluent Emoji 3D (Microsoft, MIT licence)
-          <Img
-            src={staticFile(`emoji/${emoji}.png`)}
-            style={{
-              width: 150,
-              transform: `rotate(${interpolate(frame, [0, duration], [-8, 8])}deg)`,
-              filter: "drop-shadow(0 8px 14px rgba(0,0,0,0.25))",
-            }}
-          />
-        ) : null}
+        {content}
       </div>
     </AbsoluteFill>
   );
 };
 
-// withEmoji=false renders the text-only version, for adding emoji on the phone.
-export const Perimenopausa: React.FC<{ withEmoji?: boolean }> = ({
-  withEmoji = true,
-}) => (
+export const Perimenopausa: React.FC = () => (
   <AbsoluteFill style={{ backgroundColor: "black" }}>
     <OffthreadVideo
       src={staticFile("hook/elena.mp4")}
       style={{ width: "100%", height: "100%", objectFit: "cover" }}
     />
     <Hook />
-    {POPS.map((p) => {
+    {POPS.map((p, i) => {
       const d = s(p.to) - s(p.from);
       return (
         <Sequence key={p.text} from={s(p.from)} durationInFrames={d}>
-          <Pop {...p} emoji={withEmoji ? p.emoji : undefined} duration={d} />
-          <Audio src={staticFile("sfx/pop.wav")} volume={0.35} />
+          <Pop {...p} duration={d} seed={i + 1} />
+          <Audio src={staticFile("sfx/pop_soft.wav")} volume={0.5} />
         </Sequence>
       );
     })}

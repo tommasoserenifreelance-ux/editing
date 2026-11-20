@@ -84,8 +84,25 @@ def pop():
     return np.stack([y, y], axis=1)
 
 
+def pop_soft():
+    """Organic bubble / mouth pop: a fast downward pitch sweep with a tiny
+    filtered click, no electronic ring."""
+    n = int(SR * 0.12)
+    t = np.arange(n) / SR
+    freq = 180 + 520 * np.exp(-t * 90)
+    body = np.sin(2 * np.pi * np.cumsum(freq) / SR) * np.exp(-t * 55)
+    click = signal.sosfilt(
+        signal.butter(2, [900, 3500], "band", fs=SR, output="sos"),
+        rng.standard_normal(n),
+    ) * np.exp(-t * 400) * 0.35
+    y = body + click
+    y = signal.sosfilt(signal.butter(2, 4000, "low", fs=SR, output="sos"), y)
+    return np.stack([y, y], axis=1)
+
+
 OUT.mkdir(parents=True, exist_ok=True)
 save("whoosh.wav", whoosh())
 save("wrong.wav", wrong())
 save("correct.wav", correct())
 save("pop.wav", pop())
+save("pop_soft.wav", pop_soft())

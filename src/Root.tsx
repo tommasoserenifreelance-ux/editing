@@ -150,15 +150,6 @@ export const RemotionRoot: React.FC = () => {
         height={1920}
       />
       <Composition
-        id="PerimenopausaSoloTesto"
-        component={Perimenopausa}
-        durationInFrames={PERI_DURATION}
-        fps={PERI_FPS}
-        width={1080}
-        height={1920}
-        defaultProps={{ withEmoji: false }}
-      />
-      <Composition
         id="Colazione"
         component={Colazione}
         durationInFrames={COLAZIONE_DURATION}
