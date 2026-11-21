@@ -33,7 +33,7 @@ const lead = (t0: number, text: string, after?: number) =>
     { list: [], t: after ?? t0 - 0.3 },
   ).list;
 
-const VOICE_END = 61.25;
+const VOICE_END = 60.0;
 const END = VOICE_END + 1.8;
 export const OMEGA_FPS = FPS;
 export const OMEGA_IG_DURATION = sec(END);
@@ -85,13 +85,13 @@ const SCENES: Scene[] = [
   },
   // ---- the fire
   {
-    from: f("Gli", 16.4),
+    from: f("Gli", 16.2),
     render: (t0) => (
       <Panel>
         <Lead words={lead(t0, "gli Omega 3 sono degli")} top={0.09} />
         <Title lines={["*estintori"]} at={[at(t0, "estintori")]} top={0.15} size={160} />
         <Fire at={4} outAt={at(t0, "basso")} top={0.33} />
-        <Lead words={lead(t0, "dell'incendio silenzioso dell'infiammazione cronica")} top={0.76} size={58} color={C.yellow} />
+        <Lead words={lead(t0, "quell'incendio silenzioso dell'infiammazione cronica")} top={0.76} size={58} color={C.yellow} />
       </Panel>
     ),
   },
@@ -114,7 +114,7 @@ const SCENES: Scene[] = [
     ),
   },
   {
-    from: f("un", 29),
+    from: f("un", 28.8),
     render: (t0) => (
       <Panel>
         <Lead words={lead(t0, "un esame che misura la percentuale di EPA e di DHA")} top={0.1} />
@@ -124,7 +124,7 @@ const SCENES: Scene[] = [
     ),
   },
   {
-    from: f("Non", 35),
+    from: f("Non", 34.5),
     render: (t0) => (
       <Panel>
         <Title lines={["non quanto", "ne prendi"]} at={[0, at(t0, "ne")]} top={0.08} size={110} color="rgba(255,255,255,0.55)" />
@@ -134,9 +134,9 @@ const SCENES: Scene[] = [
     ),
   },
   // ---- why you can still be low
-  { from: f("Perché", 40), caps: true, render: (t0) => <Speaker start={t0} punch={["carenti"]} /> },
+  { from: f("Perché", 39.5), caps: true, render: (t0) => <Speaker start={t0} punch={["carenti"]} /> },
   {
-    from: f("Perché", 44.6),
+    from: f("Perché", 44.1),
     render: (t0) => (
       <Clip src="omega/v_softgel.mp4">
         <Lead words={lead(t0, "perché contano")} top={0.22} size={62} color="#fff" />
@@ -145,9 +145,9 @@ const SCENES: Scene[] = [
     ),
   },
   // ---- food first
-  { from: f("E", 47.5), caps: true, render: (t0) => <Speaker start={t0} punch={["cibo"]} /> },
+  { from: f("E", 47), caps: true, render: (t0) => <Speaker start={t0} punch={["cibo"]} /> },
   {
-    from: f("Pesce", 50.3),
+    from: f("Pesce", 49),
     render: (t0) => (
       <Clip src="omega/v_pesce.mp4">
         <Lead words={lead(t0, "pesce grasso come")} top={0.14} size={62} color="#fff" />
@@ -158,7 +158,7 @@ const SCENES: Scene[] = [
     ),
   },
   {
-    from: f("due", 53.3),
+    from: f("due", 52),
     render: (t0) => (
       <Panel>
         <Title lines={["*2-3 volte", "a settimana"]} at={[0, at(t0, "settimana")]} top={0.24} size={130} />
@@ -167,7 +167,7 @@ const SCENES: Scene[] = [
     ),
   },
   {
-    from: f("Resta", 55.2),
+    from: f("Resta", 54),
     render: (t0) => (
       <Panel>
         <Lead words={lead(t0, "resta la base, l'integrazione mirata serve solamente come")} top={0.1} />

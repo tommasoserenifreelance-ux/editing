@@ -238,6 +238,7 @@ export const Captions: React.FC<{
               textShadow: key ? "none" : "0 4px 16px rgba(0,0,0,0.75), 0 0 2px rgba(0,0,0,0.9)",
               opacity: key && !said ? 0 : 1,
               display: "inline-block",
+              margin: `0 ${size * 0.13}px`,
             }}
           >
             {txt}
