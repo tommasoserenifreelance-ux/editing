@@ -21,13 +21,18 @@ for k, sec in enumerate(SECT):
             on = i < len(q) and q[i]
             if on and s is None: s = i
             if not on and s is not None:
-                if i - s >= MIN and s > 0 and i < len(q):
+                if i - s >= MIN and s == 0 and i < len(q):
+                    cur = a + i / 100 - KEEP_BEFORE  # leading silence of a section: drop it
+                elif i - s >= MIN and i == len(q) and s > 0:
+                    b_trim = a + s / 100 + KEEP_AFTER  # trailing silence: drop it
+                    pieces.append([cur, b_trim, z]); cur = None
+                elif i - s >= MIN and s > 0 and i < len(q):
                     ps = a + s / 100 + KEEP_AFTER; pe = a + i / 100 - KEEP_BEFORE
                     if pe > ps:
                         pieces.append([cur, ps, z]); cur = pe
                         if (i - s) >= 45: z ^= 1
                 s = None
-        pieces.append([cur, b, z])
+        if cur is not None: pieces.append([cur, b, z])
 q30 = lambda t: round(t * 30) / 30
 pieces = [[q30(a), q30(b), z] for a, b, z in pieces if q30(b) - q30(a) >= 2 / 30]
 tot = sum(b - a for a, b, z in pieces); print(len(pieces), 'pieces raw', round(tot, 2), '-> out', round(tot / SPEED, 2))
