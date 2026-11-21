@@ -14,7 +14,7 @@ import {
 
 // "Camminare VS correre sul tapis roulant", one after the other (no split
 // screen): first the walking clip full screen with its differences raining
-// down, a big "VS", then a swipe to the running clip with its own. Same hand-written
+// down, a fade to black with a big "VS", then the running clip with its own. Same hand-written
 // style as the perimenopause reel. Clips uploaded in chat →
 // public/tapis/{a,b}_v.mp4 (b = walking, a = running).
 
@@ -231,38 +231,43 @@ const Part: React.FC<{
   );
 };
 
-// Big "VS" that bursts in the middle while the clips swap.
+// Between the clips: fade to black, a big "VS" bursts in on the black,
+// then the black fades away on the running clip.
+const VS_LEN = 42; // frames
 const Versus: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const p = spring({ frame, fps, config: { damping: 7, mass: 0.6 } });
-  const out = interpolate(frame, [26, 34], [1, 0], clamp);
+  const black = interpolate(
+    frame,
+    [0, 8, VS_LEN - 8, VS_LEN],
+    [0, 1, 1, 0],
+    clamp,
+  );
+  const p = spring({
+    frame: frame - 8,
+    fps,
+    config: { damping: 7, mass: 0.6 },
+  });
+  const out = interpolate(frame, [VS_LEN - 10, VS_LEN - 4], [1, 0], clamp);
   return (
-    <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
+    <AbsoluteFill
+      style={{
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: `rgba(0,0,0,${black})`,
+      }}
+    >
       <div
         style={{
           ...hand(LILAC, 360),
-          WebkitTextStroke: "14px white",
+          WebkitTextStroke: "0px",
+          filter: "drop-shadow(0 0 30px rgba(217,168,240,0.55))",
           opacity: out,
           transform: `scale(${p}) rotate(${interpolate(p, [0, 1], [-30, -8])}deg)`,
         }}
       >
         vs
       </div>
-    </AbsoluteFill>
-  );
-};
-
-// Swipe: the running part slides in from the right over the walking part.
-const Swipe: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const frame = useCurrentFrame();
-  const x = interpolate(frame, [0, 10], [1080, 0], {
-    ...clamp,
-    easing: (t) => 1 - Math.pow(1 - t, 3),
-  });
-  return (
-    <AbsoluteFill style={{ transform: `translateX(${x}px)` }}>
-      {children}
     </AbsoluteFill>
   );
 };
@@ -281,21 +286,20 @@ export const TapisVs: React.FC = () => (
     </Sequence>
     <Audio src={staticFile("sfx/paper_swish.wav")} volume={0.3} />
     <Sequence from={s(PART)}>
-      <Swipe>
-        <Part
-          src="tapis/a_v.mp4"
-          label="correre"
-          color={PINK}
-          notes={RUN}
-          seed={11}
-          withTitle={false}
-        />
-      </Swipe>
-      <Audio src={staticFile("sfx/paper_swish.wav")} volume={0.35} />
+      <Part
+        src="tapis/a_v.mp4"
+        label="correre"
+        color={PINK}
+        notes={RUN}
+        seed={11}
+        withTitle={false}
+      />
     </Sequence>
-    <Sequence from={s(PART) - 10} durationInFrames={36}>
+    <Sequence from={s(PART) - VS_LEN / 2} durationInFrames={VS_LEN}>
       <Versus />
-      <Audio src={staticFile("sfx/pop_user.wav")} volume={0.7} />
+      <Sequence from={8}>
+        <Audio src={staticFile("sfx/pop_user.wav")} volume={0.7} />
+      </Sequence>
     </Sequence>
   </AbsoluteFill>
 );
