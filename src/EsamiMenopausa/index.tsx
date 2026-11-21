@@ -137,13 +137,15 @@ const Study: React.FC<{ t: number }> = ({ t }) => {
   return (
     <>
       <Kicker t={t}>LO STUDIO</Kicker>
+      <Headline t={t} size={52}>
+        I ricercatori hanno analizzato oltre
+      </Headline>
       <BigNumber t={t} at={0.2}>
         {n} milioni
       </BigNumber>
       <Sub t={t} at={1}>
-        di esami del sangue,
-        <br />
-        di <b>oltre 1 milione di donne</b>.
+        di risultati di esami di laboratorio, come gli esami del sangue,
+        appartenenti a <b>oltre 1 milione di donne</b>.
       </Sub>
     </>
   );
@@ -450,7 +452,17 @@ export const EsamiMenopausa: React.FC = () => {
         </div>
       ) : null}
       <Signature color={colors.plum} fontFamily={inter} />
-      <Audio src={staticFile("audio/esami-menopausa.m4a")} />
+      <Audio
+        src={staticFile("audio/esami-menopausa.m4a")}
+        volume={(f) =>
+          interpolate(
+            f,
+            [ESAMI_DURATION - 75, ESAMI_DURATION - 5],
+            [1, 0],
+            clamp,
+          )
+        }
+      />
     </AbsoluteFill>
   );
 };
