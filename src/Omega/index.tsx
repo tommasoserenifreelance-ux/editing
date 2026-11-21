@@ -1,31 +1,56 @@
 import React from "react";
-import { AbsoluteFill, Audio, Img, interpolate, Sequence, staticFile, useCurrentFrame } from "remotion";
+import { AbsoluteFill, Audio, Easing, Img, interpolate, Sequence, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { TalkingHead } from "../Nad/scenes";
 import { Sfx } from "../Testosterone/primitives";
 import { FPS, sec } from "../Testosterone/theme";
-import { Grain, Vignette } from "../IvTherapy/fx";
-import { CherryTop, Checks, Fire, FuelGauge, IndexGauge, ToTarget, Week } from "./anim";
-import { C, Captions, Clip, Lead, norm, Panel, Pill, StudyFan, Title, Wipe, Word } from "./ui";
+import { ColorBars, Grain, ref, Room, Smoke, Vignette } from "../IvTherapy/fx";
+import { chunksOf, Kinetic, Word } from "../IvTherapy/kinetic";
+import { Big, BrollWord, Card, Chip, CircleDraw, Lead, Stripes, Studies } from "../Tiroide/mg";
 import words from "./words_ig.json";
 
 /*
- * "Omega 3: il numero, non il barattolo" — vertical IG reel (≈ 63 s).
- * Speaker = approved pre-edit (already cut, 1.05×); words_ig.json holds
- * its word timings. New grammar for the series (see ui.tsx).
+ * "Omega 3: il numero, non il barattolo" — vertical IG reel, the usual
+ * LongevaMed/Pulp edit (kinetic captions, typographic cards, B-roll with the
+ * big decoding word, PubMed cards). Speaker = approved pre-edit v2 (1.05x).
  */
 
 const W = words as Word[];
+const norm = (w: string) => w.replace(/[.,?:!]/g, "").toLowerCase();
+/** case-insensitive word-time lookup */
 const wt = (text: string, after = 0) => {
   const hit = W.find((x) => x.s >= after - 0.01 && norm(x.w) === norm(text));
   if (!hit) throw new Error(`word not found: ${text} after ${after}`);
   return hit.s;
 };
 const at = (t0: number, w: string, after = t0 - 0.3) => sec(wt(w, after) - t0);
-const f = (w: string, after: number, pre = 0.05) => wt(w, after) - pre;
+const VOICE_END = 60.0;
+const END = VOICE_END + 1.7;
+export const OMEGA_FPS = FPS;
+export const OMEGA_IG_DURATION = sec(END);
+
+const CHUNKS = chunksOf(W, [], {
+  yellow: ["spiazza", "saperlo", "cibo", "base"],
+  red: ["carenti"],
+});
+
+const ANCHOR = "50% 8%";
+
+const Speaker: React.FC<{ start: number; punch?: string[] }> = ({ start, punch = [] }) => (
+  <AbsoluteFill>
+    <TalkingHead start={start} framing="wide" punch={punch.map((w) => wt(w, start - 0.3) - start)} src="omega/clip_ig.mp4" anchor={ANCHOR} />
+    <AbsoluteFill style={{ background: "linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.5))" }} />
+    <Vignette strength={0.4} />
+    <Grain opacity={0.06} />
+  </AbsoluteFill>
+);
+
+type Scene = { from: number; speaker?: boolean; smoke?: boolean; bars?: boolean; render: (t0: number) => React.ReactNode };
+
 const lead = (t0: number, text: string, after?: number) =>
   text.split(" ").reduce<{ list: { w: string; at: number }[]; t: number }>(
     (acc, w) => {
-      const s = wt(w.replace(/[.,]/g, ""), acc.t);
+      const clean = w.replace(/[.,]/g, "");
+      const s = wt(clean, acc.t);
       acc.list.push({ w, at: sec(s - t0) });
       acc.t = s + 0.01;
       return acc;
@@ -33,166 +58,152 @@ const lead = (t0: number, text: string, after?: number) =>
     { list: [], t: after ?? t0 - 0.3 },
   ).list;
 
-const VOICE_END = 60.0;
-const END = VOICE_END + 1.8;
-export const OMEGA_FPS = FPS;
-export const OMEGA_IG_DURATION = sec(END);
-const ANCHOR = "50% 8%";
-
-const Speaker: React.FC<{ start: number; punch?: string[] }> = ({ start, punch = [] }) => (
-  <AbsoluteFill>
-    <TalkingHead start={start} framing="wide" punch={punch.map((w) => wt(w, start - 0.3) - start)} src="omega/clip_ig.mp4" anchor={ANCHOR} />
-    <AbsoluteFill style={{ background: "linear-gradient(180deg, transparent 55%, rgba(11,22,34,0.55))" }} />
-    <Vignette strength={0.35} />
-    <Grain opacity={0.05} />
-  </AbsoluteFill>
-);
-
-type Scene = { from: number; caps?: boolean; render: (t0: number) => React.ReactNode };
+const f = (w: string, after: number, pre = 0.04) => wt(w, after) - pre;
 
 const SCENES: Scene[] = [
   // ---- hook
-  { from: 0, caps: true, render: (t0) => <Speaker start={t0} punch={["spiazza"]} /> },
+  { from: 0, speaker: true, render: (t0) => <Speaker start={t0} punch={["spiazza"]} /> },
   {
     from: f("Puoi", 1.5),
-    caps: true,
-    render: (t0) => (
-      <Clip src="omega/v_capsula_donna.mp4">
-        <Pill text="Omega 3" at={at(t0, "Omega")} x={0.5} y={0.2} />
-        <Pill text="ogni giorno" at={at(t0, "tutti")} x={0.5} y={0.29} bg={C.white} size={52} rot={-3} />
-      </Clip>
-    ),
+    render: (t0) => <BrollWord src="omega/v_capsula_donna.mp4" word={"TUTTI I\nGIORNI"} at={at(t0, "tutti")} lead={lead(t0, "il tuo bravo integratore di Omega 3")} />,
   },
   {
     from: f("ed", 6.5),
     render: (t0) => (
-      <Panel>
-        <Lead words={lead(t0, "ed essere comunque biologicamente")} top={0.13} />
-        <FuelGauge at={at(t0, "secco") - 6} top={0.3} />
-        <Title lines={["*a secco."]} at={[at(t0, "secco")]} top={0.68} size={170} />
-      </Panel>
+      <Card>
+        <Lead words={lead(t0, "ed essere comunque biologicamente")} top={0.38} />
+        <Big text="A SECCO." at={at(t0, "secco")} top={0.52} color={ref.red} size={150} boom />
+        <CircleDraw at={at(t0, "secco") + 4} top={0.52} w={0.86} h={0.14} />
+      </Card>
     ),
   },
-  { from: f("Ma", 9.3), caps: true, render: (t0) => <Speaker start={t0} punch={["saperlo"]} /> },
+  { from: f("Ma", 9.3), speaker: true, render: (t0) => <Speaker start={t0} punch={["saperlo"]} /> },
   {
     from: f("si", 14.8),
     render: (t0) => (
-      <Panel>
-        <Title lines={["si possono", "*misurare."]} at={[0, at(t0, "misurare")]} top={0.36} size={150} />
-        <Pill text="EPA + DHA" at={at(t0, "misurare") + 8} x={0.5} y={0.62} bg={C.white} size={56} />
-      </Panel>
+      <Card bg="yellow">
+        <Lead words={lead(t0, "si possono")} top={0.34} color="#141416" />
+        <Big text="MISURARE." at={at(t0, "misurare")} top={0.47} color="#141416" size={150} shadow={false} />
+      </Card>
     ),
   },
-  // ---- the fire
+  // ---- what they do
   {
     from: f("Gli", 16.2),
+    smoke: true,
     render: (t0) => (
-      <Panel>
-        <Lead words={lead(t0, "gli Omega 3 sono degli")} top={0.09} />
-        <Title lines={["*estintori"]} at={[at(t0, "estintori")]} top={0.15} size={160} />
-        <Fire at={4} outAt={at(t0, "basso")} top={0.33} />
-        <Lead words={lead(t0, "quell'incendio silenzioso dell'infiammazione cronica")} top={0.76} size={58} color={C.yellow} />
-      </Panel>
+      <Card>
+        <Lead words={lead(t0, "gli Omega 3 sono degli")} top={0.22} />
+        <Big text="ESTINTORI" at={at(t0, "estintori")} top={0.33} size={150} boom />
+        <Stripes at={at(t0, "quell'incendio") - 4} top={0.58} />
+        <Chip text="INFIAMMAZIONE" at={at(t0, "dell'infiammazione")} x={0.42} y={0.53} rot={-5} bg={ref.red} />
+        <Chip text="CRONICA" at={at(t0, "cronica")} x={0.62} y={0.66} rot={4} bg={ref.yellow} color="#141416" />
+      </Card>
     ),
   },
   // ---- the index
   {
     from: f("Lo", 25),
     render: (t0) => (
-      <Panel>
-        <Lead words={lead(t0, "lo strumento che pochi conoscono")} top={0.08} />
-        <StudyFan
-          top={0.2}
-          items={[
-            { src: "omega/study0.png", at: 3, hl: [0.42, 0.95] },
-            { src: "omega/study1.png", at: at(t0, "pochi"), hl: [0.2, 0.62] },
-            { src: "omega/study2.png", at: at(t0, "conoscono"), hl: [0.2, 0.62] },
-          ]}
-        />
-        <Title lines={["l'indice", "*omega 3"]} at={[at(t0, "l'indice"), at(t0, "Omega")]} top={0.7} size={140} />
-      </Panel>
+      <Studies
+        items={[
+          { src: "omega/study0.png", at: 3, hl: [0.42, 0.95] },
+          { src: "omega/study1.png", at: at(t0, "pochi"), hl: [0.2, 0.62] },
+          { src: "omega/study2.png", at: at(t0, "conoscono"), hl: [0.2, 0.62] },
+        ]}
+        label={
+          <>
+            <Lead words={lead(t0, "lo strumento che pochi conoscono")} top={0.1} />
+            <Big text={"INDICE\nOMEGA 3"} at={at(t0, "l'indice")} top={0.84} />
+          </>
+        }
+      />
     ),
   },
   {
     from: f("un", 28.8),
     render: (t0) => (
-      <Panel>
-        <Lead words={lead(t0, "un esame che misura la percentuale di EPA e di DHA")} top={0.1} />
-        <IndexGauge at={at(t0, "percentuale")} top={0.33} />
-        <Title lines={["nelle tue", "*cellule"]} at={[at(t0, "nelle"), at(t0, "membrane")]} top={0.62} size={140} />
-      </Panel>
+      <Card>
+        <Lead words={lead(t0, "un esame che misura la percentuale di")} top={0.2} />
+        <Chip text="EPA" at={at(t0, "EPA")} x={0.34} y={0.37} rot={-6} />
+        <Chip text="DHA" at={at(t0, "DHA")} x={0.66} y={0.4} rot={5} bg={ref.red} />
+        <Lead words={lead(t0, "nelle tue membrane,")} top={0.55} />
+        <Big text={"DELLE TUE\nCELLULE."} at={at(t0, "delle")} top={0.7} size={130} />
+      </Card>
     ),
   },
   {
     from: f("Non", 34.5),
     render: (t0) => (
-      <Panel>
-        <Title lines={["non quanto", "ne prendi"]} at={[0, at(t0, "ne")]} top={0.08} size={110} color="rgba(255,255,255,0.55)" />
-        <Title lines={["*ma quanto", "*arriva"]} at={[at(t0, "ma"), at(t0, "arrivato")]} top={0.72} size={130} />
-        <ToTarget at={at(t0, "ma")} fillAt={at(t0, "arrivato")} top={0.47} />
-      </Panel>
+      <Card bg="red">
+        <Lead words={lead(t0, "non quanto ne prendi,")} top={0.3} />
+        <Big text={"MA QUANTO\nARRIVA."} at={at(t0, "arrivato")} top={0.5} color="#fff" size={140} boom />
+      </Card>
     ),
   },
   // ---- why you can still be low
-  { from: f("Perché", 39.5), caps: true, render: (t0) => <Speaker start={t0} punch={["carenti"]} /> },
+  { from: f("Perché", 39.5), speaker: true, render: (t0) => <Speaker start={t0} punch={["carenti"]} /> },
   {
     from: f("Perché", 44.1),
-    render: (t0) => (
-      <Clip src="omega/v_softgel.mp4">
-        <Lead words={lead(t0, "perché contano")} top={0.22} size={62} color="#fff" />
-        <Checks items={[{ text: "QUALITÀ", at: at(t0, "qualità") }, { text: "DOSE VERA", at: at(t0, "dose") }]} top={0.36} />
-      </Clip>
-    ),
+    render: (t0) => <BrollWord src="omega/v_softgel.mp4" word={"QUALITÀ\nE DOSE"} at={at(t0, "qualità")} />,
   },
   // ---- food first
-  { from: f("E", 47), caps: true, render: (t0) => <Speaker start={t0} punch={["cibo"]} /> },
+  { from: f("E", 47), speaker: true, render: (t0) => <Speaker start={t0} punch={["cibo"]} /> },
   {
     from: f("Pesce", 49),
     render: (t0) => (
-      <Clip src="omega/v_pesce.mp4">
-        <Lead words={lead(t0, "pesce grasso come")} top={0.14} size={62} color="#fff" />
-        <Pill text="sgombro" at={at(t0, "sgombro")} x={0.3} y={0.62} rot={-4} />
-        <Pill text="sardine" at={at(t0, "sardine")} x={0.68} y={0.7} bg={C.white} rot={3} />
-        <Pill text="salmone" at={at(t0, "salmone")} x={0.36} y={0.79} rot={-2} />
-      </Clip>
+      <>
+        <BrollWord src="omega/v_pesce.mp4" word={"PESCE\nGRASSO"} at={at(t0, "Pesce")} />
+        <Chip text="SGOMBRO" at={at(t0, "sgombro")} x={0.3} y={0.18} rot={-5} />
+        <Chip text="SARDINE" at={at(t0, "sardine")} x={0.68} y={0.27} rot={4} bg={ref.red} />
+        <Chip text="SALMONE" at={at(t0, "salmone")} x={0.36} y={0.36} rot={-3} bg="#fff" color="#141416" />
+      </>
     ),
   },
   {
     from: f("due", 52),
+    smoke: true,
     render: (t0) => (
-      <Panel>
-        <Title lines={["*2-3 volte", "a settimana"]} at={[0, at(t0, "settimana")]} top={0.24} size={130} />
-        <Week at={4} top={0.52} />
-      </Panel>
+      <Card>
+        <Big text="2-3 VOLTE" at={at(t0, "due")} top={0.42} size={150} />
+        <Lead words={lead(t0, "a settimana.")} top={0.53} color={ref.yellow} size={66} />
+      </Card>
     ),
   },
+  { from: f("Resta", 54), speaker: true, render: (t0) => <Speaker start={t0} punch={["base"]} /> },
   {
-    from: f("Resta", 54),
+    from: f("l'integrazione", 55),
     render: (t0) => (
-      <Panel>
-        <Lead words={lead(t0, "resta la base, l'integrazione mirata serve solamente come")} top={0.1} />
-        <CherryTop at={at(t0, "base") - 4} capAt={at(t0, "ciliegina")} top={0.42} />
-        <Title lines={["*la ciliegina", "sulla torta."]} at={[at(t0, "ciliegina"), at(t0, "torta")]} top={0.68} size={120} />
-      </Panel>
+      <Card bg="yellow">
+        <Lead words={lead(t0, "l'integrazione mirata serve solamente come")} top={0.32} color="#141416" />
+        <Big text={"CILIEGINA\nSULLA TORTA."} at={at(t0, "ciliegina")} top={0.52} color="#141416" size={120} shadow={false} />
+      </Card>
     ),
   },
-  { from: VOICE_END + 0.05, render: () => <EndCard /> },
+  { from: VOICE_END + 0.05, bars: true, render: () => <EndCard /> },
 ];
 
 const EndCard: React.FC = () => {
   const frame = useCurrentFrame();
-  const k = interpolate(frame, [3, 14], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  const glitch = frame < 8 && frame % 2 === 0;
+  const k = interpolate(frame, [2, 12], [0, 1], { extrapolateRight: "clamp" });
   return (
-    <Panel>
+    <Room>
       <Img
         src={staticFile("nadig/logo-white.png")}
-        style={{ position: "absolute", left: glitch ? 14 : 0, top: 0, width: 1080, height: 1920, opacity: k, transform: `scale(${1.45 + 0.2 * k})`, filter: glitch ? "hue-rotate(60deg) saturate(3)" : "none" }}
+        style={{ position: "absolute", left: 0, top: 0, width: 1080, height: 1920, opacity: k, transform: `scale(${1.5 + 0.25 * k})` }}
       />
-      <Sfx at={0} name="glitch" volume={0.22} />
-      <Sfx at={2} name="tvon" volume={0.18} />
-    </Panel>
+    </Room>
   );
+};
+
+const Cam: React.FC<{ dir: "in" | "out"; origin: string; children: React.ReactNode }> = ({ dir, origin, children }) => {
+  const frame = useCurrentFrame();
+  const { durationInFrames } = useVideoConfig();
+  const scale =
+    dir === "in"
+      ? interpolate(frame, [0, durationInFrames], [1, 1.05], { easing: Easing.inOut(Easing.quad) })
+      : interpolate(frame, [0, Math.min(durationInFrames, 30)], [1.08, 1], { extrapolateRight: "clamp", easing: Easing.out(Easing.cubic) });
+  return <AbsoluteFill style={{ transform: `scale(${scale})`, transformOrigin: origin }}>{children}</AbsoluteFill>;
 };
 
 const sceneAt = (t: number) => {
@@ -208,25 +219,27 @@ export const OmegaIG: React.FC = () => (
       const stop = i < SCENES.length - 1 ? sec(SCENES[i + 1].from) : sec(END);
       return (
         <Sequence key={i} from={start} durationInFrames={Math.max(1, stop - start)}>
-          {s.render(s.from)}
+          <Cam dir={i % 2 === 0 ? "in" : "out"} origin={s.speaker ? ANCHOR : "50% 50%"}>
+            {s.render(s.from)}
+          </Cam>
+          {s.smoke ? <Smoke at={-12} dur={24} sound={false} /> : null}
+          {s.smoke ? <Sfx at={-6} name="smoke" volume={0.16} /> : null}
+          {s.bars ? <ColorBars at={0} dur={5} /> : null}
+          {i > 0 && !s.smoke && !s.bars ? <Sfx at={0} name={i % 2 ? "whoosh" : "swoosh"} volume={0.13} /> : null}
         </Sequence>
       );
     })}
-    {/* the yellow wipe rides over every cut (starts a few frames before it) */}
-    {SCENES.slice(1).map((s, i) => (
-      <Sequence key={`w${i}`} from={Math.max(0, sec(s.from) - 4)} durationInFrames={10} layout="none">
-        <Wipe dur={9} sound={i < SCENES.length - 2} />
-      </Sequence>
-    ))}
-    <Captions
-      words={W}
-      keys={["spiazza", "saperlo", "carenti", "cibo", "religiosamente"]}
-      top={0.72}
-      visible={(t) => !!SCENES[sceneAt(t)].caps}
+    <Kinetic
+      chunks={CHUNKS}
+      visible={(t) => {
+        const i = sceneAt(t);
+        return { on: !!SCENES[i].speaker, end: SCENES[i + 1]?.from ?? END };
+      }}
     />
     <Sequence durationInFrames={sec(VOICE_END + 0.3)} layout="none">
       <Audio src={staticFile("omega/voice_ig.m4a")} volume={0.95} />
     </Sequence>
-    <Audio src={staticFile("omega/music_ig.m4a")} volume={0.55} />
+    {/* dark trap bed in the spirit of the Pulp Podcast reference, ducked under the voice */}
+    <Audio src={staticFile("omega/music_ig.m4a")} volume={0.6} />
   </AbsoluteFill>
 );
