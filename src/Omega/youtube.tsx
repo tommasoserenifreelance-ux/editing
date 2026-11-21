@@ -24,7 +24,7 @@ const wt = (text: string, after = 0) => {
   return hit.s;
 };
 const at = (t0: number, w: string, after = t0 - 0.3) => sec(wt(w, after) - t0);
-const VOICE_END = 135.7;
+const VOICE_END = 135.1;
 const END = VOICE_END + 0.4; // the channel outro follows
 const BODY_DURATION = sec(END);
 
@@ -236,7 +236,7 @@ const SCENES: Scene[] = [
   { from: f("prenderli", 79), speaker: true, render: (t0) => <Speaker start={t0} punch={["carenti"]} /> },
   { from: f("Perché", 83), render: (t0) => <BW src="omega/h_softgel.mp4" word="QUALITÀ E DOSE" at={at(t0, "qualità")} /> },
   {
-    from: f("Il", 85.9),
+    from: f("Il", 85.2),
     render: (t0) => (
       <Card>
         <Lead words={lead(t0, "il titolo reale di EPA e di DHA è spesso")} top={0.22} />
@@ -246,7 +246,7 @@ const SCENES: Scene[] = [
     ),
   },
   {
-    from: f("La", 92.2),
+    from: f("La", 91.5),
     smoke: true,
     render: (t0) => (
       <Card>
@@ -257,10 +257,10 @@ const SCENES: Scene[] = [
       </Card>
     ),
   },
-  { from: f("È", 97.3), speaker: true, render: (t0) => <Speaker start={t0} /> },
-  { from: f("la", 100.7), render: (t0) => <BW src="omega/h_medico.mp4" word="PROFESSIONISTA" at={at(t0, "professionista")} lead={lead(t0, "la guida di un")} /> },
+  { from: f("È", 96.6), speaker: true, render: (t0) => <Speaker start={t0} /> },
+  { from: f("la", 100.0), render: (t0) => <BW src="omega/h_medico.mp4" word="PROFESSIONISTA" at={at(t0, "professionista")} lead={lead(t0, "la guida di un")} /> },
   {
-    from: f("e", 102.5),
+    from: f("e", 101.8),
     render: (t0) => (
       <Card>
         <Lead words={lead(t0, "e una scelta")} top={0.26} />
@@ -269,11 +269,11 @@ const SCENES: Scene[] = [
       </Card>
     ),
   },
-  { from: f("evitano", 105.8), render: (t0) => <BW src="omega/h_scaffale.mp4" word="GENERICI E SOTTODOSATI" at={at(t0, "generici")} lead={lead(t0, "evitano di farti buttare soldi in prodotti")} color={ref.red} /> },
+  { from: f("evitano", 105.1), render: (t0) => <BW src="omega/h_scaffale.mp4" word="GENERICI E SOTTODOSATI" at={at(t0, "generici")} lead={lead(t0, "evitano di farti buttare soldi in prodotti")} color={ref.red} /> },
   // ---- food first
-  { from: f("E", 110.3), speaker: true, render: (t0) => <Speaker start={t0} punch={["cibo"]} /> },
+  { from: f("E", 109.6), speaker: true, render: (t0) => <Speaker start={t0} punch={["cibo"]} /> },
   {
-    from: f("Pesce", 112.7),
+    from: f("Pesce", 112.0),
     render: (t0) => (
       <>
         <BW src="omega/h_pesce.mp4" word="PESCE GRASSO" at={at(t0, "Pesce")} />
@@ -284,7 +284,7 @@ const SCENES: Scene[] = [
     ),
   },
   {
-    from: f("due", 115.9),
+    from: f("due", 115.2),
     smoke: true,
     render: (t0) => (
       <Card>
@@ -293,9 +293,9 @@ const SCENES: Scene[] = [
       </Card>
     ),
   },
-  { from: f("Resta", 117.8), speaker: true, render: (t0) => <Speaker start={t0} punch={["base"]} /> },
+  { from: f("Resta", 117.1), speaker: true, render: (t0) => <Speaker start={t0} punch={["base"]} /> },
   {
-    from: f("l'integrazione", 119.2),
+    from: f("l'integrazione", 118.5),
     render: (t0) => (
       <Card bg="yellow">
         <Lead words={lead(t0, "l'integrazione mirata serve solamente come")} top={0.26} color="#141416" />
@@ -303,7 +303,7 @@ const SCENES: Scene[] = [
       </Card>
     ),
   },
-  { from: f("magari", 124), speaker: true, render: (t0) => <Speaker start={t0} punch={["grande"]} /> },
+  { from: f("magari", 123.3), speaker: true, render: (t0) => <Speaker start={t0} punch={["grande"]} /> },
 ];
 
 const Cam: React.FC<{ dir: "in" | "out"; origin: string; children: React.ReactNode }> = ({ dir, origin, children }) => {
