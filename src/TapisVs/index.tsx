@@ -14,7 +14,7 @@ import {
 
 // "Camminare VS correre sul tapis roulant", one after the other (no split
 // screen): first the walking clip full screen with its differences raining
-// down, then a swipe to the running clip with its own. Same hand-written
+// down, a big "VS", then a swipe to the running clip with its own. Same hand-written
 // style as the perimenopause reel. Clips uploaded in chat →
 // public/tapis/{a,b}_v.mp4 (b = walking, a = running).
 
@@ -22,8 +22,7 @@ export const TAPIS_FPS = 30;
 const s = (seconds: number) => Math.round(seconds * TAPIS_FPS);
 
 const PART = 8.6; // seconds per side
-const CLOSE = 2.6; // closing line after the running part
-export const TAPIS_DURATION = s(PART * 2 + CLOSE);
+export const TAPIS_DURATION = s(PART * 2);
 
 const HAND = "Caveat Brush";
 const handle = delayRender("Loading hand-written font");
@@ -55,24 +54,30 @@ const hand = (color: string, size: number): React.CSSProperties => ({
 });
 
 const WALK = [
-  "basso impatto sulle articolazioni",
-  "cortisolo stabile",
-  "usa soprattutto i grassi",
-  "poca infiammazione acuta",
-  "recuperi subito: ogni giorno",
+  "basso impatto\nsulle articolazioni",
+  "cortisolo\nstabile",
+  "usa soprattutto\ni grassi",
+  "poca infiammazione\nacuta",
+  "recuperi subito:\nogni giorno",
 ];
 const RUN = [
-  "impatto 2-3 volte il peso corporeo",
-  "picco di cortisolo",
-  "usa più zuccheri",
-  "infiammazione acuta temporanea",
-  "serve più recupero",
+  "impatto 2-3 volte\nil peso corporeo",
+  "picco di\ncortisolo",
+  "usa più\nzuccheri",
+  "infiammazione\nacuta temporanea",
+  "serve più\nrecupero",
+];
+// Scattered around the edges so her body in the middle stays visible.
+const SPOTS: { left: boolean; y: number }[] = [
+  { left: true, y: 560 },
+  { left: false, y: 760 },
+  { left: true, y: 1010 },
+  { left: false, y: 1260 },
+  { left: true, y: 1500 },
 ];
 
 const FIRST = 1.6; // first note falls, in each part (s)
 const EVERY = 1.2;
-const ROW_Y = 600;
-const ROW_H = 165;
 
 const clamp = {
   extrapolateLeft: "clamp",
@@ -131,49 +136,41 @@ const RiseText: React.FC<{
   );
 };
 
-// A torn-paper note that drops from above and bounces into place.
+// A torn-paper note that drops from above and bounces into place, at the
+// left or right edge of the frame.
 const Falling: React.FC<{
   text: string;
   color: string;
+  left: boolean;
   y: number;
   seed: number;
-}> = ({ text, color, y, seed }) => {
+}> = ({ text, color, left, y, seed }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const drop = spring({ frame, fps, config: { damping: 11, mass: 0.8 } });
-  const tilt = (rnd(seed) - 0.5) * 8;
-  const offset = (rnd(seed + 5) - 0.5) * 120;
+  const tilt = (left ? -1 : 1) * (3 + rnd(seed) * 4);
   return (
     <div
       style={{
         position: "absolute",
-        left: 0,
-        right: 0,
         top: interpolate(drop, [0, 1], [-260, y]),
-        display: "flex",
-        justifyContent: "center",
-        transform: `translateX(${offset}px)`,
+        [left ? "left" : "right"]: 34,
+        filter: "drop-shadow(0 10px 14px rgba(70,30,50,0.3))",
+        transform: `rotate(${interpolate(drop, [0, 1], [tilt * 3, tilt])}deg)`,
       }}
     >
       <div
         style={{
-          filter: "drop-shadow(0 10px 14px rgba(70,30,50,0.3))",
-          transform: `rotate(${interpolate(drop, [0, 1], [tilt * 3, tilt])}deg)`,
+          background: "#FFFDF8",
+          clipPath: tornClip(seed),
+          padding: "16px 26px",
+          ...hand(color, 48),
+          WebkitTextStroke: "0px",
+          filter: "none",
+          whiteSpace: "pre-line",
         }}
       >
-        <div
-          style={{
-            background: "#FFFDF8",
-            clipPath: tornClip(seed),
-            padding: "18px 34px",
-            ...hand(color, 56),
-            WebkitTextStroke: "0px",
-            filter: "none",
-            whiteSpace: "nowrap",
-          }}
-        >
-          {text}
-        </div>
+        {text}
       </div>
     </div>
   );
@@ -223,7 +220,8 @@ const Part: React.FC<{
           <Falling
             text={n}
             color={color}
-            y={ROW_Y + i * ROW_H}
+            left={SPOTS[i].left}
+            y={SPOTS[i].y}
             seed={seed + i}
           />
           <Audio src={staticFile("sfx/pop_user.wav")} volume={0.6} />
@@ -233,26 +231,23 @@ const Part: React.FC<{
   );
 };
 
-const Closing: React.FC = () => {
+// Big "VS" that bursts in the middle while the clips swap.
+const Versus: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const p = spring({ frame, fps, config: { damping: 10 } });
+  const p = spring({ frame, fps, config: { damping: 7, mass: 0.6 } });
+  const out = interpolate(frame, [26, 34], [1, 0], clamp);
   return (
-    <AbsoluteFill
-      style={{
-        alignItems: "center",
-        justifyContent: "flex-end",
-        paddingBottom: 170,
-      }}
-    >
+    <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
       <div
         style={{
-          ...hand(LILAC, 72),
-          opacity: p,
-          transform: `translateY(${interpolate(p, [0, 1], [80, 0])}px)`,
+          ...hand(LILAC, 360),
+          WebkitTextStroke: "14px white",
+          opacity: out,
+          transform: `scale(${p}) rotate(${interpolate(p, [0, 1], [-30, -8])}deg)`,
         }}
       >
-        il segreto? alternarli ✨
+        vs
       </div>
     </AbsoluteFill>
   );
@@ -298,9 +293,9 @@ export const TapisVs: React.FC = () => (
       </Swipe>
       <Audio src={staticFile("sfx/paper_swish.wav")} volume={0.35} />
     </Sequence>
-    <Sequence from={s(PART * 2)}>
-      <Closing />
-      <Audio src={staticFile("sfx/soft_chime.wav")} volume={0.35} />
+    <Sequence from={s(PART) - 10} durationInFrames={36}>
+      <Versus />
+      <Audio src={staticFile("sfx/pop_user.wav")} volume={0.7} />
     </Sequence>
   </AbsoluteFill>
 );
