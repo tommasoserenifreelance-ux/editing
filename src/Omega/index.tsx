@@ -5,7 +5,7 @@ import { Sfx } from "../Testosterone/primitives";
 import { FPS, sec } from "../Testosterone/theme";
 import { ColorBars, Grain, ref, Room, Smoke, Vignette } from "../IvTherapy/fx";
 import { chunksOf, Kinetic, Word } from "../IvTherapy/kinetic";
-import { Big, BrollWord, Card, Chip, CircleDraw, Lead, Stripes, Studies } from "../Tiroide/mg";
+import { Big, BrollWord, Card, Chip, CircleDraw, Lead, Studies } from "../Tiroide/mg";
 import words from "./words_ig.json";
 
 /*
@@ -65,7 +65,7 @@ const SCENES: Scene[] = [
   { from: 0, speaker: true, render: (t0) => <Speaker start={t0} punch={["spiazza"]} /> },
   {
     from: f("Puoi", 1.5),
-    render: (t0) => <BrollWord src="omega/v_capsula_donna.mp4" word={"TUTTI I\nGIORNI"} at={at(t0, "tutti")} lead={lead(t0, "il tuo bravo integratore di Omega 3")} />,
+    render: (t0) => <BrollWord src="omega/v_capsula_donna.mp4" word="OGNI GIORNO" at={at(t0, "tutti")} lead={lead(t0, "il tuo bravo integratore")} />,
   },
   {
     from: f("ed", 6.5),
@@ -93,11 +93,11 @@ const SCENES: Scene[] = [
     smoke: true,
     render: (t0) => (
       <Card>
-        <Lead words={lead(t0, "gli Omega 3 sono degli")} top={0.22} />
-        <Big text="ESTINTORI" at={at(t0, "estintori")} top={0.33} size={150} boom />
-        <Stripes at={at(t0, "quell'incendio") - 4} top={0.58} />
-        <Chip text="INFIAMMAZIONE" at={at(t0, "dell'infiammazione")} x={0.42} y={0.53} rot={-5} bg={ref.red} />
-        <Chip text="CRONICA" at={at(t0, "cronica")} x={0.62} y={0.66} rot={4} bg={ref.yellow} color="#141416" />
+        <Lead words={lead(t0, "gli Omega 3 sono degli")} top={0.2} />
+        <Big text="ESTINTORI" at={at(t0, "estintori")} top={0.31} size={150} boom />
+        <Lead words={lead(t0, "di quell'incendio silenzioso")} top={0.5} />
+        <Big text={"INFIAMMAZIONE\nCRONICA"} at={at(t0, "dell'infiammazione")} top={0.66} color={ref.red} size={104} />
+        <CircleDraw at={at(t0, "cronica") + 2} top={0.66} w={0.96} h={0.17} color={ref.yellow} />
       </Card>
     ),
   },
