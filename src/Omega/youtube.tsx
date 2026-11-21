@@ -24,7 +24,7 @@ const wt = (text: string, after = 0) => {
   return hit.s;
 };
 const at = (t0: number, w: string, after = t0 - 0.3) => sec(wt(w, after) - t0);
-const VOICE_END = 135.1;
+const VOICE_END = 134.08;
 const END = VOICE_END + 0.4; // the channel outro follows
 const BODY_DURATION = sec(END);
 
@@ -156,7 +156,7 @@ const SCENES: Scene[] = [
       </Card>
     ),
   },
-  { from: f("e", 30.7), render: (t0) => <BW src="omega/h_cuore.mp4" word="CUORE" at={at(t0, "cuore")} lead={lead(t0, "importantissimi per")} /> },
+  { from: f("e", 30.69), render: (t0) => <BW src="omega/h_cuore.mp4" word="CUORE" at={at(t0, "cuore")} lead={lead(t0, "importantissimi per")} /> },
   { from: f("cervello", 32.9), render: () => <BW src="omega/h_cervello.mp4" word="CERVELLO" at={3} /> },
   { from: f("e", 34.1), render: (t0) => <BW src="omega/h_occhi.mp4" word="OCCHI" at={at(t0, "occhi")} /> },
   { from: f("Hai", 34.9), speaker: true, render: (t0) => <Speaker start={t0} punch={["collegamento", "cronica"]} /> },
@@ -233,8 +233,8 @@ const SCENES: Scene[] = [
     ),
   },
   // ---- why you can still be low
-  { from: f("prenderli", 79), speaker: true, render: (t0) => <Speaker start={t0} punch={["carenti"]} /> },
-  { from: f("Perché", 83), render: (t0) => <BW src="omega/h_softgel.mp4" word="QUALITÀ E DOSE" at={at(t0, "qualità")} /> },
+  { from: f("prenderli", 79.0), speaker: true, render: (t0) => <Speaker start={t0} punch={["carenti"]} /> },
+  { from: f("Perché", 83.0), render: (t0) => <BW src="omega/h_softgel.mp4" word="QUALITÀ E DOSE" at={at(t0, "qualità")} /> },
   {
     from: f("Il", 85.2),
     render: (t0) => (
@@ -246,7 +246,7 @@ const SCENES: Scene[] = [
     ),
   },
   {
-    from: f("La", 91.5),
+    from: f("La", 91.3),
     smoke: true,
     render: (t0) => (
       <Card>
@@ -257,10 +257,10 @@ const SCENES: Scene[] = [
       </Card>
     ),
   },
-  { from: f("È", 96.6), speaker: true, render: (t0) => <Speaker start={t0} /> },
-  { from: f("la", 100.0), render: (t0) => <BW src="omega/h_medico.mp4" word="PROFESSIONISTA" at={at(t0, "professionista")} lead={lead(t0, "la guida di un")} /> },
+  { from: f("È", 96.41), speaker: true, render: (t0) => <Speaker start={t0} /> },
+  { from: f("la", 99.8), render: (t0) => <BW src="omega/h_medico.mp4" word="PROFESSIONISTA" at={at(t0, "professionista")} lead={lead(t0, "la guida di un")} /> },
   {
-    from: f("e", 101.8),
+    from: f("e", 101.6),
     render: (t0) => (
       <Card>
         <Lead words={lead(t0, "e una scelta")} top={0.26} />
@@ -269,11 +269,11 @@ const SCENES: Scene[] = [
       </Card>
     ),
   },
-  { from: f("evitano", 105.1), render: (t0) => <BW src="omega/h_scaffale.mp4" word="GENERICI E SOTTODOSATI" at={at(t0, "generici")} lead={lead(t0, "evitano di farti buttare soldi in prodotti")} color={ref.red} /> },
+  { from: f("evitano", 104.89), render: (t0) => <BW src="omega/h_scaffale.mp4" word="GENERICI E SOTTODOSATI" at={at(t0, "generici")} lead={lead(t0, "evitano di farti buttare soldi in prodotti")} color={ref.red} /> },
   // ---- food first
-  { from: f("E", 109.6), speaker: true, render: (t0) => <Speaker start={t0} punch={["cibo"]} /> },
+  { from: f("E", 109.4), speaker: true, render: (t0) => <Speaker start={t0} punch={["cibo"]} /> },
   {
-    from: f("Pesce", 112.0),
+    from: f("Pesce", 111.79),
     render: (t0) => (
       <>
         <BW src="omega/h_pesce.mp4" word="PESCE GRASSO" at={at(t0, "Pesce")} />
@@ -284,7 +284,7 @@ const SCENES: Scene[] = [
     ),
   },
   {
-    from: f("due", 115.2),
+    from: f("due", 115.09),
     smoke: true,
     render: (t0) => (
       <Card>
@@ -293,9 +293,9 @@ const SCENES: Scene[] = [
       </Card>
     ),
   },
-  { from: f("Resta", 117.1), speaker: true, render: (t0) => <Speaker start={t0} punch={["base"]} /> },
+  { from: f("Resta", 116.89), speaker: true, render: (t0) => <Speaker start={t0} punch={["base"]} /> },
   {
-    from: f("l'integrazione", 118.5),
+    from: f("l'integrazione", 118.3),
     render: (t0) => (
       <Card bg="yellow">
         <Lead words={lead(t0, "l'integrazione mirata serve solamente come")} top={0.26} color="#141416" />
@@ -303,7 +303,7 @@ const SCENES: Scene[] = [
       </Card>
     ),
   },
-  { from: f("magari", 123.3), speaker: true, render: (t0) => <Speaker start={t0} punch={["grande"]} /> },
+  { from: f("magari", 122.75), speaker: true, render: (t0) => <Speaker start={t0} punch={["grande"]} /> },
 ];
 
 const Cam: React.FC<{ dir: "in" | "out"; origin: string; children: React.ReactNode }> = ({ dir, origin, children }) => {
@@ -373,7 +373,7 @@ const OmegaYTBody: React.FC = () => (
 /* intro ("metti like, iscriviti…", yellow ring) with the title →      */
 /* body → subscribe/disclaimer outro.                                   */
 /* ------------------------------------------------------------------ */
-const HOOK_END = sec(f("Prima", 21));
+const HOOK_END = sec(f("Prima", 21.0));
 const INTRO = sec(13.5);
 const OUTRO = sec(5.59);
 const BODY_REST = BODY_DURATION - HOOK_END;
