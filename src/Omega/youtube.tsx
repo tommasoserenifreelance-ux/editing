@@ -28,10 +28,6 @@ const VOICE_END = 135.7;
 const END = VOICE_END + 1.7;
 export const OMEGA_YT_DURATION = sec(END);
 
-const CHUNKS = chunksOf(W, [], {
-  yellow: ["spiazza", "servono", "collegamento", "cronica", "oggettivo", "cibo", "base", "grande"],
-  red: ["carenti", "intenzioni"],
-});
 
 const ANCHOR = "52% 22%";
 
@@ -339,6 +335,20 @@ const sceneAt = (t: number) => {
   while (i < SCENES.length - 1 && t >= SCENES[i + 1].from) i++;
   return i;
 };
+
+// captions only from words spoken on speaker shots: a word that is written on a
+// card or B-roll never also appears as a caption (no doubles)
+const SETS = {
+  yellow: ["spiazza", "servono", "collegamento", "cronica", "oggettivo", "cibo", "base", "grande"],
+  red: ["carenti", "intenzioni"],
+};
+// chunked per speaker shot, so a caption never runs into the next shot
+const CHUNKS = SCENES.flatMap((sc, i) => {
+  if (!sc.speaker) return [];
+  const end = SCENES[i + 1]?.from ?? END;
+  const ws = W.filter((w) => w.s + 0.01 >= sc.from && w.s + 0.01 < end);
+  return ws.length ? chunksOf(ws, [], SETS) : [];
+});
 
 export const OmegaYT: React.FC = () => (
   <AbsoluteFill style={{ backgroundColor: "#000" }}>
