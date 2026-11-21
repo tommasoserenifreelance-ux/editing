@@ -1,7 +1,7 @@
 import sys, subprocess, io, re, json
 import numpy as np, soundfile as sf, librosa
 TXT, WAV, OUT = sys.argv[1:4]; SR=16000; H=160
-SAY={'DHEA':'di acca e a','DHEA-S':'di acca e a esse','T3':'ti tre','T4':'ti quattro','100%':'cento per cento'}
+SAY={'DHEA':'di acca e a','DHEA-S':'di acca e a esse','EPA':'e pi a','DHA':'di acca a','T3':'ti tre','T4':'ti quattro','100%':'cento per cento'}
 text=open(TXT).read().split()
 def synth(w):
     key=re.sub(r"[^\wàèéìòùÀÈÉÌÒÙ'%-]",'',w); say=SAY.get(key,key)

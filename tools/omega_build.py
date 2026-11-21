@@ -1,0 +1,53 @@
+"""Omega 3 pre-edit builder.
+usage: omega_build.py yt|ig OUT SPEED [dry]
+yt: full talk, pauses compressed, 16:9 with wide/close alternation.
+ig: selected sections (SECT_IG), 9:16 speaker crops.
+"""
+import json, subprocess, sys, numpy as np
+S = '/tmp/claude-0/-home-user-editing/80a2e44c-55fb-5633-9cd2-a538b271aca0/scratchpad/'
+SRC = S + 'omega_src/'; W = S + 'omega/'
+MODE, OUT, SPEED = sys.argv[1], sys.argv[2], float(sys.argv[3]); DRY = len(sys.argv) > 4
+db = np.load(SRC + 'db.npy'); SEAM = 79.2
+TH = -40; MIN = 22; KEEP_AFTER = 0.13; KEEP_BEFORE = 0.08
+SECT_YT = [[(0.2, 79.2), (79.2, 157.45)]]
+SECT_IG = json.load(open(W + 'sect_ig.json')) if MODE == 'ig' else None
+SECT = SECT_YT if MODE == 'yt' else SECT_IG
+pieces = []
+for k, sec in enumerate(SECT):
+    z = k % 2
+    for (a, b) in sec:
+        i0, i1 = int(a * 100), int(b * 100); q = db[i0:i1] < TH; s = None; cur = a
+        for i in range(len(q) + 1):
+            on = i < len(q) and q[i]
+            if on and s is None: s = i
+            if not on and s is not None:
+                if i - s >= MIN and s > 0 and i < len(q):
+                    ps = a + s / 100 + KEEP_AFTER; pe = a + i / 100 - KEEP_BEFORE
+                    if pe > ps:
+                        pieces.append([cur, ps, z]); cur = pe
+                        if (i - s) >= 45: z ^= 1
+                s = None
+        pieces.append([cur, b, z])
+q30 = lambda t: round(t * 30) / 30
+pieces = [[q30(a), q30(b), z] for a, b, z in pieces if q30(b) - q30(a) >= 2 / 30]
+tot = sum(b - a for a, b, z in pieces); print(len(pieces), 'pieces raw', round(tot, 2), '-> out', round(tot / SPEED, 2))
+json.dump(pieces, open(W + f'pieces_{MODE}.json', 'w'))
+if DRY: sys.exit()
+if MODE == 'yt':
+    F = ["scale=1920:1080:flags=lanczos", "crop=2880:1620:560:60,scale=1920:1080:flags=lanczos"]
+else:
+    F = ["crop=1215:2160:1400:0,scale=1080:1920:flags=lanczos", "crop=972:1728:1520:110,scale=1080:1920:flags=lanczos"]
+L = open(W + 'list.txt', 'w'); n = 0
+subprocess.run(f'rm -f {W}p*.mp4', shell=True)
+for a, b, z in pieces:
+    segs = [('o1.mp4', a, b)] if b <= SEAM else ([('o2.mp4', a - SEAM, b - SEAM)] if a >= SEAM else [('o1.mp4', a, SEAM), ('o2.mp4', 0, b - SEAM)])
+    for f, x0, x1 in segs:
+        d = x1 - x0
+        if d < 1 / 30: continue
+        o = f'{W}p{n:03d}.mp4'; n += 1
+        subprocess.run(['ffmpeg', '-v', 'error', '-y', '-ss', f'{x0:.4f}', '-i', SRC + f, '-t', f'{d:.4f}', '-vf', F[z] + ',fps=30,setsar=1',
+            '-af', f'afade=t=in:d=0.006,afade=t=out:st={max(0, d - 0.008):.4f}:d=0.008', '-c:v', 'libx264', '-preset', 'fast', '-crf', '17', '-pix_fmt', 'yuv420p', '-c:a', 'pcm_s16le', '-ar', '48000', o], check=True)
+        L.write(f"file '{o}'\n")
+L.close()
+subprocess.run(['ffmpeg', '-v', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', W + 'list.txt', '-filter_complex', f'[0:v]setpts=PTS/{SPEED},fps=30[v];[0:a]atempo={SPEED},loudnorm=I=-15:TP=-1.5:LRA=9[a]', '-map', '[v]', '-map', '[a]', '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '192k', '-ar', '48000', '-movflags', '+faststart', OUT], check=True)
+print('done')
