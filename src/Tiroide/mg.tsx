@@ -135,20 +135,24 @@ export const CircleDraw: React.FC<{ at: number; top: number; w: number; h: numbe
   const frame = useCurrentFrame();
   const { width, height } = useVideoConfig();
   const p = interpolate(frame - at, [0, 12], [0, 1], clamp);
-  const len = 2400;
+  // exact perimeter (Ramanujan) so no stray dash shows before the draw starts
+  const rx = (width * w) / 2;
+  const ry = (height * h) / 2;
+  const len = Math.PI * (3 * (rx + ry) - Math.sqrt((3 * rx + ry) * (rx + 3 * ry))) + 4;
+  if (frame < at) return null;
   return (
     <>
       <svg width={width} height={height} style={{ position: "absolute", left: 0, top: 0 }}>
         <ellipse
           cx={width / 2}
           cy={height * top}
-          rx={(width * w) / 2}
-          ry={(height * h) / 2}
+          rx={rx}
+          ry={ry}
           fill="none"
           stroke={color}
           strokeWidth={7}
           strokeLinecap="round"
-          strokeDasharray={len}
+          strokeDasharray={`${len} ${len}`}
           strokeDashoffset={len * (1 - p)}
           transform={`rotate(-6 ${width / 2} ${height * top})`}
         />

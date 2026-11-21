@@ -5,7 +5,7 @@ ig: selected sections (SECT_IG), 9:16 speaker crops.
 """
 import json, subprocess, sys, numpy as np
 S = '/tmp/claude-0/-home-user-editing/80a2e44c-55fb-5633-9cd2-a538b271aca0/scratchpad/'
-SRC = S + 'omega_src/'; W = S + 'omega/'
+SRC = S + 'omega_src/'; W = S + 'omega/'; WP = S + f'omega/{sys.argv[1]}_parts/'
 MODE, OUT, SPEED = sys.argv[1], sys.argv[2], float(sys.argv[3]); DRY = len(sys.argv) > 4
 db = np.load(SRC + 'db.npy'); SEAM = 79.2
 TH = -40; MIN = 22; KEEP_AFTER = 0.13; KEEP_BEFORE = 0.08
@@ -30,7 +30,7 @@ for k, sec in enumerate(SECT):
                     ps = a + s / 100 + KEEP_AFTER; pe = a + i / 100 - KEEP_BEFORE
                     if pe > ps:
                         pieces.append([cur, ps, z]); cur = pe
-                        if (i - s) >= 45: z ^= 1
+                        z ^= 1  # every cut changes framing, so no same-shot jump (looks like a stutter)
                 s = None
         if cur is not None: pieces.append([cur, b, z])
 q30 = lambda t: round(t * 30) / 30
@@ -42,17 +42,17 @@ if MODE == 'yt':
     F = ["scale=1920:1080:flags=lanczos", "crop=2880:1620:560:60,scale=1920:1080:flags=lanczos"]
 else:
     F = ["crop=1215:2160:1400:0,scale=1080:1920:flags=lanczos", "crop=972:1728:1520:110,scale=1080:1920:flags=lanczos"]
-L = open(W + 'list.txt', 'w'); n = 0
-subprocess.run(f'rm -f {W}p*.mp4', shell=True)
+subprocess.run(f'mkdir -p {WP}; rm -f {WP}p*.mp4', shell=True)
+L = open(WP + 'list.txt', 'w'); n = 0
 for a, b, z in pieces:
     segs = [('o1.mp4', a, b)] if b <= SEAM else ([('o2.mp4', a - SEAM, b - SEAM)] if a >= SEAM else [('o1.mp4', a, SEAM), ('o2.mp4', 0, b - SEAM)])
     for f, x0, x1 in segs:
         d = x1 - x0
         if d < 1 / 30: continue
-        o = f'{W}p{n:03d}.mp4'; n += 1
+        o = f'{WP}p{n:03d}.mp4'; n += 1
         subprocess.run(['ffmpeg', '-v', 'error', '-y', '-ss', f'{x0:.4f}', '-i', SRC + f, '-t', f'{d:.4f}', '-vf', F[z] + ',fps=30,setsar=1',
             '-af', f'afade=t=in:d=0.006,afade=t=out:st={max(0, d - 0.008):.4f}:d=0.008', '-c:v', 'libx264', '-preset', 'fast', '-crf', '17', '-pix_fmt', 'yuv420p', '-c:a', 'pcm_s16le', '-ar', '48000', o], check=True)
         L.write(f"file '{o}'\n")
 L.close()
-subprocess.run(['ffmpeg', '-v', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', W + 'list.txt', '-filter_complex', f'[0:v]setpts=PTS/{SPEED},fps=30[v];[0:a]atempo={SPEED},loudnorm=I=-15:TP=-1.5:LRA=9[a]', '-map', '[v]', '-map', '[a]', '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '192k', '-ar', '48000', '-movflags', '+faststart', OUT], check=True)
+subprocess.run(['ffmpeg', '-v', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', WP + 'list.txt', '-filter_complex', f'[0:v]setpts=PTS/{SPEED},fps=30[v];[0:a]atempo={SPEED},loudnorm=I=-15:TP=-1.5:LRA=9[a]', '-map', '[v]', '-map', '[a]', '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '192k', '-ar', '48000', '-movflags', '+faststart', OUT], check=True)
 print('done')
