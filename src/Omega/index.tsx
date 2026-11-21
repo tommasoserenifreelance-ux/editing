@@ -6,6 +6,7 @@ import { FPS, sec } from "../Testosterone/theme";
 import { ColorBars, Grain, ref, Room, Smoke, Vignette } from "../IvTherapy/fx";
 import { chunksOf, Kinetic, Word } from "../IvTherapy/kinetic";
 import { Big, BrollWord, Card, Chip, CircleDraw, Lead, Studies } from "../Tiroide/mg";
+import { IndexRing, Membrane } from "./fx";
 import words from "./words_ig.json";
 
 /*
@@ -29,7 +30,7 @@ export const OMEGA_FPS = FPS;
 export const OMEGA_IG_DURATION = sec(END);
 
 const CHUNKS = chunksOf(W, [], {
-  yellow: ["spiazza", "saperlo", "cibo", "base"],
+  yellow: ["spiazza", "cibo", "base"],
   red: ["carenti"],
 });
 
@@ -71,13 +72,16 @@ const SCENES: Scene[] = [
     from: f("ed", 6.5),
     render: (t0) => (
       <Card>
-        <Lead words={lead(t0, "ed essere comunque biologicamente")} top={0.38} />
-        <Big text="A SECCO." at={at(t0, "secco")} top={0.52} color={ref.red} size={150} boom />
-        <CircleDraw at={at(t0, "secco") + 4} top={0.52} w={0.86} h={0.14} />
+        <Lead words={lead(t0, "ed essere comunque biologicamente")} top={0.33} />
+        <Big text="A SECCO." at={at(t0, "secco")} top={0.48} color={ref.red} size={150} boom />
+        <CircleDraw at={at(t0, "secco") + 4} top={0.48} w={0.86} h={0.14} />
+        {/* the question stays on the same card so both can be read */}
+        <Lead words={lead(t0, "ma come fai a")} top={0.62} />
+        <Big text="SAPERLO?" at={at(t0, "saperlo")} top={0.72} size={140} />
       </Card>
     ),
   },
-  { from: f("Ma", 9.3), speaker: true, render: (t0) => <Speaker start={t0} punch={["saperlo"]} /> },
+  { from: f("Omega", 11.3), speaker: true, render: (t0) => <Speaker start={t0} /> },
   {
     from: f("si", 14.8),
     render: (t0) => (
@@ -124,11 +128,18 @@ const SCENES: Scene[] = [
     from: f("un", 28.8),
     render: (t0) => (
       <Card>
-        <Lead words={lead(t0, "un esame che misura la percentuale di")} top={0.2} />
-        <Chip text="EPA" at={at(t0, "EPA")} x={0.34} y={0.37} rot={-6} />
-        <Chip text="DHA" at={at(t0, "DHA")} x={0.66} y={0.4} rot={5} bg={ref.red} />
-        <Lead words={lead(t0, "nelle tue membrane,")} top={0.55} />
-        <Big text={"DELLE TUE\nCELLULE."} at={at(t0, "delle")} top={0.7} size={130} />
+        <Lead words={lead(t0, "un esame che misura la percentuale di EPA e di DHA")} top={0.12} />
+        <IndexRing at={at(t0, "percentuale") - 4} top={0.5} />
+      </Card>
+    ),
+  },
+  {
+    from: f("nelle", 32.2),
+    render: (t0) => (
+      <Card>
+        <Lead words={lead(t0, "nelle tue membrane,")} top={0.16} />
+        <Membrane at={2} fillAt={at(t0, "membrane")} top={0.47} />
+        <Big text={"DELLE TUE\nCELLULE."} at={at(t0, "delle")} top={0.8} size={120} />
       </Card>
     ),
   },
@@ -136,8 +147,9 @@ const SCENES: Scene[] = [
     from: f("Non", 34.5),
     render: (t0) => (
       <Card bg="red">
-        <Lead words={lead(t0, "non quanto ne prendi,")} top={0.3} />
-        <Big text={"MA QUANTO\nARRIVA."} at={at(t0, "arrivato")} top={0.5} color="#fff" size={140} boom />
+        <Lead words={lead(t0, "non quanto ne prendi,")} top={0.27} />
+        <Big text="MA QUANTO" at={at(t0, "ma")} top={0.4} color="#fff" size={140} />
+        <Big text={"ARRIVA A\nDESTINAZIONE."} at={at(t0, "arrivato")} top={0.57} color="#141416" size={108} shadow={false} boom />
       </Card>
     ),
   },
