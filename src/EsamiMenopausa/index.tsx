@@ -128,20 +128,19 @@ const Hook: React.FC<{ t: number }> = ({ t }) => (
 );
 
 const Study: React.FC<{ t: number }> = ({ t }) => {
-  const n = Math.round(
-    interpolate(t, [0.4, 2.2], [0, 300], {
-      ...clamp,
-      easing: Easing.out(Easing.cubic),
-    }),
-  );
+  // Linear count-up, so the number moves at a steady pace.
+  const n = Math.round(interpolate(t, [0.5, 2.5], [0, 300], clamp));
   return (
     <>
       <Kicker t={t}>LO STUDIO</Kicker>
       <Headline t={t} size={52}>
         I ricercatori hanno analizzato oltre
       </Headline>
+      {/* "milioni" on its own line so the layout doesn't shift as n grows. */}
       <BigNumber t={t} at={0.2}>
-        {n} milioni
+        <span style={{ fontVariantNumeric: "tabular-nums" }}>{n}</span>
+        <br />
+        milioni
       </BigNumber>
       <Sub t={t} at={1}>
         di risultati di esami di laboratorio, come gli esami del sangue,
