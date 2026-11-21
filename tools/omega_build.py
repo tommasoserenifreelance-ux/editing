@@ -9,8 +9,9 @@ SRC = S + 'omega_src/'; W = S + 'omega/'; WP = S + f'omega/{sys.argv[1]}_parts/'
 MODE, OUT, SPEED = sys.argv[1], sys.argv[2], float(sys.argv[3]); DRY = len(sys.argv) > 4
 db = np.load(SRC + 'db.npy'); SEAM = 79.2
 TH = -40; MIN = 22; KEEP_AFTER = 0.13; KEEP_BEFORE = 0.08
-# false start 'titolo re- reale' and the 'ehh' before 'E come sempre' are cut
-SECT_YT = [[(0.2, 79.2), (79.2, 101.98), (102.40, 128.85), (129.45, 157.45)]]
+# cut: false start 'titolo re- reale', micro-gaps in 'di EPA e di DHA', the 'ehh' before
+# 'E come sempre' and the 'ahh' before 'compensi'
+SECT_YT = [[(0.2, 79.2), (79.2, 101.98), (102.40, 103.17), (103.23, 103.49), (103.55, 104.07), (104.17, 128.85), (129.45, 147.12), (148.86, 157.45)]]
 SECT_IG = json.load(open(W + 'sect_ig.json')) if MODE == 'ig' else None
 SECT = SECT_YT if MODE == 'yt' else SECT_IG
 pieces = []
