@@ -170,7 +170,7 @@ const SCENES: Scene[] = [
         <Big text="ESTINTORI" at={at(t0, "estintori")} top={0.28} size={170} boom />
         <Lead words={lead(t0, "di quell'incendio silenzioso")} top={0.5} />
         <Big text={"INFIAMMAZIONE\nCRONICA"} at={at(t0, "dell'infiammazione")} top={0.72} color={ref.red} size={120} />
-        <CircleDraw at={at(t0, "cronica") + 2} top={0.72} w={0.62} h={0.32} color={ref.yellow} />
+        <CircleDraw at={at(t0, "cronica") + 2} top={0.73} w={0.6} h={0.26} color={ref.yellow} />
       </Card>
     ),
   },
