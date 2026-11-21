@@ -53,20 +53,20 @@ const hand = (color: string, size: number): React.CSSProperties => ({
   filter: "drop-shadow(0 4px 10px rgba(120,40,80,0.35))",
 });
 
-// Both sides positive: each has its own strengths.
+// Both sides positive, every point about inflammation.
 const WALK = [
-  "basso impatto\nsulle articolazioni",
+  "meno stress\nsulle articolazioni",
   "cortisolo\nstabile",
-  "usa soprattutto\ni grassi",
-  "perfetta per\nil recupero",
+  "contrasta la\nsedentarietà",
+  "ideale per\nil recupero",
   "si può fare\nogni giorno",
 ];
 const RUN = [
+  "rilascia miochine\nantinfiammatorie",
+  "brucia più\ngrasso viscerale",
+  "PCR più bassa\nnel tempo",
   "rafforza\ncuore e ossa",
-  "più calorie\nin meno tempo",
-  "migliora\nla resistenza",
-  "carica di\nbuonumore",
-  "riduce l'infiammazione\nnel tempo",
+  "più effetto\nin meno tempo",
 ];
 // Scattered around the edges so her body in the middle stays visible.
 const SPOTS: { left: boolean; y: number }[] = [
