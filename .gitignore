@@ -7,3 +7,6 @@ dist
 out
 public/input/
 public/msc/nuda.mp4
+public/msc/vo_raw.wav
+public/msc/vo_clean.wav
+public/msc/vo.wav

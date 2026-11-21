@@ -215,6 +215,7 @@ export const MscReel: React.FC = () => {
         <EndCard />
       </Sequence>
       <Audio src={staticFile("msc/sfx.wav")} />
+      <Audio src={staticFile("msc/vo.wav")} />
     </AbsoluteFill>
   );
 };
