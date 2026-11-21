@@ -1,9 +1,9 @@
 import React from "react";
-import { AbsoluteFill, Audio, Easing, Img, interpolate, Sequence, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
+import { AbsoluteFill, Audio, Easing, Img, interpolate, OffthreadVideo, Sequence, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { TalkingHead } from "../Nad/scenes";
 import { Sfx } from "../Testosterone/primitives";
 import { sec } from "../Testosterone/theme";
-import { ColorBars, Grain, ref, Room, Smoke, Vignette } from "../IvTherapy/fx";
+import { anton, ColorBars, Grain, ref, Room, Smoke, Vignette } from "../IvTherapy/fx";
 import { chunksOf, Kinetic, Word } from "../IvTherapy/kinetic";
 import { Big, BrollWord, Card, Chip, CircleDraw, Lead } from "../Tiroide/mg";
 import { IndexRing, Membrane } from "./fx";
@@ -25,8 +25,8 @@ const wt = (text: string, after = 0) => {
 };
 const at = (t0: number, w: string, after = t0 - 0.3) => sec(wt(w, after) - t0);
 const VOICE_END = 135.7;
-const END = VOICE_END + 1.7;
-export const OMEGA_YT_DURATION = sec(END);
+const END = VOICE_END + 0.4; // the channel outro follows
+const BODY_DURATION = sec(END);
 
 
 const ANCHOR = "52% 22%";
@@ -233,7 +233,7 @@ const SCENES: Scene[] = [
     ),
   },
   // ---- why you can still be low
-  { from: f("Perché", 78.2), speaker: true, render: (t0) => <Speaker start={t0} punch={["carenti"]} /> },
+  { from: f("prenderli", 79), speaker: true, render: (t0) => <Speaker start={t0} punch={["carenti"]} /> },
   { from: f("Perché", 83), render: (t0) => <BW src="omega/h_softgel.mp4" word="QUALITÀ E DOSE" at={at(t0, "qualità")} /> },
   {
     from: f("Il", 85.9),
@@ -304,21 +304,7 @@ const SCENES: Scene[] = [
     ),
   },
   { from: f("magari", 124), speaker: true, render: (t0) => <Speaker start={t0} punch={["grande"]} /> },
-  { from: VOICE_END + 0.05, bars: true, render: () => <EndCard /> },
 ];
-
-const EndCard: React.FC = () => {
-  const frame = useCurrentFrame();
-  const k = interpolate(frame, [2, 12], [0, 1], { extrapolateRight: "clamp" });
-  return (
-    <Room>
-      <Img
-        src={staticFile("nadig/logo-white.png")}
-        style={{ position: "absolute", left: 420, top: -420, width: 1080, height: 1920, opacity: k, transform: `scale(${1.2 + 0.2 * k})` }}
-      />
-    </Room>
-  );
-};
 
 const Cam: React.FC<{ dir: "in" | "out"; origin: string; children: React.ReactNode }> = ({ dir, origin, children }) => {
   const frame = useCurrentFrame();
@@ -350,7 +336,7 @@ const CHUNKS = SCENES.flatMap((sc, i) => {
   return ws.length ? chunksOf(ws, [], SETS) : [];
 });
 
-export const OmegaYT: React.FC = () => (
+const OmegaYTBody: React.FC = () => (
   <AbsoluteFill style={{ backgroundColor: "#000" }}>
     {SCENES.map((s, i) => {
       const start = sec(s.from);
@@ -379,5 +365,51 @@ export const OmegaYT: React.FC = () => (
     </Sequence>
     {/* dark trap bed in the spirit of the Pulp Podcast reference, ducked under the voice */}
     <Audio src={staticFile("omega/music_yt.m4a")} volume={0.6} />
+  </AbsoluteFill>
+);
+
+/* ------------------------------------------------------------------ */
+/* YouTube wrapper, as for the previous long videos: hook → channel    */
+/* intro ("metti like, iscriviti…", yellow ring) with the title →      */
+/* body → subscribe/disclaimer outro.                                   */
+/* ------------------------------------------------------------------ */
+const HOOK_END = sec(f("Prima", 21));
+const INTRO = sec(13.5);
+const OUTRO = sec(5.59);
+const BODY_REST = BODY_DURATION - HOOK_END;
+export const OMEGA_YT_DURATION = HOOK_END + INTRO + BODY_REST + OUTRO;
+
+const IntroTitle: React.FC = () => {
+  const frame = useCurrentFrame();
+  const t0 = sec(8.9);
+  const k = interpolate(frame, [t0, t0 + 8], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  return (
+    <AbsoluteFill>
+      <OffthreadVideo src={staticFile("omega/intro_bg.mp4")} volume={0.75} />
+      <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
+        <div style={{ fontFamily: anton, fontSize: 104, color: "#fff", letterSpacing: "0.01em", opacity: k, transform: `scale(${0.96 + 0.04 * k})`, textShadow: "0 4px 18px rgba(0,0,0,0.5)" }}>
+          OMEGA 3
+        </div>
+      </AbsoluteFill>
+    </AbsoluteFill>
+  );
+};
+
+export const OmegaYT: React.FC = () => (
+  <AbsoluteFill style={{ backgroundColor: "#000" }}>
+    <Sequence durationInFrames={HOOK_END}>
+      <OmegaYTBody />
+    </Sequence>
+    <Sequence from={HOOK_END} durationInFrames={INTRO}>
+      <IntroTitle />
+    </Sequence>
+    <Sequence from={HOOK_END + INTRO} durationInFrames={BODY_REST}>
+      <Sequence from={-HOOK_END}>
+        <OmegaYTBody />
+      </Sequence>
+    </Sequence>
+    <Sequence from={HOOK_END + INTRO + BODY_REST} durationInFrames={OUTRO}>
+      <OffthreadVideo src={staticFile("omega/outro.mp4")} />
+    </Sequence>
   </AbsoluteFill>
 );
