@@ -466,6 +466,11 @@ export const TapisCover: React.FC = () => (
           </Paper>
         </div>
       </div>
+      <div
+        style={{ ...hand(LILAC, 62), marginTop: 14, transform: "rotate(-2deg)" }}
+      >
+        cosa cambia per il tuo corpo?
+      </div>
     </AbsoluteFill>
   </AbsoluteFill>
 );
