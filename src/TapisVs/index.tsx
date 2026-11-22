@@ -25,7 +25,11 @@ export const TAPIS_FPS = 30;
 const s = (seconds: number) => Math.round(seconds * TAPIS_FPS);
 
 const PART = 10.5; // seconds per side: all notes stay on screen ~4 s at the end
-export const TAPIS_DURATION = s(PART * 2);
+// The walking side lasts 3 s more: at PART its heading is replaced by the
+// treadmill settings card (client's numbers).
+const SETTINGS_LEN = 3;
+const WALK_LEN = PART + SETTINGS_LEN;
+export const TAPIS_DURATION = s(WALK_LEN + PART);
 
 const HAND = "Caveat Brush";
 const handle = delayRender("Loading hand-written font");
@@ -81,6 +85,8 @@ const SPOTS: { left: boolean; y: number }[] = [
   { left: false, y: 1300 },
 ];
 const WATER_Y = 1560; // centred banner, last
+const WALK_SETTINGS =
+  "come impostarla\npendenza tra 6.0 e 8.0\nvelocità tra 5,5 e 6,5 km/h\ncardio: 40 min, max 1 ora";
 
 const FIRST = 1.6; // first note falls, in each part (s)
 const EVERY = 1.0;
@@ -193,8 +199,12 @@ const Part: React.FC<{
   notes: string[];
   seed: number;
   withTitle: boolean;
-}> = ({ src, label, color, notes, water, seed, withTitle }) => {
+  settings?: string; // replaces the heading at PART
+}> = ({ src, label, color, notes, water, seed, withTitle, settings }) => {
   const frame = useCurrentFrame();
+  const heading = settings
+    ? interpolate(frame, [s(PART) - 8, s(PART)], [1, 0], clamp)
+    : 1;
   const shade = interpolate(frame, [s(FIRST) - 10, s(FIRST)], [0, 0.15], clamp);
   return (
     <AbsoluteFill style={{ backgroundColor: "white" }}>
@@ -204,7 +214,9 @@ const Part: React.FC<{
         style={{ width: "100%", height: "100%", objectFit: "cover" }}
       />
       <AbsoluteFill style={{ backgroundColor: `rgba(0,0,0,${shade})` }} />
-      <AbsoluteFill style={{ alignItems: "center", paddingTop: 100 }}>
+      <AbsoluteFill
+        style={{ alignItems: "center", paddingTop: 100, opacity: heading }}
+      >
         {withTitle ? (
           <>
             <RiseText text="tapis roulant" color={LILAC} size={86} delay={0} />
@@ -248,6 +260,19 @@ const Part: React.FC<{
         />
         <Audio src={staticFile("sfx/pop_user.wav")} volume={0.6} />
       </Sequence>
+      {settings ? (
+        <Sequence from={s(PART)} layout="none">
+          <Falling
+            text={settings}
+            color={color}
+            left={null}
+            y={90}
+            seed={seed + 20}
+            size={50}
+          />
+          <Audio src={staticFile("sfx/pop_user.wav")} volume={0.7} />
+        </Sequence>
+      ) : null}
     </AbsoluteFill>
   );
 };
@@ -293,10 +318,10 @@ const Versus: React.FC = () => {
   );
 };
 
-// Sung chorus of "Turn It Up" (client's track): from the beat at 0:10, so
+// Sung chorus of "Turn It Up" (client's track): from the drop at 0:07.9, so
 // "turn it up, let it go" (0:15-0:30) is in and the verse (0:32) is not;
 // faded in and out, kept under the pops.
-const SONG_FROM = 10.01;
+const SONG_FROM = 7.9; // the drop: 24 s window ends before the verse
 
 const Song: React.FC = () => {
   const { durationInFrames } = useVideoConfig();
@@ -320,7 +345,7 @@ const Song: React.FC = () => {
 export const TapisVs: React.FC = () => (
   <AbsoluteFill style={{ backgroundColor: "white" }}>
     <Song />
-    <Sequence durationInFrames={s(PART) + 10}>
+    <Sequence durationInFrames={s(WALK_LEN) + 10}>
       <Part
         src="tapis/b_orig.mp4"
         label="camminata in salita"
@@ -329,10 +354,11 @@ export const TapisVs: React.FC = () => (
         water={WALK_WATER}
         seed={1}
         withTitle
+        settings={WALK_SETTINGS}
       />
     </Sequence>
     <Audio src={staticFile("sfx/paper_swish.wav")} volume={0.3} />
-    <Sequence from={s(PART)}>
+    <Sequence from={s(WALK_LEN)}>
       <Part
         src="tapis/a_orig.mp4"
         label="corsa"
@@ -343,7 +369,7 @@ export const TapisVs: React.FC = () => (
         withTitle={false}
       />
     </Sequence>
-    <Sequence from={s(PART) - VS_LEN / 2} durationInFrames={VS_LEN}>
+    <Sequence from={s(WALK_LEN) - VS_LEN / 2} durationInFrames={VS_LEN}>
       <Versus />
       <Sequence from={8}>
         <Audio src={staticFile("sfx/pop_user.wav")} volume={0.7} />
