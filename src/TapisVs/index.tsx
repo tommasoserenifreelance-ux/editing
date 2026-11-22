@@ -53,29 +53,31 @@ const hand = (color: string, size: number): React.CSSProperties => ({
   filter: "drop-shadow(0 4px 10px rgba(120,40,80,0.35))",
 });
 
-// Both sides positive, every point about inflammation.
+// Client's copy: four benefits per side, then a water-retention note.
 const WALK = [
-  "meno stress\nsulle articolazioni",
-  "cortisolo\nstabile",
-  "contrasta la\nsedentarietà",
-  "ideale per\nil recupero",
-  "si può fare\nogni giorno",
+  "tonifica di più\nglutei e gambe",
+  "aiuta a bruciare\ncalorie e grassi",
+  "meno traumatica\nper le articolazioni",
+  "favorisce resistenza\ne recupero",
 ];
 const RUN = [
-  "rilascia miochine\nantinfiammatorie",
-  "brucia più\ngrasso viscerale",
-  "PCR più bassa\nnel tempo",
-  "rafforza\ncuore e ossa",
-  "più effetto\nin meno tempo",
+  "più capacità\ncardiovascolare",
+  "più calorie\nin meno tempo",
+  "rafforza la\nresistenza fisica",
+  "stimola di più\nossa e muscoli",
 ];
+const WALK_WATER =
+  "ritenzione idrica:\nfavorisce circolazione e ritorno venoso,\ngambe meno pesanti e gonfie";
+const RUN_WATER =
+  "ritenzione idrica:\nmigliora la circolazione, ma è più traumatica\ne non sempre è la più efficace";
 // Scattered around the edges so her body in the middle stays visible.
 const SPOTS: { left: boolean; y: number }[] = [
   { left: true, y: 560 },
-  { left: false, y: 760 },
-  { left: true, y: 1010 },
-  { left: false, y: 1260 },
-  { left: true, y: 1500 },
+  { left: false, y: 800 },
+  { left: true, y: 1050 },
+  { left: false, y: 1300 },
 ];
+const WATER_Y = 1560; // centred banner, last
 
 const FIRST = 1.6; // first note falls, in each part (s)
 const EVERY = 1.2;
@@ -142,20 +144,23 @@ const RiseText: React.FC<{
 const Falling: React.FC<{
   text: string;
   color: string;
-  left: boolean;
+  left: boolean | null; // null = centred
   y: number;
   seed: number;
-}> = ({ text, color, left, y, seed }) => {
+  size?: number;
+}> = ({ text, color, left, y, seed, size = 48 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const drop = spring({ frame, fps, config: { damping: 11, mass: 0.8 } });
-  const tilt = (left ? -1 : 1) * (3 + rnd(seed) * 4);
+  const tilt = left === null ? -2 : (left ? -1 : 1) * (3 + rnd(seed) * 4);
   return (
     <div
       style={{
         position: "absolute",
         top: interpolate(drop, [0, 1], [-260, y]),
-        [left ? "left" : "right"]: 34,
+        ...(left === null
+          ? { left: 0, right: 0, display: "flex", justifyContent: "center" }
+          : { [left ? "left" : "right"]: 34 }),
         filter: "drop-shadow(0 10px 14px rgba(70,30,50,0.3))",
         transform: `rotate(${interpolate(drop, [0, 1], [tilt * 3, tilt])}deg)`,
       }}
@@ -165,7 +170,7 @@ const Falling: React.FC<{
           background: "#FFFDF8",
           clipPath: tornClip(seed),
           padding: "16px 26px",
-          ...hand(color, 48),
+          ...hand(color, size),
           WebkitTextStroke: "0px",
           filter: "none",
           whiteSpace: "pre-line",
@@ -178,13 +183,14 @@ const Falling: React.FC<{
 };
 
 const Part: React.FC<{
+  water: string;
   src: string;
   label: string;
   color: string;
   notes: string[];
   seed: number;
   withTitle: boolean;
-}> = ({ src, label, color, notes, seed, withTitle }) => {
+}> = ({ src, label, color, notes, water, seed, withTitle }) => {
   const frame = useCurrentFrame();
   const shade = interpolate(frame, [s(FIRST) - 10, s(FIRST)], [0, 0.15], clamp);
   return (
@@ -200,7 +206,7 @@ const Part: React.FC<{
           <>
             <RiseText text="tapis roulant" color={LILAC} size={86} delay={0} />
             <RiseText
-              text="cosa cambia per l'infiammazione?"
+              text="cosa cambia per il tuo corpo?"
               color={LILAC}
               size={60}
               delay={10}
@@ -211,7 +217,7 @@ const Part: React.FC<{
           <RiseText
             text={label}
             color={color}
-            size={120}
+            size={label.length > 12 ? 92 : 120}
             delay={withTitle ? 18 : 2}
           />
         </div>
@@ -228,6 +234,17 @@ const Part: React.FC<{
           <Audio src={staticFile("sfx/pop_user.wav")} volume={0.6} />
         </Sequence>
       ))}
+      <Sequence from={s(FIRST + notes.length * EVERY + 0.3)} layout="none">
+        <Falling
+          text={water}
+          color={color}
+          left={null}
+          y={WATER_Y}
+          seed={seed + 9}
+          size={40}
+        />
+        <Audio src={staticFile("sfx/pop_user.wav")} volume={0.6} />
+      </Sequence>
     </AbsoluteFill>
   );
 };
@@ -278,9 +295,10 @@ export const TapisVs: React.FC = () => (
     <Sequence durationInFrames={s(PART) + 10}>
       <Part
         src="tapis/b_v.mp4"
-        label="camminare"
+        label="camminata in salita"
         color={BLUE}
         notes={WALK}
+        water={WALK_WATER}
         seed={1}
         withTitle
       />
@@ -289,9 +307,10 @@ export const TapisVs: React.FC = () => (
     <Sequence from={s(PART)}>
       <Part
         src="tapis/a_v.mp4"
-        label="correre"
+        label="corsa"
         color={PINK}
         notes={RUN}
+        water={RUN_WATER}
         seed={11}
         withTitle={false}
       />
