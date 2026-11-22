@@ -25,11 +25,11 @@ export const TAPIS_FPS = 30;
 const s = (seconds: number) => Math.round(seconds * TAPIS_FPS);
 
 const PART = 10.5; // seconds per side: all notes stay on screen ~4 s at the end
-// The walking side lasts 3 s more: at PART its heading is replaced by the
+// Each side lasts 3 s more: at PART its heading is replaced by the
 // treadmill settings card (client's numbers).
 const SETTINGS_LEN = 3;
 const WALK_LEN = PART + SETTINGS_LEN;
-export const TAPIS_DURATION = s(WALK_LEN + PART);
+export const TAPIS_DURATION = s(WALK_LEN * 2);
 
 const HAND = "Caveat Brush";
 const handle = delayRender("Loading hand-written font");
@@ -87,6 +87,8 @@ const SPOTS: { left: boolean; y: number }[] = [
 const WATER_Y = 1560; // centred banner, last
 const WALK_SETTINGS =
   "come impostarla\npendenza tra 6.0 e 8.0\nvelocità tra 5,5 e 6,5 km/h\ncardio: 40 min, max 1 ora";
+const RUN_SETTINGS =
+  "come impostarla\npendenza: minimo 1.0\nvelocità: 8 km/h per iniziare,\npoi aumentala in base al tuo livello";
 
 const FIRST = 1.6; // first note falls, in each part (s)
 const EVERY = 1.0;
@@ -318,10 +320,11 @@ const Versus: React.FC = () => {
   );
 };
 
-// Sung chorus of "Turn It Up" (client's track): from the drop at 0:07.9, so
+// Sung chorus of "Turn It Up" (client's track): from the build-up at 0:04.9
+// (the drop at 0:07.9 lands under the title), so
 // "turn it up, let it go" (0:15-0:30) is in and the verse (0:32) is not;
 // faded in and out, kept under the pops.
-const SONG_FROM = 7.9; // the drop: 24 s window ends before the verse
+const SONG_FROM = 4.94; // 27 s window ends before the verse
 
 const Song: React.FC = () => {
   const { durationInFrames } = useVideoConfig();
@@ -367,6 +370,7 @@ export const TapisVs: React.FC = () => (
         water={RUN_WATER}
         seed={11}
         withTitle={false}
+        settings={RUN_SETTINGS}
       />
     </Sequence>
     <Sequence from={s(WALK_LEN) - VS_LEN / 2} durationInFrames={VS_LEN}>
