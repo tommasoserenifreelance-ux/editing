@@ -6,6 +6,7 @@ import {
   SLIDE_WIDTH,
 } from "./BoccaMenopausa";
 import { CIBO_DURATION, CIBO_FPS, CiboMedicina } from "./CiboMedicina";
+import { CORPO_DURATION, CORPO_FPS, CorpoMenopausa } from "./CorpoMenopausa";
 import { ESAMI_DURATION, ESAMI_FPS, EsamiMenopausa } from "./EsamiMenopausa";
 import { HelloWorld } from "./HelloWorld";
 import {
@@ -139,6 +140,14 @@ export const RemotionRoot: React.FC = () => {
         component={EsamiMenopausa}
         durationInFrames={ESAMI_DURATION}
         fps={ESAMI_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="CorpoMenopausa"
+        component={CorpoMenopausa}
+        durationInFrames={CORPO_DURATION}
+        fps={CORPO_FPS}
         width={1080}
         height={1920}
       />
