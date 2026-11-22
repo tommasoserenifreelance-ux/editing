@@ -290,9 +290,10 @@ const Versus: React.FC = () => {
   );
 };
 
-// Chorus of "Turn It Up" (client's track): the drop at 2:37.4, faded in and
-// out, kept under the pops.
-const SONG_FROM = 157.38;
+// Sung chorus of "Turn It Up" (client's track): from the beat at 0:10, so
+// "turn it up, let it go" (0:15-0:30) is in and the verse (0:32) is not;
+// faded in and out, kept under the pops.
+const SONG_FROM = 10.01;
 
 const Song: React.FC = () => {
   const { durationInFrames } = useVideoConfig();
