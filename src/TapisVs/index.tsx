@@ -17,7 +17,9 @@ import {
 // down, a fade to black with a big "VS", then the running clip with its own. Same hand-written
 // style as the perimenopause reel. Clips uploaded in chat →
 // public/tapis/{a,b}_v.mp4 (b = walking, a = running), AI-upscaled to
-// 1080x1920 with scripts/upscale.py → {a,b}_hd.mp4.
+// 1080x1920 with scripts/upscale.py → {a,b}_hd.mp4. Now the client's originals
+// (1080x1920, IMG_4211 = walking, IMG_4213 = running) stream-copied to
+// {a,b}_orig.mp4, no re-encode.
 
 export const TAPIS_FPS = 30;
 const s = (seconds: number) => Math.round(seconds * TAPIS_FPS);
@@ -320,7 +322,7 @@ export const TapisVs: React.FC = () => (
     <Song />
     <Sequence durationInFrames={s(PART) + 10}>
       <Part
-        src="tapis/b_hd.mp4"
+        src="tapis/b_orig.mp4"
         label="camminata in salita"
         color={BLUE}
         notes={WALK}
@@ -332,7 +334,7 @@ export const TapisVs: React.FC = () => (
     <Audio src={staticFile("sfx/paper_swish.wav")} volume={0.3} />
     <Sequence from={s(PART)}>
       <Part
-        src="tapis/a_hd.mp4"
+        src="tapis/a_orig.mp4"
         label="corsa"
         color={PINK}
         notes={RUN}
