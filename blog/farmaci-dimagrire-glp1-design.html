@@ -1,0 +1,132 @@
+<style>
+.sb-art{--navy:#3a5881;--slate:#7f97ba;--mid:#a9bcd4;--powder:#e5edf8;--soft:#f3f6fa;color:var(--navy);font-family:"Jost","Helvetica Neue",Arial,sans-serif;font-size:18px;line-height:1.7;max-width:900px;margin:0 auto}
+.sb-art *{box-sizing:border-box}
+.sb-art h2{font-size:30px;font-weight:500;color:var(--navy);margin:56px 0 16px;line-height:1.25}
+.sb-art h3{font-size:21px;font-weight:600;color:var(--navy);margin:0 0 6px;line-height:1.3}
+.sb-art p{margin:0 0 16px}
+.sb-art .kicker{display:inline-block;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--slate);font-weight:600;margin-bottom:10px}
+.sb-art .lead{font-size:21px;line-height:1.6;border-left:4px solid var(--navy);padding-left:22px;margin:10px 0 30px}
+.sb-art .fonte{font-size:14px;font-style:italic;color:var(--slate)}
+.sb-art .timeline{list-style:none;margin:20px 0 0;padding:0;border-left:2px solid var(--mid)}
+.sb-art .timeline li{position:relative;padding:0 0 22px 28px}
+.sb-art .timeline li::before{content:"";position:absolute;left:-8px;top:6px;width:14px;height:14px;border-radius:50%;background:var(--navy);box-shadow:0 0 0 4px #fff}
+.sb-art .timeline b{display:block;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate)}
+.sb-art .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin:22px 0}
+.sb-art .stat{background:var(--powder);padding:26px 24px;border-radius:6px}
+.sb-art .stat .n{display:block;font-size:46px;font-weight:600;line-height:1;color:var(--navy)}
+.sb-art .stat .l{display:block;margin-top:8px;font-size:16px;line-height:1.4}
+.sb-art .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:22px 0}
+.sb-art .card{border:1px solid #dbe4f1;border-top:4px solid var(--navy);padding:22px 20px;border-radius:6px;background:#fff}
+.sb-art .card .tag{display:inline-block;background:var(--powder);font-size:13px;padding:3px 10px;border-radius:20px;margin:6px 6px 0 0}
+.sb-art .card p{font-size:16px;line-height:1.55;margin:10px 0 0}
+.sb-art .studies{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin:22px 0}
+.sb-art .study{background:var(--navy);color:#fff;padding:26px 24px;border-radius:6px}
+.sb-art .study h3{color:#fff;font-size:15px;letter-spacing:.14em;text-transform:uppercase}
+.sb-art .study .vs{display:flex;align-items:flex-end;gap:16px;margin:12px 0 8px}
+.sb-art .study .big{font-size:48px;font-weight:600;line-height:1}
+.sb-art .study .small{font-size:16px;color:var(--mid);padding-bottom:6px}
+.sb-art .study p{font-size:15px;color:rgba(255,255,255,.85);margin:0}
+.sb-art .note{background:var(--soft);border-left:4px solid var(--navy);padding:20px 24px;border-radius:0 6px 6px 0;margin:24px 0}
+.sb-art .note p:last-child{margin:0}
+.sb-art .check{list-style:none;padding:0;margin:16px 0}
+.sb-art .check li{position:relative;padding:0 0 10px 34px}
+.sb-art .check li::before{content:"✓";position:absolute;left:0;top:2px;width:22px;height:22px;border-radius:50%;background:var(--navy);color:#fff;font-size:13px;line-height:22px;text-align:center}
+.sb-art .warn{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:22px 0}
+.sb-art .warn div{background:var(--powder);padding:22px 20px;border-radius:6px}
+.sb-art .warn p{font-size:16px;line-height:1.55;margin:8px 0 0}
+.sb-art details{border-bottom:1px solid #dbe4f1;padding:18px 0}
+.sb-art details:first-of-type{border-top:1px solid #dbe4f1}
+.sb-art summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:20px;font-weight:500;font-size:19px}
+.sb-art summary::-webkit-details-marker{display:none}
+.sb-art summary::after{content:"+";font-size:26px;line-height:1;color:var(--slate)}
+.sb-art details[open] summary::after{content:"–"}
+.sb-art details p{margin:12px 0 0}
+.sb-art .cta{margin:56px 0 20px;background:var(--navy);color:#fff;border-radius:8px;padding:36px 34px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.sb-art .cta h3{color:#fff;font-size:24px;font-weight:500;margin:0 0 6px}
+.sb-art .cta p{margin:0;color:rgba(255,255,255,.85)}
+.sb-art .cta a.btn{background:#fff;color:var(--navy);text-decoration:none;padding:14px 26px;border-radius:4px;font-size:14px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap}
+@media(max-width:760px){.sb-art{font-size:17px}.sb-art h2{font-size:25px}.sb-art .stats,.sb-art .cards,.sb-art .studies,.sb-art .warn{grid-template-columns:1fr}.sb-art .lead{font-size:19px}}
+</style>
+
+<div class="sb-art">
+
+<span class="kicker">Farmaci GLP-1 · Aggiornamento</span>
+<p class="lead">Negli ultimi mesi nomi come <strong>Ozempic</strong> e <strong>Mounjaro</strong> sono diventati familiari anche a chi non ha mai avuto problemi di peso. E proprio in queste settimane in Italia è arrivata una stretta sul loro utilizzo. Vediamo con ordine cosa è successo e cosa sono davvero questi farmaci.</p>
+
+<h2>Cosa è successo</h2>
+<ul class="timeline">
+<li><b>28 ottobre</b>L'Ordine dei farmacisti di Roma segnala una situazione di "crescente criticità": sconti aggressivi, promozioni online e prescrizioni non sempre in linea con i protocolli.</li>
+<li><b>30 ottobre</b>Il Ministero della Salute gira la segnalazione a tutte le Regioni, che vigilano sulle farmacie.</li>
+<li><b>2 novembre</b>La Regione Lombardia avvia le verifiche sulle prescrizioni, partendo dalla tirzepatide (Mounjaro).</li>
+</ul>
+
+<h2>Perché preoccupa</h2>
+<div class="stats">
+<div class="stat"><span class="n">+85,7%</span><span class="l">acquisti privati nel 2025 rispetto all'anno precedente</span></div>
+<div class="stat"><span class="n">+75,8%</span><span class="l">aumento della spesa nello stesso periodo</span></div>
+</div>
+<p>Sempre più persone li usano solo per perdere qualche chilo, spesso per ragioni estetiche. Il rischio è che vengano a mancare a chi ne ha davvero bisogno, come le persone con diabete di tipo 2 o obesità.</p>
+<p class="fonte">Fonte: AIFA, Rapporto OsMed 2025.</p>
+
+<h2>Di quali farmaci parliamo</h2>
+<div class="cards">
+<div class="card"><h3>Semaglutide</h3><span class="tag">Ozempic</span><span class="tag">Wegovy</span><p>Imita il GLP-1, un ormone prodotto dall'intestino. Iniezione una volta a settimana. Ozempic per il diabete di tipo 2, Wegovy per la gestione del peso.</p></div>
+<div class="card"><h3>Tirzepatide</h3><span class="tag">Mounjaro</span><p>Imita due ormoni intestinali, GLP-1 e GIP. Una volta a settimana. Indicata sia per il diabete di tipo 2 sia per la gestione del peso.</p></div>
+<div class="card"><h3>Liraglutide</h3><span class="tag">Saxenda</span><p>Agisce come la semaglutide, ma si inietta ogni giorno. Per la gestione del peso si chiama Saxenda.</p></div>
+</div>
+
+<h2>Come funzionano</h2>
+<p>Quando mangiamo, l'intestino produce ormoni che dicono al cervello che siamo sazi e aiutano a controllare la glicemia. Questi farmaci imitano quegli ormoni:</p>
+<ul class="check">
+<li>aumentano il senso di sazietà;</li>
+<li>riducono la fame;</li>
+<li>rallentano lo svuotamento dello stomaco.</li>
+</ul>
+<p>Il risultato è che si mangia meno.</p>
+
+<h2>Cosa dicono gli studi</h2>
+<div class="studies">
+<div class="study"><h3>STEP 1 · Semaglutide</h3><div class="vs"><span class="big">−14,9%</span><span class="small">vs −2,4% placebo</span></div><p>Perdita di peso media in 68 settimane.</p></div>
+<div class="study"><h3>SURMOUNT-1 · Tirzepatide</h3><div class="vs"><span class="big">−20,9%</span><span class="small">vs −3,1% placebo</span></div><p>Perdita di peso media in 72 settimane, alla dose più alta.</p></div>
+</div>
+<div class="note"><p>Sono risultati importanti, ma si tratta di <strong>medie</strong>: ogni persona risponde in modo diverso, e in tutti gli studi il farmaco era associato a <strong>dieta e attività fisica</strong>.</p></div>
+<p class="fonte">Fonti: STEP 1, New England Journal of Medicine, 2021; SURMOUNT-1, New England Journal of Medicine, 2022.</p>
+
+<h2>A chi sono indicati</h2>
+<p>Per la gestione del peso, l'Agenzia Europea dei Medicinali li indica negli adulti con:</p>
+<ul class="check">
+<li><strong>IMC di 30 o più</strong>, cioè obesità;</li>
+<li><strong>IMC tra 27 e 30</strong> con almeno un problema legato al peso, come diabete, pressione alta, grassi alti nel sangue o apnee notturne.</li>
+</ul>
+<p>Sempre insieme a dieta e attività fisica, mai come unica soluzione. In Italia il Servizio sanitario nazionale li rimborsa solo per il diabete di tipo 2: per l'obesità il costo è a carico del paziente.</p>
+
+<h2>Cosa sapere prima di pensarci</h2>
+<div class="warn">
+<div><h3>Effetti collaterali</h3><p>I più comuni riguardano l'intestino: nausea, vomito, diarrea, stitichezza e dolore addominale.</p></div>
+<div><h3>Quando si smette</h3><p>Chi ha sospeso la semaglutide ha ripreso circa due terzi del peso perso entro un anno.</p></div>
+<div><h3>Mai il fai da te</h3><p>Solo con prescrizione e controllo medico, mai farmaci di altri o da canali non ufficiali.</p></div>
+</div>
+<p class="fonte">Fonte: estensione dello studio STEP 1, Diabetes, Obesity and Metabolism, 2022.</p>
+
+<h2>Cosa arriva nei prossimi mesi</h2>
+<ul class="timeline">
+<li><b>1° aprile 2026 · Stati Uniti</b>Approvato l'orforglipron, la prima pillola di questa famiglia che non è un peptide. In Europa è ancora in valutazione.</li>
+<li><b>16 luglio 2026 · Europa</b>La Commissione Europea autorizza la semaglutide in compresse per la gestione del peso. I tempi per l'Italia non sono ancora noti.</li>
+</ul>
+
+<h2>Domande frequenti</h2>
+<details><summary>Che differenza c'è tra Ozempic e Wegovy?</summary><p>Contengono lo stesso principio attivo, la semaglutide. Ozempic è indicato per il diabete di tipo 2, Wegovy per la gestione del peso.</p></details>
+<details><summary>Chi può usarli per perdere peso?</summary><p>Adulti con IMC di 30 o più, oppure tra 27 e 30 con almeno un problema legato al peso, sempre su prescrizione medica e insieme a dieta e attività fisica.</p></details>
+<details><summary>Sono rimborsati dal Servizio sanitario nazionale?</summary><p>Solo per il diabete di tipo 2. Per l'obesità il costo è a carico del paziente.</p></details>
+<details><summary>Se smetto, riprendo peso?</summary><p>Spesso sì: negli studi chi ha sospeso la semaglutide ha ripreso circa due terzi del peso perso entro un anno. Per questo è fondamentale lavorare anche sullo stile di vita.</p></details>
+
+<h2>Conclusioni</h2>
+<p>Semaglutide, tirzepatide e liraglutide sono terapie importanti, che possono cambiare la vita di chi convive con diabete o obesità. Proprio per questo <strong>non vanno trattate come una scorciatoia estetica</strong>. Servono una diagnosi, una prescrizione corretta e controlli nel tempo.</p>
+
+<div class="cta">
+<div><h3>Vuoi parlarne con un medico?</h3><p>Milano · Roma · 02 91766 535 · 345 7245102</p></div>
+<a class="btn" href="https://studiobonaccorso.it/prenota-visita">Prenota una visita</a>
+</div>
+
+<p class="fonte">Questo articolo ha scopo informativo e non sostituisce il parere del medico.</p>
+</div>
