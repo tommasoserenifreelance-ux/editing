@@ -21,7 +21,7 @@ import {
 export const TAPIS_FPS = 30;
 const s = (seconds: number) => Math.round(seconds * TAPIS_FPS);
 
-const PART = 8.6; // seconds per side
+const PART = 10.5; // seconds per side: all notes stay on screen ~4 s at the end
 export const TAPIS_DURATION = s(PART * 2);
 
 const HAND = "Caveat Brush";
@@ -80,7 +80,7 @@ const SPOTS: { left: boolean; y: number }[] = [
 const WATER_Y = 1560; // centred banner, last
 
 const FIRST = 1.6; // first note falls, in each part (s)
-const EVERY = 1.2;
+const EVERY = 1.0;
 
 const clamp = {
   extrapolateLeft: "clamp",
