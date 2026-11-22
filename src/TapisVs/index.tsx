@@ -1,4 +1,5 @@
 import {
+  Img,
   AbsoluteFill,
   Audio,
   continueRender,
@@ -379,5 +380,96 @@ export const TapisVs: React.FC = () => (
         <Audio src={staticFile("sfx/pop_user.wav")} volume={0.7} />
       </Sequence>
     </Sequence>
+  </AbsoluteFill>
+);
+
+// Reel cover: a running frame (public/cover/tapis.png, from a_orig.mp4 at
+// 2.5 s) with the title on the treadmill belt, under her feet, inside the
+// centre 3:4 area kept by the profile grid.
+const Paper: React.FC<{ seed: number; children: React.ReactNode }> = ({
+  seed,
+  children,
+}) => (
+  <div style={{ filter: "drop-shadow(0 10px 14px rgba(70,30,50,0.35))" }}>
+    <div
+      style={{
+        background: "#FFFDF8",
+        clipPath: tornClip(seed),
+        padding: "14px 40px",
+      }}
+    >
+      {children}
+    </div>
+  </div>
+);
+
+export const TapisCover: React.FC = () => (
+  <AbsoluteFill style={{ backgroundColor: "black" }}>
+    <Img
+      src={staticFile("cover/tapis.png")}
+      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+    />
+    <AbsoluteFill
+      style={{
+        background:
+          "linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(0,0,0,0.35) 85%)",
+      }}
+    />
+    <AbsoluteFill
+      style={{
+        alignItems: "center",
+        justifyContent: "flex-end",
+        paddingBottom: 240,
+      }}
+    >
+      <div style={{ ...hand(LILAC, 92), transform: "rotate(-3deg)" }}>
+        tapis roulant
+      </div>
+      <div style={{ transform: "rotate(-2deg)", marginTop: 8 }}>
+        <Paper seed={3}>
+          <div
+            style={{
+              ...hand(BLUE, 64),
+              WebkitTextStroke: "0px",
+              filter: "none",
+            }}
+          >
+            camminata in salita
+          </div>
+        </Paper>
+      </div>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 22,
+          marginTop: -6,
+        }}
+      >
+        <div
+          style={{
+            ...hand(LILAC, 104),
+            WebkitTextStroke: "0px",
+            filter: "drop-shadow(0 0 24px rgba(217,168,240,0.7))",
+            transform: "rotate(-8deg)",
+          }}
+        >
+          vs
+        </div>
+        <div style={{ transform: "rotate(2deg)" }}>
+          <Paper seed={13}>
+            <div
+              style={{
+                ...hand(PINK, 76),
+                WebkitTextStroke: "0px",
+                filter: "none",
+              }}
+            >
+              corsa
+            </div>
+          </Paper>
+        </div>
+      </div>
+    </AbsoluteFill>
   </AbsoluteFill>
 );

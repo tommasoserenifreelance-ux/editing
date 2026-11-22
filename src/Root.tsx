@@ -14,7 +14,7 @@ import {
 } from "./Elena";
 import { COLAZIONE_DURATION, COLAZIONE_FPS, Colazione } from "./Colazione";
 import { HelloWorld } from "./HelloWorld";
-import { TAPIS_DURATION, TAPIS_FPS, TapisVs } from "./TapisVs";
+import { TAPIS_DURATION, TAPIS_FPS, TapisCover, TapisVs } from "./TapisVs";
 import { PERI_DURATION, PERI_FPS, Perimenopausa } from "./Perimenopausa";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
@@ -150,6 +150,7 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
       />
+      <Still id="TapisCover" component={TapisCover} width={1080} height={1920} />
       <Composition
         id="Perimenopausa"
         component={Perimenopausa}
