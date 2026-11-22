@@ -79,13 +79,17 @@ const WALK_WATER =
 const RUN_WATER =
   "ritenzione idrica:\nmigliora la circolazione, ma è più traumatica\ne non sempre è la più efficace";
 // Scattered around the edges so her body in the middle stays visible.
+// Everything stays inside the Reels safe zone: below the top bar (~270 px),
+// above the caption/username area (~1580 px), clear of the action buttons on
+// the right.
+const SAFE_TOP = 270;
 const SPOTS: { left: boolean; y: number }[] = [
-  { left: true, y: 560 },
-  { left: false, y: 800 },
-  { left: true, y: 1050 },
-  { left: false, y: 1300 },
+  { left: true, y: 620 },
+  { left: false, y: 790 },
+  { left: true, y: 960 },
+  { left: false, y: 1130 },
 ];
-const WATER_Y = 1560; // centred banner, last
+const WATER_Y = 1340; // centred banner, last
 const WALK_SETTINGS =
   "come impostarla\npendenza tra 6.0 e 8.0\nvelocità tra 5,5 e 6,5 km/h\ncardio: 40 min, max 1 ora";
 const RUN_SETTINGS =
@@ -172,7 +176,7 @@ const Falling: React.FC<{
         top: interpolate(drop, [0, 1], [-260, y]),
         ...(left === null
           ? { left: 0, right: 0, display: "flex", justifyContent: "center" }
-          : { [left ? "left" : "right"]: 34 }),
+          : { [left ? "left" : "right"]: left ? 40 : 130 }),
         filter: "drop-shadow(0 10px 14px rgba(70,30,50,0.3))",
         transform: `rotate(${interpolate(drop, [0, 1], [tilt * 3, tilt])}deg)`,
       }}
@@ -218,7 +222,7 @@ const Part: React.FC<{
       />
       <AbsoluteFill style={{ backgroundColor: `rgba(0,0,0,${shade})` }} />
       <AbsoluteFill
-        style={{ alignItems: "center", paddingTop: 100, opacity: heading }}
+        style={{ alignItems: "center", paddingTop: SAFE_TOP, opacity: heading }}
       >
         {withTitle ? (
           <>
@@ -231,7 +235,7 @@ const Part: React.FC<{
             />
           </>
         ) : null}
-        <div style={{ marginTop: withTitle ? 24 : 120 }}>
+        <div style={{ marginTop: withTitle ? 16 : 0 }}>
           <RiseText
             text={label}
             color={color}
@@ -269,7 +273,7 @@ const Part: React.FC<{
             text={settings}
             color={color}
             left={null}
-            y={90}
+            y={SAFE_TOP}
             seed={seed + 20}
             size={50}
           />
