@@ -21,3 +21,5 @@ public/colazione/
 public/hook/
 # Treadmill clips (uploaded in chat)
 public/tapis/
+# Licensed song supplied by the client (not committed)
+public/music/turn_it_up.mp3

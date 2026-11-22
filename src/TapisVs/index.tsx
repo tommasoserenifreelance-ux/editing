@@ -290,8 +290,32 @@ const Versus: React.FC = () => {
   );
 };
 
+// Chorus of "Turn It Up" (client's track): the drop at 2:37.4, faded in and
+// out, kept under the pops.
+const SONG_FROM = 157.38;
+
+const Song: React.FC = () => {
+  const { durationInFrames } = useVideoConfig();
+  return (
+    <Audio
+      src={staticFile("music/turn_it_up.mp3")}
+      trimBefore={s(SONG_FROM)}
+      volume={(f) =>
+        0.4 *
+        interpolate(
+          f,
+          [0, 8, durationInFrames - 30, durationInFrames],
+          [0, 1, 1, 0],
+          clamp,
+        )
+      }
+    />
+  );
+};
+
 export const TapisVs: React.FC = () => (
   <AbsoluteFill style={{ backgroundColor: "white" }}>
+    <Song />
     <Sequence durationInFrames={s(PART) + 10}>
       <Part
         src="tapis/b_v.mp4"
