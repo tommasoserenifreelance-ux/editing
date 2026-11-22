@@ -384,8 +384,7 @@ export const TapisVs: React.FC = () => (
 );
 
 // Reel cover: a running frame (public/cover/tapis.png, from a_orig.mp4 at
-// 2.5 s) with the title on the treadmill belt, under her feet, inside the
-// centre 3:4 area kept by the profile grid.
+// 2.5 s) with the title in the centre of the frame.
 const Paper: React.FC<{ seed: number; children: React.ReactNode }> = ({
   seed,
   children,
@@ -418,8 +417,7 @@ export const TapisCover: React.FC = () => (
     <AbsoluteFill
       style={{
         alignItems: "center",
-        justifyContent: "flex-end",
-        paddingBottom: 240,
+        justifyContent: "center",
       }}
     >
       <div style={{ ...hand(LILAC, 92), transform: "rotate(-3deg)" }}>
@@ -449,8 +447,6 @@ export const TapisCover: React.FC = () => (
         <div
           style={{
             ...hand(LILAC, 104),
-            WebkitTextStroke: "0px",
-            filter: "drop-shadow(0 0 24px rgba(217,168,240,0.7))",
             transform: "rotate(-8deg)",
           }}
         >
