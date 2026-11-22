@@ -531,18 +531,6 @@ export const CorpoMenopausa: React.FC = () => {
       >
         <Body t={t} />
       </div>
-      <div
-        style={{
-          position: "absolute",
-          top: 1620,
-          left: 90,
-          right: 90,
-          fontSize: 24,
-          color: colors.muted,
-        }}
-      >
-        Fonte: rielaborazione da Science
-      </div>
       <Signature color={colors.plum} fontFamily={inter} />
     </AbsoluteFill>
   );
