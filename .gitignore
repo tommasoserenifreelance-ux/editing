@@ -5,3 +5,8 @@ dist
 
 # Ignore the output video from Git but not videos you import into src/.
 out
+
+# presentazione: sorgenti pesanti del cliente e file di lavoro del video
+presentazione/sorgenti/
+presentazione/storia-ozono/out/
+presentazione/storia-ozono/stills/

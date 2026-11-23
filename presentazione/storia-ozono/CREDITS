@@ -1,0 +1,9 @@
+Storia dell'ozono in medicina — crediti
+
+Immagini: le otto immagini storiche provengono dalla presentazione "Scientific and Medical Aspects of Ozone Therapy: State of the Art"
+  del Dott. Michele Bonaccorso (materiale del cliente). Alcune sono illustrazioni o ricostruzioni, non fotografie d'archivio.
+  Scontorni (separazione soggetto/sfondo) ottenuti con rembg, modello isnet-general-use (licenza Apache-2.0 / MIT).
+Voce: Kokoro TTS (kokoro-onnx, modello Kokoro-82M, licenza Apache-2.0), voce im_nicola.
+Musica e suoni: sintetizzati nel codice (numpy/scipy), nessun campione di terze parti.
+Font: IBM Plex Mono (OFL), Montserrat (OFL), Cormorant Garamond (OFL), da Fontsource.
+Stile: Archive Light Table, libreria Lemo-Opuscar (github.com/lemomo-ai/lemo-opuscar).
