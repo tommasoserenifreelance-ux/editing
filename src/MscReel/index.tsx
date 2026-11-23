@@ -12,7 +12,7 @@ import {
 } from "remotion";
 
 export const MSC_FPS = 30;
-const CLIP_END = 25.6; // the clean footage (no text) ends here
+const CLIP_END = 27.2; // the clean footage (no text) ends here
 const CARD = 2.4; // end card
 export const MSC_DURATION = Math.round((CLIP_END + CARD) * MSC_FPS);
 
@@ -31,28 +31,28 @@ Promise.all(
   ),
 ).then(() => continueRender(handle));
 
-type Cap = { from: number; to: number; text: string; big?: boolean; sub?: string };
+type Cap = { from: number; to: number; text: string; big?: boolean; low?: boolean };
 
 // Captions follow the voice over: each chunk starts on its first spoken word
 // (word times from the recording, shifted by scripts/place_msc_vo.py).
 const CAPS: Cap[] = [
   { from: 0.3, to: 1.82, text: "MSC *WORLD EUROPA*" },
-  { from: 1.82, to: 3.42, text: "CI HA INVITATI\n*A BORDO*" },
-  { from: 3.42, to: 4.0, text: "UNA DELLE NAVI" },
-  { from: 4.0, to: 5.6, text: "*PIÙ GRANDI*\nAL MONDO" },
-  { from: 5.77, to: 6.53, text: "WELCOME *COCKTAIL*" },
-  { from: 6.53, to: 7.31, text: "*ROADSHOW*" },
-  { from: 7.31, to: 9.9, text: "INCONTRI\nCON *IL SETTORE*" },
-  { from: 10.19, to: 11.31, text: "POI LA PARTE\n*MIGLIORE*" },
-  { from: 11.31, to: 12.36, text: "LA *VISITA*" },
-  { from: 12.36, to: 13.5, text: "PER SCOPRIRE\nTUTTI GLI SPAZI" },
-  { from: 13.5, to: 15.72, text: "DELLA NAVE DOVE\nORGANIZZARE *EVENTI*" },
-  { from: 15.72, to: 16.86, text: "TEATRO, SALE" },
-  { from: 16.86, to: 17.98, text: "PONTI *PANORAMICI*" },
-  { from: 17.98, to: 18.68, text: "QUI SI PUÒ FARE" },
-  { from: 18.68, to: 19.8, text: "DAVVERO *DI TUTTO*" },
-  { from: 21.74, to: 22.76, text: "IL PROSSIMO *EVENTO*\nA BORDO" },
-  { from: 22.76, to: 25.6, text: "POTREBBE ESSERE\n*IL TUO*" },
+  { from: 1.82, to: 3.8, text: "CI HA INVITATI\n*A BORDO*" },
+  { from: 5.02, to: 5.6, text: "UNA DELLE NAVI" },
+  { from: 5.6, to: 7.2, text: "*PIÙ GRANDI*\nAL MONDO" },
+  { from: 7.37, to: 8.13, text: "WELCOME *COCKTAIL*" },
+  { from: 8.13, to: 8.91, text: "*ROADSHOW*", low: true },
+  { from: 8.91, to: 11.5, text: "INCONTRI\nCON *IL SETTORE*" },
+  { from: 11.79, to: 12.91, text: "POI LA PARTE\n*MIGLIORE*" },
+  { from: 12.91, to: 13.96, text: "LA *VISITA*" },
+  { from: 13.96, to: 15.1, text: "PER SCOPRIRE\nTUTTI GLI SPAZI" },
+  { from: 15.1, to: 17.32, text: "DELLA NAVE DOVE\nORGANIZZARE *EVENTI*" },
+  { from: 17.32, to: 18.46, text: "TEATRO, SALE" },
+  { from: 18.46, to: 19.58, text: "PONTI *PANORAMICI*" },
+  { from: 19.58, to: 20.28, text: "QUI SI PUÒ FARE" },
+  { from: 20.28, to: 21.4, text: "DAVVERO *DI TUTTO*" },
+  { from: 23.34, to: 24.36, text: "IL PROSSIMO *EVENTO*\nA BORDO" },
+  { from: 24.36, to: 27.2, text: "POTREBBE ESSERE\n*IL TUO*" },
 ];
 
 // Words between *asterisks* are the key words, in the Setup Events red.
@@ -84,7 +84,7 @@ const Caption: React.FC<{ cap: Cap; frames: number }> = ({ cap, frames }) => {
       style={{
         justifyContent: cap.big ? "center" : "flex-end",
         alignItems: "center",
-        paddingBottom: cap.big ? 160 : 600,
+        paddingBottom: cap.big ? 160 : cap.low ? 380 : 600,
         paddingLeft: 60,
         paddingRight: 60,
       }}
@@ -200,7 +200,7 @@ export const MscReel: React.FC = () => {
   return (
     <AbsoluteFill style={{ backgroundColor: "black" }}>
       <Sequence durationInFrames={s(CLIP_END)}>
-        <OffthreadVideo src={staticFile("msc/nuda_fix.mp4")} muted />
+        <OffthreadVideo src={staticFile("msc/nuda_v2.mp4")} muted />
         <Footer />
         <Sequence durationInFrames={s(2.2)}>
           <MscLogo frames={s(2.2)} />

@@ -27,11 +27,11 @@ CUES = [
     # Music comes later (added on TikTok): only soft, smooth whooshes under key
     # titles. Kept low and band-limited so nothing sounds harsh or crackly.
     (0.40, "pro_whoosh_big/tonal", 0.30, []),  # MSC logo + "MSC ci ha invitati a bordo"
-    (2.20, "whoosh_big/swell", 0.28, []),  # "Della MSC World Europa"
-    (3.40, "pro_whoosh_big/swell", 0.32, []),  # "Una delle navi più grandi al mondo"
-    (10.00, "whoosh_big/swell", 0.30, ["--seed", "3"]),  # "Ma la parte migliore?"
-    (19.80, "pro_whoosh_big/swell", 0.32, ["--seed", "4"]),  # "Un palco"
-    (23.60, "pro_whoosh_big/tonal", 0.30, ["--seed", "5"]),  # "Potrebbe essere il tuo"
+    (2.20, "whoosh_big/swell", 0.28, []),  # cut to the MSC flag
+    (5.00, "pro_whoosh_big/swell", 0.32, []),  # "Una delle navi più grandi al mondo"
+    (11.60, "whoosh_big/swell", 0.30, ["--seed", "3"]),  # "Ma la parte migliore?"
+    (21.40, "pro_whoosh_big/swell", 0.32, ["--seed", "4"]),  # "Un palco"
+    (25.20, "pro_whoosh_big/tonal", 0.30, ["--seed", "5"]),  # "Potrebbe essere il tuo"
 ]
 
 
