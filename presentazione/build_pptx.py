@@ -139,10 +139,10 @@ for i, (n, t, d) in enumerate(items):
 
 # ===================== 3 · LA STORIA (video animato) =====================
 s = inner('Come siamo arrivati fin qui', 'La storia dell’ozono in medicina')
-vw = 9.6; vh = vw * 9 / 16; vx = (SW - vw) / 2
-rect(s, vx + 0.12, 1.55 + 0.12, vw, vh, fill=CYAN)
-video(s, 'storia-ozono.mp4', 'storia-ozono-poster.jpg', vx, 1.55, vw, vh)
-tb(s, vx, 1.55 + vh + 0.18, vw, 0.4, '1839  →  1857  →  1870  →  1881  →  1885  →  1886  →  1900  →  1990–2000',
+vw = 8.8; vh = vw * 9 / 16; vx = (SW - vw) / 2
+rect(s, vx + 0.12, 1.5 + 0.12, vw, vh, fill=CYAN)
+video(s, 'storia-ozono.mp4', 'storia-ozono-poster.jpg', vx, 1.5, vw, vh)
+tb(s, vx, 1.5 + vh + 0.22, vw, 0.4, '1839  →  1857  →  1870  →  1881  →  1885  →  1886  →  1900  →  1990–2000',
    size=13, color=NAVY, bold=True, align=PP_ALIGN.CENTER, spacing=1)
 
 # ===================== 4 · DAL 2000 AL 2025 (video PubMed) =====================
@@ -276,7 +276,7 @@ tb(s, 1.8, 1.95, 4.8, 0.7, 'Secondo uno studio pubblicato su International Wound
 tb(s, 0.95, 2.85, 5.6, 2.5, ["L'ozonoterapia, eseguita da professionisti qualificati secondo protocolli standardizzati, mostra un profilo di sicurezza favorevole.",
                             'Gli effetti collaterali riportati sono rari, per lo più lievi e transitori (dolore locale, irritazione). Non sono stati osservati eventi avversi gravi.'],
    size=13.5, color=GREY, line=1.25)
-banner(s, 0.62, 5.75, 6.2, 'Un trattamento complementare sicuro, se applicato correttamente', size=13)
+banner(s, 0.62, 5.75, 6.2, 'Trattamento complementare sicuro, se ben applicato', size=13)
 pw, ph = fit('img24.png', 5.4, 2.55); picture(s, 'img24.png', 7.3 + (5.4 - pw) / 2, 1.65, pw, ph, frame=False)
 pw2, ph2 = fit('img25.png', 5.4, 2.55); picture(s, 'img25.png', 7.3 + (5.4 - pw2) / 2, 4.35, pw2, ph2, frame=False)
 
