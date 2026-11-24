@@ -7,6 +7,12 @@ import {
   PENSIONE_FPS,
 } from "./GeneraliPensione";
 import { GeneraliPensioneCover } from "./GeneraliPensione/Cover";
+import {
+  ACCUMULO_DURATION,
+  ACCUMULO_FPS,
+  PianoAccumulo,
+} from "./PianoAccumulo";
+import { PianoAccumuloCover } from "./PianoAccumulo/Cover";
 import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
@@ -93,6 +99,20 @@ export const RemotionRoot: React.FC = () => {
         component={GeneraliPensione}
         durationInFrames={PENSIONE_DURATION}
         fps={PENSIONE_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="PianoAccumulo"
+        component={PianoAccumulo}
+        durationInFrames={ACCUMULO_DURATION}
+        fps={ACCUMULO_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Still
+        id="PianoAccumuloCover"
+        component={PianoAccumuloCover}
         width={1080}
         height={1920}
       />

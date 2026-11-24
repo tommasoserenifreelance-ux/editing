@@ -18,7 +18,9 @@ const usePop = (delay: number, damping = 11) => {
   return spring({ frame: frame - delay, fps, config: { damping, mass: 0.7 } });
 };
 
-const Stage: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+export const Stage: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => (
   <svg
     viewBox="0 0 1080 1920"
     style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
@@ -27,7 +29,7 @@ const Stage: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   </svg>
 );
 
-const Label: React.FC<{
+export const Label: React.FC<{
   x: number;
   y: number;
   size: number;
@@ -137,7 +139,7 @@ export const YearsScene: React.FC = () => {
   );
 };
 
-const IconBubble: React.FC<{
+export const IconBubble: React.FC<{
   x: number;
   y: number;
   p: number;
