@@ -9,6 +9,7 @@ import {
 } from "./PilatesOverlay";
 import { PILATES_DURATION, PilatesReformer } from "./PilatesReformer";
 import { IconSheet } from "./Zymerex/IconSheet";
+import { PMS_DURATION, PMS_FPS, ZymerexPMS } from "./ZymerexPMS";
 import { Zymerex, ZYMEREX_DURATION, ZYMEREX_FPS } from "./Zymerex";
 
 // Each <Composition> is an entry in the sidebar!
@@ -87,6 +88,14 @@ export const RemotionRoot: React.FC = () => {
         component={Zymerex}
         durationInFrames={ZYMEREX_DURATION}
         fps={ZYMEREX_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="ZymerexPMS"
+        component={ZymerexPMS}
+        durationInFrames={PMS_DURATION}
+        fps={PMS_FPS}
         width={1080}
         height={1920}
       />
