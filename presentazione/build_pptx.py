@@ -117,6 +117,45 @@ def video(s, f, poster, x, y, w, h):
     return m
 
 
+
+def source(s, text):
+    tb(s, 0.62, 6.62, 11.6, 0.3, text, size=9, color=GREY, italic=True)
+
+
+def points(s, x, y, w, items, h=1.12, gap=0.22, size=13):
+    for i, it in enumerate(items):
+        head, body = it if isinstance(it, tuple) else (None, it)
+        yy = y + i * (h + gap)
+        card(s, x, yy, w, h, shadow=[CYAN, LILAC, PINK, CYAN][i % 4], off=0.07)
+        circle(s, x + 0.45, yy + h / 2, 0.5, text=str(i + 1), size=14, fill=[NAVY, CYAN, NAVY, CYAN][i % 4])
+        if head:
+            tb(s, x + 0.9, yy + 0.1, w - 1.05, 0.38, head.upper(), size=12.5, bold=True, spacing=1)
+            tb(s, x + 0.9, yy + 0.44, w - 1.05, h - 0.5, body, size=size - 0.5, color=GREY, line=1.15)
+        else:
+            tb(s, x + 0.9, yy + 0.08, w - 1.05, h - 0.16, body, size=size, color=NAVY, anchor=MSO_ANCHOR.MIDDLE, line=1.15)
+
+
+def study(s, img, x, y, w, h, shadow=LILAC):
+    """a PubMed screenshot in an Infiammazione card"""
+    pw, ph = fit(img, w - 0.3, h - 0.3)
+    card(s, x, y, pw + 0.3, ph + 0.3, shadow=shadow)
+    picture(s, img, x + 0.15, y + 0.15, pw, ph, frame=False)
+    return pw + 0.3, ph + 0.3
+
+
+def placeholder(s, x, y, w, h, title, sub):
+    b = rect(s, x, y, w, h, fill=SKY, line=CYAN, lw=2.0)
+    b.line.dash_style = 4
+    tb(s, x, y + h / 2 - 0.45, w, 0.45, title, size=18, bold=True, color=NAVY, align=PP_ALIGN.CENTER)
+    tb(s, x, y + h / 2 + 0.05, w, 0.6, sub, size=12, color=GREY, align=PP_ALIGN.CENTER)
+
+
+def badge(s, x, y, text, fill=PINK):
+    w = 0.16 + 0.105 * len(text)
+    rect(s, x, y, w, 0.34, fill=fill)
+    tb(s, x, y, w, 0.34, text.upper(), size=10, bold=True, color=NAVY, align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, spacing=1)
+
+
 # ===================== 1 · COPERTINA =====================
 s = prs.slides.add_slide(BLANK); bg(s, 'bg-copertina.jpg')
 
@@ -146,7 +185,7 @@ tb(s, vx, 1.5 + vh + 0.22, vw, 0.4, '1839  →  1857  →  1870  →  1881  → 
    size=13, color=NAVY, bold=True, align=PP_ALIGN.CENTER, spacing=1)
 
 # ===================== 4 · DAL 2000 AL 2025 (video PubMed) =====================
-s = inner('Dal 2000 al 2025', 'L’esplosione delle evidenze')
+s = inner('Dal 2000 al 2026', 'L’esplosione delle evidenze')
 vw = 7.9; vh = vw * 9 / 16
 rect(s, 0.62 + 0.1, 1.6 + 0.1, vw, vh, fill=LILAC)
 video(s, 'pubmed.mp4', 'pubmed-poster.jpg', 0.62, 1.6, vw, vh)
@@ -157,8 +196,146 @@ for i, (t, c) in enumerate([('Dermatologia', CYAN), ('Stress ossidativo', LILAC)
     y = 4.05 + i * 0.6
     rect(s, 8.95, y, 0.14, 0.42, fill=c)
     tb(s, 9.2, y, 3.5, 0.42, t.upper(), size=12.5, bold=True, anchor=MSO_ANCHOR.MIDDLE, spacing=1)
-banner(s, 0.62, 6.25, 7.9, 'Le quattro revisioni che seguono riassumono lo stato delle evidenze', size=13)
+banner(s, 0.62, 6.25, 7.9, 'E per la medicina della longevità? Approfondiamo alcuni studi', size=13)
 
+
+# ===================== E PER LA MEDICINA DELLA LONGEVITÀ? =====================
+s = inner('', None)
+tb(s, 0.9, 1.7, 11.8, 1.9, [[('E per la medicina ', {})], [('della longevità?', {'italic': True, 'color': CYAN})]], size=50, font=SERIF, line=1.0)
+tb(s, 0.95, 3.75, 10.5, 0.8, 'Dalla modulazione dello stress ossidativo alla senescenza cellulare: cosa dicono gli studi.', size=20, color=GREY)
+for i, (t, c) in enumerate([('Meccanismi', CYAN), ('Studi sperimentali', LILAC), ('Dati sull’uomo', PINK), ('Prospettive', CYAN)]):
+    x = 0.95 + i * 2.95
+    rect(s, x + 0.07, 4.85 + 0.07, 2.65, 0.7, fill=NAVY); rect(s, x, 4.85, 2.65, 0.7, fill=c)
+    tb(s, x, 4.85, 2.65, 0.7, t.upper(), size=13, bold=True, color=WHITE if c != LILAC else NAVY, align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, spacing=1)
+
+# ===================== 1 · LONGEVITÀ E HEALTHY AGING =====================
+s = inner('Longevità e healthy aging', '01 · Vivere più a lungo, vivere meglio')
+card(s, 0.62, 1.7, 5.4, 4.6, shadow=CYAN)
+tb(s, 0.95, 1.95, 4.8, 0.4, 'IL DIVARIO TRA VITA E VITA IN SALUTE', size=12, bold=True, spacing=1.5)
+tb(s, 0.9, 2.45, 4.9, 1.6, '9,6', size=110, font=SERIF, color=CYAN, line=0.9)
+tb(s, 3.2, 3.15, 2.6, 0.6, 'anni', size=28, font=SERIF, color=NAVY)
+tb(s, 0.95, 4.2, 4.8, 1.0, 'In 183 Paesi la differenza tra aspettativa di vita e anni vissuti in salute è passata da 8,5 anni (2000) a 9,6 anni (2019).', size=13, color=GREY, line=1.2)
+banner(s, 0.95, 5.45, 4.8, 'Obiettivo: più anni in salute', size=13)
+points(s, 6.5, 1.7, 6.2, [
+    ('Healthy aging (OMS)', 'Sviluppare e mantenere la capacità funzionale che permette il benessere in età avanzata: non solo assenza di malattia.'),
+    ('2021–2030', 'L’ONU ha proclamato il Decennio dell’Invecchiamento in Salute.'),
+    ('12 segni dell’invecchiamento', 'Instabilità genomica, telomeri, epigenetica, proteostasi, autofagia, nutrienti, mitocondri, senescenza, staminali, comunicazione, infiammazione, disbiosi.')],
+    h=1.35, gap=0.27)
+source(s, 'Fonti: WHO, World report on ageing and health 2015 · López-Otín C et al., Cell 2023;186:243-278 · Garmany A, Terzic A, JAMA Netw Open 2024;7:e2450241')
+
+# ===================== 2 · STRESS OSSIDATIVO E INVECCHIAMENTO =====================
+s = inner('Lo stress ossidativo nell’invecchiamento', '02 · Dalla teoria dei radicali liberi all’equilibrio redox')
+steps = [('1956', 'Teoria dei radicali liberi', 'Harman: l’invecchiamento deriva dall’accumulo di danni ossidativi.', CYAN),
+         ('2012', 'Il limite degli antiossidanti', '78 studi, 296.707 persone: gli integratori antiossidanti non riducono la mortalità.', LILAC),
+         ('Oggi', 'Eustress e distress', 'I radicali liberi sono anche segnali indispensabili: l’obiettivo è l’equilibrio, non spegnerli.', PINK)]
+for i, (y, t, d, c) in enumerate(steps):
+    x = 0.62 + i * 4.1
+    card(s, x, 1.75, 3.8, 3.5, shadow=c)
+    rect(s, x, 1.75, 3.8, 0.85, fill=NAVY)
+    tb(s, x + 0.25, 1.75, 3.4, 0.85, y, size=30, font=SERIF, color=CYAN, anchor=MSO_ANCHOR.MIDDLE)
+    tb(s, x + 0.25, 2.8, 3.35, 0.8, t, size=17, bold=True, line=1.1)
+    tb(s, x + 0.25, 3.6, 3.35, 1.6, d, size=13.5, color=GREY, line=1.25)
+banner(s, 0.62, 5.65, 12.0, 'Ripristinare l’equilibrio redox è il razionale dell’ossigeno-ozono a basse dosi', size=14)
+source(s, 'Fonti: Harman D, J Gerontol 1956;11:298-300 · Bjelakovic G et al., Cochrane Database Syst Rev 2012;CD007176 · Sies H, Jones DP, Nat Rev Mol Cell Biol 2020;21:363-383')
+
+# ===================== 3 · ORMESI =====================
+s = inner('Ormesi e precondizionamento ossidativo', '03 · Uno stress lieve che attiva le difese')
+card(s, 0.62, 1.7, 5.6, 4.55, shadow=LILAC)
+tb(s, 0.95, 1.9, 5.0, 0.4, 'LA CURVA ORMETICA', size=12, bold=True, spacing=1.5)
+# hormesis curve: low dose protects, high dose harms
+from pptx.util import Emu as _E
+import math
+pts = []
+for k in range(41):
+    xx = k / 40
+    yy = 0.9 * math.sin(math.pi * min(xx / 0.62, 1)) if xx < 0.62 else -1.4 * ((xx - 0.62) / 0.38) ** 1.4
+    pts.append((1.1 + xx * 4.6, 4.0 - yy))
+for (xa, ya), (xb, yb) in zip(pts, pts[1:]):
+    seg_ = s.shapes.add_connector(1, Inches(xa), Inches(ya), Inches(xb), Inches(yb))
+    seg_.line.color.rgb = CYAN if yb <= 4.0 else PINK; seg_.line.width = Pt(4.5)
+ax = s.shapes.add_connector(1, Inches(1.1), Inches(4.0), Inches(5.8), Inches(4.0)); ax.line.color.rgb = NAVY; ax.line.width = Pt(1.5)
+tb(s, 1.3, 2.55, 2.4, 0.4, 'BASSE DOSI: PROTEZIONE', size=10.5, bold=True, color=CYAN)
+tb(s, 3.9, 4.9, 2.2, 0.4, 'ALTE DOSI: DANNO', size=10.5, bold=True, color=PINK)
+tb(s, 0.95, 5.55, 5.0, 0.6, 'Sistemica: 10–40 µg/mL, calibrata sulla capacità antiossidante del sangue', size=12, color=GREY, line=1.15)
+points(s, 6.6, 1.7, 6.1, [
+    ('La fine di un dogma', 'L’ozono non è sempre tossico: a dosi calibrate viene neutralizzato dalle difese del sangue e diventa un segnale.'),
+    ('Stress ossidativo lieve', 'Un breve e controllato stress ossidativo attiva Nrf2 e le risposte adattative.'),
+    ('Precondizionamento', 'Il pretrattamento ripetuto protegge i tessuti da un danno ossidativo successivo, come esercizio, freddo o restrizione calorica.')],
+    h=1.32, gap=0.29)
+source(s, 'Fonti: Bocci V, Toxicol Appl Pharmacol 2006;216:493-504 · Bocci VA et al., J Transl Med 2011;9:66 · Sagai M, Bocci V, Med Gas Res 2011;1:29 · Viebahn-Haensler R, León Fernández OS, Int J Mol Sci 2021;22:7890')
+
+# ===================== 4 · OZONO E NRF2 =====================
+s = inner('Ozono e sistema Nrf2', '04 · L’interruttore delle difese antiossidanti')
+cw, ch = study(s, 'pm-malatesta.png', 0.62, 1.7, 6.4, 3.6, shadow=CYAN)
+badge(s, 0.62, 1.7 + ch + 0.22, 'Revisione · 2024', fill=LILAC)
+tb(s, 0.62, 1.7 + ch + 0.7, 6.3, 1.0, 'L’ozono a basse dosi agisce come “eustress”: uno stimolo benefico che attiva la risposta antiossidante della cellula, soprattutto tramite Nrf2.', size=13, color=GREY, line=1.2)
+x0 = 7.45; w = SW - x0 - 0.62
+flow = [('Ozono a basse dosi', CYAN), ('Prodotti di ossidazione lipidica', LILAC), ('Keap1 rilascia Nrf2', PINK), ('Nrf2 entra nel nucleo', CYAN), ('Geni antiossidanti: HO-1, NQO1, glutatione', LILAC)]
+for i, (t, c) in enumerate(flow):
+    y = 1.7 + i * 0.93
+    rect(s, x0 + 0.06, y + 0.06, w, 0.66, fill=NAVY); rect(s, x0, y, w, 0.66, fill=c)
+    tb(s, x0 + 0.2, y, w - 0.4, 0.66, t, size=13.5, bold=True, color=NAVY if c != NAVY else WHITE, anchor=MSO_ANCHOR.MIDDLE)
+    if i < len(flow) - 1: tb(s, x0, y + 0.62, w, 0.34, '↓', size=14, bold=True, color=NAVY, align=PP_ALIGN.CENTER)
+source(s, 'Fonti: Malatesta M, Tabaracci G, Pellicciari C, Int J Mol Sci 2024;25:12657 · Galiè M et al., Int J Mol Sci 2019;20:4009 · Pecorelli A et al., Toxicol Appl Pharmacol 2013;267:30-40')
+
+# ===================== 5 · GLUTATIONE, SOD, CATALASI — l'uomo anziano =====================
+s = inner('Glutatione, SOD e catalasi', '05 · Il dato sull’uomo anziano')
+if os.path.exists(os.path.join(A, 'pm-leon.png')):
+    cw, ch = study(s, 'pm-leon.png', 0.62, 1.7, 6.4, 3.6, shadow=PINK)
+else:
+    ch = 3.3; placeholder(s, 0.62, 1.7, 6.3, ch, 'Screenshot PubMed', 'León Fernández OS et al., Front Physiol 2022 · PMID 36406985')
+badge(s, 0.62, 1.7 + ch + 0.22, 'Studio randomizzato · 60–70 anni', fill=PINK)
+tb(s, 0.62, 1.7 + ch + 0.7, 6.3, 1.0, 'Pazienti anziani con malattie a eziologia ossidativa, ozono per via rettale contro gruppo di controllo.', size=13, color=GREY, line=1.2)
+points(s, 7.45, 1.7, SW - 7.45 - 0.62, [
+    ('Difese', 'Regolazione di SOD, catalasi e perossido di idrogeno.'),
+    ('Danno', 'Arrestata la progressione del danno ossidativo a proteine e lipidi.'),
+    ('Vasi', 'Regolati i mediatori vasoattivi (trombossano / prostaciclina).'),
+    ('Limiti', 'Studio piccolo (45 pazienti): servono conferme su numeri più ampi.')],
+    h=0.98, gap=0.2, size=12.5)
+source(s, 'Fonte: León Fernández OS et al., Medical ozone arrests oxidative damage progression and regulates vasoactive mediator levels in elderly patients (60–70 years) with oxidative etiology diseases. Front Physiol 2022;13:1029805')
+
+# ===================== 6 · MITOCONDRI ED ENERGIA — studio animale =====================
+s = inner('Funzionalità mitocondriale ed energia', '06 · Studio sperimentale sull’invecchiamento')
+cw, ch = study(s, 'pm-elsawalhi.png', 0.62, 1.7, 6.4, 3.6, shadow=LILAC)
+badge(s, 0.62, 1.7 + ch + 0.22, 'Studio sperimentale · ratti anziani', fill=LILAC)
+tb(s, 0.62, 1.7 + ch + 0.7, 6.3, 1.0, 'Ozono per via rettale (0,6 mg/kg) fino a 15 mesi di età, confrontato con ossigeno e con animali anziani non trattati.', size=13, color=GREY, line=1.2)
+points(s, 7.45, 1.7, SW - 7.45 - 0.62, [
+    ('Redox', 'Ridotti i marcatori di ossidazione di lipidi e proteine; meno lipofuscina.'),
+    ('Glutatione', 'Ripristinato nel cuore e nell’ippocampo.'),
+    ('Energia', 'Attenuato il calo di ATP e del rapporto ATP/ADP legato all’età.'),
+    ('Funzione', 'Migliore gestione del calcio nel cuore, Na+/K+-ATPasi ripristinata nel cervello.')],
+    h=0.98, gap=0.2, size=12.5)
+source(s, 'Fonte: El-Sawalhi MM et al., Modulation of age-related changes in oxidative stress markers and energy status in the rat heart and hippocampus: a significant role for ozone therapy. Cell Biochem Funct 2013;31(6):518-525')
+
+# ===================== 6b · PREVENZIONE: PRIMA O DOPO? — studio animale =====================
+s = inner('Prima o dopo l’invecchiamento?', '06 · Il valore della prevenzione')
+cw, ch = study(s, 'pm-safwat.png', 0.62, 1.7, 6.4, 3.6, shadow=CYAN)
+badge(s, 0.62, 1.7 + ch + 0.22, 'Studio sperimentale · fegato e reni', fill=CYAN)
+x0 = 7.45; w = (SW - x0 - 0.62 - 0.3) / 2
+for i, (t, per, res, c) in enumerate([('Prima', 'dai 3 ai 15 mesi', 'Meno MDA, carbonili proteici e lipofuscina in fegato e reni', CYAN),
+                                       ('Dopo', 'dai 14 ai 15 mesi', 'Effetti simili ma più deboli: lipofuscina invariata', PINK)]):
+    x = x0 + i * (w + 0.3)
+    card(s, x, 1.7, w, 3.55, shadow=c)
+    rect(s, x, 1.7, w, 0.8, fill=NAVY)
+    tb(s, x + 0.2, 1.7, w - 0.4, 0.8, t.upper(), size=20, bold=True, color=c, anchor=MSO_ANCHOR.MIDDLE, spacing=2)
+    tb(s, x + 0.2, 2.65, w - 0.4, 0.4, per, size=13, bold=True)
+    tb(s, x + 0.2, 3.1, w - 0.4, 2.0, res, size=13, color=GREY, line=1.25)
+banner(s, x0, 5.55, SW - x0 - 0.62, 'Iniziare prima funziona meglio', size=14)
+source(s, 'Fonte: Safwat MH, El-Sawalhi MM, Mausouf MN, Shaheen AA. Ozone ameliorates age-related oxidative stress changes in rat liver and kidney: effects of pre- and post-ageing administration. Biochemistry (Moscow) 2014;79(5):450-458')
+
+# ===================== 7 · SENESCENZA E INFLAMMAGING =====================
+s = inner('Senescenza cellulare e inflammaging', '07 · Le revisioni più recenti')
+cw1, ch1 = study(s, 'pm-chirumbolo.png', 0.62, 1.65, 6.1, 2.55, shadow=PINK)
+cw2, ch2 = study(s, 'pm-scassellati.png', 0.62, 1.65 + ch1 + 0.25, 6.1, 2.55, shadow=CYAN)
+points(s, 7.2, 1.65, SW - 7.2 - 0.62, [
+    ('Inflammaging', 'Con l’età si instaura un’infiammazione cronica di basso grado, alimentata dalle cellule senescenti.'),
+    ('Nrf2 su, NF-κB giù', 'L’ozono a basse dosi attiva le difese antiossidanti e riduce i segnali infiammatori.'),
+    ('Una nuova strategia', 'Le revisioni lo propongono come terapia di supporto nei disturbi legati all’invecchiamento.'),
+    ('Da dimostrare', 'Protocolli e dosi non standardizzati: effetti sulla senescenza nell’uomo ancora da provare.')],
+    h=0.98, gap=0.2, size=12.5)
+source(s, 'Fonti: Chirumbolo S et al., Adv Pharmacol 2025;104:417-446 · Scassellati C et al., Ageing Res Rev 2020;63:101138 · Franceschi C et al., Nat Rev Endocrinol 2018;14:576-590')
+
+# ===================== 8 · LE EVIDENZE CLINICHE (introduzione alle revisioni) =====================
 # ===================== 5–8 · GLI STUDI =====================
 STUDIES = [
     ('img13.png', 'Ozonoterapia in dermatologia', 'Revisione della letteratura · studi clinici', [
@@ -179,7 +356,7 @@ STUDIES = [
         ('Conclusione', "L'ozono è una terapia emergente promettente, ma servono ulteriori ricerche in ambiti specifici.")]),
 ]
 for img, title, kick, blocks in STUDIES:
-    s = inner(title, 'Dal 2000 al 2025 · ' + kick)
+    s = inner(title, 'Dal 2000 al 2026 · ' + kick)
     pw, ph = fit(img, 4.6, 4.9)
     card(s, 0.62, 1.7, pw + 0.3, ph + 0.3, shadow=LILAC)
     picture(s, img, 0.77, 1.85, pw, ph, frame=False)
@@ -279,6 +456,50 @@ tb(s, 0.95, 2.85, 5.6, 2.5, ["L'ozonoterapia, eseguita da professionisti qualifi
 banner(s, 0.62, 5.75, 6.2, 'Trattamento complementare sicuro, se ben applicato', size=13)
 pw, ph = fit('img24.png', 5.4, 2.55); picture(s, 'img24.png', 7.3 + (5.4 - pw) / 2, 1.65, pw, ph, frame=False)
 pw2, ph2 = fit('img25.png', 5.4, 2.55); picture(s, 'img25.png', 7.3 + (5.4 - pw2) / 2, 4.35, pw2, ph2, frame=False)
+
+
+# ===================== 9 · EVIDENZE E LIMITI =====================
+s = inner('Cosa sappiamo, cosa non sappiamo', '09 · Evidenze cliniche e limiti')
+cols = [('Solido', 'Meccanismi', ['Ormesi a basse dosi', 'Attivazione di Nrf2', 'Aumento di glutatione, SOD, catalasi'], CYAN),
+        ('Promettente', 'Studi sperimentali', ['Ratti anziani: meno danno ossidativo', 'Più energia nei tessuti', 'Meglio se iniziato prima'], LILAC),
+        ('Da dimostrare', 'Nell’uomo', ['Pochi studi, piccoli', 'Nessuna prova su durata della vita', 'Servono studi controllati'], PINK)]
+for i, (lvl, t, items, c) in enumerate(cols):
+    x = 0.62 + i * 4.1
+    card(s, x, 1.7, 3.8, 4.0, shadow=c)
+    rect(s, x, 1.7, 3.8, 0.75, fill=c)
+    tb(s, x + 0.25, 1.7, 3.4, 0.75, lvl.upper(), size=16, bold=True, color=NAVY, anchor=MSO_ANCHOR.MIDDLE, spacing=2)
+    tb(s, x + 0.25, 2.6, 3.4, 0.5, t, size=19, font=SERIF)
+    for j, it in enumerate(items):
+        yy = 3.3 + j * 0.72
+        circle(s, x + 0.42, yy + 0.22, 0.2, fill=c)
+        tb(s, x + 0.7, yy, 2.95, 0.6, it, size=13, color=NAVY, line=1.1)
+banner(s, 0.62, 6.0, 12.0, 'Ben tollerata se eseguita con protocolli standardizzati; certezza delle prove cliniche ancora bassa', size=13)
+source(s, 'Fonti: Cacciatore S et al., Med Sci (Basel) 2026;14(2):289 · Chirumbolo S et al., Adv Pharmacol 2025;104:417-446')
+
+# ===================== 10 · PROSPETTIVE =====================
+s = inner('Le prospettive per la ricerca', '10 · Dove sta andando la medicina della longevità')
+card(s, 0.62, 1.7, 5.9, 4.5, shadow=CYAN)
+badge(s, 0.95, 1.95, 'Studio in corso · Italia', fill=CYAN)
+tb(s, 0.95, 2.45, 5.3, 0.9, 'Ossigeno-ozono e fragilità cognitiva nell’anziano', size=20, font=SERIF, line=1.1)
+tb(s, 0.95, 3.4, 5.3, 2.5, ['Studio randomizzato, in doppio cieco, controllato con placebo (IRCCS Fatebenefratelli, Brescia).',
+                            '75 persone tra 60 e 85 anni: ossigeno-ozono contro ossigeno contro aria, per 5 settimane.',
+                            'Valuta scale cliniche e biomarcatori (proteomica, metabolomica). NCT06071611.'], size=12.5, color=GREY, line=1.25)
+points(s, 6.95, 1.7, SW - 6.95 - 0.62, [
+    ('Protocolli', 'Standardizzare dosi, concentrazioni e vie di somministrazione.'),
+    ('Studi controllati', 'Trial con placebo ed esiti funzionali: fragilità, cognizione, autonomia.'),
+    ('Biomarcatori', 'Pannelli validati: difese (SOD, GSH), danno (MDA, isoprostani), infiammazione (IL-6, PCR).'),
+    ('Età biologica', 'Orologi epigenetici come possibili misure di risultato.')],
+    h=0.98, gap=0.18, size=12.5)
+source(s, 'Fonti: Scassellati C et al., J Pers Med 2024;14(8):795 · Frijhoff J et al., Antioxid Redox Signal 2015;23:1144-1170 · Belsky DW et al., eLife 2022;11:e73420')
+
+# ===================== COME SI PREPARA L'OZONO (video) =====================
+s = inner('Come si prepara l’ossigeno-ozono', 'Dalla teoria alla pratica')
+vw = 8.8; vh = vw * 9 / 16; vx = (SW - vw) / 2
+rect(s, vx + 0.12, 1.5 + 0.12, vw, vh, fill=LILAC)
+if os.path.exists(os.path.join(A, 'preparazione-ozono.mp4')):
+    video(s, 'preparazione-ozono.mp4', 'preparazione-ozono-poster.jpg', vx, 1.5, vw, vh)
+else:
+    placeholder(s, vx, 1.5, vw, vh, 'Video: preparazione dell’ossigeno-ozono', 'Spazio riservato al video')
 
 # ===================== 17 · CONCLUSIVA =====================
 s = prs.slides.add_slide(BLANK); bg(s, 'bg-conclusiva.jpg')
