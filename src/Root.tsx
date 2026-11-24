@@ -13,6 +13,7 @@ import {
   PANORAMA_W,
 } from "./Elena";
 import { COLAZIONE_DURATION, COLAZIONE_FPS, Colazione } from "./Colazione";
+import { ColazioneCover } from "./Colazione/Cover";
 import { HelloWorld } from "./HelloWorld";
 import { TAPIS_DURATION, TAPIS_FPS, TapisCover, TapisVs } from "./TapisVs";
 import { PERI_DURATION, PERI_FPS, Perimenopausa } from "./Perimenopausa";
@@ -164,6 +165,12 @@ export const RemotionRoot: React.FC = () => {
         component={Colazione}
         durationInFrames={COLAZIONE_DURATION}
         fps={COLAZIONE_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Still
+        id="ColazioneCover"
+        component={ColazioneCover}
         width={1080}
         height={1920}
       />
