@@ -15,7 +15,9 @@ const TICKS = [
 export const Sfx: React.FC = () => {
   const { fps } = useVideoConfig();
   const cues: { src: string; out: number; vol: number }[] = [
-    { src: "whoosh-long", out: 0, vol: 0.35 },
+    // music bed under the question card, fading out as the talk starts
+    { src: "intro-bed", out: 0, vol: 0.55 },
+    { src: "whoosh-long", out: 0, vol: 0.25 },
     { src: "pop", out: 0.3, vol: 0.3 },
     { src: "whoosh", out: INTRO - 0.22, vol: 0.5 },
     ...TRANSITION_SEGMENTS.map((i) => ({ src: "whoosh", out: SEGMENT_OUT_STARTS[i] - 0.22, vol: 0.5 })),
@@ -25,7 +27,7 @@ export const Sfx: React.FC = () => {
   return (
     <>
       {cues.map((c, i) => (
-        <Sequence key={i} from={Math.max(0, Math.round(c.out * fps))} durationInFrames={Math.round(2 * fps)}>
+        <Sequence key={i} from={Math.max(0, Math.round(c.out * fps))} durationInFrames={Math.round((c.src === "intro-bed" ? 4.3 : 2) * fps)}>
           <Audio src={staticFile(`zymerex/sfx/${c.src}.wav`)} volume={c.vol} />
         </Sequence>
       ))}

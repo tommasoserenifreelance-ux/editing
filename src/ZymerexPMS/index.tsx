@@ -27,7 +27,7 @@ const clamp = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
 // Framing changes at every cut and at these extra sentence starts (source s),
 // alternating wide / tight.
 const FRAMING = [1.0, 1.15, 1.05, 1.2];
-const EXTRA_SWITCHES = [21.95, 25.28, 32.36, 39.52];
+const EXTRA_SWITCHES = [21.95, 32.36, 39.52];
 const TR = 4; // frames each side of a zoom-blur cut
 const segOutFrame = (i: number, fps: number) => Math.round(SEGMENT_OUT_STARTS[i] * fps);
 

@@ -1,23 +1,27 @@
 import { useCurrentFrame, useVideoConfig } from "remotion";
 
 // Kept parts of the source (C9834 + C9834_1, seconds). The spoken question
-// (0-5.1 s) is replaced by a silent blurred intro card; silences between the
-// kept parts become jump cuts.
+// (0-5.1 s) is replaced by a blurred intro card with a music bed; pauses
+// (incl. their room-reverb tail, below -27 dB) become jump cuts.
 export const SEGMENTS: [number, number][] = [
-  [5.1, 8.0],
-  [8.13, 13.02],
-  [13.1, 14.26],
-  [14.56, 28.63],
-  [28.81, 34.36],
-  [34.63, 35.51],
-  [36.04, 42.32],
+  [5.1, 7.06],
+  [7.22, 7.84],
+  [8.18, 10.31],
+  [10.65, 12.81],
+  [13.11, 13.98],
+  [15.04, 25.26],
+  [25.86, 28.34],
+  [28.83, 31.63],
+  [31.79, 34.16],
+  [34.65, 35.42],
+  [36.05, 42.32],
 ];
 
 /** Length of the blurred question card before the first segment (output seconds). */
 export const INTRO = 2.8;
 
 /** Topic changes get a zoom-blur transition (+ whoosh); index into SEGMENTS. */
-export const TRANSITION_SEGMENTS = [1, 3, 4];
+export const TRANSITION_SEGMENTS = [2, 6];
 
 const OUT_STARTS: number[] = [];
 {
