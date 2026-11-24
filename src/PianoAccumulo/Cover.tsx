@@ -35,7 +35,7 @@ export const PianoAccumuloCover: React.FC = () => (
     <AbsoluteFill
       style={{
         background:
-          "linear-gradient(180deg, rgba(40,4,8,0.97) 0%, rgba(51,5,10,0.94) 18%, rgba(70,8,14,0.6) 25%, rgba(90,10,18,0) 31%)",
+          "linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.97) 17%, rgba(255,255,255,0.7) 23%, rgba(255,255,255,0) 30%)",
       }}
     />
     <AbsoluteFill
@@ -46,12 +46,12 @@ export const PianoAccumuloCover: React.FC = () => (
     />
 
     {/* logo */}
-    <AbsoluteFill style={{ top: 170, alignItems: "center" }}>
+    <AbsoluteFill style={{ top: 105, alignItems: "center" }}>
       <Img
-        src={staticFile("accumulo/generali-logo-white.png")}
+        src={staticFile("accumulo/generali-logo-red.png")}
         style={{
-          width: 290,
-          filter: "drop-shadow(0 8px 20px rgba(0,0,0,0.45))",
+          width: 330,
+          filter: "none",
         }}
       />
     </AbsoluteFill>
