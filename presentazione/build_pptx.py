@@ -143,6 +143,13 @@ def study(s, img, x, y, w, h, shadow=LILAC):
     return pw + 0.3, ph + 0.3
 
 
+def aside(s, img, x, y, w, h, shadow=CYAN):
+    """image card aligned to the block beside it: same top and bottom, image centred inside"""
+    card(s, x, y, w, h, shadow=shadow)
+    pw, ph = fit(img, w - 0.3, h - 0.3)
+    picture(s, img, x + (w - pw) / 2, y + (h - ph) / 2, pw, ph, frame=False)
+
+
 def placeholder(s, x, y, w, h, title, sub):
     b = rect(s, x, y, w, h, fill=SKY, line=CYAN, lw=2.0)
     b.line.dash_style = 4
@@ -161,9 +168,9 @@ s = prs.slides.add_slide(BLANK); bg(s, 'bg-copertina.jpg')
 
 # ===================== 2 · LO STATO DELL'ARTE (video) =====================
 s = inner("Lo stato dell'arte", 'Ossigeno-ozonoterapia oggi')
-vw, vh = 3.05, 3.05 * 1276 / 720
-rect(s, 8.9 + 0.1, 1.45 + 0.1, vw, vh, fill=LILAC)
-video(s, 'stato-arte.mp4', 'stato-arte-poster.jpg', 8.9, 1.45, vw, vh)
+vh = 6.49 - 1.95; vw = vh * 720 / 1276; vx = SW - 0.62 - vw - 0.1
+rect(s, vx + 0.1, 1.95 + 0.1, vw, vh, fill=LILAC)
+video(s, 'stato-arte.mp4', 'stato-arte-poster.jpg', vx, 1.95, vw, vh)
 tb(s, 0.62, 1.95, 7.6, 1.6, [[("Dall'esperimento di laboratorio ", {}), ('alla pratica clinica', {'italic': True, 'color': CYAN})]],
    size=36, font=SERIF, line=1.05)
 items = [('01', 'Evidenze', 'una letteratura scientifica in crescita costante'),
@@ -193,7 +200,7 @@ card(s, 8.95, 1.6, 3.75, 2.2, shadow=CYAN)
 tb(s, 9.2, 1.75, 3.3, 1.9, [[('Esplosione', {'bold': True, 'size': 20})],
                             [('degli studi pubblicati su PubMed: un aumento esponenziale delle evidenze scientifiche.', {'size': 14, 'color': GREY})]], line=1.2)
 for i, (t, c) in enumerate([('Dermatologia', CYAN), ('Stress ossidativo', LILAC), ('Invecchiamento vascolare', PINK), ('Medicina integrativa', CYAN)]):
-    y = 4.05 + i * 0.6
+    y = 4.0 + i * 0.54
     rect(s, 8.95, y, 0.14, 0.42, fill=c)
     tb(s, 9.2, y, 3.5, 0.42, t.upper(), size=12.5, bold=True, anchor=MSO_ANCHOR.MIDDLE, spacing=1)
 banner(s, 0.62, 6.25, 7.9, 'E per la medicina della longevità? Approfondiamo alcuni studi', size=13)
@@ -291,7 +298,7 @@ study_slide('Ozono e sistema Nrf2', '04 · L’interruttore delle difese antioss
 s = inner("Il meccanismo d'azione", '04 · Come agisce l’ozono')
 tb(s, 0.62, 1.55, 7.2, 0.75, "Negli ultimi anni è cresciuto l'interesse per gli approcci integrati, con particolare attenzione all'ozonoterapia per efficacia e profilo di sicurezza.",
    size=14, color=GREY, line=1.2)
-MECH = ['Azione multifattoriale: modulazione redox, effetto antinfiammatorio e antimicrobico',
+MECH = ['Azione multifattoriale: redox, antinfiammatoria e antimicrobica',
         'Effetto locale e sistemico sul microambiente tissutale',
         'Riduzione della carica batterica, virale e fungina',
         'Intervento sugli squilibri immunitari',
@@ -306,9 +313,7 @@ for i, t in enumerate(MECH):
     card(s, x, y, w, 0.86, shadow=[CYAN, LILAC, PINK][i % 3], off=0.07)
     circle(s, x + 0.4, y + 0.43, 0.46, text=str(i + 1), size=13, fill=NAVY)
     tb(s, x + 0.78, y + 0.06, w - 0.9, 0.74, t, size=11.5, color=NAVY, anchor=MSO_ANCHOR.MIDDLE, line=1.1)
-pw, ph = fit('img17.png', 4.4, 4.4)
-card(s, 8.2, 1.7, pw + 0.3, ph + 0.3, shadow=CYAN)
-picture(s, 'img17.png', 8.35, 1.85, pw, ph, frame=False)
+aside(s, 'img17.png', 8.2, 2.45, SW - 0.62 - 8.2, 2.45 + 3 * 1.08 + 0.86 - 2.45, CYAN)
 
 # ===================== 05 · GLUTATIONE, SOD, CATALASI =====================
 study_slide('Glutatione, SOD e catalasi', '05 · Il dato sull’uomo anziano', 'st-leon.png', 'Studio randomizzato · 60–70 anni',
@@ -382,9 +387,7 @@ for i, (t, c) in enumerate(FIELDS):
     rect(s, 1.12, y, 5.4, 0.46, fill=WHITE, line=NAVY, lw=1.5)
     tb(s, 1.3, y, 5.1, 0.46, t.upper(), size=13, bold=True, anchor=MSO_ANCHOR.MIDDLE, spacing=1)
 banner(s, 0.62, 6.0, 5.9, 'Guarigione · equilibrio ossidativo · qualità di vita', size=13)
-pw, ph = fit('img18.png', 5.5, 4.6)
-card(s, 7.15, 1.75, pw + 0.3, ph + 0.3, shadow=PINK)
-picture(s, 'img18.png', 7.3, 1.9, pw, ph, frame=False)
+aside(s, 'img18.png', 7.15, 2.75, SW - 0.62 - 7.15, 6.55 - 2.75, PINK)
 
 # ===================== 09 · LE AREE =====================
 AREAS = [
@@ -431,10 +434,12 @@ tb(s, 1.8, 1.75, 10.6, 0.45, 'Secondo uno studio pubblicato su International Wou
 tb(s, 1.8, 2.2, 10.6, 0.85, "Eseguita da professionisti qualificati secondo protocolli standardizzati, l'ozonoterapia mostra un profilo di sicurezza favorevole: effetti collaterali rari, per lo più lievi e transitori (dolore locale, irritazione).",
    size=13, color=GREY, line=1.2)
 # the two screenshots side by side, as in the original: the arrow in the first points to the second
-pw, ph = fit('img24.png', 6.2, 3.2); pw2, ph2 = fit('img25.png', 6.2, 2.8)
-x1 = (SW - pw - pw2 - 0.35) / 2
-picture(s, 'img24.png', x1, 3.35, pw, ph, frame=False)
-picture(s, 'img25.png', x1 + pw + 0.35, 3.35 + 0.4, pw2, ph2, frame=False)
+IH, GAP = 3.05, 1.1
+pw, ph = fit('img24-card.png', 6.0, IH); pw2, ph2 = fit('img25.png', 6.0, IH)
+x1 = (SW - pw - pw2 - GAP) / 2; y1 = 3.42
+picture(s, 'img24-card.png', x1, y1 + (IH - ph) / 2, pw, ph, frame=False)
+picture(s, 'img25.png', x1 + pw + GAP, y1 + (IH - ph2) / 2, pw2, ph2, frame=False)
+arr = rect(s, x1 + pw + 0.2, y1 + IH / 2 - 0.3, GAP - 0.4, 0.6, fill=CYAN, shape=MSO_SHAPE.RIGHT_ARROW)
 source(s, 'Fonte: Ozone therapy for skin diseases: Cellular and molecular mechanisms. Int Wound J 2023;20(6):2376-2385 (online 16/12/2022). doi:10.1111/iwj.14060')
 
 

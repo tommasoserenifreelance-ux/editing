@@ -14,7 +14,9 @@ for n, sl in enumerate(prs.slides, 1):
         if sh.shape_type == 16:  # MEDIA
             rid = sh._element.xpath('.//p:nvPr/a:videoFile/@r:link')[0]
             f = vids[len(sl.part.related_part(rid).blob)]
-            vs.append({'src': 'video/' + f, 'poster': 'video/' + f[:-4] + '-poster.jpg',
+            audio = subprocess.run(['ffprobe', '-v', 'error', '-select_streams', 'a', '-show_entries', 'stream=index', '-of', 'csv=p=0',
+                                    os.path.join(A, f)], capture_output=True, text=True).stdout.strip()
+            vs.append({'src': 'video/' + f, 'poster': 'video/' + f[:-4] + '-poster.jpg', 'auto': not audio,
                        'x': sh.left / SW, 'y': sh.top / SH, 'w': sh.width / SW, 'h': sh.height / SH})
     data.append({'img': 'slides/s%02d.jpg' % n, 'videos': vs})
 os.makedirs(os.path.join(W, 'video'), exist_ok=True)

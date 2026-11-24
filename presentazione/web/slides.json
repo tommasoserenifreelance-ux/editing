@@ -9,10 +9,11 @@
    {
     "src": "video/stato-arte.mp4",
     "poster": "video/stato-arte-poster.jpg",
-    "x": 0.6675166988675487,
-    "y": 0.19333333333333333,
-    "w": 0.22875572264562063,
-    "h": 0.7207035578885973
+    "auto": false,
+    "x": 0.7538621167934402,
+    "y": 0.26,
+    "w": 0.19213645026388865,
+    "h": 0.6053333333333333
    }
   ]
  },
@@ -22,6 +23,7 @@
    {
     "src": "video/storia-ozono.mp4",
     "poster": "video/storia-ozono-poster.jpg",
+    "auto": false,
     "x": 0.1699917033685636,
     "y": 0.2,
     "w": 0.6600165112398235,
@@ -35,6 +37,7 @@
    {
     "src": "video/pubmed.mp4",
     "poster": "video/pubmed-poster.jpg",
+    "auto": true,
     "x": 0.04650116329189666,
     "y": 0.21333333333333335,
     "w": 0.5925148225902961,
@@ -140,6 +143,7 @@
    {
     "src": "video/preparazione-ozono.mp4",
     "poster": "video/preparazione-ozono-poster.jpg",
+    "auto": false,
     "x": 0.18874217243787678,
     "y": 0.24666666666666667,
     "w": 0.6225155731011972,

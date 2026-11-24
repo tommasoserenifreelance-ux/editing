@@ -44,7 +44,9 @@ function show(n) {
   stage.appendChild(im);
   for (const v of S[i].videos) {
     const el = document.createElement('video');
-    el.src = v.src; el.poster = v.poster; el.controls = true; el.playsInline = true; el.preload = 'metadata';
+    el.src = v.src; el.poster = v.poster; el.playsInline = true; el.preload = 'auto';
+    if (v.auto) { el.muted = true; el.autoplay = true; el.removeAttribute('poster'); el.style.background = 'transparent'; el.style.cursor = 'pointer'; el.onclick = () => { el.currentTime = 0; el.play(); }; }
+    else el.controls = true;
     Object.assign(el.style, { left: v.x * 100 + '%', top: v.y * 100 + '%', width: v.w * 100 + '%', height: v.h * 100 + '%' });
     stage.appendChild(el);
   }
