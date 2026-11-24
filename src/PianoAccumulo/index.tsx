@@ -28,7 +28,7 @@ import {
   GoalsScene,
   GrowthScene,
 } from "./Scenes";
-import { WORDS } from "./words";
+import { JUMPS, WORDS } from "./words";
 
 export const ACCUMULO_FPS = 30;
 const FPS = ACCUMULO_FPS;
@@ -147,6 +147,7 @@ const ITEMS: Item[] = [];
 // Punch-in zoom alternates on every key-phrase block.
 const ZOOM_POINTS = [
   0,
+  ...JUMPS.map((t) => toFrame(t)),
   ...ITEMS.filter((it) => it.kind !== "word").map((it) => it.from),
 ]
   .sort((a, b) => a - b)
