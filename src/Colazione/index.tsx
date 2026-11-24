@@ -12,12 +12,14 @@ import {
 } from "remotion";
 import { sans } from "../PilatesReformer/theme";
 
-// "La mia colazione anti picco glicemico": same editing style as the
+// "La mia colazione anti fame": same editing style as the
 // collagen myths reel (stickers hook, white outlined subtitles, logo
 // watermark, whoosh on the cut, pop on every sticker) without the black &
 // white / red reveal. Stickers sit in the right column, clear of her face.
 // Source: GitHub release (colazione.santa.mov) → public/colazione/colazione.mp4.
-// The repeated line at the end of the recipe and the pause are cut out.
+// The repeated line at the end of the recipe and the pause are cut out; the
+// video ends on "...o un pezzetto di cioccolata" (the closing line about the
+// glycaemic peak is dropped) and closes on a Santa Longevity logo card.
 
 export const COLAZIONE_FPS = 24;
 const s = (seconds: number) => Math.round(seconds * COLAZIONE_FPS);
@@ -28,14 +30,16 @@ const SRC = "colazione/colazione.mp4";
 // the pause after it.
 const CUT_FROM = 64.5;
 const CUT_TO = 72.4; // just before "con questo piccolo trucchetto"
+const END = 82.85; // right after "cioccolata", before "e non avrai..."
 const PART1 = s(CUT_FROM);
-const PART2 = s(85.875) - s(CUT_TO);
-export const COLAZIONE_DURATION = PART1 + PART2;
+const PART2 = s(END) - s(CUT_TO);
+const OUTRO = s(2.6); // logo card
+export const COLAZIONE_DURATION = PART1 + PART2 + OUTRO;
 
 // Output-timeline seconds for something said at source time t.
 const at = (t: number) => (t < CUT_FROM ? t : t - (CUT_TO - CUT_FROM));
 
-const HOOK = ["La mia colazione", "anti picco glicemico"];
+const HOOK = ["La mia colazione", "anti fame"];
 
 const CAPTIONS: [number, number, string][] = [
   [0, 3.0, "La colazione al bar può essere divertente,"],
@@ -61,8 +65,7 @@ const CAPTIONS: [number, number, string][] = [
   [72.45, 75.0, "Con questo piccolo trucchetto"],
   [75.0, 76.7, "arriverai a pranzo più sazia"],
   [76.74, 80.9, "magari spezzando la fame con 3-4 mandorle"],
-  [80.94, 82.7, "o un pezzetto di cioccolato"],
-  [82.7, 85.8, "e non avrai il famoso picco glicemico"],
+  [80.94, 82.85, "o un pezzetto di cioccolata"],
 ];
 
 // Ingredient tags, shown when she adds each one (source seconds).
@@ -223,6 +226,37 @@ const Timed: React.FC<{
   );
 };
 
+// Closing card: the frame fades to cream and the logo pops in on a soft chime.
+const Outro: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const bg = interpolate(frame, [0, 8], [0, 1], clamp);
+  const pop = spring({
+    frame: frame - 5,
+    fps,
+    config: { damping: 11, mass: 0.6 },
+  });
+  return (
+    <AbsoluteFill
+      style={{
+        backgroundColor: `rgba(250,246,238,${bg})`,
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <Img
+        src={staticFile("logo.png")}
+        style={{
+          width: 360,
+          filter: "invert(1)",
+          opacity: Math.min(1, pop * 1.5),
+          transform: `scale(${interpolate(pop, [0, 1], [0.6, 1])})`,
+        }}
+      />
+    </AbsoluteFill>
+  );
+};
+
 export const Colazione: React.FC = () => (
   <AbsoluteFill style={{ backgroundColor: "black" }}>
     <Sequence durationInFrames={PART1}>
@@ -231,10 +265,13 @@ export const Colazione: React.FC = () => (
         style={{ width: "100%", height: "100%", objectFit: "cover" }}
       />
     </Sequence>
-    <Sequence from={PART1} durationInFrames={PART2}>
+    <Sequence from={PART1} durationInFrames={PART2 + 8}>
       <OffthreadVideo
         src={staticFile(SRC)}
         trimBefore={s(CUT_TO)}
+        // voice stops right after "cioccolata"; the picture runs on under
+        // the fade to the logo card
+        volume={(f) => interpolate(f, [PART2 - 2, PART2], [1, 0], clamp)}
         style={{ width: "100%", height: "100%", objectFit: "cover" }}
       />
     </Sequence>
@@ -323,5 +360,9 @@ export const Colazione: React.FC = () => (
         }}
       />
     </AbsoluteFill>
+    <Sequence from={PART1 + PART2}>
+      <Outro />
+      <Audio src={staticFile("sfx/soft_chime.wav")} volume={0.5} />
+    </Sequence>
   </AbsoluteFill>
 );
