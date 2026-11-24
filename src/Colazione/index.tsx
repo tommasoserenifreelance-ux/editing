@@ -29,8 +29,13 @@ const SRC = "colazione/colazione.mp4";
 // Cut: the repeated "e sono certa che il vostro intestino ringrazierà" and
 // the pause after it.
 const CUT_FROM = 64.5;
-const CUT_TO = 72.4; // just before "con questo piccolo trucchetto"
-const END = 82.85; // right after "cioccolata", before "e non avrai..."
+// The source itself changes shot at 72.5 s (frame 1740): start exactly there
+// so no frames of the previous shot flash before "con questo piccolo trucchetto".
+const CUT_TO = 72.5;
+// "cioccolata" ends at 82.68; from 82.75 she raises her hand for the next
+// line, so the picture ends here, already faded out.
+const END = 82.7;
+const FADE = 6; // frames: the logo card fades in over the last frames
 const PART1 = s(CUT_FROM);
 const PART2 = s(END) - s(CUT_TO);
 const OUTRO = s(2.6); // logo card
@@ -62,10 +67,11 @@ const CAPTIONS: [number, number, string][] = [
   [53.82, 58.4, "Poi aggiungiamo due cucchiaini rasi di semi di lino"],
   [58.44, 62.6, "e raggiungiamo 24 grammi di proteine"],
   [62.66, 64.45, "e 7 grammi di fibre"],
-  [72.45, 75.0, "Con questo piccolo trucchetto"],
-  [75.0, 76.7, "arriverai a pranzo più sazia"],
-  [76.74, 80.9, "magari spezzando la fame con 3-4 mandorle"],
-  [80.94, 82.85, "o un pezzetto di cioccolata"],
+  [72.5, 74.08, "Con questo piccolo trucchetto"],
+  [74.08, 76.04, "arriverai a pranzo più sazia"],
+  [76.04, 79.76, "magari spezzando la fame con 3-4 mandorle"],
+  [79.76, 80.96, "durante la giornata"],
+  [80.96, END, "o un pezzetto di cioccolata"],
 ];
 
 // Ingredient tags, shown when she adds each one (source seconds).
@@ -230,9 +236,9 @@ const Timed: React.FC<{
 const Outro: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const bg = interpolate(frame, [0, 8], [0, 1], clamp);
+  const bg = interpolate(frame, [0, FADE], [0, 1], clamp);
   const pop = spring({
-    frame: frame - 5,
+    frame: frame - FADE,
     fps,
     config: { damping: 11, mass: 0.6 },
   });
@@ -265,13 +271,11 @@ export const Colazione: React.FC = () => (
         style={{ width: "100%", height: "100%", objectFit: "cover" }}
       />
     </Sequence>
-    <Sequence from={PART1} durationInFrames={PART2 + 8}>
+    <Sequence from={PART1} durationInFrames={PART2}>
       <OffthreadVideo
         src={staticFile(SRC)}
         trimBefore={s(CUT_TO)}
-        // voice stops right after "cioccolata"; the picture runs on under
-        // the fade to the logo card
-        volume={(f) => interpolate(f, [PART2 - 2, PART2], [1, 0], clamp)}
+        volume={(f) => interpolate(f, [PART2 - 3, PART2], [1, 0], clamp)}
         style={{ width: "100%", height: "100%", objectFit: "cover" }}
       />
     </Sequence>
@@ -360,7 +364,7 @@ export const Colazione: React.FC = () => (
         }}
       />
     </AbsoluteFill>
-    <Sequence from={PART1 + PART2}>
+    <Sequence from={PART1 + PART2 - FADE}>
       <Outro />
       <Audio src={staticFile("sfx/soft_chime.wav")} volume={0.5} />
     </Sequence>
