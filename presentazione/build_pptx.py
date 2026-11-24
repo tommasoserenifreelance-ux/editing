@@ -264,113 +264,31 @@ points(s, 6.6, 1.7, 6.1, [
     h=1.32, gap=0.29)
 source(s, 'Fonti: Bocci V, Toxicol Appl Pharmacol 2006;216:493-504 · Bocci VA et al., J Transl Med 2011;9:66 · Sagai M, Bocci V, Med Gas Res 2011;1:29 · Viebahn-Haensler R, León Fernández OS, Int J Mol Sci 2021;22:7890')
 
-# ===================== 4 · OZONO E NRF2 =====================
-s = inner('Ozono e sistema Nrf2', '04 · L’interruttore delle difese antiossidanti')
-cw, ch = study(s, 'pm-malatesta.png', 0.62, 1.7, 6.4, 3.6, shadow=CYAN)
-badge(s, 0.62, 1.7 + ch + 0.22, 'Revisione · 2024', fill=LILAC)
-tb(s, 0.62, 1.7 + ch + 0.7, 6.3, 1.0, 'L’ozono a basse dosi agisce come “eustress”: uno stimolo benefico che attiva la risposta antiossidante della cellula, soprattutto tramite Nrf2.', size=13, color=GREY, line=1.2)
-x0 = 7.45; w = SW - x0 - 0.62
-flow = [('Ozono a basse dosi', CYAN), ('Prodotti di ossidazione lipidica', LILAC), ('Keap1 rilascia Nrf2', PINK), ('Nrf2 entra nel nucleo', CYAN), ('Geni antiossidanti: HO-1, NQO1, glutatione', LILAC)]
-for i, (t, c) in enumerate(flow):
-    y = 1.7 + i * 0.93
-    rect(s, x0 + 0.06, y + 0.06, w, 0.66, fill=NAVY); rect(s, x0, y, w, 0.66, fill=c)
-    tb(s, x0 + 0.2, y, w - 0.4, 0.66, t, size=13.5, bold=True, color=NAVY if c != NAVY else WHITE, anchor=MSO_ANCHOR.MIDDLE)
-    if i < len(flow) - 1: tb(s, x0, y + 0.62, w, 0.34, '↓', size=14, bold=True, color=NAVY, align=PP_ALIGN.CENTER)
-source(s, 'Fonti: Malatesta M, Tabaracci G, Pellicciari C, Int J Mol Sci 2024;25:12657 · Galiè M et al., Int J Mol Sci 2019;20:4009 · Pecorelli A et al., Toxicol Appl Pharmacol 2013;267:30-40')
+# ===================== STUDY TEMPLATE =====================
+def study_slide(title, kicker, img, badge_text, desc, pts, src, shadow=CYAN):
+    """one layout for every study: PubMed card left (fixed size), study type + summary below, 3 key points right, source"""
+    s = inner(title, kicker)
+    bx, by, bw, bh = 0.62, 1.7, 6.3, 2.75
+    card(s, bx, by, bw, bh, shadow=shadow)
+    pw, ph = fit(img, bw - 0.4, bh - 0.4)
+    picture(s, img, bx + (bw - pw) / 2, by + (bh - ph) / 2, pw, ph, frame=False)
+    badge(s, bx, 4.75, badge_text, fill=shadow)
+    tb(s, bx, 5.22, bw, 1.25, desc, size=13, color=GREY, line=1.2)
+    points(s, 7.4, 1.7, SW - 7.4 - 0.62, pts, h=1.38, gap=0.22, size=12.5)
+    source(s, src)
+    return s
 
-# ===================== 5 · GLUTATIONE, SOD, CATALASI — l'uomo anziano =====================
-s = inner('Glutatione, SOD e catalasi', '05 · Il dato sull’uomo anziano')
-if os.path.exists(os.path.join(A, 'pm-leon.png')):
-    cw, ch = study(s, 'pm-leon.png', 0.62, 1.7, 6.4, 3.6, shadow=PINK)
-else:
-    ch = 3.3; placeholder(s, 0.62, 1.7, 6.3, ch, 'Screenshot PubMed', 'León Fernández OS et al., Front Physiol 2022 · PMID 36406985')
-badge(s, 0.62, 1.7 + ch + 0.22, 'Studio randomizzato · 60–70 anni', fill=PINK)
-tb(s, 0.62, 1.7 + ch + 0.7, 6.3, 1.0, 'Pazienti anziani con malattie a eziologia ossidativa, ozono per via rettale contro gruppo di controllo.', size=13, color=GREY, line=1.2)
-points(s, 7.45, 1.7, SW - 7.45 - 0.62, [
-    ('Difese', 'Regolazione di SOD, catalasi e perossido di idrogeno.'),
-    ('Danno', 'Arrestata la progressione del danno ossidativo a proteine e lipidi.'),
-    ('Vasi', 'Regolati i mediatori vasoattivi (trombossano / prostaciclina).'),
-    ('Limiti', 'Studio piccolo (45 pazienti): servono conferme su numeri più ampi.')],
-    h=0.98, gap=0.2, size=12.5)
-source(s, 'Fonte: León Fernández OS et al., Medical ozone arrests oxidative damage progression and regulates vasoactive mediator levels in elderly patients (60–70 years) with oxidative etiology diseases. Front Physiol 2022;13:1029805')
 
-# ===================== 6 · MITOCONDRI ED ENERGIA — studio animale =====================
-s = inner('Funzionalità mitocondriale ed energia', '06 · Studio sperimentale sull’invecchiamento')
-cw, ch = study(s, 'pm-elsawalhi.png', 0.62, 1.7, 6.4, 3.6, shadow=LILAC)
-badge(s, 0.62, 1.7 + ch + 0.22, 'Studio sperimentale · ratti anziani', fill=LILAC)
-tb(s, 0.62, 1.7 + ch + 0.7, 6.3, 1.0, 'Ozono per via rettale (0,6 mg/kg) fino a 15 mesi di età, confrontato con ossigeno e con animali anziani non trattati.', size=13, color=GREY, line=1.2)
-points(s, 7.45, 1.7, SW - 7.45 - 0.62, [
-    ('Redox', 'Ridotti i marcatori di ossidazione di lipidi e proteine; meno lipofuscina.'),
-    ('Glutatione', 'Ripristinato nel cuore e nell’ippocampo.'),
-    ('Energia', 'Attenuato il calo di ATP e del rapporto ATP/ADP legato all’età.'),
-    ('Funzione', 'Migliore gestione del calcio nel cuore, Na+/K+-ATPasi ripristinata nel cervello.')],
-    h=0.98, gap=0.2, size=12.5)
-source(s, 'Fonte: El-Sawalhi MM et al., Modulation of age-related changes in oxidative stress markers and energy status in the rat heart and hippocampus: a significant role for ozone therapy. Cell Biochem Funct 2013;31(6):518-525')
+# ===================== 04 · OZONO E NRF2 =====================
+study_slide('Ozono e sistema Nrf2', '04 · L’interruttore delle difese antiossidanti', 'st-malatesta.png', 'Revisione · 2024',
+    'L’ozono a basse dosi agisce come “eustress”: uno stimolo benefico che attiva la risposta antiossidante della cellula, soprattutto tramite Nrf2.',
+    [('Stimolo lieve', 'Basse dosi di ozono generano prodotti di ossidazione lipidica che funzionano da segnale.'),
+     ('Keap1 rilascia Nrf2', 'Il segnale libera Nrf2, che entra nel nucleo della cellula.'),
+     ('Geni antiossidanti', 'Aumentano HO-1, NQO1 ed enzimi del glutatione: la cellula si difende meglio.')],
+    'Fonti: Malatesta M, Tabaracci G, Pellicciari C, Int J Mol Sci 2024;25:12657 · Galiè M et al., Int J Mol Sci 2019;20:4009 · Pecorelli A et al., Toxicol Appl Pharmacol 2013;267:30-40', CYAN)
 
-# ===================== 6b · PREVENZIONE: PRIMA O DOPO? — studio animale =====================
-s = inner('Prima o dopo l’invecchiamento?', '06 · Il valore della prevenzione')
-cw, ch = study(s, 'pm-safwat.png', 0.62, 1.7, 6.4, 3.6, shadow=CYAN)
-badge(s, 0.62, 1.7 + ch + 0.22, 'Studio sperimentale · fegato e reni', fill=CYAN)
-x0 = 7.45; w = (SW - x0 - 0.62 - 0.3) / 2
-for i, (t, per, res, c) in enumerate([('Prima', 'dai 3 ai 15 mesi', 'Meno MDA, carbonili proteici e lipofuscina in fegato e reni', CYAN),
-                                       ('Dopo', 'dai 14 ai 15 mesi', 'Effetti simili ma più deboli: lipofuscina invariata', PINK)]):
-    x = x0 + i * (w + 0.3)
-    card(s, x, 1.7, w, 3.55, shadow=c)
-    rect(s, x, 1.7, w, 0.8, fill=NAVY)
-    tb(s, x + 0.2, 1.7, w - 0.4, 0.8, t.upper(), size=20, bold=True, color=c, anchor=MSO_ANCHOR.MIDDLE, spacing=2)
-    tb(s, x + 0.2, 2.65, w - 0.4, 0.4, per, size=13, bold=True)
-    tb(s, x + 0.2, 3.1, w - 0.4, 2.0, res, size=13, color=GREY, line=1.25)
-banner(s, x0, 5.55, SW - x0 - 0.62, 'Iniziare prima funziona meglio', size=14)
-source(s, 'Fonte: Safwat MH, El-Sawalhi MM, Mausouf MN, Shaheen AA. Ozone ameliorates age-related oxidative stress changes in rat liver and kidney: effects of pre- and post-ageing administration. Biochemistry (Moscow) 2014;79(5):450-458')
-
-# ===================== 7 · SENESCENZA E INFLAMMAGING =====================
-s = inner('Senescenza cellulare e inflammaging', '07 · Le revisioni più recenti')
-cw1, ch1 = study(s, 'pm-chirumbolo.png', 0.62, 1.65, 6.1, 2.55, shadow=PINK)
-cw2, ch2 = study(s, 'pm-scassellati.png', 0.62, 1.65 + ch1 + 0.25, 6.1, 2.55, shadow=CYAN)
-points(s, 7.2, 1.65, SW - 7.2 - 0.62, [
-    ('Inflammaging', 'Con l’età si instaura un’infiammazione cronica di basso grado, alimentata dalle cellule senescenti.'),
-    ('Nrf2 su, NF-κB giù', 'L’ozono a basse dosi attiva le difese antiossidanti e riduce i segnali infiammatori.'),
-    ('Una nuova strategia', 'Le revisioni lo propongono come terapia di supporto nei disturbi legati all’invecchiamento.'),
-    ('Da dimostrare', 'Protocolli e dosi non standardizzati: effetti sulla senescenza nell’uomo ancora da provare.')],
-    h=0.98, gap=0.2, size=12.5)
-source(s, 'Fonti: Chirumbolo S et al., Adv Pharmacol 2025;104:417-446 · Scassellati C et al., Ageing Res Rev 2020;63:101138 · Franceschi C et al., Nat Rev Endocrinol 2018;14:576-590')
-
-# ===================== 8 · LE EVIDENZE CLINICHE (introduzione alle revisioni) =====================
-# ===================== 5–8 · GLI STUDI =====================
-STUDIES = [
-    ('img13.png', 'Ozonoterapia in dermatologia', 'Revisione della letteratura · studi clinici', [
-        ('Condizioni trattate', 'Acne, dermatite atopica, psoriasi, ferite infette, ulcere.'),
-        ('Benefici riportati', 'Azione antibatterica, antinfiammatoria e rigenerativa. Riduce prurito e carica batterica.'),
-        ('Sicurezza', 'Nessun evento avverso significativo nei protocolli standardizzati. Ottima tollerabilità anche in trattamenti ripetuti.')]),
-    ('img14.png', 'Stress ossidativo e mitocondri', 'Revisione sistematica', [
-        ('Problema', 'Stress ossidativo cronico e disfunzione mitocondriale sono alla base di molte malattie croniche (neurodegenerative, metaboliche, autoimmuni).'),
-        ('Intervento', "L'ozono a basse dosi attiva i sistemi antiossidanti endogeni (Nrf2, SOD, catalasi) senza causare danno cellulare."),
-        ('Conclusione', "L'ozonoterapia agisce come modulatore redox, favorisce l'equilibrio sistemico e sostiene la funzione mitocondriale.")]),
-    ('img15.png', 'Ozono e invecchiamento vascolare', 'Pazienti anziani', [
-        ('Contesto', 'Pazienti anziani con malattie croniche legate allo stress ossidativo e alla disregolazione vascolare.'),
-        ('Risultato', 'Riduzione significativa dei marcatori di perossidazione lipidica (MDA) e miglior tono vascolare, grazie alla regolazione di NO ed endoteline.'),
-        ('Implicazione clinica', "L'ozonoterapia può rallentare l'invecchiamento vascolare e migliorare la qualità di vita del paziente geriatrico.")]),
-    ('img16.png', "L'ozono nella medicina integrativa", 'Evidenze e lacune', [
-        ('Obiettivo', "Raccogliere e analizzare gli ambiti di applicazione dell'ozono in medicina integrativa, dal dolore cronico alla terapia rigenerativa."),
-        ('Risultato', 'Evidenze solide per dolore muscolo-scheletrico e ferite croniche. Restano lacune in oncologia e psichiatria.'),
-        ('Conclusione', "L'ozono è una terapia emergente promettente, ma servono ulteriori ricerche in ambiti specifici.")]),
-]
-for img, title, kick, blocks in STUDIES:
-    s = inner(title, 'Dal 2000 al 2026 · ' + kick)
-    pw, ph = fit(img, 4.6, 4.9)
-    card(s, 0.62, 1.7, pw + 0.3, ph + 0.3, shadow=LILAC)
-    picture(s, img, 0.77, 1.85, pw, ph, frame=False)
-    x0 = 0.62 + pw + 0.85; w = SW - x0 - 0.75
-    icons = ['1', '2', '3']
-    for i, (h, t) in enumerate(blocks):
-        y = 1.7 + i * 1.72
-        card(s, x0, y, w, 1.45, shadow=[CYAN, LILAC, PINK][i])
-        circle(s, x0 + 0.5, y + 0.5, 0.56, text=icons[i], size=15, fill=[NAVY, CYAN, NAVY][i])
-        tb(s, x0 + 1.0, y + 0.14, w - 1.2, 0.4, h.upper(), size=14, bold=True, color=NAVY, spacing=1.5)
-        tb(s, x0 + 1.0, y + 0.52, w - 1.2, 0.9, t, size=13.5, color=GREY, line=1.2)
-
-# ===================== 9 · MECCANISMO D'AZIONE =====================
-s = inner("Il meccanismo d'azione", 'Come agisce l’ozono')
+# ===================== 04 · MECCANISMO D'AZIONE =====================
+s = inner("Il meccanismo d'azione", '04 · Come agisce l’ozono')
 tb(s, 0.62, 1.55, 7.2, 0.75, "Negli ultimi anni è cresciuto l'interesse per gli approcci integrati, con particolare attenzione all'ozonoterapia per efficacia e profilo di sicurezza.",
    size=14, color=GREY, line=1.2)
 MECH = ['Azione multifattoriale: modulazione redox, effetto antinfiammatorio e antimicrobico',
@@ -388,12 +306,72 @@ for i, t in enumerate(MECH):
     card(s, x, y, w, 0.86, shadow=[CYAN, LILAC, PINK][i % 3], off=0.07)
     circle(s, x + 0.4, y + 0.43, 0.46, text=str(i + 1), size=13, fill=NAVY)
     tb(s, x + 0.78, y + 0.06, w - 0.9, 0.74, t, size=11.5, color=NAVY, anchor=MSO_ANCHOR.MIDDLE, line=1.1)
-pw, ph = fit('img17.png', 4.6, 4.4)
+pw, ph = fit('img17.png', 4.4, 4.4)
 card(s, 8.2, 1.7, pw + 0.3, ph + 0.3, shadow=CYAN)
 picture(s, 'img17.png', 8.35, 1.85, pw, ph, frame=False)
 
-# ===================== 10 · CAMPI DI APPLICAZIONE =====================
-s = inner('I campi di applicazione', 'Dove si utilizza')
+# ===================== 05 · GLUTATIONE, SOD, CATALASI =====================
+study_slide('Glutatione, SOD e catalasi', '05 · Il dato sull’uomo anziano', 'st-leon.png', 'Studio randomizzato · 60–70 anni',
+    'Anziani con malattie a eziologia ossidativa (45 pazienti): ozono per via rettale contro gruppo di controllo.',
+    [('Difese', 'Regolati superossido dismutasi, catalasi e perossido di idrogeno.'),
+     ('Danno e vasi', 'Arrestata la progressione del danno ossidativo; regolati i mediatori vasoattivi.'),
+     ('Limiti', 'Studio piccolo e monocentrico: servono conferme su numeri più ampi.')],
+    'Fonte: León Fernández OS et al., Medical ozone arrests oxidative damage progression and regulates vasoactive mediator levels in elderly patients (60–70 years). Front Physiol 2022;13:1029805', PINK)
+
+# ===================== 06 · MITOCONDRI =====================
+study_slide('Funzionalità mitocondriale ed energia', '06 · Studio sperimentale sull’invecchiamento', 'st-elsawalhi.png', 'Studio sperimentale · ratti anziani',
+    'Ozono per via rettale (0,6 mg/kg) fino a 15 mesi di età, confrontato con ossigeno e con animali anziani non trattati.',
+    [('Redox', 'Meno ossidazione di lipidi e proteine, meno lipofuscina; glutatione ripristinato.'),
+     ('Energia', 'Attenuato il calo di ATP e del rapporto ATP/ADP legato all’età.'),
+     ('Funzione', 'Migliore gestione del calcio nel cuore; Na+/K+-ATPasi ripristinata nel cervello.')],
+    'Fonte: El-Sawalhi MM et al., Modulation of age-related changes in oxidative stress markers and energy status in the rat heart and hippocampus: a significant role for ozone therapy. Cell Biochem Funct 2013;31(6):518-525', LILAC)
+
+# ===================== 07 · SENESCENZA E INFLAMMAGING =====================
+study_slide('Senescenza cellulare e inflammaging', '07 · Revisione 2025', 'st-chirumbolo.png', 'Revisione · 2025',
+    'Lo stato dell’arte sull’ossigeno-ozono come terapia di supporto nei disturbi legati all’invecchiamento e alla senescenza.',
+    [('Inflammaging', 'Con l’età si instaura un’infiammazione cronica di basso grado, alimentata dalle cellule senescenti.'),
+     ('Nrf2 su, NF-κB giù', 'L’ozono a basse dosi attiva le difese antiossidanti e riduce i segnali infiammatori.'),
+     ('Da dimostrare', 'Protocolli e dosi non standardizzati: effetti sulla senescenza nell’uomo ancora da provare.')],
+    'Fonti: Chirumbolo S et al., Adv Pharmacol 2025;104:417-446 · Franceschi C et al., Nat Rev Endocrinol 2018;14:576-590', PINK)
+
+study_slide('Invecchiamento e neurodegenerazione', '07 · Revisione 2020', 'st-scassellati.png', 'Revisione · 2020',
+    'L’ozono come molecola bioattiva con proprietà antiossidanti: una possibile nuova strategia nell’invecchiamento e nelle malattie neurodegenerative.',
+    [('Bersagli comuni', 'Stress ossidativo, infiammazione e mitocondri: meccanismi condivisi da invecchiamento e neurodegenerazione.'),
+     ('Fragilità cognitiva', 'Da qui nasce lo studio controllato italiano su ossigeno-ozono e fragilità nell’anziano.'),
+     ('Da confermare', 'Evidenze soprattutto precliniche: servono studi controllati sull’uomo.')],
+    'Fonte: Scassellati C et al., Ozone: a natural bioactive molecule with antioxidant property as potential new strategy in aging and in neurodegenerative disorders. Ageing Res Rev 2020;63:101138', CYAN)
+
+# ===================== 08 · GLI STUDI =====================
+study_slide('Prima o dopo l’invecchiamento?', '08 · Gli studi · sperimentale 2014', 'st-safwat.png', 'Studio sperimentale · fegato e reni',
+    'Ozono per via rettale iniziato prima (dai 3 ai 15 mesi) o dopo l’invecchiamento (dai 14 ai 15 mesi).',
+    [('Prima', 'Meno MDA, carbonili proteici e lipofuscina in fegato e reni.'),
+     ('Dopo', 'Effetti simili ma più deboli; lipofuscina invariata.'),
+     ('Il messaggio', 'Iniziare prima funziona meglio: il valore della prevenzione.')],
+    'Fonte: Safwat MH, El-Sawalhi MM, Mausouf MN, Shaheen AA. Ozone ameliorates age-related oxidative stress changes in rat liver and kidney: effects of pre- and post-ageing administration. Biochemistry (Moscow) 2014;79(5):450-458', CYAN)
+
+study_slide('Ozonoterapia in dermatologia', '08 · Gli studi · revisione 2022', 'st-machado.png', 'Revisione · 18 studi clinici',
+    'Revisione di 18 studi clinici (2011–2021, 1.279 pazienti) su efficacia e sicurezza dell’ozono nelle malattie della pelle.',
+    [('Condizioni trattate', 'Ulcere diabetiche e venose, dermatite atopica, ustioni, onicomicosi e altre infezioni cutanee.'),
+     ('Benefici riportati', 'Azione antimicrobica, antinfiammatoria e riparativa dei tessuti.'),
+     ('Sicurezza', 'Ben tollerata, con effetti avversi rari e lievi nei protocolli descritti.')],
+    'Fonte: Machado AU, Contri RV. Effectiveness and Safety of Ozone Therapy for Dermatological Disorders: A Literature Review of Clinical Trials. Indian J Dermatol 2022;67(4):479', LILAC)
+
+study_slide('Stress ossidativo e mitocondri', '08 · Gli studi · revisione sistematica 2024', 'st-viebahn.png', 'Revisione sistematica · 2024',
+    'Disfunzione mitocondriale e malattie da stress ossidativo: l’ozono medicale a basse dosi come bioregolatore redox.',
+    [('Problema', 'Stress ossidativo cronico e disfunzione mitocondriale sono alla base di molte malattie croniche.'),
+     ('Intervento', 'L’ozono a basse dosi attiva le difese endogene (glutatione, SOD, catalasi) senza danno cellulare.'),
+     ('Conclusione', 'Modulatore redox: favorisce l’equilibrio sistemico e sostiene la funzione mitocondriale.')],
+    'Fonte: Viebahn-Haensler R, León Fernández OS. Mitochondrial Dysfunction, Its Oxidative Stress-Induced Pathologies and Redox Bioregulation through Low-Dose Medical Ozone: A Systematic Review. Molecules 2024;29(12):2738', PINK)
+
+study_slide("L'ozono nella medicina integrativa", '08 · Gli studi · mappa delle evidenze 2023', 'st-serra.png', 'Mappa delle evidenze · 2023',
+    'Mappa delle evidenze sull’ozono come pratica di medicina integrativa, dal dolore cronico alla terapia rigenerativa.',
+    [('Obiettivo', 'Raccogliere e analizzare gli ambiti clinici in cui l’ozono è stato studiato.'),
+     ('Risultato', 'Evidenze più solide per dolore muscolo-scheletrico e ferite croniche; lacune in altri ambiti.'),
+     ('Conclusione', 'Terapia emergente e promettente: servono ulteriori ricerche in ambiti specifici.')],
+    'Fonte: Serra MEG et al. The role of ozone treatment as integrative medicine. An evidence and gap map. Front Public Health 2023;10:1112296', CYAN)
+
+# ===================== 09 · CAMPI DI APPLICAZIONE =====================
+s = inner('I campi di applicazione', '09 · Evidenze cliniche · dove si utilizza')
 tb(s, 0.62, 1.55, 6.3, 1.6, "Adattata nelle modalità di somministrazione e nei protocolli, l'ozonoterapia trova impiego in diverse aree cliniche.",
    size=16, color=NAVY, line=1.2)
 FIELDS = [('Dermatologia', CYAN), ('Ortopedia e medicina fisica', LILAC), ('Ginecologia', PINK), ('Medicina estetica', CYAN), ('Medicina della longevità', LILAC)]
@@ -408,7 +386,7 @@ pw, ph = fit('img18.png', 5.5, 4.6)
 card(s, 7.15, 1.75, pw + 0.3, ph + 0.3, shadow=PINK)
 picture(s, 'img18.png', 7.3, 1.9, pw, ph, frame=False)
 
-# ===================== 11–15 · LE AREE =====================
+# ===================== 09 · LE AREE =====================
 AREAS = [
     ('img19.png', 'Ortopedia e medicina fisica', 'Principali tecniche di somministrazione', [
         ('Infiltrazioni paravertebrali o periradicolari', "per il trattamento delle ernie discali, spesso sotto guida TC o ecografica"),
@@ -417,7 +395,7 @@ AREAS = [
     ('img20.png', 'Dermatologia', 'Quattro modalità di applicazione topica', [
         ('Ozono gassoso', "somministrato con una sacca contenente la miscela ossigeno-ozono"),
         ('Soluzioni ozonizzate', "come l'acqua ozonizzata, per lavare o irrigare le lesioni cutanee"),
-        ('Creme od oli vegetali ozonizzati', 'usati come medicazione per favorire la guarigione delle ferite'),
+        ('Creme od oli ozonizzati', 'usati come medicazione per favorire la guarigione delle ferite'),
         ('Sauna all’ozono', "per l'assorbimento transdermico dell'ozono")]),
     ('img21.png', 'Ginecologia', 'Modalità di applicazione', [
         ('Irrigazioni vaginali', 'con acqua ozonizzata'),
@@ -428,34 +406,36 @@ AREAS = [
         ('Oli ozonizzati topici', 'su viso, collo e corpo, con effetto idratante, rigenerante e antinfiammatorio'),
         ('Ozonoterapia sistemica', 'grande autoemotrasfusione nei protocolli antiaging: prelievo, ozonizzazione e reinfusione')]),
     ('img23.png', 'Medicina della longevità', 'Principali vie di somministrazione', [
-        ('Grande autoemotrasfusione', 'gold standard: un lieve stress ossidativo attiva la risposta antiossidante (superossido dismutasi, catalasi, glutatione)'),
+        ('Grande autoemotrasfusione', 'gold standard: un lieve stress ossidativo attiva la risposta antiossidante (SOD, catalasi, glutatione)'),
         ('Insufflazioni rettali', 'metodo non invasivo per un effetto sistemico'),
         ('Iniezioni sottocutanee', 'in punti strategici per migliorare microcircolo e ossigenazione dei tessuti')]),
 ]
 for img, title, kick, blocks in AREAS:
-    s = inner(title, kick)
+    s = inner(title, '09 · ' + kick)
     n = len(blocks); gap = 0.3; w = (SW - 1.24 - gap * (n - 1)) / n
     for i, (h, t) in enumerate(blocks):
         x = 0.62 + i * (w + gap)
         card(s, x, 1.7, w, 2.45, shadow=[CYAN, LILAC, PINK, CYAN][i])
         rect(s, x, 1.7, w, 0.62, fill=NAVY)
         tb(s, x + 0.2, 1.7, 0.7, 0.62, f'0{i + 1}', size=20, bold=True, color=CYAN, anchor=MSO_ANCHOR.MIDDLE)
-        tb(s, x + 0.2, 2.45, w - 0.4, 0.75, h, size=15, bold=True, color=NAVY, line=1.1)
+        tb(s, x + 0.2, 2.45, w - 0.4, 0.75, h, size=15 if n < 4 else 14, bold=True, color=NAVY, line=1.1)
         tb(s, x + 0.2, 3.2, w - 0.4, 0.9, t, size=12.5, color=GREY, line=1.2)
-    pw, ph = fit(img, SW - 1.24, 2.35)
+    pw, ph = fit(img, SW - 1.24, 2.25)
     picture(s, img, (SW - pw) / 2, 4.45, pw, ph, frame=False)
 
-# ===================== 16 · È SICURA? =====================
-s = inner("L'ozonoterapia è sicura?", 'Il profilo di sicurezza')
-card(s, 0.62, 1.7, 6.2, 3.75, shadow=CYAN)
-circle(s, 1.2, 2.3, 0.75, text='✓', size=22, fill=CYAN)
-tb(s, 1.8, 1.95, 4.8, 0.7, 'Secondo uno studio pubblicato su International Wound Journal', size=14, bold=True, line=1.15)
-tb(s, 0.95, 2.85, 5.6, 2.5, ["L'ozonoterapia, eseguita da professionisti qualificati secondo protocolli standardizzati, mostra un profilo di sicurezza favorevole.",
-                            'Gli effetti collaterali riportati sono rari, per lo più lievi e transitori (dolore locale, irritazione). Non sono stati osservati eventi avversi gravi.'],
-   size=13.5, color=GREY, line=1.25)
-banner(s, 0.62, 5.75, 6.2, 'Trattamento complementare sicuro, se ben applicato', size=13)
-pw, ph = fit('img24.png', 5.4, 2.55); picture(s, 'img24.png', 7.3 + (5.4 - pw) / 2, 1.65, pw, ph, frame=False)
-pw2, ph2 = fit('img25.png', 5.4, 2.55); picture(s, 'img25.png', 7.3 + (5.4 - pw2) / 2, 4.35, pw2, ph2, frame=False)
+# ===================== 09 · È SICURA? =====================
+s = inner("L'ozonoterapia è sicura?", '09 · Il profilo di sicurezza')
+card(s, 0.62, 1.65, 12.0, 1.45, shadow=CYAN)
+circle(s, 1.2, 2.375, 0.75, text='✓', size=22, fill=CYAN)
+tb(s, 1.8, 1.75, 10.6, 0.45, 'Secondo uno studio pubblicato su International Wound Journal (2022)', size=14, bold=True)
+tb(s, 1.8, 2.2, 10.6, 0.85, "Eseguita da professionisti qualificati secondo protocolli standardizzati, l'ozonoterapia mostra un profilo di sicurezza favorevole: effetti collaterali rari, per lo più lievi e transitori (dolore locale, irritazione).",
+   size=13, color=GREY, line=1.2)
+# the two screenshots side by side, as in the original: the arrow in the first points to the second
+pw, ph = fit('img24.png', 6.2, 3.2); pw2, ph2 = fit('img25.png', 6.2, 2.8)
+x1 = (SW - pw - pw2 - 0.35) / 2
+picture(s, 'img24.png', x1, 3.35, pw, ph, frame=False)
+picture(s, 'img25.png', x1 + pw + 0.35, 3.35 + 0.4, pw2, ph2, frame=False)
+source(s, 'Fonte: Ozone therapy for skin diseases: Cellular and molecular mechanisms. Int Wound J 2023;20(6):2376-2385 (online 16/12/2022). doi:10.1111/iwj.14060')
 
 
 # ===================== 9 · EVIDENZE E LIMITI =====================
@@ -494,12 +474,12 @@ source(s, 'Fonti: Scassellati C et al., J Pers Med 2024;14(8):795 · Frijhoff J 
 
 # ===================== COME SI PREPARA L'OZONO (video) =====================
 s = inner('Come si prepara l’ossigeno-ozono', 'Dalla teoria alla pratica')
-vw = 8.8; vh = vw * 9 / 16; vx = (SW - vw) / 2
-rect(s, vx + 0.12, 1.5 + 0.12, vw, vh, fill=LILAC)
+vw = 8.3; vh = vw * 9 / 16; vx = (SW - vw) / 2; vy = 1.85
+rect(s, vx + 0.12, vy + 0.12, vw, vh, fill=LILAC)
 if os.path.exists(os.path.join(A, 'preparazione-ozono.mp4')):
-    video(s, 'preparazione-ozono.mp4', 'preparazione-ozono-poster.jpg', vx, 1.5, vw, vh)
+    video(s, 'preparazione-ozono.mp4', 'preparazione-ozono-poster.jpg', vx, vy, vw, vh)
 else:
-    placeholder(s, vx, 1.5, vw, vh, 'Video: preparazione dell’ossigeno-ozono', 'Spazio riservato al video')
+    placeholder(s, vx, vy, vw, vh, 'Video: preparazione dell’ossigeno-ozono', 'Spazio riservato al video')
 
 # ===================== 17 · CONCLUSIVA =====================
 s = prs.slides.add_slide(BLANK); bg(s, 'bg-conclusiva.jpg')
