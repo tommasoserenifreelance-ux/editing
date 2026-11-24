@@ -1,6 +1,7 @@
 import {
   AbsoluteFill,
   Audio,
+  Img,
   Easing,
   interpolate,
   OffthreadVideo,
@@ -454,95 +455,34 @@ const NameCard: React.FC<{ duration: number }> = ({ duration }) => {
   );
 };
 
+// Closing: the picture dissolves to white and only the Generali logo stays.
 const EndCard: React.FC = () => {
-  const pop = [usePopIn(4), usePopIn(9), usePopIn(16), usePopIn(22)];
   const frame = useCurrentFrame();
-  const fadeIn = interpolate(frame, [0, 8], [0, 1], {
+  const white = interpolate(frame, [0, 14], [0, 1], {
     extrapolateRight: "clamp",
+    easing: Easing.inOut(Easing.quad),
   });
-  const item = (i: number): React.CSSProperties => ({
-    opacity: Math.min(1, pop[i] * 2),
-    transform: `translateY(${interpolate(pop[i], [0, 1], [40, 0])}px) scale(${interpolate(pop[i], [0, 1], [0.7, 1])})`,
+  const logo = interpolate(frame, [8, 26], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: Easing.out(Easing.cubic),
   });
   return (
-    <AbsoluteFill>
-      <AbsoluteFill style={{ filter: "blur(28px)", transform: "scale(1.15)" }}>
-        <OffthreadVideo
-          src={staticFile(SRC)}
-          trimBefore={toFrame(40)}
-          muted
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-        />
-      </AbsoluteFill>
-      <AbsoluteFill
+    <AbsoluteFill
+      style={{
+        backgroundColor: `rgba(255,255,255,${white})`,
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <Img
+        src={staticFile("accumulo/generali-logo-red.png")}
         style={{
-          opacity: fadeIn,
-          background: `linear-gradient(170deg, rgba(142,18,32,0.82), rgba(51,5,10,0.92))`,
-          alignItems: "center",
-          justifyContent: "center",
-          fontFamily: condensed,
-          color: colors.white,
-          textAlign: "center",
+          width: 520,
+          opacity: logo,
+          transform: `scale(${interpolate(logo, [0, 1], [0.94, 1])})`,
         }}
-      >
-        <div
-          style={{
-            ...item(0),
-            fontSize: 46,
-            fontWeight: 700,
-            letterSpacing: 8,
-          }}
-        >
-          IL FUTURO DEI TUOI FIGLI
-        </div>
-        <div
-          style={{ ...item(1), fontSize: 130, fontWeight: 800, lineHeight: 1 }}
-        >
-          PIANO DI
-          <br />
-          ACCUMULO
-        </div>
-        <div
-          style={{
-            ...item(1),
-            ...box(colors.white),
-            color: colors.red,
-            fontSize: 70,
-            fontWeight: 800,
-            marginTop: 30,
-          }}
-        >
-          L'IMPORTANTE È INIZIARE
-        </div>
-        <div
-          style={{
-            ...item(2),
-            width: 160,
-            height: 10,
-            borderRadius: 5,
-            background: colors.white,
-            margin: "44px 0",
-          }}
-        />
-        <div
-          style={{ ...item(2), display: "flex", alignItems: "center", gap: 20 }}
-        >
-          <Pin size={72} color={colors.red} />
-          <div style={{ textAlign: "left", lineHeight: 1.05 }}>
-            <div style={{ fontSize: 64, fontWeight: 800 }}>
-              Agenzia Generali
-            </div>
-            <div style={{ fontSize: 54, fontWeight: 500 }}>
-              Frascati · Piazza Roma 13
-            </div>
-          </div>
-        </div>
-        <div
-          style={{ ...item(3), fontSize: 50, fontWeight: 700, marginTop: 50 }}
-        >
-          Vienici a trovare in agenzia
-        </div>
-      </AbsoluteFill>
+      />
     </AbsoluteFill>
   );
 };
@@ -601,9 +541,7 @@ ITEMS.forEach((it) => {
   }
 });
 
-sfx(SPEECH_END - 36, "riser", 0.22);
-sfx(SPEECH_END, "impact", 0.8);
-sfx(SPEECH_END + 22, "ding", 0.45);
+sfx(SPEECH_END + 8, "ding", 0.35);
 
 SFX.sort((a, b) => a.at - b.at);
 
