@@ -3,9 +3,7 @@ import { sans } from "../PilatesReformer/theme";
 
 // Reel cover for "Una colazione anti fame": the frame where she laughs with
 // a blueberry (public/cover/colazione.png, colazione.mp4 at 46.5 s), the
-// same pill stickers as the video hook on the empty wall above her head, and
-// the totals on the table. Everything inside the centre 3:4 area kept by
-// the profile grid, clear of her face.
+// same pill stickers as the video hook in the centre, under her face.
 
 const pill: React.CSSProperties = {
   display: "inline-block",
@@ -23,7 +21,9 @@ export const ColazioneCover: React.FC = () => (
       src={staticFile("cover/colazione.png")}
       style={{ width: "100%", height: "100%", objectFit: "cover" }}
     />
-    <AbsoluteFill style={{ alignItems: "center", paddingTop: 245 }}>
+    <AbsoluteFill
+      style={{ alignItems: "center", justifyContent: "center", paddingTop: 80 }}
+    >
       <div
         style={{
           display: "flex",
@@ -54,25 +54,6 @@ export const ColazioneCover: React.FC = () => (
         >
           ANTI FAME
         </div>
-      </div>
-    </AbsoluteFill>
-    <AbsoluteFill
-      style={{
-        alignItems: "center",
-        justifyContent: "flex-end",
-        paddingBottom: 290,
-      }}
-    >
-      <div
-        style={{
-          ...pill,
-          background: "white",
-          fontSize: 50,
-          padding: "14px 44px",
-          transform: "rotate(2deg)",
-        }}
-      >
-        24 g proteine · 7 g fibre
       </div>
     </AbsoluteFill>
   </AbsoluteFill>
