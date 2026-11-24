@@ -12,7 +12,7 @@ import {
 } from "remotion";
 import { sans } from "../PilatesReformer/theme";
 
-// "La mia colazione anti fame": same editing style as the
+// "Una colazione anti fame": same editing style as the
 // collagen myths reel (stickers hook, white outlined subtitles, logo
 // watermark, whoosh on the cut, pop on every sticker) without the black &
 // white / red reveal. Stickers sit in the right column, clear of her face.
@@ -44,7 +44,7 @@ export const COLAZIONE_DURATION = PART1 + PART2 + OUTRO;
 // Output-timeline seconds for something said at source time t.
 const at = (t: number) => (t < CUT_FROM ? t : t - (CUT_TO - CUT_FROM));
 
-const HOOK = ["La mia colazione", "anti fame"];
+const HOOK = ["Una colazione", "anti fame"];
 
 const CAPTIONS: [number, number, string][] = [
   [0, 3.0, "La colazione al bar può essere divertente,"],
