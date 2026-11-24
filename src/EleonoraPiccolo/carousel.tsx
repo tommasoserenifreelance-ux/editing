@@ -43,8 +43,10 @@ export const Frame: React.FC<{
   photo?: string;
   bare?: boolean;
   textTop?: boolean;
+  // A decorative full-bleed background image, shown as is under the text.
+  backdrop?: string;
   children: React.ReactNode;
-}> = ({ theme, photo, bare, textTop = false, children }) => (
+}> = ({ theme, photo, bare, textTop = false, backdrop, children }) => (
   <AbsoluteFill
     style={{
       background: theme.bg,
@@ -59,6 +61,18 @@ export const Frame: React.FC<{
       textShadow: photo && !bare ? "0 2px 14px rgba(0,0,0,0.45)" : undefined,
     }}
   >
+    {backdrop ? (
+      <Img
+        src={staticFile(`img/${backdrop}`)}
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+        }}
+      />
+    ) : null}
     {photo ? (
       <>
         <Img
@@ -194,5 +208,6 @@ export type SlideDef = {
   photo?: string;
   bare?: boolean;
   textTop?: boolean;
+  backdrop?: string;
   render: (t: Theme) => React.ReactNode;
 };

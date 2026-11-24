@@ -10,6 +10,10 @@ import { CORPO_DURATION, CORPO_FPS, CorpoMenopausa } from "./CorpoMenopausa";
 import { ESAMI_DURATION, ESAMI_FPS, EsamiMenopausa } from "./EsamiMenopausa";
 import { HelloWorld } from "./HelloWorld";
 import {
+  PRECIPIZIO_SLIDE_COUNT,
+  PrecipizioMenopausa,
+} from "./PrecipizioMenopausa";
+import {
   ORMONALE_DURATION,
   ORMONALE_FPS,
   TerapiaOrmonale,
@@ -205,6 +209,18 @@ export const RemotionRoot: React.FC = () => {
             key={i}
             id={`OvaieImmunitarie-${i + 1}`}
             component={OvaieImmunitarie}
+            width={SLIDE_WIDTH}
+            height={SLIDE_HEIGHT}
+            defaultProps={{ index: i }}
+          />
+        ))}
+      </Folder>
+      <Folder name="PrecipizioMenopausa">
+        {Array.from({ length: PRECIPIZIO_SLIDE_COUNT }, (_, i) => (
+          <Still
+            key={i}
+            id={`PrecipizioMenopausa-${i + 1}`}
+            component={PrecipizioMenopausa}
             width={SLIDE_WIDTH}
             height={SLIDE_HEIGHT}
             defaultProps={{ index: i }}
