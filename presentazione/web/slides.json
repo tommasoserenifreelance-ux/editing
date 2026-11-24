@@ -1,0 +1,154 @@
+[
+ {
+  "img": "slides/s01.jpg",
+  "videos": []
+ },
+ {
+  "img": "slides/s02.jpg",
+  "videos": [
+   {
+    "src": "video/stato-arte.mp4",
+    "poster": "video/stato-arte-poster.jpg",
+    "x": 0.6675166988675487,
+    "y": 0.19333333333333333,
+    "w": 0.22875572264562063,
+    "h": 0.7207035578885973
+   }
+  ]
+ },
+ {
+  "img": "slides/s03.jpg",
+  "videos": [
+   {
+    "src": "video/storia-ozono.mp4",
+    "poster": "video/storia-ozono-poster.jpg",
+    "x": 0.1699917033685636,
+    "y": 0.2,
+    "w": 0.6600165112398235,
+    "h": 0.66
+   }
+  ]
+ },
+ {
+  "img": "slides/s04.jpg",
+  "videos": [
+   {
+    "src": "video/pubmed.mp4",
+    "poster": "video/pubmed-poster.jpg",
+    "x": 0.04650116329189666,
+    "y": 0.21333333333333335,
+    "w": 0.5925148225902961,
+    "h": 0.5925
+   }
+  ]
+ },
+ {
+  "img": "slides/s05.jpg",
+  "videos": []
+ },
+ {
+  "img": "slides/s06.jpg",
+  "videos": []
+ },
+ {
+  "img": "slides/s07.jpg",
+  "videos": []
+ },
+ {
+  "img": "slides/s08.jpg",
+  "videos": []
+ },
+ {
+  "img": "slides/s09.jpg",
+  "videos": []
+ },
+ {
+  "img": "slides/s10.jpg",
+  "videos": []
+ },
+ {
+  "img": "slides/s11.jpg",
+  "videos": []
+ },
+ {
+  "img": "slides/s12.jpg",
+  "videos": []
+ },
+ {
+  "img": "slides/s13.jpg",
+  "videos": []
+ },
+ {
+  "img": "slides/s14.jpg",
+  "videos": []
+ },
+ {
+  "img": "slides/s15.jpg",
+  "videos": []
+ },
+ {
+  "img": "slides/s16.jpg",
+  "videos": []
+ },
+ {
+  "img": "slides/s17.jpg",
+  "videos": []
+ },
+ {
+  "img": "slides/s18.jpg",
+  "videos": []
+ },
+ {
+  "img": "slides/s19.jpg",
+  "videos": []
+ },
+ {
+  "img": "slides/s20.jpg",
+  "videos": []
+ },
+ {
+  "img": "slides/s21.jpg",
+  "videos": []
+ },
+ {
+  "img": "slides/s22.jpg",
+  "videos": []
+ },
+ {
+  "img": "slides/s23.jpg",
+  "videos": []
+ },
+ {
+  "img": "slides/s24.jpg",
+  "videos": []
+ },
+ {
+  "img": "slides/s25.jpg",
+  "videos": []
+ },
+ {
+  "img": "slides/s26.jpg",
+  "videos": []
+ },
+ {
+  "img": "slides/s27.jpg",
+  "videos": []
+ },
+ {
+  "img": "slides/s28.jpg",
+  "videos": [
+   {
+    "src": "video/preparazione-ozono.mp4",
+    "poster": "video/preparazione-ozono-poster.jpg",
+    "x": 0.1699917033685636,
+    "y": 0.2,
+    "w": 0.6600165112398235,
+    "h": 0.66
+   }
+  ]
+ },
+ {
+  "img": "slides/s29.jpg",
+  "videos": []
+ }
+]
