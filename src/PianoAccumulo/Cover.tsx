@@ -1,5 +1,4 @@
 import { AbsoluteFill, Img, staticFile } from "remotion";
-import { Pin } from "../ContoGenerali/Scenes";
 import { colors, condensed, outline } from "../ContoGenerali/theme";
 
 // 9:16 reel cover. The profile grid crops it to the central 3:4
@@ -56,82 +55,33 @@ export const PianoAccumuloCover: React.FC = () => (
       />
     </AbsoluteFill>
 
-    {/* sticker */}
-    <div
-      style={{
-        position: "absolute",
-        right: 70,
-        top: 930,
-        transform: "rotate(8deg)",
-        ...box(colors.red),
-        color: colors.white,
-        fontSize: 64,
-        fontWeight: 800,
-        letterSpacing: 3,
-      }}
-    >
-      RISPARMIO
-    </div>
-
     {/* headline */}
     <AbsoluteFill
       style={{
-        top: 1040,
+        top: 1120,
         alignItems: "center",
         textAlign: "center",
         color: colors.white,
         textShadow: outline,
       }}
     >
-      <div style={{ fontSize: 76, fontWeight: 700, lineHeight: 1.1 }}>
-        Il futuro dei tuoi figli
-      </div>
       <div
         style={{
           ...box(colors.red),
-          fontSize: 108,
+          fontSize: 112,
           whiteSpace: "nowrap",
           fontWeight: 800,
           lineHeight: 1.05,
-          margin: "14px 0 10px",
-          transform: "rotate(-2deg)",
+          marginBottom: 30,
         }}
       >
         PIANO D'ACCUMULO
       </div>
-      <div style={{ fontSize: 104, fontWeight: 800, lineHeight: 1.05 }}>
-        Inizia oggi
+      <div style={{ fontSize: 80, fontWeight: 700, lineHeight: 1.15 }}>
+        Il futuro dei tuoi figli
+        <br />
+        inizia oggi
       </div>
-      <div
-        style={{
-          ...box(colors.white),
-          color: colors.red,
-          fontSize: 54,
-          fontWeight: 800,
-          letterSpacing: 2,
-          marginTop: 34,
-        }}
-      >
-        18 ANNI · AUTO · UNIVERSITÀ
-      </div>
-    </AbsoluteFill>
-
-    {/* location */}
-    <AbsoluteFill
-      style={{
-        top: 1570,
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "flex-start",
-        gap: 14,
-        color: colors.white,
-        fontSize: 48,
-        fontWeight: 700,
-        textShadow: outline,
-      }}
-    >
-      <Pin size={40} />
-      <div>Frascati · Piazza Roma 13</div>
     </AbsoluteFill>
   </AbsoluteFill>
 );
