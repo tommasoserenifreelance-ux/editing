@@ -37,6 +37,9 @@ const starts = DISHES.reduce<number[]>(
 export const MENU_DURATION =
   starts[starts.length - 1] + DISHES[DISHES.length - 1].frames; // 214
 
+// yellow of the placemat in the dish photos
+const YELLOW = "#e2960a";
+
 const half = (top: boolean): React.CSSProperties => ({
   position: "absolute",
   left: 0,
@@ -48,11 +51,26 @@ const half = (top: boolean): React.CSSProperties => ({
 
 export const BeatMenu: React.FC = () => (
   <AbsoluteFill style={{ background: "black" }}>
-    <div style={half(true)}>
+    {/* the whole menu page, readable, on the same yellow as the dish
+        photos below so the two halves read as one */}
+    <div
+      style={{
+        ...half(true),
+        background: YELLOW,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
       <OffthreadVideo
         src={staticFile("beat/menu/menu_slow.mp4")}
         muted
-        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        style={{
+          height: 900,
+          width: "auto",
+          borderRadius: 18,
+          boxShadow: "0 18px 40px rgba(90,50,0,0.35)",
+        }}
       />
     </div>
     <div style={half(false)}>
