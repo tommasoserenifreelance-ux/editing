@@ -93,7 +93,8 @@ const LABELS: Label[] = [
 
 const LabelView: React.FC<{ l: Label }> = ({ l }) => {
   const f = useCurrentFrame();
-  if (f < l.at) return null;
+  // names only on the still: gone as soon as the plates start moving
+  if (f < l.at || f >= T_OUT) return null;
   const pts = tracks.pts[l.key];
   const i = Math.min(pts.length - 1, Math.round(clipTime(f) * CLIP_FPS));
   const [x, y] = pts[i];
