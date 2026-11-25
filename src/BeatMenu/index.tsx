@@ -37,8 +37,8 @@ const starts = DISHES.reduce<number[]>(
 export const MENU_DURATION =
   starts[starts.length - 1] + DISHES[DISHES.length - 1].frames; // 214
 
-// the menu cover's yellow, as it renders in beat.ref.6
-const MENU_YELLOW = "#704104";
+// placemat yellow of the dish photos
+const YELLOW = "#e2960a";
 
 const half = (top: boolean): React.CSSProperties => ({
   position: "absolute",
@@ -51,13 +51,14 @@ const half = (top: boolean): React.CSSProperties => ({
 
 export const BeatMenu: React.FC = () => (
   <AbsoluteFill style={{ background: "black" }}>
-    {/* the whole menu page, readable, on the yellow of the menu's own
-        cover (sampled from the clip's top and bottom edges), so the page
-        continues into its menu */}
-    <div style={{ ...half(true), background: MENU_YELLOW }}>
+    {/* the whole menu page, readable. The menu cover's ochre in the clip is
+        recoloured to the placemat yellow of the photos (menu_yellow.mp4,
+        hue-keyed so the hand is untouched) and the half is filled with that
+        same yellow: no bands, one colour top to bottom */}
+    <div style={{ ...half(true), background: YELLOW }}>
       <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
         <OffthreadVideo
-          src={staticFile("beat/menu/menu_slow.mp4")}
+          src={staticFile("beat/menu/menu_yellow.mp4")}
           muted
           style={{ height: 960, width: "auto" }}
         />
@@ -68,7 +69,14 @@ export const BeatMenu: React.FC = () => (
         <Sequence key={i} from={starts[i]} durationInFrames={d.frames}>
           <Img
             src={staticFile(`beat/menu/dishes/${d.img}.jpg`)}
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              // the yellow disc has a radius of ~700 px: zoom so the black
+              // corners outside it never show
+              transform: "scale(1.08)",
+            }}
           />
         </Sequence>
       ))}
