@@ -1,6 +1,7 @@
 import {
   AbsoluteFill,
   Audio,
+  Img,
   interpolate,
   OffthreadVideo,
   Sequence,
@@ -8,93 +9,148 @@ import {
   useCurrentFrame,
 } from "remotion";
 
-// Fast cinematic montage modelled on the fourth reference (25 fps, 24 s):
-// 32 shots cut exactly on the reference's cut frames, every moment used once,
-// then a slow end shot of the Beat menu fading up from black like the
-// reference's logo card. Client's own grade, reference music.
-// Clip: public/beat/montage/c4.mp4 (beat.ref.4). beat.ref.5 (plates on the
-// yellow placemat) is for the plated-sushi format, not used here.
-export const MONTAGE_FPS = 25;
+// Cinematic montage modelled on the fourth reference: one shot per scene
+// (nothing shown twice), every shot slowly pushing in, fast whip-slides with
+// motion blur on alternate cuts (the reference's push transitions), then the
+// Beat menu fading up from black and holding with the push-in.
+// Rendered at 24 fps like the footage, real speed only: no duplicated frames,
+// so nothing judders. Clip: public/beat/montage/c4.mp4 (beat.ref.4);
+// beat.ref.5 belongs to the plated-sushi format and is not used here.
+export const MONTAGE_FPS = 24;
 
-type Shot = { clip: "c4"; from: number; frames: number; rate?: number };
+const SRC = staticFile("beat/montage/c4.mp4");
 
-// Shot lengths = gaps between the reference's cuts (frames 6, 12, 18, 25,
-// 43, 49, 61, 79, 89, 97, 115, 150, 167, 177, 190, 195, 202, 220, 237, 272,
-// 290, 308, 325, 332, 343, 361, 378, 414, 431, 447, 484, 502).
+type Shot = { from: number; frames: number; slide?: 1 | -1 };
 const SHOTS: Shot[] = [
-  { clip: "c4", from: 0.5, frames: 6 }, // chef at work
-  { clip: "c4", from: 5.2, frames: 6 }, // hands on the rice
-  { clip: "c4", from: 13.2, frames: 6 }, // piping on nori
-  { clip: "c4", from: 34.2, frames: 7 }, // wine wall
-  { clip: "c4", from: 6.5, frames: 18 }, // spreading rice
-  { clip: "c4", from: 25.2, frames: 6 }, // tuna roll close
-  { clip: "c4", from: 2.0, frames: 12 }, // chef
-  { clip: "c4", from: 16.3, frames: 18 }, // piping on the roll
-  { clip: "c4", from: 15.2, frames: 10 }, // piping on nori
-  { clip: "c4", from: 36.1, frames: 8 }, // booth
-  { clip: "c4", from: 30.2, frames: 18 }, // orange garnish
-  { clip: "c4", from: 20.5, frames: 35, rate: 0.6 }, // piping, slow
-  { clip: "c4", from: 9.5, frames: 17 }, // pressing the rice
-  { clip: "c4", from: 37.2, frames: 10 }, // dining room
-  { clip: "c4", from: 26.4, frames: 13 }, // crispy topping
-  { clip: "c4", from: 33.0, frames: 5 }, // sauce
-  { clip: "c4", from: 14.2, frames: 7 }, // piping on nori
-  { clip: "c4", from: 19.3, frames: 18 }, // piping on the roll
-  { clip: "c4", from: 31.4, frames: 17 }, // garnish
-  { clip: "c4", from: 33.2, frames: 35, rate: 0.5 }, // sauce drizzle, slow
-  { clip: "c4", from: 38.3, frames: 18 }, // tables
-  { clip: "c4", from: 11.2, frames: 18 }, // hands on the rice
-  { clip: "c4", from: 27.8, frames: 17 }, // crispy topping
-  { clip: "c4", from: 35.1, frames: 7 }, // wine wall
-  { clip: "c4", from: 3.5, frames: 11 }, // chef
-  { clip: "c4", from: 32.2, frames: 18 }, // garnish
-  { clip: "c4", from: 22.5, frames: 17 }, // piping close
-  { clip: "c4", from: 28.8, frames: 36, rate: 0.6 }, // tray, slow
-  { clip: "c4", from: 18.3, frames: 17 }, // piping on the roll
-  { clip: "c4", from: 8.0, frames: 16 }, // rice on nori
-  { clip: "c4", from: 39.0, frames: 37, rate: 0.6 }, // dining room, slow
-  { clip: "c4", from: 24.0, frames: 18 }, // last dollop
+  { from: 0.3, frames: 20 }, // chef at work
+  { from: 5.2, frames: 18, slide: 1 }, // hands on the rice
+  { from: 13.1, frames: 18 }, // piping on nori
+  { from: 16.3, frames: 22, slide: -1 }, // piping on the rolls
+  { from: 25.0, frames: 16 }, // tuna roll close-up
+  { from: 26.3, frames: 22, slide: 1 }, // crispy topping
+  { from: 30.2, frames: 24 }, // orange garnish
+  { from: 33.0, frames: 20, slide: -1 }, // sauce
+  { from: 34.1, frames: 22 }, // wine wall
+  { from: 36.0, frames: 16, slide: 1 }, // booth
+  { from: 37.2, frames: 30 }, // dining room
 ];
-const END = { clip: "c4" as const, from: 40.0, frames: 95, rate: 0.3 }; // the Beat menu
+const MENU = { from: 40.0, frames: 29 }; // the Beat menu, real speed
+const HOLD = 46; // then its last frame, still pushing in
 
 const starts = SHOTS.reduce<number[]>(
   (acc, s, i) => [...acc, i === 0 ? 0 : acc[i - 1] + SHOTS[i - 1].frames],
   [],
 );
-const END_AT = starts[starts.length - 1] + SHOTS[SHOTS.length - 1].frames; // 502
-export const MONTAGE_DURATION = END_AT + END.frames; // 597
+const END_AT = starts[starts.length - 1] + SHOTS[SHOTS.length - 1].frames;
+export const MONTAGE_DURATION = END_AT + MENU.frames + HOLD;
 
-const full: React.CSSProperties = { width: "100%", height: "100%" };
+const SL = 6; // slide length, frames
+const W = 1080;
+const ease = (t: number) =>
+  t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
-const Clip: React.FC<{ s: Shot; style?: React.CSSProperties }> = ({
-  s,
-  style,
-}) => (
-  <OffthreadVideo
-    src={staticFile(`beat/montage/${s.clip}.mp4`)}
-    startFrom={Math.round(s.from * MONTAGE_FPS)}
-    playbackRate={s.rate ?? 1}
-    muted
-    style={{ ...full, ...style }}
-  />
+const MotionBlurDefs: React.FC = () => (
+  <svg width={0} height={0} style={{ position: "absolute" }}>
+    {[16, 36, 64].map((d, i) => (
+      <filter key={i} id={`mmb${i}`} x="-20%" y="0" width="140%" height="100%">
+        <feGaussianBlur stdDeviation={`${d} 0`} />
+      </filter>
+    ))}
+  </svg>
 );
+const blurFor = (speed: number) =>
+  speed < 0.08
+    ? undefined
+    : `url(#mmb${speed < 0.22 ? 0 : speed < 0.4 ? 1 : 2})`;
 
-const EndShot: React.FC = () => {
+// Shot i is on screen from starts[i]; if shot i+1 slides in, shot i keeps
+// playing SL frames longer and is pushed out.
+const ShotView: React.FC<{ i: number }> = ({ i }) => {
   const f = useCurrentFrame();
-  const o = interpolate(f, [0, 20], [0, 1], { extrapolateRight: "clamp" });
-  return <Clip s={END} style={{ opacity: o }} />;
+  const s = SHOTS[i];
+  const next = SHOTS[i + 1];
+  const push = interpolate(f, [0, s.frames + SL], [1.0, 1.07]);
+  let x = 0;
+  let speed = 0;
+  if (s.slide && f < SL) {
+    x = s.slide * W * (1 - ease(f / SL));
+    speed = Math.abs(ease((f + 1) / SL) - ease(f / SL));
+  } else if (next?.slide && f >= s.frames) {
+    const t = (f - s.frames) / SL;
+    x = -next.slide * W * ease(t);
+    speed = Math.abs(ease(t + 1 / SL) - ease(t));
+  }
+  return (
+    <AbsoluteFill
+      style={{
+        overflow: "hidden",
+        transform: `translateX(${x}px)`,
+        filter: blurFor(speed),
+      }}
+    >
+      <OffthreadVideo
+        src={SRC}
+        startFrom={Math.round(s.from * MONTAGE_FPS)}
+        muted
+        style={{
+          width: "100%",
+          height: "100%",
+          transform: `scale(${push})`,
+        }}
+      />
+    </AbsoluteFill>
+  );
+};
+
+const End: React.FC = () => {
+  const f = useCurrentFrame();
+  const o = interpolate(f, [0, 18], [0, 1], { extrapolateRight: "clamp" });
+  const push = interpolate(f, [0, MENU.frames + HOLD], [1.0, 1.1]);
+  const style: React.CSSProperties = {
+    width: "100%",
+    height: "100%",
+    opacity: o,
+    transform: `scale(${push})`,
+  };
+  return (
+    <AbsoluteFill style={{ overflow: "hidden" }}>
+      {f < MENU.frames ? (
+        <OffthreadVideo
+          src={SRC}
+          startFrom={Math.round(MENU.from * MONTAGE_FPS)}
+          muted
+          style={style}
+        />
+      ) : (
+        <Img src={staticFile("beat/montage/menu_last.png")} style={style} />
+      )}
+    </AbsoluteFill>
+  );
 };
 
 export const BeatMontage: React.FC = () => (
   <AbsoluteFill style={{ background: "black" }}>
+    <MotionBlurDefs />
     {SHOTS.map((s, i) => (
-      <Sequence key={i} from={starts[i]} durationInFrames={s.frames}>
-        <Clip s={s} />
+      <Sequence
+        key={i}
+        from={starts[i]}
+        durationInFrames={s.frames + (SHOTS[i + 1]?.slide ? SL : 0)}
+      >
+        <ShotView i={i} />
       </Sequence>
     ))}
-    <Sequence from={END_AT} durationInFrames={END.frames}>
-      <EndShot />
+    <Sequence from={END_AT}>
+      <End />
     </Sequence>
-    <Audio src={staticFile("beat/montage/ref-audio.m4a")} />
+    <Audio
+      src={staticFile("beat/montage/ref-audio.m4a")}
+      volume={(f) =>
+        interpolate(f, [MONTAGE_DURATION - 30, MONTAGE_DURATION], [1, 0], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+        })
+      }
+    />
   </AbsoluteFill>
 );
