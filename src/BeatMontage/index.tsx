@@ -34,8 +34,8 @@ const SHOTS: Shot[] = [
   { from: 26.5, frames: 22, slide: 1 }, // crispy topping
   { from: 30.2, frames: 24 }, // orange garnish
   { from: 33.3, frames: 20, slide: -1 }, // sauce
-  { from: 34.35, frames: 22 }, // wine wall
-  { from: 36.2, frames: 16, slide: 1 }, // booth
+  { from: 34.35, frames: 32 }, // wine wall
+  { from: 36.2, frames: 26, slide: 1 }, // booth
   { from: 37.5, frames: 30 }, // dining room
 ];
 const MENU = { from: 40.1, frames: 26 }; // the Beat menu, real speed
