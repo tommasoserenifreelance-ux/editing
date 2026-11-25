@@ -9,6 +9,7 @@ import { CIBO_DURATION, CIBO_FPS, CiboMedicina } from "./CiboMedicina";
 import { CORPO_DURATION, CORPO_FPS, CorpoMenopausa } from "./CorpoMenopausa";
 import { ESAMI_DURATION, ESAMI_FPS, EsamiMenopausa } from "./EsamiMenopausa";
 import { HelloWorld } from "./HelloWorld";
+import { NON_SOLO_OGGI_SLIDE_COUNT, NonSoloOggi } from "./NonSoloOggi";
 import {
   PRECIPIZIO_SLIDE_COUNT,
   PrecipizioMenopausa,
@@ -221,6 +222,18 @@ export const RemotionRoot: React.FC = () => {
             key={i}
             id={`PrecipizioMenopausa-${i + 1}`}
             component={PrecipizioMenopausa}
+            width={SLIDE_WIDTH}
+            height={SLIDE_HEIGHT}
+            defaultProps={{ index: i }}
+          />
+        ))}
+      </Folder>
+      <Folder name="NonSoloOggi">
+        {Array.from({ length: NON_SOLO_OGGI_SLIDE_COUNT }, (_, i) => (
+          <Still
+            key={i}
+            id={`NonSoloOggi-${i + 1}`}
+            component={NonSoloOggi}
             width={SLIDE_WIDTH}
             height={SLIDE_HEIGHT}
             defaultProps={{ index: i }}

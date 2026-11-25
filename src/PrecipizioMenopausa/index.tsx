@@ -65,9 +65,7 @@ const SLIDES: SlideDef[] = [
         <Title theme={t} size={104}>
           La menopausa è un <Accent theme={t}>precipizio</Accent>
         </Title>
-        <Body size={42}>
-          E gli estrogeni iniziano a calare 12 anni prima.
-        </Body>
+        <Body size={42}>E gli estrogeni iniziano a calare 12 anni prima.</Body>
       </>
     ),
   },
