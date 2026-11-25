@@ -36,7 +36,8 @@ const CLIP_FPS = tracks.fps; // 24
 const FREEZE_AT = 0.75; // clip seconds: hands on the plates, nothing moved yet
 const IN = { from: 0, to: FREEZE_AT, frames: 22 }; // real time
 const FREEZE = 101; // frames (3.4 s), like the reference
-const OUT = { from: FREEZE_AT, to: 2.1, frames: 54 }; // 0.75x, ends on empty marble
+// plays to 2.5 s: the tartare plate only clears the bottom-left edge at 2.17 s
+const OUT = { from: FREEZE_AT, to: 2.5, frames: 54 }; // ~0.97x, ends on empty marble
 const rate = (p: { from: number; to: number; frames: number }) =>
   ((p.to - p.from) * PLATES_FPS) / p.frames;
 const T_FREEZE = IN.frames;
