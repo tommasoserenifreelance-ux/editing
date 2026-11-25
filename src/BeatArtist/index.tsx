@@ -12,7 +12,8 @@ import {
 // top half the chef at work, bottom half the dishes, both halves cutting
 // together on the reference's beats (30 fps: 1.33, 2.67, 3.97, 5.3, 6.23,
 // 7.93 s), then one full-frame close-up and the Beat menu as the logo shot.
-// Same music as the reference. Clips: public/beat/artist (graded).
+// Same music as the reference. Clips: public/beat/artist, already graded by
+// the client (copied as-is, no grade applied here).
 export const ARTIST_FPS = 30;
 
 const serif = "Cormorant Garamond";
@@ -48,16 +49,19 @@ const TOP: Cut[] = [
   { from: 1.53, rate: 0.8, zoom: 1.3, pos: "50% 30%", origin: "45% 28%" }, // face close
   { from: 8.5, rate: 1, zoom: 1.1, pos: "50% 34%", origin: "50% 35%" }, // side, working
 ];
+// Dishes always whole and centred in the half (no punch-in): object-position
+// y = (dish centre in frame - 0.25) / 0.5, each cut starts once the plate
+// has landed.
 const BOTTOM: Cut[] = [
-  { from: 0.45, rate: 1, zoom: 1, pos: "50% 40%" }, // tartare arrives
-  { from: 3.2, rate: 1, zoom: 1, pos: "50% 46%" }, // bowl
-  { from: 4.95, rate: 1, zoom: 1, pos: "50% 50%" }, // crostini
-  { from: 6.2, rate: 1, zoom: 1, pos: "50% 58%" }, // carpaccio
-  { from: 5.4, rate: 0.9, zoom: 1.7, pos: "50% 50%", origin: "40% 50%" }, // crostini close
-  { from: 1.6, rate: 0.68, zoom: 1.6, pos: "50% 40%", origin: "50% 45%" }, // tartare close
+  { from: 1.2, rate: 1, zoom: 1, pos: "50% 56%" }, // tartare
+  { from: 3.4, rate: 1, zoom: 1, pos: "50% 50%" }, // bowl
+  { from: 5.35, rate: 0.6, zoom: 1, pos: "50% 34%" }, // crostini
+  { from: 6.7, rate: 0.65, zoom: 1, pos: "50% 64%" }, // carpaccio
+  { from: 3.8, rate: 1, zoom: 1, pos: "50% 50%" }, // bowl again
+  { from: 1.75, rate: 0.5, zoom: 1, pos: "50% 56%" }, // tartare, slow
 ];
 const SPLIT_END = SPLIT.reduce((a, b) => a + b, 0); // 238
-const HERO = { frames: 16, from: 2.2, rate: 0.5, zoom: 2.3 }; // tartare yolk macro
+const HERO = { frames: 16, from: 2.2, rate: 0.5, zoom: 1.1 }; // tartare, whole plate
 const LOGO = { frames: 61, from: 11.18, rate: 0.42 }; // the Beat menu
 export const ARTIST_DURATION = SPLIT_END + HERO.frames + LOGO.frames;
 
