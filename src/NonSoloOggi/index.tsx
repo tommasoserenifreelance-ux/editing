@@ -33,17 +33,6 @@ export const NON_SOLO_OGGI_SLIDE_COUNT = 2;
 
 const Cover: React.FC = () => (
   <Frame theme={COVER}>
-    <div
-      style={{
-        fontSize: 30,
-        fontWeight: 700,
-        letterSpacing: 4,
-        color: COVER.accent,
-        marginBottom: 30,
-      }}
-    >
-      25 NOVEMBRE
-    </div>
     <Title theme={COVER} size={110}>
       La violenza non sempre <Accent theme={COVER}>fa rumore.</Accent>
     </Title>
