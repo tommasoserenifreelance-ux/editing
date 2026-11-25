@@ -17,6 +17,7 @@ import { ARTIST_DURATION, ARTIST_FPS, BeatArtist } from "./BeatArtist";
 import { BeatPlates, PLATES_DURATION, PLATES_FPS } from "./BeatPlates";
 import { BAR_DURATION, BAR_FPS, BeatBar } from "./BeatBar";
 import { BeatMontage, MONTAGE_DURATION, MONTAGE_FPS } from "./BeatMontage";
+import { BeatRolls, ROLLS_DURATION, ROLLS_FPS } from "./BeatRolls";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -145,6 +146,14 @@ export const RemotionRoot: React.FC = () => {
           component={BeatMontage}
           durationInFrames={MONTAGE_DURATION}
           fps={MONTAGE_FPS}
+          width={1080}
+          height={1920}
+        />
+        <Composition
+          id="BeatRolls"
+          component={BeatRolls}
+          durationInFrames={ROLLS_DURATION}
+          fps={ROLLS_FPS}
           width={1080}
           height={1920}
         />
