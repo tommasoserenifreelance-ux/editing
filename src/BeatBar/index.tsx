@@ -8,7 +8,7 @@ import {
 
 // Bar montage modelled on the third reference: 17 quick shots (~0.5 s) of
 // drinks being made, cut exactly on the reference's cut frames, then a 2 s
-// hero of the finished drink. No text, client's own grade, reference music.
+// closing shot of the guests toasting. No text, client's own grade, reference music.
 // Clip: public/beat/bar/bar.mp4 (beat.ref.3), 24 fps like the reference.
 export const BAR_FPS = 24;
 
@@ -33,9 +33,9 @@ const SHOTS: Shot[] = [
   { from: 36.8, rate: 0.7, frames: 14 }, // red wine pour
   { from: 39.2, rate: 0.8, frames: 19 }, // glass filling
   { from: 42.2, rate: 1, frames: 14 }, // bottle away
-  { from: 52.5, rate: 1, frames: 13 }, // guests drinking
-  { from: 46.3, rate: 1, frames: 22 }, // cheers
-  { from: 28.2, rate: 1, frames: 48 }, // hero: the finished spritz
+  { from: 28.2, rate: 1, frames: 13 }, // the finished spritz
+  { from: 52.3, rate: 1, frames: 22 }, // guests drinking
+  { from: 46.3, rate: 1, frames: 48 }, // hero: the guests' cheers (ends on them)
 ];
 
 const starts = SHOTS.reduce<number[]>(
