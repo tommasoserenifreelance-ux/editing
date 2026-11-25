@@ -15,6 +15,7 @@ import { BeatSplit, SPLIT_DURATION, SPLIT_FPS } from "./BeatSplit";
 import { BeatTalk, TALK_DURATION, TALK_FPS } from "./BeatTalk";
 import { ARTIST_DURATION, ARTIST_FPS, BeatArtist } from "./BeatArtist";
 import { BeatPlates, PLATES_DURATION, PLATES_FPS } from "./BeatPlates";
+import { BAR_DURATION, BAR_FPS, BeatBar } from "./BeatBar";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -127,6 +128,14 @@ export const RemotionRoot: React.FC = () => {
           component={BeatPlates}
           durationInFrames={PLATES_DURATION}
           fps={PLATES_FPS}
+          width={1080}
+          height={1920}
+        />
+        <Composition
+          id="BeatBar"
+          component={BeatBar}
+          durationInFrames={BAR_DURATION}
+          fps={BAR_FPS}
           width={1080}
           height={1920}
         />
