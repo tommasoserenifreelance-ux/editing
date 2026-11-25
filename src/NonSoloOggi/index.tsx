@@ -21,7 +21,7 @@ const ITEMS = [
   "Essere controllata nel telefono e nelle amicizie",
   "Dover scegliere tra lavoro e figli",
   "Sentirti dire che il tuo dolore è «normale»",
-  "Aspettare anni una diagnosi di endometriosi",
+  "Ricevere un calmante invece di una diagnosi",
   "Sentirti dire «è solo l'età»",
   "Essere chiamata esagerata quando chiedi aiuto",
   "Vergognarti dei sintomi della menopausa al lavoro",
