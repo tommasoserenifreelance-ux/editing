@@ -37,8 +37,8 @@ const starts = DISHES.reduce<number[]>(
 export const MENU_DURATION =
   starts[starts.length - 1] + DISHES[DISHES.length - 1].frames; // 214
 
-// yellow of the placemat in the dish photos
-const YELLOW = "#e2960a";
+// the menu cover's yellow, as it renders in beat.ref.6
+const MENU_YELLOW = "#704104";
 
 const half = (top: boolean): React.CSSProperties => ({
   position: "absolute",
@@ -51,27 +51,17 @@ const half = (top: boolean): React.CSSProperties => ({
 
 export const BeatMenu: React.FC = () => (
   <AbsoluteFill style={{ background: "black" }}>
-    {/* the whole menu page, readable, on the same yellow as the dish
-        photos below so the two halves read as one */}
-    <div
-      style={{
-        ...half(true),
-        background: YELLOW,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <OffthreadVideo
-        src={staticFile("beat/menu/menu_slow.mp4")}
-        muted
-        style={{
-          height: 900,
-          width: "auto",
-          borderRadius: 18,
-          boxShadow: "0 18px 40px rgba(90,50,0,0.35)",
-        }}
-      />
+    {/* the whole menu page, readable, on the yellow of the menu's own
+        cover (sampled from the clip's top and bottom edges), so the page
+        continues into its menu */}
+    <div style={{ ...half(true), background: MENU_YELLOW }}>
+      <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
+        <OffthreadVideo
+          src={staticFile("beat/menu/menu_slow.mp4")}
+          muted
+          style={{ height: 960, width: "auto" }}
+        />
+      </AbsoluteFill>
     </div>
     <div style={half(false)}>
       {DISHES.map((d, i) => (
