@@ -37,9 +37,6 @@ const starts = DISHES.reduce<number[]>(
 export const MENU_DURATION =
   starts[starts.length - 1] + DISHES[DISHES.length - 1].frames; // 214
 
-// placemat yellow of the dish photos
-const YELLOW = "#e2960a";
-
 const half = (top: boolean): React.CSSProperties => ({
   position: "absolute",
   left: 0,
@@ -51,18 +48,18 @@ const half = (top: boolean): React.CSSProperties => ({
 
 export const BeatMenu: React.FC = () => (
   <AbsoluteFill style={{ background: "black" }}>
-    {/* the whole menu page, readable. The menu cover's ochre in the clip is
-        recoloured to the placemat yellow of the photos (menu_yellow.mp4,
-        hue-keyed so the hand is untouched) and the half is filled with that
-        same yellow: no bands, one colour top to bottom */}
-    <div style={{ ...half(true), background: YELLOW }}>
-      <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
-        <OffthreadVideo
-          src={staticFile("beat/menu/menu_yellow.mp4")}
-          muted
-          style={{ height: 960, width: "auto" }}
-        />
-      </AbsoluteFill>
+    {/* the whole menu clip, uncropped. It is 9:16 and the half is almost
+        square, so the space beside it is reconstructed: menu_wide.mp4 extends
+        the clip's left edge (page and cover) a full width outward, so the
+        menu reads as one wide open book. The right edge stays the frame edge
+        because the arm comes in from there. The cover's ochre is recoloured
+        to the placemat yellow of the photos below (menu_yellow.mp4). */}
+    <div style={half(true)}>
+      <OffthreadVideo
+        src={staticFile("beat/menu/menu_wide.mp4")}
+        muted
+        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+      />
     </div>
     <div style={half(false)}>
       {DISHES.map((d, i) => (
