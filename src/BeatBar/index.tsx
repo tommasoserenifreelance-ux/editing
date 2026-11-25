@@ -19,7 +19,9 @@ const SRC = staticFile("beat/bar/bar.mp4");
 // frames = shot length, measured on the reference (cuts at frames 19, 30,
 // 42, 58, 69, 79, 93, 105, 117, 131, 147, 162, 176, 195, 209, 222, 244).
 // In story order: yellow cocktail, spritz, red wine, then the guests. The
-// guests' shots are smooth-stabilised segments (tools/stabilize_smooth.py ->
+// guests' shots are stabilised segments, translation only, no rotation
+// (tools/stabilize_smooth.py: g1-g3 almost tripod-still, sigma 3 s; the
+// cheers keep their slow move, sigma 0.5 s ->
 // public/beat/bar/stab), `seg` set; the others play from the clip.
 // `fade` = frames of cross-dissolve from the previous shot (others are cuts).
 type Shot = {
@@ -42,11 +44,11 @@ const SHOTS: Shot[] = [
   { from: 36.8, rate: 0.7, frames: 16 }, // red wine pour
   { from: 39.2, rate: 0.8, frames: 15 }, // glass filling
   { from: 42.2, rate: 1, frames: 14 }, // bottle away
-  { from: 49.6, rate: 1, frames: 19 }, // guests: drinking at the bar
+  { from: 0, rate: 1, frames: 19, seg: "g1" }, // guests: drinking at the bar
   { from: 0, rate: 1, frames: 14, seg: "g2" }, // the group at the bar
   // one continuous shot: two cuts on the same framing read as a jump
   { from: 0, rate: 1, frames: 35, seg: "g3" }, // drinking, laughing
-  { from: 46.35, rate: 1, frames: 48, fade: 8 }, // only the cheers (glasses clinking), raw: no stabilisation zoom
+  { from: 0, rate: 1, frames: 48, seg: "hero", fade: 8 }, // only the cheers (glasses clinking)
 ];
 
 const starts = SHOTS.reduce<number[]>(
