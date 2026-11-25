@@ -39,7 +39,7 @@ const SHOTS: Shot[] = [
   { from: 37.5, frames: 30 }, // dining room
 ];
 const MENU = { from: 40.1, frames: 26 }; // the Beat menu, real speed
-const HOLD = 49; // then its last frame, still pushing in
+const HOLD = 10; // short hold on the last frame, then end
 
 const starts = SHOTS.reduce<number[]>(
   (acc, s, i) => [...acc, i === 0 ? 0 : acc[i - 1] + SHOTS[i - 1].frames],
@@ -150,7 +150,7 @@ export const BeatMontage: React.FC = () => (
     <Audio
       src={staticFile("beat/montage/ref-audio.m4a")}
       volume={(f) =>
-        interpolate(f, [MONTAGE_DURATION - 30, MONTAGE_DURATION], [1, 0], {
+        interpolate(f, [MONTAGE_DURATION - 14, MONTAGE_DURATION], [1, 0], {
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp",
         })
