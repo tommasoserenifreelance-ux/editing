@@ -26,18 +26,17 @@ const SHOTS: Shot[] = [
   { from: 4.0, rate: 1, frames: 12 }, // filling up
   { from: 6.1, rate: 0.8, frames: 16 }, // last drops, peel
   { from: 8.0, rate: 1, frames: 11 }, // finished tumbler
-  { from: 12.6, rate: 0.7, frames: 10 }, // spritz: prosecco
-  { from: 18.1, rate: 1, frames: 14 }, // orange slice
+  { from: 12.6, rate: 0.8, frames: 24 }, // spritz: prosecco poured, held longer
+  { from: 18.1, rate: 1, frames: 12 }, // orange slice
   { from: 20.2, rate: 1, frames: 12 }, // straw in
-  { from: 22.6, rate: 1, frames: 12 }, // stirring
   { from: 28.2, rate: 1, frames: 14 }, // the finished spritz
   { from: 36.8, rate: 0.7, frames: 16 }, // red wine pour
   { from: 39.2, rate: 0.8, frames: 15 }, // glass filling
   { from: 42.2, rate: 1, frames: 14 }, // bottle away
   { from: 0, rate: 1, frames: 19, seg: "g1" }, // guests: two friends, wine
   { from: 0, rate: 1, frames: 14, seg: "g2" }, // the group at the bar
-  { from: 0, rate: 1, frames: 13, seg: "g3" }, // drinking
-  { from: 0, rate: 1, frames: 22, seg: "g4" }, // drinking, laughing
+  // one continuous shot: two cuts on the same framing read as a jump
+  { from: 0, rate: 1, frames: 35, seg: "g3" }, // drinking, laughing
   { from: 0, rate: 1, frames: 48, seg: "hero" }, // the cheers, to the end
 ];
 
