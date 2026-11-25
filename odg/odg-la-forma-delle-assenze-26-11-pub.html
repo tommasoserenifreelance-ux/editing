@@ -1,0 +1,343 @@
+<title>OdG La forma delle assenze · Pub</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=Courier+Prime:wght@400;700&display=swap">
+<style>
+/* Layout: foglio di produzione. Banda-titolo, griglia dei dati chiave, timeline proporzionale della giornata, poi tabelle e shotlist per set. */
+:root{
+  --paper:#F3F4F2; --sheet:#FFFFFF; --ink:#15191D; --muted:#5E6870; --rule:#D5D9DC;
+  --sea:#2D5B70; --sea-soft:#E1EAEE; --sand:#B79C77; --sand-soft:#F1EBE2; --alert:#B3392E;
+  --display:"Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --body:"IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --script:"Courier Prime", "Courier New", Courier, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0E1113; --sheet:#161B1F; --ink:#E8EBEC; --muted:#99A3AA; --rule:#2A3237;
+  --sea:#7FB0C6; --sea-soft:#1B2A31; --sand:#CDB591; --sand-soft:#2A251E; --alert:#E0786D; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0E1113; --sheet:#161B1F; --ink:#E8EBEC; --muted:#99A3AA; --rule:#2A3237;
+  --sea:#7FB0C6; --sea-soft:#1B2A31; --sand:#CDB591; --sand-soft:#2A251E; --alert:#E0786D; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font:400 14px/1.45 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 48px}
+.wrap{max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+a{color:var(--sea)}
+h2{font:400 30px/1.05 var(--display);margin:0;text-wrap:balance}
+.eyebrow{font:600 11px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.mono{font-family:var(--script)}
+.tab{font-variant-numeric:tabular-nums}
+
+/* Testata */
+.head{background:var(--ink);color:var(--paper);border-radius:4px;overflow:hidden;position:relative}
+.head-in{padding:30px 30px 26px;display:grid;grid-template-columns:1fr auto;gap:18px 28px;align-items:end}
+.head .eyebrow{color:color-mix(in srgb,var(--paper) 62%,transparent)}
+.title{font:400 clamp(44px,8vw,86px)/.92 var(--display);margin:8px 0 10px;letter-spacing:-.01em}
+.title em{font-style:italic;color:var(--sand)}
+.credits{font-size:13px;color:color-mix(in srgb,var(--paper) 78%,transparent)}
+.credits b{color:var(--paper);font-weight:600}
+.date{text-align:right}
+.date .d{font:400 64px/.9 var(--display)}
+.date .m{font:600 12px/1.3 var(--body);letter-spacing:.16em;text-transform:uppercase}
+.slate{height:14px;background:repeating-linear-gradient(135deg,var(--paper) 0 18px,var(--ink) 18px 36px);opacity:.9}
+
+/* Dati chiave */
+.keys{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.key{background:var(--sheet);padding:12px 14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.key .v{font:400 30px/1 var(--display)}
+.key .s{font-size:12px;color:var(--muted)}
+.key.hl{background:var(--sea);color:var(--sheet);grid-column:span 2}
+.key .v{white-space:nowrap}
+.key.hl .eyebrow,.key.hl .s{color:color-mix(in srgb,var(--sheet) 75%,transparent)}
+
+/* Sezioni */
+.card{background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:20px 22px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--rule);padding-bottom:10px}
+
+/* Timeline */
+.tl{display:flex;height:46px;border-radius:3px;overflow:hidden;gap:2px}
+.tl div{display:flex;align-items:center;justify-content:center;font:600 10px/1.1 var(--body);letter-spacing:.04em;text-transform:uppercase;text-align:center;padding:0 3px;overflow:hidden;min-width:0}
+.t-a{background:var(--sea);color:var(--sheet)}
+.t-b{background:var(--sand);color:var(--ink)}
+.t-n{background:var(--ink);color:var(--paper)}
+.t-p{background:var(--rule);color:var(--muted)}
+.tl-scale{display:flex;justify-content:space-between;font:12px var(--script);color:var(--muted)}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+
+/* Location */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.loc{border-top:4px solid var(--sea)}
+.loc.b{border-top-color:var(--sand)}
+.loc .tag{font:700 12px var(--script);letter-spacing:.06em}
+.loc h3{font:400 26px/1.1 var(--display);margin:2px 0 0}
+.dl{display:grid;grid-template-columns:120px 1fr;gap:6px 14px;margin:0;font-size:13px}
+.dl dt{color:var(--muted)}
+.dl dd{margin:0;min-width:0}
+
+/* Tabelle */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font:600 10.5px/1.2 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1.5px solid var(--ink);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.c,th.c{text-align:center}
+td.tab{white-space:nowrap}
+.role{font-weight:600}
+.char{font:700 13px var(--script);text-transform:uppercase;letter-spacing:.02em}
+.tbd{color:var(--alert);font-weight:600}
+.phone{font-variant-numeric:tabular-nums;white-space:nowrap}
+.pill{display:inline-block;font:600 10.5px/1 var(--body);letter-spacing:.06em;padding:4px 7px;border-radius:99px;white-space:nowrap}
+.p-a{background:var(--sea-soft);color:var(--sea)}
+.p-b{background:var(--sand-soft);color:color-mix(in srgb,var(--sand) 60%,var(--ink))}
+
+/* Spoglio scene */
+.scn{font:700 20px/1 var(--script);white-space:nowrap}
+.slug{font:700 12.5px var(--script);text-transform:uppercase;display:block;margin-bottom:3px}
+.syn{color:var(--muted)}
+
+/* Shotlist */
+.set-band{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:4px;color:var(--sheet);background:var(--sea)}
+.set-band.b{background:var(--sand);color:var(--ink)}
+.set-band .big{font:400 28px/1 var(--display)}
+.set-band .meta{font-size:12.5px;opacity:.85}
+.scene{display:flex;flex-direction:column;gap:10px}
+.scene-h{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center}
+.scene-num{font:700 34px/1 var(--script);color:var(--sea)}
+.scene.b .scene-num{color:color-mix(in srgb,var(--sand) 70%,var(--ink))}
+.scene-h .slug{font-size:15px;margin:0}
+.scene-h .who{font-size:12.5px;color:var(--muted)}
+.scene-h .when{font:700 15px var(--script);text-align:right;white-space:nowrap}
+.shot td:first-child{font:700 14px var(--script);white-space:nowrap}
+.shot .sz{font-weight:600;white-space:nowrap}
+.shot .lens{font:13px var(--script);white-space:nowrap}
+.shot .mv{white-space:nowrap}
+.note{font-size:12.5px;color:var(--muted);border-left:3px solid var(--rule);padding:2px 0 2px 12px}
+
+/* Fabbisogni + note */
+.need{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.need h4{margin:0 0 8px;font:600 11px var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.need ul,.rules{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px}
+.rules li::marker{color:var(--alert)}
+.foot{text-align:center;font:700 12px var(--script);letter-spacing:.08em;color:var(--alert);text-transform:uppercase;padding-top:6px}
+
+@media screen and (max-width:860px){
+  .keys{grid-template-columns:repeat(3,1fr)}
+  .key.hl{grid-column:1/-1}
+  .key:last-child{grid-column:span 2}
+  .grid2,.need{grid-template-columns:1fr}
+  .head-in{grid-template-columns:1fr}
+  .date{text-align:left}
+  .tl{height:auto;flex-wrap:wrap}
+  .tl div{flex:1 1 30% !important;height:40px}
+}
+@media screen and (max-width:480px){
+  .keys{grid-template-columns:repeat(2,1fr)}
+  .key:last-child{grid-column:1/-1}
+  .dl{grid-template-columns:96px 1fr}
+  .card{padding:16px}
+  .head-in{padding:22px 18px}
+  .scene-h{grid-template-columns:auto 1fr}
+  .scene-h .when{grid-column:1/-1;text-align:left}
+}
+@media print{
+  @page{size:A4;margin:10mm}
+  body{padding:0;font-size:11.5px;background:#fff}
+  .wrap{gap:12px;max-width:none}
+  .keys,.head,.set-band,.loc,tr{break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .set-band{break-after:avoid}
+  .set-band.b{break-before:page}
+  .card{padding:14px 16px;gap:10px}
+  td{padding:6px 8px} th{padding:6px 8px}
+  .title{font-size:64px}
+  .key .v{font-size:24px}
+  .tl div,.key.hl,.slate{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .foot,.rules{break-before:avoid;break-inside:avoid}
+  .tl div{font-size:8px;letter-spacing:0}
+  .scene-h{break-after:avoid}
+}
+</style>
+
+<div class="wrap">
+
+  <header class="head">
+    <div class="head-in">
+      <div>
+        <div class="eyebrow">Ordine del giorno · Cortometraggio</div>
+        <h1 class="title">La forma <em>delle</em> assenze</h1>
+        <div class="credits">Regia di <b>Tommaso Sereni</b> · Scritto da <b>Luigi Maria Mennella</b> · DoP <b>Francesco Squillantini</b></div>
+      </div>
+      <div class="date">
+        <div class="d tab">26</div>
+        <div class="m">Giovedì · Novembre 2026</div>
+      </div>
+    </div>
+    <div class="slate" aria-hidden="true"></div>
+  </header>
+
+  <section class="keys" aria-label="Dati chiave della giornata">
+    <div class="key hl"><span class="eyebrow">Ritrovo troupe e cast</span><span class="v tab">Ore 08:45</span><span class="s">Dublin Pub, Via Faenza 27/R, Firenze</span></div>
+    <div class="key"><span class="eyebrow">Pronti a girare</span><span class="v tab">09:30</span><span class="s">Sc. 5 · Pub</span></div>
+    <div class="key"><span class="eyebrow">Fine riprese</span><span class="v tab">11:40</span><span class="s">Poi smontaggio</span></div>
+    <div class="key"><span class="eyebrow">Fine set</span><span class="v tab">12:00</span><span class="s">Locale libero</span></div>
+    <div class="key"><span class="eyebrow">Scene</span><span class="v">5 · 8</span><span class="s">Pag. 4–5, 7</span></div>
+    <div class="key"><span class="eyebrow">Luce</span><span class="v">Sera</span><span class="s">Effetto notte, finestre oscurate</span></div>
+  </section>
+
+  <section class="card" aria-label="Timeline della mattina">
+    <div class="sec-h"><h2>La mattina</h2><span class="eyebrow">08:45 → 12:00 · in scala</span></div>
+    <div class="tl">
+      <div class="t-p" style="flex:45">Prep · trucco</div>
+      <div class="t-a" style="flex:105">Sc. 5 · Pub</div>
+      <div class="t-b" style="flex:25">Sc. 8</div>
+      <div class="t-n" style="flex:20">Smont.</div>
+    </div>
+    <div class="tl-scale tab"><span>08:45</span><span>09:30</span><span>11:15</span><span>12:00</span></div>
+    <div class="legend"><span><i style="background:var(--sea)"></i>Sc. 5 · Pub, sera</span><span><i style="background:var(--sand)"></i>Sc. 8 · Flashback (replay)</span><span><i style="background:var(--ink)"></i>Smontaggio</span></div>
+  </section>
+
+  <div class="grid2">
+    <section class="card loc">
+      <span class="tag" style="color:var(--sea)">SET · MATTINA</span>
+      <h3>Dublin Pub</h3>
+      <dl class="dl">
+        <dt>Indirizzo</dt><dd>Via Faenza 27/R, 50123 Firenze</dd>
+        <dt>Mappa</dt><dd><a href="https://share.google/SkiX6BRiTFjKcCbLn" target="_blank" rel="noopener">Apri il link della location</a></dd>
+        <dt>Come arrivare</dt><dd>A pochi minuti a piedi dalla stazione di Santa Maria Novella</dd>
+        <dt>Scene</dt><dd>5 · 8</dd>
+      </dl>
+    </section>
+    <section class="card loc b">
+      <span class="tag" style="color:color-mix(in srgb,var(--sand) 65%,var(--ink))">NOTE DI SET</span>
+      <h3>Sera di mattina</h3>
+      <dl class="dl">
+        <dt>Luce</dt><dd>Le scene sono di sera: oscurare le finestre e lavorare con luce calda artificiale.</dd>
+        <dt>Musica</dt><dd>Musica del locale spenta durante i ciak.</dd>
+        <dt>Continuità</dt><dd>La sc. 8 è un replay della 5: stessi costumi, stessi tavoli, stessi bicchieri.</dd>
+      </dl>
+    </section>
+  </div>
+
+  <section class="card">
+    <div class="sec-h"><h2>Convocazione troupe</h2><span class="eyebrow">Ore 08:45 · Dublin Pub, Via Faenza 27/R</span></div>
+    <div class="tw"><table>
+      <thead><tr><th>Ruolo</th><th>Nome</th><th>Telefono</th><th class="c">Conv.</th><th class="c">Sul set</th></tr></thead>
+      <tbody>
+        <tr><td class="role">Regista</td><td>Tommaso Sereni</td><td class="phone"><a href="tel:+393331730916">+39 333 173 0916</a></td><td class="c tab">08:45</td><td class="c tab">09:30</td></tr>
+        <tr><td class="role">DoP</td><td>Francesco Squillantini</td><td class="phone"><a href="tel:+393937096627">+39 393 709 6627</a></td><td class="c tab">08:45</td><td class="c tab">09:30</td></tr>
+        <tr><td class="role">Fonico</td><td>Luigi Maria Mennella</td><td class="phone"><a href="tel:+393333613756">+39 333 361 3756</a></td><td class="c tab">08:45</td><td class="c tab">09:30</td></tr>
+        <tr><td class="role">Make-up artist</td><td>Ana Maria</td><td class="phone"><a href="tel:+393240509301">+39 324 050 9301</a></td><td class="c tab">08:45</td><td class="c tab">08:50</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section class="card">
+    <div class="sec-h"><h2>Convocazione cast</h2><span class="eyebrow">Trucco a cura di Ana Maria</span></div>
+    <div class="tw"><table>
+      <thead><tr><th>Personaggio</th><th>Interprete</th><th>Telefono</th><th class="c">Conv.</th><th class="c">Trucco</th><th class="c">Sul set</th><th>Scene</th></tr></thead>
+      <tbody>
+        <tr><td class="char">Uomo</td><td>Ivan Izzo</td><td class="phone"><a href="tel:+393312954522">+39 331 295 4522</a></td><td class="c tab">08:45</td><td class="c tab">08:50</td><td class="c tab">09:30</td><td>5 · 8</td></tr>
+        <tr><td class="char">Amico 1</td><td>Matteo Goretti</td><td class="phone">—</td><td class="c tab">08:45</td><td class="c tab">08:58</td><td class="c tab">09:30</td><td>5 · 8</td></tr>
+        <tr><td class="char">Amico 2</td><td>Niccolò Zucchini</td><td class="phone">—</td><td class="c tab">08:45</td><td class="c tab">09:03</td><td class="c tab">09:30</td><td>5 · 8</td></tr>
+        <tr><td class="char">Compagno</td><td>Luca Fogli</td><td class="phone">—</td><td class="c tab">08:45</td><td class="c tab">09:08</td><td class="c tab">09:30</td><td>5</td></tr>
+        <tr><td class="char">Ragazza bionda 1</td><td>Giulia Faggi</td><td class="phone">—</td><td class="c tab">08:45</td><td class="c tab">09:13</td><td class="c tab">09:30</td><td>5 · 8</td></tr>
+        <tr><td class="char">Ragazza bionda 2</td><td>Gemma Del Bino</td><td class="phone">—</td><td class="c tab">08:45</td><td class="c tab">09:18</td><td class="c tab">09:30</td><td>5 · 8</td></tr>
+        <tr><td class="char">Ragazza bionda 3</td><td>Olivia Giles</td><td class="phone">—</td><td class="c tab">08:45</td><td class="c tab">09:23</td><td class="c tab">09:30</td><td>5 · 8</td></tr>
+        <tr><td class="char">Donna matura</td><td>Ana Maria</td><td class="phone"><a href="tel:+393240509301">+39 324 050 9301</a></td><td class="c tab">08:45</td><td class="c tab">09:25</td><td class="c tab">09:30</td><td>5</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">Ivan Izzo è l'attore. Tutti gli altri sono comparse. Ana Maria trucca il cast e poi entra in scena come Donna matura.</p>
+  </section>
+
+  <section class="card">
+    <div class="sec-h"><h2>Spoglio scene</h2><span class="eyebrow">Sceneggiatura · seconda revisione, 20.09.2026</span></div>
+    <div class="tw"><table>
+      <thead><tr><th>Scena</th><th class="c">I/E</th><th class="c">G/N</th><th>Set / Sinossi</th><th>Cast</th><th class="c">Pag.</th><th class="c">Orario</th></tr></thead>
+      <tbody>
+        <tr><td class="scn">5</td><td class="c">I</td><td class="c">N</td><td><span class="slug">Pub · sera</span><span class="syn">L'Uomo è seduto tra due Amici euforici, ma è assorto. Gli Amici indicano tre Ragazze bionde a un altro tavolo. L'Uomo osserva una coppia: lei parla senza sosta, lui scorre il cellulare. Gli Amici lo riportano alle ragazze.</span></td><td>Uomo, Amico 1, Amico 2, 3 Ragazze, Donna matura, Compagno</td><td class="c tab">4–5</td><td class="c tab">09:30–11:15</td></tr>
+        <tr><td class="scn">8</td><td class="c">I</td><td class="c">N</td><td><span class="slug">Pub · sera · flashback (replay)</span><span class="syn">L'Uomo al tavolo tra i due Amici, galvanizzati dalla presenza femminile vicino a loro.</span></td><td>Uomo, Amico 1, Amico 2, 3 Ragazze</td><td class="c tab">7</td><td class="c tab">11:15–11:40</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <div class="set-band" style="break-before:page">
+    <span class="big">Shotlist</span>
+    <span class="meta">Dublin Pub · 09:30–11:40</span>
+  </div>
+
+  <section class="card scene">
+    <div class="scene-h">
+      <span class="scene-num">5</span>
+      <div><span class="slug">INT. SERA. PUB</span><span class="who">Uomo · Amico 1 · Amico 2 · Ragazze bionde · Donna matura · Compagno — pag. 4–5</span></div>
+      <span class="when tab">09:30–11:15</span>
+    </div>
+    <div class="tw"><table class="shot">
+      <thead><tr><th>Shot</th><th>Piano</th><th>Ottica</th><th>Movimento</th><th>Descrizione</th><th class="c">Orario</th></tr></thead>
+      <tbody>
+        <tr><td>5-1</td><td class="sz">Totale</td><td class="lens">24mm</td><td class="mv">Slider in avanti</td><td>Il pub pieno: l'Uomo tra i due Amici al tavolo, le Ragazze e la coppia sullo sfondo.</td><td class="c tab">09:30–09:50</td></tr>
+        <tr><td>5-2</td><td class="sz">Piano a tre</td><td class="lens">35mm</td><td class="mv">Cavalletto</td><td>Frontale sul tavolo: Amici euforici, l'Uomo al centro, assorto.</td><td class="c tab">09:50–10:05</td></tr>
+        <tr><td>5-3</td><td class="sz">MP</td><td class="lens">50mm</td><td class="mv">Fisso</td><td>Amico 1 si china verso gli altri e indica di nascosto qualcosa alle sue spalle.</td><td class="c tab">10:05–10:12</td></tr>
+        <tr><td>5-4</td><td class="sz">MP</td><td class="lens">50mm</td><td class="mv">Fisso</td><td>Amico 2 porta avanti il labbro inferiore, in segno di compiaciuto stupore.</td><td class="c tab">10:12–10:20</td></tr>
+        <tr><td>5-5</td><td class="sz">CM</td><td class="lens">85mm</td><td class="mv">Fisso, dal tavolo</td><td>Le tre Ragazze bionde: brevi frasi, sorrisi, sguardi intorno.</td><td class="c tab">10:20–10:35</td></tr>
+        <tr><td>5-6</td><td class="sz">PP</td><td class="lens">85mm</td><td class="mv">Fisso</td><td>L'Uomo assorto, per la V.O. «O forse si tratta semplicemente di quella sorta di disagio sociale…».</td><td class="c tab">10:35–10:45</td></tr>
+        <tr><td>5-7</td><td class="sz">PP di quinta</td><td class="lens">50mm</td><td class="mv">Fisso</td><td>L'Uomo si volta leggermente verso la coppia seduta lì vicino.</td><td class="c tab">10:45–10:52</td></tr>
+        <tr><td>5-8</td><td class="sz">CM a due</td><td class="lens">50mm</td><td class="mv">Fisso</td><td>Donna matura parla al Compagno come per sfogarsi. Lui ha lo sguardo chino sul cellulare.</td><td class="c tab">10:52–11:02</td></tr>
+        <tr><td>5-9</td><td class="sz">Dettaglio</td><td class="lens">85mm</td><td class="mv">Fisso</td><td>Il dito del Compagno che scorre sul cellulare.</td><td class="c tab">11:02–11:07</td></tr>
+        <tr><td>5-10</td><td class="sz">Piano a tre</td><td class="lens">35mm</td><td class="mv">Camera a mano</td><td>Gli Amici distolgono l'Uomo dalla coppia e lo riportano alle Ragazze.</td><td class="c tab">11:07–11:15</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section class="card scene b">
+    <div class="scene-h">
+      <span class="scene-num">8</span>
+      <div><span class="slug">INT. SERA. PUB — FLASHBACK (REPLAY)</span><span class="who">Uomo · Amico 1 · Amico 2 · Ragazze bionde — pag. 7</span></div>
+      <span class="when tab">11:15–11:40</span>
+    </div>
+    <div class="tw"><table class="shot">
+      <thead><tr><th>Shot</th><th>Piano</th><th>Ottica</th><th>Movimento</th><th>Descrizione</th><th class="c">Orario</th></tr></thead>
+      <tbody>
+        <tr><td>8-1</td><td class="sz">Piano a tre</td><td class="lens">35mm</td><td class="mv">Camera a mano</td><td>Gli Amici galvanizzati, l'Uomo al centro. Stesso asse della 5-2, più stretto e mosso.</td><td class="c tab">11:15–11:25</td></tr>
+        <tr><td>8-2</td><td class="sz">PP</td><td class="lens">85mm</td><td class="mv">Fisso</td><td>Reazione dell'Uomo, distante dall'entusiasmo degli Amici.</td><td class="c tab">11:25–11:32</td></tr>
+        <tr><td>8-3</td><td class="sz">CM</td><td class="lens">85mm</td><td class="mv">Fisso</td><td>Le Ragazze al loro tavolo, viste dal punto degli Amici.</td><td class="c tab">11:32–11:40</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section class="card">
+    <div class="sec-h"><h2>Fabbisogni</h2><span class="eyebrow">Da controllare prima di partire</span></div>
+    <div class="need">
+      <div><h4>Props</h4><ul>
+        <li>Boccali e bicchieri pieni (birra o analcolico, stesso livello per la continuità)</li>
+        <li>Cellulare del Compagno</li>
+        <li>Tre tavoli: Uomo e Amici, Ragazze, coppia</li>
+      </ul></div>
+      <div><h4>Costumi e trucco</h4><ul>
+        <li>Uomo: abiti da uscita serale, gli stessi in sc. 5 e 8</li>
+        <li>Comparse: abiti serali autunnali, niente loghi in vista</li>
+        <li>Ragazze: capelli biondi, aspetto curato</li>
+        <li>Trucco leggero per tutti, a cura di Ana Maria</li>
+      </ul></div>
+      <div><h4>Materiale tecnico</h4><ul>
+        <li>Teli o pannelli neri per oscurare le finestre</li>
+        <li>Luci calde per l'effetto sera</li>
+        <li>Cavalletto, slider, setup per camera a mano</li>
+        <li>Ottiche 24 · 35 · 50 · 85mm</li>
+        <li>Batterie e schede cariche</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="sec-h"><h2>Note</h2></div>
+    <ul class="rules">
+      <li>Cellulari spenti o in silenzioso durante le riprese.</li>
+      <li>Non pubblicare foto del set senza consenso.</li>
+      <li>Per assenze o ritardi avvisare la sera prima, o la mattina entro le 8:00.</li>
+      <li>Non si fuma durante le ore di set.</li>
+      <li>Siamo ospiti del Dublin Pub: alle 12:00 il locale va lasciato in ordine.</li>
+    </ul>
+    <div class="foot">A fine set si smonta e si rimette l'attrezzatura nei rispettivi posti</div>
+  </section>
+
+</div>
