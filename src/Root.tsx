@@ -13,6 +13,7 @@ import { beatDefaults, beatSchema } from "./BeatRestaurant/schema";
 import { BeatSushi, SUSHI_DURATION, SUSHI_FPS } from "./BeatSushi";
 import { BeatSplit, SPLIT_DURATION, SPLIT_FPS } from "./BeatSplit";
 import { BeatTalk, TALK_DURATION, TALK_FPS } from "./BeatTalk";
+import { ARTIST_DURATION, ARTIST_FPS, BeatArtist } from "./BeatArtist";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -109,6 +110,14 @@ export const RemotionRoot: React.FC = () => {
           component={BeatTalk}
           durationInFrames={TALK_DURATION}
           fps={TALK_FPS}
+          width={1080}
+          height={1920}
+        />
+        <Composition
+          id="BeatArtist"
+          component={BeatArtist}
+          durationInFrames={ARTIST_DURATION}
+          fps={ARTIST_FPS}
           width={1080}
           height={1920}
         />
