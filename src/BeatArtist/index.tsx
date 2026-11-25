@@ -49,20 +49,19 @@ const TOP: Cut[] = [
   { from: 1.53, rate: 0.8, zoom: 1.3, pos: "50% 30%", origin: "45% 28%" }, // face close
   { from: 8.5, rate: 1, zoom: 1.1, pos: "50% 34%", origin: "50% 35%" }, // side, working
 ];
-// Dishes always whole and centred in the half (no punch-in): object-position
-// y = (dish centre in frame - 0.25) / 0.5, each cut starts once the plate
-// has landed.
-const BOTTOM: Cut[] = [
-  { from: 1.2, rate: 1, zoom: 1, pos: "50% 56%" }, // tartare
-  { from: 3.4, rate: 1, zoom: 1, pos: "50% 50%" }, // bowl
-  { from: 5.35, rate: 0.6, zoom: 1, pos: "50% 34%" }, // crostini
-  { from: 6.7, rate: 0.65, zoom: 1, pos: "50% 64%" }, // carpaccio
-  { from: 3.8, rate: 1, zoom: 1, pos: "50% 50%" }, // bowl again
-  { from: 1.75, rate: 0.5, zoom: 1, pos: "50% 56%" }, // tartare, slow
+// Dishes: each plate appears once only, slowed down so the hand setting it
+// down is seen calmly. Whole and centred in the half (no punch-in):
+// object-position y = (dish centre in frame - 0.25) / 0.5. The bottom half
+// cuts on every other beat of the reference (80, 159 frames).
+const BOTTOM: (Cut & { frames: number })[] = [
+  { from: 1.0, rate: 0.6, zoom: 1, pos: "50% 56%", frames: 80 }, // tartare
+  { from: 3.25, rate: 0.55, zoom: 1, pos: "50% 50%", frames: 79 }, // bowl
+  { from: 5.0, rate: 0.42, zoom: 1, pos: "50% 34%", frames: 79 }, // crostini
 ];
 const SPLIT_END = SPLIT.reduce((a, b) => a + b, 0); // 238
-const HERO = { frames: 16, from: 2.2, rate: 0.5, zoom: 1.1 }; // tartare, whole plate
-const LOGO = { frames: 61, from: 11.18, rate: 0.42 }; // the Beat menu
+// Carpaccio, the fourth dish, gets the full-frame shot (only appearance).
+const HERO = { frames: 36, from: 6.5, rate: 0.85, zoom: 1 };
+const LOGO = { frames: 41, from: 11.18, rate: 0.6 }; // the Beat menu
 export const ARTIST_DURATION = SPLIT_END + HERO.frames + LOGO.frames;
 
 const Clip: React.FC<{ src: string; c: Cut }> = ({ src, c }) => (
@@ -82,11 +81,11 @@ const Clip: React.FC<{ src: string; c: Cut }> = ({ src, c }) => (
   />
 );
 
-const Half: React.FC<{ src: string; cuts: Cut[]; top: boolean }> = ({
-  src,
-  cuts,
-  top,
-}) => {
+const Half: React.FC<{
+  src: string;
+  cuts: (Cut & { frames?: number })[];
+  top: boolean;
+}> = ({ src, cuts, top }) => {
   let at = 0;
   return (
     <div
@@ -101,9 +100,10 @@ const Half: React.FC<{ src: string; cuts: Cut[]; top: boolean }> = ({
     >
       {cuts.map((c, i) => {
         const from = at;
-        at += SPLIT[i];
+        const len = c.frames ?? SPLIT[i];
+        at += len;
         return (
-          <Sequence key={i} from={from} durationInFrames={SPLIT[i]}>
+          <Sequence key={i} from={from} durationInFrames={len}>
             <Clip src={src} c={c} />
           </Sequence>
         );
