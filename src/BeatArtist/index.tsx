@@ -52,11 +52,11 @@ const TOP: Cut[] = [
 // Dishes: each plate appears once only, slowed down so the hand setting it
 // down is seen calmly. Whole and centred in the half (no punch-in):
 // object-position y = (dish centre in frame - 0.25) / 0.5. The bottom half
-// cuts on every other beat of the reference (80, 159 frames).
+// cuts on the reference beats at 119 and 187 frames.
 const BOTTOM: (Cut & { frames: number })[] = [
-  { from: 1.0, rate: 0.6, zoom: 1, pos: "50% 56%", frames: 80 }, // tartare
-  { from: 3.25, rate: 0.55, zoom: 1, pos: "50% 50%", frames: 79 }, // bowl
-  { from: 5.0, rate: 0.42, zoom: 1, pos: "50% 34%", frames: 79 }, // crostini
+  { from: 0.65, rate: 0.55, zoom: 1, pos: "50% 56%", frames: 119 }, // tartare
+  { from: 3.3, rate: 0.6, zoom: 1, pos: "50% 50%", frames: 68 }, // bowl
+  { from: 5.0, rate: 0.65, zoom: 1, pos: "50% 34%", frames: 51 }, // montanarine
 ];
 const SPLIT_END = SPLIT.reduce((a, b) => a + b, 0); // 238
 // Carpaccio, the fourth dish, gets the full-frame shot (only appearance).
