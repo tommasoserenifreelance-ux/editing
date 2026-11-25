@@ -1,7 +1,7 @@
 import {
   AbsoluteFill,
   Audio,
-  Img,
+  Freeze,
   interpolate,
   OffthreadVideo,
   Sequence,
@@ -20,22 +20,26 @@ export const MONTAGE_FPS = 24;
 
 const SRC = staticFile("beat/montage/c4.mp4");
 
+// The source clip is itself an edit with cuts at 4.83, 12.50, 16.46, 20.04,
+// 24.54, 26.42, 29.88, 33.25, 34.29, 36.17, 37.42 and 40.08 s: every shot
+// (slide overlap included) sits inside one of those takes, so no shot ever
+// jumps mid-way.
 type Shot = { from: number; frames: number; slide?: 1 | -1 };
 const SHOTS: Shot[] = [
   { from: 0.3, frames: 20 }, // chef at work
   { from: 5.2, frames: 18, slide: 1 }, // hands on the rice
   { from: 13.1, frames: 18 }, // piping on nori
-  { from: 16.3, frames: 22, slide: -1 }, // piping on the rolls
+  { from: 16.6, frames: 22, slide: -1 }, // piping on the rolls
   { from: 25.0, frames: 16 }, // tuna roll close-up
-  { from: 26.3, frames: 22, slide: 1 }, // crispy topping
+  { from: 26.5, frames: 22, slide: 1 }, // crispy topping
   { from: 30.2, frames: 24 }, // orange garnish
-  { from: 33.0, frames: 20, slide: -1 }, // sauce
-  { from: 34.1, frames: 22 }, // wine wall
-  { from: 36.0, frames: 16, slide: 1 }, // booth
-  { from: 37.2, frames: 30 }, // dining room
+  { from: 33.3, frames: 20, slide: -1 }, // sauce
+  { from: 34.35, frames: 22 }, // wine wall
+  { from: 36.2, frames: 16, slide: 1 }, // booth
+  { from: 37.5, frames: 30 }, // dining room
 ];
-const MENU = { from: 40.0, frames: 29 }; // the Beat menu, real speed
-const HOLD = 46; // then its last frame, still pushing in
+const MENU = { from: 40.1, frames: 26 }; // the Beat menu, real speed
+const HOLD = 49; // then its last frame, still pushing in
 
 const starts = SHOTS.reduce<number[]>(
   (acc, s, i) => [...acc, i === 0 ? 0 : acc[i - 1] + SHOTS[i - 1].frames],
@@ -112,18 +116,18 @@ const End: React.FC = () => {
     opacity: o,
     transform: `scale(${push})`,
   };
+  // hold = the same video frozen (a separate PNG would decode with
+  // slightly different colours)
   return (
     <AbsoluteFill style={{ overflow: "hidden" }}>
-      {f < MENU.frames ? (
+      <Freeze frame={MENU.frames - 1} active={f >= MENU.frames}>
         <OffthreadVideo
           src={SRC}
           startFrom={Math.round(MENU.from * MONTAGE_FPS)}
           muted
           style={style}
         />
-      ) : (
-        <Img src={staticFile("beat/montage/menu_last.png")} style={style} />
-      )}
+      </Freeze>
     </AbsoluteFill>
   );
 };
