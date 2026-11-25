@@ -42,11 +42,11 @@ const SHOTS: Shot[] = [
   { from: 36.8, rate: 0.7, frames: 16 }, // red wine pour
   { from: 39.2, rate: 0.8, frames: 15 }, // glass filling
   { from: 42.2, rate: 1, frames: 14 }, // bottle away
-  { from: 0, rate: 1, frames: 19, seg: "g1" }, // guests: two friends, wine
+  { from: 49.6, rate: 1, frames: 19 }, // guests: drinking at the bar
   { from: 0, rate: 1, frames: 14, seg: "g2" }, // the group at the bar
   // one continuous shot: two cuts on the same framing read as a jump
   { from: 0, rate: 1, frames: 35, seg: "g3" }, // drinking, laughing
-  { from: 0, rate: 1, frames: 48, seg: "hero", fade: 8 }, // the cheers, dissolved in
+  { from: 46.35, rate: 1, frames: 48, fade: 8 }, // only the cheers (glasses clinking), raw: no stabilisation zoom
 ];
 
 const starts = SHOTS.reduce<number[]>(
