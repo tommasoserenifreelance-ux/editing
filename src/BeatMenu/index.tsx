@@ -1,10 +1,13 @@
 import {
   AbsoluteFill,
+  Easing,
+  interpolate,
   Audio,
   Img,
   OffthreadVideo,
   Sequence,
   staticFile,
+  useCurrentFrame,
 } from "remotion";
 
 // Split-screen "menu" reel modelled on the sixth reference: top half a finger
@@ -46,20 +49,31 @@ const half = (top: boolean): React.CSSProperties => ({
   overflow: "hidden",
 });
 
+// Zoomed on the menu: the clip fills the width and the frame glides down the
+// page with the finger, so the line being pointed at stays readable.
+const MenuZoom: React.FC = () => {
+  const f = useCurrentFrame();
+  const y = interpolate(f, [0, MENU_DURATION - 1], [12, 88], {
+    easing: Easing.inOut(Easing.quad),
+  });
+  return (
+    <OffthreadVideo
+      src={staticFile("beat/menu/menu_yellow.mp4")}
+      muted
+      style={{
+        width: "100%",
+        height: "100%",
+        objectFit: "cover",
+        objectPosition: `50% ${y}%`,
+      }}
+    />
+  );
+};
+
 export const BeatMenu: React.FC = () => (
   <AbsoluteFill style={{ background: "black" }}>
-    {/* the whole menu clip, uncropped. It is 9:16 and the half is almost
-        square, so the space beside it is reconstructed: menu_wide.mp4 extends
-        the clip's left edge (page and cover) a full width outward, so the
-        menu reads as one wide open book. The right edge stays the frame edge
-        because the arm comes in from there. The cover's ochre is recoloured
-        to the placemat yellow of the photos below (menu_yellow.mp4). */}
     <div style={half(true)}>
-      <OffthreadVideo
-        src={staticFile("beat/menu/menu_wide.mp4")}
-        muted
-        style={{ width: "100%", height: "100%", objectFit: "cover" }}
-      />
+      <MenuZoom />
     </div>
     <div style={half(false)}>
       {DISHES.map((d, i) => (
