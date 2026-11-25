@@ -55,7 +55,7 @@ for name, (src, t0, t1, *off) in SEGS.items():
     P, ZOOM = res[name]
     ox, oy = (off + [0, 0])[:2]  # optional reframe (px) to keep the dish in shot
     enc = subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "bgr24",
-        "-s", f"{W}x{H}", "-r", "50", "-i", "-", "-c:v", "libx264", "-crf", "12",
+        "-s", f"{W}x{H}", "-r", str(cv2.VideoCapture(src).get(cv2.CAP_PROP_FPS)), "-i", "-", "-c:v", "libx264", "-crf", "12",
         "-preset", "medium", "-pix_fmt", "yuv420p", f"{OUT}/{name}.mp4"], stdin=subprocess.PIPE)
     for fr, (tx, ty, ang, sc, _) in zip(frames(src, t0, t1), P):
         # inverse of the measured frame->ref warp is already "fr -> ref", so apply it
