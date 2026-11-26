@@ -8,7 +8,7 @@ S = '/tmp/claude-0/-home-user-editing/80a2e44c-55fb-5633-9cd2-a538b271aca0/scrat
 SRC = S + 'dheau_src/'; W = S + 'dheau/'; WP = S + f'dheau/{sys.argv[1]}_parts/'
 MODE, OUT, SPEED = sys.argv[1], sys.argv[2], float(sys.argv[3]); DRY = len(sys.argv) > 4
 db = np.load(SRC + 'db.npy'); SEAM = 92.625
-TH = -42; MIN = 12; KEEP_AFTER = 0.08; KEEP_BEFORE = 0.04  # tight: no leftover silences
+TH = -38; MIN = 12; KEEP_AFTER = 0.08; KEEP_BEFORE = 0.04  # tight: no leftover silences; -38 dB also drops breaths
 # cut: false start 'titolo re- reale', micro-gaps in 'di EPA e di DHA', the 'ehh' before
 # 'E come sempre' and the 'ahh' before 'compensi'
 SECT_YT = [[(0.2, 79.2), (79.2, 101.98), (102.40, 103.17), (103.23, 103.49), (103.55, 104.07), (104.17, 128.85), (129.45, 147.12), (148.86, 157.45)]]
@@ -44,7 +44,7 @@ if MODE == 'yt':
     F = ["scale=1920:1080:flags=lanczos", "crop=2880:1620:560:60,scale=1920:1080:flags=lanczos"]
 else:
     # centred on him; bottom edge stays above the window light and the curtain hem
-    F = ["crop=472:840:714:60,scale=1080:1920:flags=lanczos", "crop=400:711:750:90,scale=1080:1920:flags=lanczos"]
+    F = ["crop=430:765:735:40,scale=1080:1920:flags=lanczos", "crop=370:658:765:75,scale=1080:1920:flags=lanczos"]
 subprocess.run(f'mkdir -p {WP}; rm -f {WP}p*.mp4', shell=True)
 L = open(WP + 'list.txt', 'w'); n = 0
 for a, b, z in pieces:
