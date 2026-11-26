@@ -74,6 +74,21 @@ for (const m of meta) {
   s.addImage({ path: path.join(DIR, "big", m.n), x: (W - f.w) / 2, y: (H - f.h) / 2, w: f.w, h: f.h, altText: "Foto", objectName: "foto" });
 }
 
+// Instagram profile mockups
+pres.addSection({ title: "Instagram" });
+s = pres.addSlide({ masterName: "Copertina", sectionTitle: "Instagram" });
+{
+  const ph = 6.5, pw = ph * 430 / 932, gap = 1.2, bz = 0.12;
+  const x0 = (W - 2 * pw - gap) / 2, y0 = (H - ph) / 2;
+  ["ig_logo.png", "ig_photo.png"].forEach((f, i) => {
+    const x = x0 + i * (pw + gap);
+    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: x - bz, y: y0 - bz, w: pw + 2 * bz, h: ph + 2 * bz, rectRadius: 0.35,
+      fill: { color: "1A1A1A" }, line: { color: "1A1A1A" }, objectName: "phone_" + (i + 1),
+      shadow: { type: "outer", color: "000000", opacity: 0.25, blur: 12, offset: 4, angle: 90 } });
+    s.addImage({ path: path.join(DIR, "ig", f), x, y: y0, w: pw, h: ph, rounding: false, altText: "Mockup profilo Instagram", objectName: "ig_" + (i + 1) });
+  });
+}
+
 // Download
 pres.addSection({ title: "Download" });
 s = pres.addSlide({ masterName: "Copertina", sectionTitle: "Download" });

@@ -121,6 +121,7 @@ PROTECT_POLYS = {'DSC06925.jpg': [[(420, 1050), (1400, 1050), (1400, 1500), (420
                                    (480, 1280), (40, 1280)]]}
 PROTECT_RECTS = {'DSC07418.jpg': [(1230, 2080, 1667, 2500)]}   # objects with wall-like colour
 FLOOR_TO_BG = {'DSC06925.jpg'}
+SEE_THROUGH = {'DSC06925.jpg'}
 FORCE_BG_RECTS = {'DSC06833.jpg': [(0, 1450, 600, 2500)], 'DSC06925.jpg': [(0, 1750, 1667, 2500), (1150, 1450, 1667, 2500)],
                   'DSC07140.jpg': [(0, 2000, 220, 2500)], 'DSC06814.jpg': [(0, 1500, 220, 2500)],
                   'DSC07185.jpg': [(1440, 0, 1667, 330)]}   # x0, y0, x1, y1: leftover plant
@@ -306,10 +307,13 @@ def backdrop(im, info, name='', person=None):
         stray_all = stray_all | rect_all
     a[outside] = 1
     protect_all = np.zeros((h, w), bool)
+    seethru_all = np.zeros((h, w), bool)
     for poly in PROTECT_POLYS.get(name, []):
         pm = np.zeros((h, w), np.uint8); cv2.fillPoly(pm, [np.array(poly, np.int32)], 1)
         soft = cv2.GaussianBlur(pm.astype(np.float32), (0, 0), 2.0)
         a = a * (1 - soft)
+        if name in SEE_THROUGH:
+            seethru_all = seethru_all | (pm > 0)
         outside[pm > 0] = False; keep[pm > 0] = 1
         protect_all = protect_all | (cv2.dilate(pm, np.ones((9, 9), np.uint8)) > 0)
     for (x0, y0, x1, y1) in PROTECT_RECTS.get(name, []):
@@ -361,6 +365,14 @@ def backdrop(im, info, name='', person=None):
     far = cv2.GaussianBlur(far, (0, 0), 1.5)[..., None]
     out -= far * 0.9 * (im - wall)
     out = out * (1 - forced[..., None]) + new_bg * forced[..., None]   # removed objects: pure backdrop
+    if seethru_all.any():
+        # wall seen through transparent objects: shift its colour like the rest of the backdrop
+        hs_ = cv2.cvtColor(np.clip(im, 0, 255).astype(np.uint8), cv2.COLOR_BGR2HSV).astype(np.float32)
+        wl = np.clip(1 - (np.abs(hs_[..., 0] - Hw) - 4) / 6, 0, 1) * np.clip((hs_[..., 1] - 25) / 30, 0, 1)
+        wl *= ((im[..., 0] - im[..., 2]) > 10)
+        wl = cv2.GaussianBlur(wl.astype(np.float32), (0, 0), 1.5) * cv2.GaussianBlur(cv2.dilate(seethru_all.astype(np.uint8), np.ones((41, 41), np.uint8)).astype(np.float32), (0, 0), 8)
+        shifted = new_bg + 0.08 * (im - wall)
+        out = out * (1 - wl[..., None]) + shifted * wl[..., None]
     for (x0, y0, x1, y1), keep_dark in FORCE_ANY.get(name, []):
         reg = np.zeros((h, w), np.float32); reg[y0:y1, x0:x1] = 1
         if keep_dark:
@@ -634,10 +646,10 @@ def lift_dark_skin(u8, person, head, info):
 
 
 # ---------------------------------------------------------------- 4e) over-exposed faces
-FACE_DIM = {'DSC06607.jpg': [('all', 14), ('right', 8)], 'DSC06621.jpg': [('all', 14), ('right', 8)],
-            'DSC06650-2.jpg': [('right', 10)], 'DSC06732.jpg': [('right', 10)],
-            'DSC06703.jpg': [('right', 18)], 'DSC06704.jpg': [('right', 18)], 'DSC06705.jpg': [('right', 18)],
-            'DSC06719.jpg': [('right', 13)], 'DSC06727-2.jpg': [('right', 13)], 'DSC06728.jpg': [('right', 13)]}
+FACE_DIM = {'DSC06607.jpg': [('all', 14), ('right', 14)], 'DSC06621.jpg': [('all', 14), ('right', 14)],
+            'DSC06650-2.jpg': [('right', 12)], 'DSC06732.jpg': [('right', 12)],
+            'DSC06703.jpg': [('right', 20)], 'DSC06704.jpg': [('right', 20)], 'DSC06705.jpg': [('right', 20)],
+            'DSC06719.jpg': [('right', 16)], 'DSC06727-2.jpg': [('right', 16)], 'DSC06728.jpg': [('right', 16)]}
 
 
 def dim_faces(u8, faces, person, name, info):
@@ -658,15 +670,39 @@ def _dim_one(u8, person, which, amount):
     yy, xx = np.mgrid[0:h, 0:w]
     top = person.any(1).argmax()
     region = skin & (yy < top + 0.42 * h)
+    lab = cv2.cvtColor(u8, cv2.COLOR_BGR2LAB).astype(np.float32)
+    L = lab[..., 0]
     if which == 'right':
         cov = cv2.blur(person[int(0.1 * h):int(0.6 * h)].astype(np.float32), (1, 1)).mean(0)
         lo, hi = int(0.3 * w), int(0.75 * w)
         split = lo + int(np.argmin(cov[lo:hi]))
-        region &= xx > split
+        # the whole right-hand person (face, neck, arms, hands); the black scrub is untouched by the curve
+        region = (person > 0) & (xx > split)
+        m = cv2.GaussianBlur(region.astype(np.float32), (0, 0), 6)
+        hs2 = cv2.cvtColor(u8, cv2.COLOR_BGR2HSV).astype(np.float32)
+        wallish = np.clip(1 - (np.abs(hs2[..., 0] - 100) - 8) / 6, 0, 1) * np.clip((hs2[..., 1] - 60) / 30, 0, 1)
+        m *= 1 - cv2.GaussianBlur(wallish, (0, 0), 1.0)      # never darken the backdrop (no halo)
+        # match the right person's skin lightness to the left person's (quantile mapping on L only)
+        left_skin = skin & (person > 0) & (xx < split - 0.02 * w)
+        right_skin = skin & region
+        if left_skin.sum() > 3000 and right_skin.sum() > 3000:
+            q = np.linspace(1, 99, 50)
+            src = np.percentile(L[right_skin], q)
+            dst = np.percentile(L[left_skin], q)
+            src = np.maximum.accumulate(src + np.arange(len(src)) * 1e-3)
+            xs = np.concatenate([[0, min(40, src[0] - 1)], src, [255]])
+            ys = np.concatenate([[0, min(40, src[0] - 1)], dst, [max(dst[-1], 250)]])
+            L2 = np.interp(L, xs, ys)
+            r = amount / 100.0
+            L2 = np.minimum(np.minimum(L2, L), L * (1 - r * (L / 255.0)))   # the darker of the two, never brighten
+            lab[..., 0] = L * (1 - m) + L2 * m
+        else:
+            r = amount / 100.0
+            L2 = L * (1 - r * (L / 255.0))
+            lab[..., 0] = L * (1 - m) + L2 * m
+        return cv2.cvtColor(np.clip(lab, 0, 255).astype(np.uint8), cv2.COLOR_LAB2BGR)
     m = cv2.GaussianBlur(region.astype(np.float32), (0, 0), 12)
     m = np.clip(m * 1.6, 0, 1)
-    lab = cv2.cvtColor(u8, cv2.COLOR_BGR2LAB).astype(np.float32)
-    L = lab[..., 0]
     k = amount / (220.0 * (220.0 / 255.0) ** 2)
     L2 = L * (1 - k * (L / 255.0) ** 2)
     lab[..., 0] = L * (1 - m) + L2 * m
