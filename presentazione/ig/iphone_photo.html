@@ -1,0 +1,82 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:IT;font-weight:400;src:url(../../post/node_modules/@fontsource/inter-tight/files/inter-tight-latin-400-normal.woff2)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:600px;height:1120px;background:transparent;display:flex;align-items:center;justify-content:center;font-family:-apple-system,"SF Pro Text","Inter","Helvetica Neue",Arial,sans-serif}
+.phone{position:relative;width:470px;height:980px;border-radius:78px;padding:14px;background:linear-gradient(145deg,#d8d8dc,#8e8e93 30%,#c7c7cc 55%,#6d6d72 80%,#b8b8bd);box-shadow:0 18px 28px rgba(0,0,0,.28),inset 0 0 0 2px rgba(255,255,255,.4)}
+.btn{position:absolute;width:5px;background:linear-gradient(90deg,#7a7a7f,#c9c9ce);border-radius:3px}
+.inner{width:100%;height:100%;border-radius:65px;background:#000;padding:9px}
+.screen{position:relative;width:100%;height:100%;border-radius:57px;overflow:hidden;background:#fff;color:#000}
+.island{position:absolute;top:12px;left:50%;transform:translateX(-50%);width:122px;height:36px;border-radius:20px;background:#000;z-index:10}
+.status{height:54px;display:flex;justify-content:space-between;align-items:center;padding:6px 34px 0 40px;font-weight:600;font-size:16px}
+.sicons{display:flex;gap:6px;align-items:center}
+.nav{height:46px;display:flex;align-items:center;justify-content:space-between;padding:0 14px}
+.nav .u{font-weight:700;font-size:20px;display:flex;align-items:center;gap:4px}
+svg{display:block}
+.head{display:flex;align-items:center;padding:6px 16px 0}
+.av{width:90px;height:90px;border-radius:50%;padding:3px;background:conic-gradient(from 200deg,#EF4122,#C9C63B,#EF4122)}
+.av div{width:100%;height:100%;border-radius:50%;border:3px solid #fff;background:#fff center/cover no-repeat}
+.stats{flex:1;display:flex;justify-content:space-around;text-align:center;margin-left:8px}
+.stats b{display:block;font-size:17px}.stats span{font-size:13px}
+.bio{padding:10px 16px 0;font-size:14px;line-height:1.36}
+.bio .n{font-weight:700}.bio .c{color:#737373}
+.btns{display:flex;gap:6px;padding:12px 16px 0}
+.btns div{flex:1;background:#efefef;border-radius:8px;text-align:center;font-weight:600;font-size:14px;padding:8px 0}
+.btns div.p{background:#0095f6;color:#fff}
+.hl{display:flex;gap:15px;padding:14px 14px 4px}
+.hl .h{text-align:center;font-size:12px;width:64px}
+.hl .h i{display:block;width:64px;height:64px;border-radius:50%;border:1px solid #ddd;margin-bottom:5px;background:#fff center/cover no-repeat}
+.tabs{display:flex;border-top:1px solid #dbdbdb;margin-top:8px}
+.tabs div{flex:1;height:46px;display:flex;align-items:center;justify-content:center}
+.tabs div.on{border-bottom:1.5px solid #000}
+.empty{text-align:center;padding-top:44px}
+.empty .c{width:62px;height:62px;border:2px solid #000;border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center}
+.empty b{font-size:22px;display:block;margin-bottom:6px}
+.empty span{font-size:14px;color:#737373}
+.bar{position:absolute;bottom:0;left:0;right:0;height:84px;border-top:1px solid #eee;background:#fff;display:flex;justify-content:space-around;padding-top:14px}
+.home{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:140px;height:5px;border-radius:3px;background:#000}
+.mini{width:26px;height:26px;border-radius:50%;background:center/cover;border:1.5px solid #000}
+</style></head><body>
+<div class="phone">
+ <div class="btn" style="left:-4px;top:170px;height:34px"></div>
+ <div class="btn" style="left:-4px;top:235px;height:66px"></div>
+ <div class="btn" style="left:-4px;top:315px;height:66px"></div>
+ <div class="btn" style="right:-4px;top:260px;height:100px"></div>
+ <div class="inner"><div class="screen">
+  <div class="island"></div>
+  <div class="status"><span>9:41</span><span class="sicons">
+   <svg width="18" height="12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+   <svg width="17" height="12" viewBox="0 0 17 12"><path d="M8.5 2.2c2.4 0 4.6.9 6.2 2.4l1.2-1.3C14 1.4 11.4.3 8.5.3S3 1.4 1.1 3.3l1.2 1.3C3.9 3.1 6.1 2.2 8.5 2.2zm0 3.7c1.4 0 2.6.5 3.6 1.4l1.2-1.3C12 4.8 10.3 4.1 8.5 4.1S5 4.8 3.7 6l1.2 1.3c1-.9 2.2-1.4 3.6-1.4zm0 3.6c-.5 0-1 .2-1.4.6L8.5 12l1.4-1.9c-.4-.4-.9-.6-1.4-.6z"/></svg>
+   <svg width="27" height="13" viewBox="0 0 27 13"><rect x=".5" y=".5" width="23" height="12" rx="3.5" fill="none" stroke="#000" opacity=".4"/><rect x="2" y="2" width="20" height="9" rx="2"/><rect x="24.5" y="4.5" width="2" height="4" rx="1" opacity=".4"/></svg></span></div>
+  <div class="nav">
+   <svg width="24" height="24" viewBox="0 0 24 24"><path d="M15 4l-8 8 8 8" stroke="#000" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+   <span class="u">glialtrinfermieri</span>
+   <span style="display:flex;gap:18px"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0-6 6v4l-2 3h16l-2-3V9a6 6 0 0 0-6-6zM9.5 19a2.5 2.5 0 0 0 5 0" stroke="#000" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>
+   <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></span>
+  </div>
+  <div class="head"><div class="av"><div style="background-image:url('avatar_photo.jpg');background-size:cover"></div></div>
+   <div class="stats"><div><b>0</b><span>post</span></div><div><b>0</b><span>follower</span></div><div><b>0</b><span>seguiti</span></div></div></div>
+  <div class="bio"><div class="n">Gli Altri Infermieri</div><div class="c">Infermiere</div>
+   🌳 Noi siamo gli altri infermieri<br>Vi spieghiamo quello che gli altri non vi spiegano<br>💉 Medicina rigenerativa e longevità<br>📍 Milano · Roma 👇</div>
+  <div class="btns"><div class="p">Segui</div><div>Messaggio</div><div style="flex:0 0 36px">
+   <svg width="16" height="16" viewBox="0 0 24 24" style="margin:2px auto 0"><path d="M16 11a4 4 0 1 0-4-4M3 20a6 6 0 0 1 12 0M18 8v6M15 11h6" stroke="#000" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div></div>
+  <div class="hl">
+   <div class="h"><i style="background:#fff url('logo.png') center/72% no-repeat"></i>Chi siamo</div>
+   <div class="h"><i style="background-image:url('g_DSC06933.jpg')"></i>Longevità</div>
+   <div class="h"><i style="background-image:url('g_DSC06703.jpg')"></i>Backstage</div>
+   <div class="h"><i style="background-image:url('g_DSC07001.jpg')"></i>Domande</div>
+   <div class="h"><i style="background-image:url('g_DSC06834.jpg')"></i>MI · RM</div>
+  </div>
+  <div class="tabs"><div class="on"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M3 3h18v18H3zM9 3v18M15 3v18M3 9h18M3 15h18" stroke="#000" stroke-width="1.8" fill="none"/></svg></div>
+   <div><svg width="22" height="22" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" stroke="#999" stroke-width="1.8" fill="none"/><path d="M10 9l5 3-5 3z" fill="#999"/></svg></div>
+   <div><svg width="22" height="22" viewBox="0 0 24 24"><path d="M4 4h16v13H14l-2 3-2-3H4z" stroke="#999" stroke-width="1.8" fill="none" stroke-linejoin="round"/><circle cx="12" cy="9" r="2.5" stroke="#999" stroke-width="1.6" fill="none"/></svg></div></div>
+  <div class="empty"><div class="c"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z" stroke="#000" stroke-width="1.6" fill="none" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.5" stroke="#000" stroke-width="1.6" fill="none"/></svg></div><b>Ancora nessun post</b></div>
+  <div class="bar">
+   <svg width="26" height="26" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v10h-6v-6H9v6H3z" stroke="#000" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>
+   <svg width="26" height="26" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" stroke="#000" stroke-width="2" fill="none"/><path d="M16 16l5 5" stroke="#000" stroke-width="2" stroke-linecap="round"/></svg>
+   <svg width="26" height="26" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5" stroke="#000" stroke-width="2" fill="none"/><path d="M12 8v8M8 12h8" stroke="#000" stroke-width="2" stroke-linecap="round"/></svg>
+   <svg width="26" height="26" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" stroke="#000" stroke-width="2" fill="none"/><path d="M3 8h18M8 3l3 5M13 3l3 5M10 11l5 3-5 3z" stroke="#000" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg>
+   <div class="mini" style="background-image:url('avatar_photo.jpg')"></div>
+  </div>
+  <div class="home"></div>
+ </div></div>
+</div></body></html>
