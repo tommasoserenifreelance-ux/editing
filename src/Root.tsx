@@ -19,6 +19,7 @@ import { BAR_DURATION, BAR_FPS, BeatBar } from "./BeatBar";
 import { BeatMontage, MONTAGE_DURATION, MONTAGE_FPS } from "./BeatMontage";
 import { BeatRolls, ROLLS_DURATION, ROLLS_FPS } from "./BeatRolls";
 import { BeatMenu, MENU_DURATION, MENU_FPS } from "./BeatMenu";
+import { BeatPizza, PIZZA_DURATION, PIZZA_FPS } from "./BeatPizza";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -163,6 +164,14 @@ export const RemotionRoot: React.FC = () => {
           component={BeatMenu}
           durationInFrames={MENU_DURATION}
           fps={MENU_FPS}
+          width={1080}
+          height={1920}
+        />
+        <Composition
+          id="BeatPizza"
+          component={BeatPizza}
+          durationInFrames={PIZZA_DURATION}
+          fps={PIZZA_FPS}
           width={1080}
           height={1920}
         />
