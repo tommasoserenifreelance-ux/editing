@@ -78,7 +78,7 @@ for (const m of meta) {
 pres.addSection({ title: "Instagram" });
 s = pres.addSlide({ masterName: "Copertina", sectionTitle: "Instagram" });
 {
-  const ph = 6.5, pw = ph * 430 / 932, gap = 1.2, bz = 0.12;
+  const pw = 4.6, ph = pw * 500 / 430, gap = 1.0, bz = 0.12;
   const x0 = (W - 2 * pw - gap) / 2, y0 = (H - ph) / 2;
   ["ig_logo.png", "ig_photo.png"].forEach((f, i) => {
     const x = x0 + i * (pw + gap);
@@ -86,17 +86,6 @@ s = pres.addSlide({ masterName: "Copertina", sectionTitle: "Instagram" });
       fill: { color: "1A1A1A" }, line: { color: "1A1A1A" }, objectName: "phone_" + (i + 1),
       shadow: { type: "outer", color: "000000", opacity: 0.25, blur: 12, offset: 4, angle: 90 } });
     s.addImage({ path: path.join(DIR, "ig", f), x, y: y0, w: pw, h: ph, rounding: false, altText: "Mockup profilo Instagram", objectName: "ig_" + (i + 1) });
-  });
-}
-
-// Presentation post (carousel), 2 slides per page
-pres.addSection({ title: "Post di presentazione" });
-for (let i = 1; i <= 10; i += 2) {
-  s = pres.addSlide({ masterName: "Copertina", sectionTitle: "Post di presentazione" });
-  const h = H - 0.8, w = h * 1080 / 1350, gap = 0.5, x0 = (W - 2 * w - gap) / 2;
-  [i, i + 1].forEach((k, j) => {
-    s.addImage({ path: path.join(DIR, "post", "slide_" + String(k).padStart(2, "0") + ".png"), x: x0 + j * (w + gap), y: 0.4, w, h,
-      altText: "Post di presentazione, slide " + k, objectName: "post_" + k });
   });
 }
 
