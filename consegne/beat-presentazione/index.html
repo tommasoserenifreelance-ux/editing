@@ -72,6 +72,14 @@
   .reel.wide .desc { max-width: 640px; }
 
   /* Closing */
+  /* Shooting divider */
+  .shoot { flex-direction: column; align-items: flex-start; justify-content: center; gap: 28px; padding: 128px;
+    background: radial-gradient(ellipse at 80% 50%, rgba(242,185,15,.16), transparent 60%), var(--dark); }
+  .shoot .kicker { font-size: 28px; letter-spacing: 6px; color: var(--yellow); }
+  .shoot h2 { font-size: 120px; font-weight: 400; line-height: 1.05; color: var(--light); letter-spacing: -2px; }
+  .shoot .sub { font-size: 30px; color: var(--muted); }
+  .shoot .logo { position: absolute; top: 64px; right: 128px; width: 150px; }
+
   .closing { flex-direction: column; align-items: center; justify-content: center; gap: 56px;
     background: radial-gradient(ellipse at 50% 45%, rgba(242,185,15,.18), transparent 60%), #000; }
   .closing img { width: 460px; }
@@ -96,7 +104,7 @@
 
   <section class="slide cover">
     <div>
-      <p class="kicker">CONTENUTI VIDEO · NOVEMBRE 2026</p>
+      <p class="kicker">SHOOTING 29 OTTOBRE · 26 NOVEMBRE 2026</p>
       <h1>Beat<br><span style="white-space:nowrap">Pizza, Roll &amp; Spa</span></h1>
       <p class="sub">11 video per i social · Bagno a Ripoli</p>
     </div>
@@ -148,7 +156,24 @@
   const stage = document.getElementById("stage");
   const closing = document.getElementById("closing");
 
+  // Shooting dividers: inserted before the first video of each shoot.
+  const SHOOTS = [
+    { before: 0, date: "29 ottobre 2026", videos: "Video 01 – 04" },
+    { before: 4, date: "26 novembre 2026", videos: "Video 05 – 11" },
+  ];
+
   REELS.forEach((r, i) => {
+    const shoot = SHOOTS.find((x) => x.before === i);
+    if (shoot) {
+      const d = document.createElement("section");
+      d.className = "slide shoot";
+      d.innerHTML = `
+        <p class="kicker">SHOOTING</p>
+        <h2>${shoot.date}</h2>
+        <p class="sub">${shoot.videos}</p>
+        <img class="logo" src="media/logo-white.png" alt="Logo Beat">`;
+      stage.insertBefore(d, closing);
+    }
     const s = document.createElement("section");
     s.className = "slide reel" + (r.wide ? " wide" : "");
     s.innerHTML = `
