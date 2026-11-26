@@ -1,0 +1,146 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:Anton;src:url(node_modules/@fontsource/anton/files/anton-latin-400-normal.woff2)}
+@font-face{font-family:IT;font-weight:300;src:url(node_modules/@fontsource/inter-tight/files/inter-tight-latin-300-normal.woff2)}
+@font-face{font-family:IT;font-weight:400;src:url(node_modules/@fontsource/inter-tight/files/inter-tight-latin-400-normal.woff2)}
+@font-face{font-family:IT;font-weight:600;src:url(node_modules/@fontsource/inter-tight/files/inter-tight-latin-600-normal.woff2)}
+@font-face{font-family:IT;font-weight:800;src:url(node_modules/@fontsource/inter-tight/files/inter-tight-latin-800-normal.woff2)}
+@font-face{font-family:IT;font-weight:400;font-style:italic;src:url(node_modules/@fontsource/inter-tight/files/inter-tight-latin-400-italic.woff2)}
+@font-face{font-family:Hand;src:url(node_modules/@fontsource/caveat/files/caveat-latin-700-normal.woff2)}
+:root{--red:#EF4122;--lime:#C9C63B;--ink:#141414;--blue:#2F8FC4;--paper:#F4F2EE}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#888}
+.s{width:1080px;height:1350px;position:relative;overflow:hidden;background:#fff;color:var(--ink);font-family:IT;margin-bottom:20px}
+.grain::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.10;mix-blend-mode:multiply;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+.paper{background:var(--paper)}
+.blue{background:var(--blue);color:#fff}
+.pill{position:absolute;top:70px;left:80px;display:flex;align-items:center;gap:14px;background:var(--ink);color:#fff;border-radius:40px;padding:12px 26px 12px 14px;font:600 22px IT;letter-spacing:.18em;z-index:5}
+.pill.w{background:#fff;color:var(--ink)}
+.pill img{width:40px;height:35px}
+.num{position:absolute;top:78px;right:80px;font:600 22px IT;color:#999;z-index:5}
+.num.w{color:rgba(255,255,255,.8)}
+.t{position:absolute;left:100px;right:100px;font-size:62px;line-height:1.12;letter-spacing:-.03em;z-index:3}
+.t b{font-weight:800}
+.r{color:var(--red)}
+.mk{background:linear-gradient(100deg,transparent 1%,rgba(201,198,59,.85) 3% 96%,transparent 98%);padding:0 .08em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.big{font-family:Anton;text-transform:uppercase;letter-spacing:-.005em;line-height:.93}
+.box{background:var(--ink);color:#fff;position:absolute;left:0;z-index:3;box-shadow:0 18px 40px rgba(0,0,0,.25)}
+.hand{font-family:Hand}
+svg.sc{position:absolute;pointer-events:none;z-index:2}
+.cut{position:absolute;z-index:2;filter:drop-shadow(5px 0 0 #fff) drop-shadow(-5px 0 0 #fff) drop-shadow(0 -5px 0 #fff) drop-shadow(0 5px 0 #fff)}
+.full{position:absolute;inset:0;background:center/cover no-repeat}
+.shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 45%,rgba(0,0,0,.72) 100%)}
+.lite{font-weight:300;letter-spacing:-.01em}
+.tag{position:absolute;top:66px;right:80px;text-align:right;z-index:5;font:400 30px IT;line-height:1.1}
+.tag .d{display:inline-block;background:var(--lime);font:italic 400 24px IT;padding:4px 12px;margin-bottom:8px}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute"><defs>
+<filter id="crayon" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="1.4" numOctaves="2" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5" result="d"/><feTurbulence type="fractalNoise" baseFrequency=".6" numOctaves="1" result="m"/><feColorMatrix in="m" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -2.2 1.6" result="mask"/><feComposite in="d" in2="mask" operator="in"/></filter>
+<filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".03" numOctaves="2" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="6"/></filter>
+</defs></svg>
+
+<!-- 1 COVER — factanza -->
+<div class="s blue grain" id="s1">
+ <div class="pill w"><img src="logo.png">GLIALTRINFERMIERI</div>
+ <div class="tag"><span class="d" style="color:var(--ink)">piacere,</span><br>chi siamo</div>
+ <div class="t big" style="top:230px;font-size:150px;color:#fff">Ci chiamiamo<br><span style="color:var(--lime)">gli altri<br>infermieri.</span></div>
+ <div class="hand" style="position:absolute;left:110px;top:760px;font-size:84px;color:#fff;transform:rotate(-4deg);z-index:3">Non è un caso.</div>
+ <svg class="sc" style="left:120px;top:850px" width="470" height="60" viewBox="0 0 470 60"><path d="M5 40 C 120 10, 260 55, 465 22" stroke="#EF4122" stroke-width="9" fill="none" stroke-linecap="round"/></svg>
+ <svg class="sc" style="left:-40px;top:520px" width="260" height="360" viewBox="0 0 260 360"><path d="M10 10 C 160 60, 40 160, 200 210 S 60 320, 240 350" stroke="#141414" stroke-width="3" fill="none"/></svg>
+ <svg class="sc" style="right:20px;top:330px" width="200" height="200" viewBox="0 0 200 200"><g stroke="#141414" stroke-width="2.5" fill="none"><path d="M30 100c20-60 120-70 140-10s-60 90-100 60-20-90 40-80 70 60 20 80-60-20-30-40"/><path d="M50 120c30-40 90-40 100 0"/></g></svg>
+ <img class="cut" src="duo.png" style="right:-60px;bottom:0;height:690px">
+</div>
+
+<!-- 2 — piccolimondi crayon -->
+<div class="s paper grain" id="s2">
+ <div class="num">2/10</div>
+ <svg class="sc" style="left:120px;top:110px" width="840" height="640" viewBox="0 0 840 640" filter="url(#crayon)">
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <!-- hospital building -->
+   <path d="M230 560 L230 230 L560 230 L560 560 Z" stroke="#2F8FC4" stroke-width="16"/><path d="M236 566 L226 236 L566 226 L556 560" stroke="#2F8FC4" stroke-width="7" opacity=".7"/>
+   <path d="M360 300 h70 M395 265 v70" stroke="#EF4122" stroke-width="26"/>
+   <path d="M270 400h60v60h-60zM460 400h60v60h-60zM360 470h70v90h-70z" stroke="#2F8FC4" stroke-width="10"/>
+   <!-- clock (turni) -->
+   <circle cx="690" cy="180" r="85" stroke="#EF4122" stroke-width="14"/><path d="M690 180 V120 M690 180 L735 205" stroke="#EF4122" stroke-width="12"/>
+   <!-- stethoscope -->
+   <path d="M90 140c0 120 40 170 90 170s70-60 70-120" stroke="#EF4122" stroke-width="12"/><circle cx="180" cy="420" r="34" stroke="#C9C63B" stroke-width="14"/><path d="M180 310 v76" stroke="#EF4122" stroke-width="10"/>
+   <!-- flowers -->
+   <g stroke="#C9C63B" stroke-width="10"><circle cx="740" cy="480" r="22"/><path d="M740 430c25-30 55-5 25 25M790 470c35-5 35 40 0 35M760 525c10 35-35 40-35 5M700 500c-35 10-40-35-5-35M705 445c-15-35 30-45 35-10"/></g>
+  </g></svg>
+ <div class="t" style="top:830px;font-size:96px;line-height:.98;letter-spacing:-.045em;font-weight:600">Pensa a un<br>infermiere.</div>
+ <div class="t" style="top:1060px;font-size:52px;line-height:1.15;letter-spacing:-.03em">Ti viene in mente un ospedale:<br><b>corsie, turni, camici.</b></div>
+</div>
+
+<!-- 3 — certo full photo -->
+<div class="s" id="s3">
+ <div class="full" style="background-image:url(full_DSC06933.jpg)"></div><div class="shade"></div>
+ <div class="num w">3/10</div>
+ <div class="t lite" style="top:960px;font-size:62px;color:#fff;line-height:1.1">per anni è stato<br>il nostro mondo.</div>
+ <div class="t" style="top:1120px;font-size:62px;color:#fff;font-weight:800;letter-spacing:-.03em">e ci ha insegnato <span style="color:var(--lime)">tutto.</span></div>
+</div>
+
+<!-- 4 — factanza black box -->
+<div class="s blue grain" id="s4">
+ <div class="pill w"><img src="logo.png">GLIALTRINFERMIERI</div><div class="num w">4/10</div>
+ <svg class="sc" style="left:-30px;top:120px" width="220" height="420" viewBox="0 0 220 420"><path d="M200 0 C 40 80, 160 180, 20 260 S 150 380, 30 420" stroke="#141414" stroke-width="3" fill="none"/></svg>
+ <div class="t" style="top:300px;font-size:58px;color:#fff;line-height:1.15">Poi abbiamo capito che<br>questo mestiere</div>
+ <div class="box" style="top:500px;right:140px;padding:40px 100px 44px"><div style="font-size:72px;line-height:1.1;letter-spacing:-.03em;font-weight:800">può essere</div></div>
+ <div class="t big" style="top:860px;font-size:200px;color:#fff">anche <span style="color:var(--lime)">altro.</span></div>
+ <svg class="sc" style="right:30px;bottom:30px" width="260" height="260" viewBox="0 0 260 260"><g stroke="#141414" stroke-width="2" fill="none"><path d="M20 240c40-40 20-90 70-110s60 40 100 10 20-90 60-120"/><path d="M40 250c40-40 30-80 70-100s70 30 110 0"/><path d="M60 255c50-60 80-40 120-80"/></g></svg>
+</div>
+
+<!-- 5 — theia white + cutout -->
+<div class="s grain" id="s5">
+ <div class="pill"><img src="logo.png">GLIALTRINFERMIERI</div><div class="num">5/10</div>
+ <div class="t" style="top:300px;right:420px;font-size:78px;line-height:1.08"><b>Oggi lavoriamo nella <span class="r">medicina rigenerativa</span> e della <span class="r">longevità</span>.</b></div>
+  <img class="cut" src="solo.png" style="right:-40px;bottom:0;height:720px;filter:none">
+</div>
+
+<!-- 6 — piccolimondi "the team" -->
+<div class="s paper grain" id="s6">
+ <div class="num">6/10</div>
+ <div class="t" style="top:150px;text-align:center;font-size:84px;font-weight:600;letter-spacing:-.045em;line-height:1">Pasquale a Milano.<br>Gabriele a Roma.</div>
+ <svg class="sc" style="left:330px;top:350px" width="90" height="190" viewBox="0 0 90 190" filter="url(#rough)"><path d="M40 6 C 60 60, 20 110, 46 176 M46 176 L22 140 M46 176 L70 146" stroke="#141414" stroke-width="5" fill="none" stroke-linecap="round"/></svg>
+ <svg class="sc" style="left:60px;top:470px" width="960" height="760" viewBox="0 0 960 760" filter="url(#crayon)"><g fill="none" stroke-linecap="round"><path d="M120 600c-40-120 10-260 120-300" stroke="#EF4122" stroke-width="14"/><path d="M840 620c40-140-10-260-110-310" stroke="#2F8FC4" stroke-width="14"/><circle cx="110" cy="260" r="40" stroke="#C9C63B" stroke-width="12"/><circle cx="860" cy="250" r="34" stroke="#EF4122" stroke-width="12"/></g></svg>
+ <img class="cut" src="duo.png" style="left:0;bottom:0;height:820px;filter:none">
+ <div class="hand" style="position:absolute;right:70px;bottom:420px;font-size:76px;color:var(--red);transform:rotate(-6deg);z-index:4;line-height:1">stesso lavoro,</div>
+ <div class="hand" style="position:absolute;right:60px;bottom:220px;font-size:76px;color:var(--red);transform:rotate(-4deg);z-index:4;line-height:1;text-align:right">un altro modo<br>di farlo.</div>
+</div>
+
+<!-- 7 — theia text -->
+<div class="s grain" id="s7">
+ <div class="pill"><img src="logo.png">GLIALTRINFERMIERI</div><div class="num">7/10</div>
+ <div class="t" style="top:260px;font-size:72px"><b>Qui raccontiamo quello che <span class="r">vediamo</span>.</b></div>
+ <svg class="sc" style="left:330px;top:530px" width="420" height="20" viewBox="0 0 420 20"><path d="M5 12 C 120 4, 300 16, 415 8" stroke="#EF4122" stroke-width="5" fill="none" stroke-linecap="round"/></svg>
+ <div class="t" style="top:640px;font-size:58px;line-height:1.2">Come funziona <b>davvero</b> questo mondo.<br><br>Cosa ci <b>chiedono</b> le persone.<br><br>Cosa impari stando accanto a qualcuno <b class="r">per mezz'ora.</b></div>
+</div>
+
+<!-- 8 — factanza big statement -->
+<div class="s blue grain" id="s8">
+ <div class="pill w"><img src="logo.png">GLIALTRINFERMIERI</div><div class="num w">8/10</div>
+ <div class="box" style="top:300px;right:120px;padding:50px 100px"><div class="big" style="font-size:150px">Niente<br>promesse.</div></div>
+ <div class="t big" style="top:740px;font-size:190px;color:#fff">Niente</div><div class="t big" style="top:940px;font-size:190px"><span class="mk" style="color:var(--ink);display:inline-block;line-height:1.05;padding:0 20px">miracoli.</span></div>
+ <svg class="sc" style="right:40px;top:120px" width="220" height="220" viewBox="0 0 220 220"><g stroke="#141414" stroke-width="2.5" fill="none"><path d="M20 110c30-80 160-80 180 0s-150 80-160 10 120-80 130-20-80 60-90 10"/></g></svg>
+</div>
+
+<!-- 9 — certo full photo hands -->
+<div class="s" id="s9">
+ <div class="full" style="background-image:url(full_DSC07113.jpg)"></div><div class="shade"></div>
+ <div class="num w">9/10</div>
+ <div class="t lite" style="top:990px;font-size:60px;color:#fff">solo il punto di vista di</div>
+ <div class="t" style="top:1070px;font-size:72px;color:#fff;font-weight:800;line-height:1.05;letter-spacing:-.035em">chi ci sta dentro<br><span style="color:var(--lime)">con le mani.</span></div>
+</div>
+
+<!-- 10 — piccolimondi closing -->
+<div class="s paper grain" id="s10">
+ <div class="num">10/10</div>
+ <svg class="sc" style="left:250px;top:120px" width="580" height="560" viewBox="0 0 580 560" filter="url(#crayon)"><g fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M290 540 C 280 440, 300 380, 290 300" stroke="#8a5a2b" stroke-width="22"/><path d="M290 380 C 240 340, 200 330, 170 300 M292 360 C 340 330, 380 320, 410 290" stroke="#8a5a2b" stroke-width="12"/>
+  <path d="M290 300 C 150 320, 80 220, 140 150 C 140 70, 250 40, 300 80 C 360 30, 470 70, 450 160 C 500 230, 420 320, 330 300" stroke="#C9C63B" stroke-width="20"/>
+  <path d="M160 200 C 200 140, 250 230, 300 170 M260 120 C 300 160, 360 110, 400 170" stroke="#C9C63B" stroke-width="12" opacity=".8"/>
+  <path d="M390 160 C 470 150, 500 240, 440 290 C 400 310, 380 260, 395 220" stroke="#EF4122" stroke-width="18"/>
+  <path d="M120 545 C 260 525, 380 530, 470 545" stroke="#2F8FC4" stroke-width="12"/></g></svg>
+ <div class="t" style="top:760px;font-size:62px;line-height:1.1">Non sapevi che un infermiere potesse fare questo?</div>
+ <div class="t" style="top:960px;font-size:150px;font-weight:600;letter-spacing:-.05em;line-height:1">Appunto. <span style="font-size:110px">🌳</span></div>
+ <div class="pill" style="top:auto;bottom:80px;left:50%;transform:translateX(-50%)"><img src="logo.png">GLIALTRINFERMIERI</div>
+</div>
+</body></html>

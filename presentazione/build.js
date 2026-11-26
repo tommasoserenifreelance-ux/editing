@@ -89,6 +89,17 @@ s = pres.addSlide({ masterName: "Copertina", sectionTitle: "Instagram" });
   });
 }
 
+// Presentation post (carousel), 2 slides per page
+pres.addSection({ title: "Post di presentazione" });
+for (let i = 1; i <= 10; i += 2) {
+  s = pres.addSlide({ masterName: "Copertina", sectionTitle: "Post di presentazione" });
+  const h = H - 0.8, w = h * 1080 / 1350, gap = 0.5, x0 = (W - 2 * w - gap) / 2;
+  [i, i + 1].forEach((k, j) => {
+    s.addImage({ path: path.join(DIR, "post", "slide_" + String(k).padStart(2, "0") + ".png"), x: x0 + j * (w + gap), y: 0.4, w, h,
+      altText: "Post di presentazione, slide " + k, objectName: "post_" + k });
+  });
+}
+
 // Download
 pres.addSection({ title: "Download" });
 s = pres.addSlide({ masterName: "Copertina", sectionTitle: "Download" });
