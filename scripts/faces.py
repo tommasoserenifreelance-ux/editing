@@ -34,3 +34,19 @@ def detect(im, model):
         if all(np.linalg.norm(c - g.mean(0)) > 0.5 * max(size, np.ptp(g[:, 0])) for g in out):
             out.append(f)
     return out
+
+_seg = None
+def person_mask(im, model):
+    """Soft-free person mask (hair, skin, clothes, accessories) at full resolution."""
+    global _seg
+    if _seg is None:
+        _seg = vision.ImageSegmenter.create_from_options(vision.ImageSegmenterOptions(
+            base_options=BaseOptions(model_asset_path=model), output_category_mask=True))
+    h, w = im.shape[:2]
+    s = 1000 / max(h, w)
+    sm = cv2.resize(im, None, fx=s, fy=s, interpolation=cv2.INTER_AREA)
+    r = _seg.segment(mp.Image(image_format=mp.ImageFormat.SRGB,
+                              data=np.ascontiguousarray(cv2.cvtColor(sm, cv2.COLOR_BGR2RGB))))
+    cm = np.squeeze(r.category_mask.numpy_view())
+    cm = cv2.resize(cm, (sm.shape[1], sm.shape[0]), interpolation=cv2.INTER_NEAREST)
+    return cv2.resize((cm > 0).astype(np.uint8), (w, h), interpolation=cv2.INTER_NEAREST)

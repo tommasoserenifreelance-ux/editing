@@ -3,7 +3,7 @@ name: Release foto servizio
 on:
   push:
     branches: [claude/sweet-knuth-lkz06a]
-    paths: [.github/workflows/release-foto.yml]
+    paths: [.github/workflows/release-foto.yml, 'public/foto/servizio/**']
   workflow_dispatch:
 
 permissions:
@@ -27,6 +27,6 @@ jobs:
           gh release delete foto-servizio-editate --yes --cleanup-tag 2>/dev/null || true
           gh release create foto-servizio-editate \
             --target "${GITHUB_SHA}" \
-            --title "Foto servizio – editate (112)" \
-            --notes "112 foto editate: sfondo pulito con profondità, pelle ritoccata, nero del camice aperto, polvere rimossa. Scarica foto-servizio-editate.zip per averle tutte insieme." \
+            --title "Foto servizio – editate ($(ls public/foto/servizio/*.jpg | wc -l))" \
+            --notes "Foto editate: sfondo pulito con profondità, pelle ritoccata, nero del camice aperto, polvere rimossa. Scarica foto-servizio-editate.zip per averle tutte insieme." \
             foto-servizio-editate.zip public/foto/servizio/*.jpg
