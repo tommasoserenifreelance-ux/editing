@@ -23,7 +23,7 @@ const wt = (text: string, after = 0) => {
   return hit.s;
 };
 const at = (t0: number, w: string, after = t0 - 0.3) => sec(wt(w, after) - t0);
-const VOICE_END = 43.65;
+const VOICE_END = 42.53;
 const END = VOICE_END + 1.7;
 export const DHEAU_FPS = FPS;
 export const DHEAU_DURATION = sec(END);
@@ -103,9 +103,9 @@ const SCENES: Scene[] = [
     from: f("viene", 17.0),
     render: (t0) => <BrollWord src="dheau/integratore.mp4" word="ANTI-AGING" at={at(t0, "anti-aging")} lead={lead(t0, "proposto come integratore")} />,
   },
-  { from: f("genericamente", 19.9), speaker: true, render: (t0) => <Speaker start={t0} punch={["scetticismo"]} /> },
+  { from: f("E", 18.75), speaker: true, render: (t0) => <Speaker start={t0} punch={["scetticismo"]} /> },
   {
-    from: f("poiché", 23.9),
+    from: f("poiché", 22.63),
     render: (t0) => (
       <Card>
         <StudyFocus src="dheau/study0.png" titleY={[0.3, 0.57]} top={0.34} />
@@ -114,11 +114,11 @@ const SCENES: Scene[] = [
     ),
   },
   {
-    from: f("porti", 27),
+    from: f("porti", 25.73),
     render: (t0) => <BrollWord src="dheau/barattolo.mp4" word="DI LONGEVITÀ" at={at(t0, "longevità")} lead={lead(t0, "porti benefici concreti")} />,
   },
   {
-    from: f("sono", 29.1),
+    from: f("sono", 27.81),
     render: (t0) => (
       <Card bg="red">
         <Lead words={lead(t0, "sono")} top={0.36} />
@@ -126,9 +126,9 @@ const SCENES: Scene[] = [
       </Card>
     ),
   },
-  { from: f("È", 31.3), speaker: true, render: (t0) => <Speaker start={t0} punch={["rispetto"]} /> },
+  { from: f("È", 30.04), speaker: true, render: (t0) => <Speaker start={t0} punch={["rispetto"]} /> },
   {
-    from: f("e", 35.0),
+    from: f("e", 33.73),
     render: (t0) => (
       <>
         <BrollWord src="dheau/pillole_colorate.mp4" word="CARAMELLA" at={at(t0, "caramella")} lead={lead(t0, "non come una")} color={ref.red} />
@@ -136,13 +136,13 @@ const SCENES: Scene[] = [
       </>
     ),
   },
-  { from: f("E", 37.1), speaker: true, render: (t0) => <Speaker start={t0} punch={["medico"]} /> },
+  { from: f("E", 35.84), speaker: true, render: (t0) => <Speaker start={t0} punch={["medico"]} /> },
   {
-    from: f("con", 39.9),
+    from: f("con", 38.63),
     render: (t0) => <BrollWord src="dheau/provette.mp4" word="MISURE ALLA MANO" at={at(t0, "misure")} />,
   },
   {
-    from: f("non", 41.5),
+    from: f("non", 40.23),
     render: (t0) => (
       <Card bg="yellow">
         <Big text={"NO AL\nFAI DA TE."} at={at(t0, "non")} top={0.46} color="#141416" size={150} shadow={false} boom />
