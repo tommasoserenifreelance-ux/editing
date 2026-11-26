@@ -65,10 +65,57 @@ def smooth_fill(img, m, scale=4):
     return cv2.resize(res, (w, h), interpolation=cv2.INTER_CUBIC)
 
 
+# ---------------------------------------------------------------- 1a) colour-only wall brightening
+def recolor_wall(im, info, name=''):
+    """No cut-out: brighten/saturate blue-wall colours with a smooth colour-space weight,
+    like an HSL adjustment. Cannot create jagged edges."""
+    u8 = np.clip(im, 0, 255).astype(np.uint8)
+    hsv = cv2.cvtColor(u8, cv2.COLOR_BGR2HSV).astype(np.float32)
+    H, S, V = hsv[..., 0], hsv[..., 1], hsv[..., 2]
+    h, w = H.shape
+    border = np.zeros((h, w), bool); border[:int(0.08 * h)] = True
+    ref = border & (H > 88) & (H < 112) & (S > 60)
+    Hm = float(np.median(H[ref])) if ref.sum() > 500 else 100.0
+    s_lo = 12 if name in LIGHT_WALL or name == 'DSC07418.jpg' else 60
+    wgt = np.clip(1 - (np.abs(H - Hm) - 6) / 8, 0, 1) * np.clip((S - s_lo) / 30, 0, 1)
+    wgt *= 1 - np.clip((S - 225) / 15, 0, 1) * np.clip((V - 120) / 30, 0, 1)   # bright saturated caps stay
+    # only the wall connected to the top/sides of the frame (not wall seen through packaging or under the chair)
+    bw_ = (wgt > 0.5).astype(np.uint8)
+    n_, l_, st_, _ = cv2.connectedComponentsWithStats(bw_, 8)
+    conn = np.zeros_like(bw_)
+    for i in range(1, n_):
+        x, y, cw, ch_, ar = st_[i]
+        if (y == 0 or x == 0 or x + cw == w) and ar > 0.002 * h * w and y < 0.5 * h:
+            conn[l_ == i] = 1
+    conn = cv2.dilate(conn, np.ones((9, 9), np.uint8)).astype(np.float32)
+    wgt = wgt * cv2.GaussianBlur(conn, (0, 0), 4)
+    wgt = cv2.GaussianBlur(wgt, (0, 0), 2.0)
+    wall = wgt > 0.8
+    # shift the wall toward the approved backdrop colour, per pixel, with the soft colour weight
+    yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
+    rr = np.sqrt(((xx - 0.5 * w) / w) ** 2 + ((yy - 0.30 * h) / (1.15 * h)) ** 2)
+    t = np.clip((rr - 0.05) / 0.85, 0, 1)
+    light = 1 - t * t * (3 - 2 * t)
+    new_bg = BACKDROP_CORNER + (BACKDROP_CENTRE - BACKDROP_CORNER) * light[..., None]
+    wall_est = smooth_fill(im, (wgt > 0.8).astype(np.float32))
+    shadow = np.clip((im.mean(2) / np.maximum(wall_est.mean(2), 1)), 0.3, 1.0)[..., None]  # keep cast shadows
+    shadow = 1 - 0.5 * (1 - shadow)
+    target = new_bg * shadow + (im - wall_est) * 0.3
+    out = im * (1 - wgt[..., None]) + target * wgt[..., None]
+    k = 0
+    info['backdrop'] = 'recoloured to approved colour'
+    return out, wgt.astype(np.float32)
+
+
 # ---------------------------------------------------------------- 1) backdrop
 SHADOW_KEEP = set()
-LIGHT_WALL = {'DSC06743.jpg', 'DSC06745.jpg', 'DSC06749.jpg', 'DSC06716.jpg'}   # over-exposed pale wall
-PROTECT_RECTS = {'DSC07001.jpg': [(40, 1050, 480, 1250)], 'DSC07418.jpg': [(1230, 2080, 1667, 2500)]}   # objects with wall-like colour
+LIGHT_WALL = {'DSC06743.jpg', 'DSC06745.jpg', 'DSC06749.jpg', 'DSC06716.jpg', 'DSC07278.jpg'}   # over-exposed pale wall
+CROP_ABOVE_SKIRTING = {"DSC06703.jpg": 2453, "DSC06704.jpg": 2451, "DSC06705.jpg": 2449, "DSC06727-2.jpg": 2422, "DSC06728.jpg": 2423, "DSC06732.jpg": 2425, "DSC06863.jpg": 2027, "DSC06870.jpg": 2204, "DSC06873.jpg": 2264, "DSC06874.jpg": 2267, "DSC06881.jpg": 2303, "DSC06925.jpg": 2197, "DSC07046.jpg": 2361, "DSC07050.jpg": 2173, "DSC07226.jpg": 2463, "DSC07227.jpg": 2463, "DSC07258.jpg": 2456, "DSC07270.jpg": 2188}   # y of the skirting line: crop just above it
+CHAIR_SHOTS = {'DSC07278.jpg', 'DSC07281.jpg', 'DSC07319.jpg', 'DSC07361.jpg', 'DSC07395.jpg', 'DSC07418.jpg'}
+PROTECT_POLYS = {'DSC07001.jpg': [[(42, 1050), (55, 1035), (100, 1033), (110, 1010), (125, 990), (155, 980), (195, 985),
+                                   (222, 1008), (234, 1050), (245, 1078), (310, 1095), (360, 1100), (480, 1200),
+                                   (480, 1280), (40, 1280)]]}
+PROTECT_RECTS = {'DSC07418.jpg': [(1230, 2080, 1667, 2500)]}   # objects with wall-like colour
 FLOOR_TO_BG = {'DSC06925.jpg'}
 FORCE_BG_RECTS = {'DSC06833.jpg': [(0, 1450, 600, 2500)], 'DSC06925.jpg': [(0, 1750, 1667, 2500), (1150, 1450, 1667, 2500)],
                   'DSC07140.jpg': [(0, 2000, 220, 2500)], 'DSC06814.jpg': [(0, 1500, 220, 2500)]}   # x0, y0, x1, y1: leftover plant
@@ -81,13 +128,15 @@ def backdrop(im, info, name='', person=None):
     if name in NO_BACKDROP:
         info['backdrop'] = 'skipped (still life)'
         return im, zero
+    if name in CHAIR_SHOTS:
+        return recolor_wall(im, info, name)
     B, R = im[..., 0], im[..., 2]
     br = B - R
     u8 = np.clip(im, 0, 255).astype(np.uint8)
     hsv = cv2.cvtColor(u8, cv2.COLOR_BGR2HSV).astype(np.float32)
     H, S, V = hsv[..., 0], hsv[..., 1], hsv[..., 2]
     # Wall candidates: blue/cyan, including very light (over-exposed) wall.
-    cand = ((H > 84) & (H < 112) & (S > 30) & (br > 12) & (V > 35))
+    cand = ((H > 84) & (H < 112) & (S > 30) & (br > 8) & (V > 22))
     # typical wall colour of this photo (border pixels), then drop blues that differ from it
     bmask = np.zeros((h, w), bool)
     bmask[: int(0.06 * h)] = True; bmask[:, : int(0.05 * w)] = True; bmask[:, -int(0.05 * w):] = True
@@ -98,7 +147,7 @@ def backdrop(im, info, name='', person=None):
     if name in LIGHT_WALL:
         cand = (H > 84) & (H < 112) & (S > 10) & (br > 6) & (V > 120)
     else:
-        cand &= (np.abs(H - Hm) < 7) & (S < Sm + 45) & (S > 0.55 * Sm)
+        cand &= (np.abs(H - Hm) < 6) & (S < 245) & (S > 0.4 * Sm)
     cand = cand.astype(np.uint8)
     cand = cv2.morphologyEx(cand, cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
     n, lab, st, _ = cv2.connectedComponentsWithStats(cand, 8)
@@ -106,7 +155,7 @@ def backdrop(im, info, name='', person=None):
     for i in range(1, n):
         x, y, bw, bh, area = st[i]
         touches = x == 0 or y == 0 or x + bw == w or y + bh == h
-        if touches and area > 0.004 * h * w:
+        if (touches and area > 0.004 * h * w) or (not touches and area > 300):
             wallreg[lab == i] = 1
     frac = wallreg.mean()
     info['wall_fraction'] = round(float(frac), 3)
@@ -123,11 +172,11 @@ def backdrop(im, info, name='', person=None):
     # colour consistency with the local wall: saturated / different-hue blues (caps, labels) are objects
     hs = smooth_fill(hsv[..., :2].copy(), sure.astype(np.float32))
     Hw, Sw = hs[..., 0], hs[..., 1]
-    consistent = np.clip(1 - (np.abs(H - Hw) - 5) / 4, 0, 1) * np.clip(1 - (S - Sw - 50) / 30, 0, 1)
+    consistent = np.clip(1 - (np.abs(H - Hw) - 5) / 4, 0, 1) * np.clip(1 - (S - 245) / 10, 0, 1)
     a *= consistent
     # much darker than the local wall -> an object (device, dark cabinet), not wall
     Vw = smooth_fill(V[..., None].repeat(3, 2).copy(), sure.astype(np.float32))[..., 0]
-    dark_ok = np.clip((V / np.maximum(Vw, 1) - 0.55) / 0.2, 0, 1)
+    dark_ok = np.clip((V / np.maximum(Vw, 1) - 0.25) / 0.15, 0, 1)
     wall_like = np.clip(1 - (np.abs(H - Hw) - 3) / 3, 0, 1) * np.clip((S - 0.85 * Sw) / (0.1 * Sw + 1), 0, 1)
     if name in SHADOW_KEEP:
         a *= cv2.GaussianBlur(dark_ok.astype(np.float32), (0, 0), 6)
@@ -152,7 +201,9 @@ def backdrop(im, info, name='', person=None):
     n2, lab2, st2, _ = cv2.connectedComponentsWithStats(1 - keep, 8)
     for i in range(1, n2):
         if st2[i, cv2.CC_STAT_AREA] < 3000:
-            keep[lab2 == i] = 1
+            comp = lab2 == i
+            if raw[comp].mean() < 0.85 or st2[i, cv2.CC_STAT_AREA] < 60:   # keep real wall pockets as wall
+                keep[comp] = 1
 
     # Plants: green things (and their dark leaf parts) that are not part of a person.
     plants = 0
@@ -208,6 +259,16 @@ def backdrop(im, info, name='', person=None):
             reg &= ~(cv2.dilate(person, np.ones((9, 9), np.uint8)) > 0)
             outside |= reg; keep[reg] = 0; stray_all = stray_all | reg
             rect_all = rect_all | reg
+        # bottom-left corner: the studio plant peeks in there. Anything that is not a person
+        # (or a white object) becomes backdrop.
+        if name not in CHAIR_SHOTS and name not in LIGHT_WALL and person[int(0.5 * h):, :int(0.4 * w)].mean() < 0.6 and person.mean() > 0.05:
+            zone = np.zeros((h, w), bool); zone[int(0.5 * h):, :int(0.4 * w)] = True
+            pd25 = cv2.dilate(person, np.ones((11, 11), np.uint8)) > 0
+            regc = zone & ~pd25 & ~neutral
+            if regc.sum() > 50:
+                outside |= regc; keep[regc] = 0; stray_all = stray_all | regc
+                rect_all = rect_all | regc
+                info['corner_cleaned'] = int(regc.sum())
         # leftover dark leaf scraps: kept bits near a detected plant, not touching any person
         if plants:
             near_plant = cv2.dilate(seeds, np.ones((161, 161), np.uint8)) > 0
@@ -226,11 +287,32 @@ def backdrop(im, info, name='', person=None):
     if 'stray_all' in dir():
         stray_all &= ~cv2.dilate(neutral.astype(np.uint8), np.ones((5, 5), np.uint8)).astype(bool)
     a[outside] = 1
+    protect_all = np.zeros((h, w), bool)
+    for poly in PROTECT_POLYS.get(name, []):
+        pm = np.zeros((h, w), np.uint8); cv2.fillPoly(pm, [np.array(poly, np.int32)], 1)
+        soft = cv2.GaussianBlur(pm.astype(np.float32), (0, 0), 2.0)
+        a = a * (1 - soft)
+        outside[pm > 0] = False; keep[pm > 0] = 1
+        protect_all = protect_all | (cv2.dilate(pm, np.ones((9, 9), np.uint8)) > 0)
     for (x0, y0, x1, y1) in PROTECT_RECTS.get(name, []):
-        reg = np.zeros((h, w), bool); reg[y0:y1, x0:x1] = True
-        reg &= ~((V > 120) & (S > 125))
-        reg = cv2.morphologyEx(reg.astype(np.uint8), cv2.MORPH_CLOSE, np.ones((9, 9), np.uint8)) > 0
-        a[reg] = 0; outside[reg] = False; keep[reg] = 1
+        box = np.zeros((h, w), bool); box[y0:y1, x0:x1] = True
+        simw = np.clip((V / np.maximum(Vw, 1) - 0.8) / 0.12, 0, 1) * np.clip((S - 0.8 * Sw) / (0.12 * Sw + 1), 0, 1) \
+            * np.clip(1 - (np.abs(H - Hw) - 3) / 3, 0, 1)
+        obj = (simw < 0.5) & box
+        obj = cv2.morphologyEx(obj.astype(np.uint8), cv2.MORPH_CLOSE, np.ones((15, 15), np.uint8))
+        n_, l_, s_, _ = cv2.connectedComponentsWithStats(obj, 8)
+        if n_ > 1:
+            big = 1 + int(np.argmax(s_[1:, cv2.CC_STAT_AREA]))
+            obj = (l_ == big).astype(np.uint8)
+        # fill holes
+        inv = 1 - obj; n2_, l2_, s2_, _ = cv2.connectedComponentsWithStats(inv, 8)
+        for i in range(1, n2_):
+            if s2_[i, cv2.CC_STAT_AREA] < 20000:
+                obj[l2_ == i] = 1
+        reg = obj > 0
+        a[box] = np.minimum(a[box], cv2.GaussianBlur(1 - obj.astype(np.float32), (0, 0), 1.5)[box])
+        outside[reg] = False; keep[reg] = 1
+        protect_all = protect_all | box
         if 'stray_all' in dir():
             stray_all &= ~reg
     forced = np.zeros((h, w), np.float32)
@@ -257,8 +339,8 @@ def backdrop(im, info, name='', person=None):
     new_bg += rng.normal(0, 1.4, (h, w, 1)).astype(np.float32)
 
     out = im + a[..., None] * (new_bg - wall)
-    far = cv2.erode((a > 0.99).astype(np.uint8), np.ones((9, 9), np.uint8)).astype(np.float32)
-    far = cv2.GaussianBlur(far, (0, 0), 3)[..., None]
+    far = cv2.erode((a > 0.9).astype(np.uint8), np.ones((3, 3), np.uint8)).astype(np.float32)
+    far = cv2.GaussianBlur(far, (0, 0), 1.5)[..., None]
     out -= far * 0.9 * (im - wall)
     out = out * (1 - forced[..., None]) + new_bg * forced[..., None]   # removed objects: pure backdrop
     if name in FLOOR_TO_BG:
@@ -278,7 +360,7 @@ def backdrop(im, info, name='', person=None):
         lum_bg = new_bg.mean(2)
         # only fix pixels that are lighter than what subject+backdrop mixing allows
         expected = (1 - a) * lum_fg + a * lum_bg
-        too_light = band & (lum_cur > expected + 6)
+        too_light = band & (lum_cur > expected + 6) & ~protect_all
         mix = (1 - a)[..., None] * fg_est + a[..., None] * new_bg
         wfix = cv2.GaussianBlur(too_light.astype(np.float32), (0, 0), 1.0)[..., None]
         out = cur * (1 - wfix) + mix * wfix
@@ -490,6 +572,39 @@ def tame_whites(u8, person, name, info):
     return cv2.cvtColor(np.clip(lab, 0, 255).astype(np.uint8), cv2.COLOR_LAB2BGR)
 
 
+# ---------------------------------------------------------------- 4d) arms lost in shadow
+def lift_dark_skin(u8, person, head, info):
+    if person is None:
+        return u8
+    h, w = u8.shape[:2]
+    hsv = cv2.cvtColor(u8, cv2.COLOR_BGR2HSV).astype(np.int16)
+    f = cv2.GaussianBlur(u8.astype(np.float32), (0, 0), 3)
+    warm = ((hsv[..., 0] < 25) | (hsv[..., 0] > 170)) & (f[..., 2] - f[..., 0] > 8) & (hsv[..., 1] > 50)
+    dark = (hsv[..., 2] > 12) & (hsv[..., 2] < 90)
+    reg = (warm & dark & (person > 0) & (head == 0)).astype(np.uint8)
+    reg = cv2.morphologyEx(reg, cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
+    reg = cv2.morphologyEx(reg, cv2.MORPH_CLOSE, np.ones((15, 15), np.uint8))
+    n, lab, st, _ = cv2.connectedComponentsWithStats(reg, 8)
+    keep = np.zeros_like(reg)
+    for i in range(1, n):
+        if st[i, cv2.CC_STAT_AREA] > 0.004 * h * w:
+            keep[lab == i] = 1
+    if keep.sum() == 0:
+        return u8
+    lab_ = cv2.cvtColor(u8, cv2.COLOR_BGR2LAB).astype(np.float32)
+    L = lab_[..., 0]
+    med = float(np.median(L[keep > 0]))
+    target = 95.0
+    if med >= target - 5:
+        return u8
+    g = float(np.clip(np.log(target / 255) / np.log(max(med, 5) / 255), 0.55, 1.0))
+    m = cv2.GaussianBlur(keep.astype(np.float32), (0, 0), 8)
+    lifted = 255.0 * (L / 255.0) ** g
+    lab_[..., 0] = L + (lifted - L) * m
+    info['dark_skin_lifted'] = round(g, 2)
+    return cv2.cvtColor(np.clip(lab_, 0, 255).astype(np.uint8), cv2.COLOR_LAB2BGR)
+
+
 # ---------------------------------------------------------------- 5) dust
 def dust(res, a_bg, head, info):
     h, w = res.shape[:2]
@@ -539,7 +654,18 @@ def process(args):
     u8 = lift_scrub(u8, a_bg, head, info)
     u8 = balance_pair(u8, faces, person, name, info)
     u8 = tame_whites(u8, person, name, info)
+    if 'right_person_darkened' in info:
+        u8 = lift_dark_skin(u8, person, head, info)
     u8 = dust(u8, a_bg, head, info)
+    if name in CROP_ABOVE_SKIRTING:
+        hh, ww = u8.shape[:2]
+        H2 = CROP_ABOVE_SKIRTING[name] - 12
+        W2 = min(ww, int(round(H2 * ww / hh)))
+        cols = person[:H2].sum(0).astype(np.float64) if person is not None else np.ones(ww)
+        cx = float(np.average(np.arange(ww), weights=cols + 1e-6))
+        x0 = int(np.clip(cx - W2 / 2, 0, ww - W2))
+        u8 = u8[:H2, x0:x0 + W2]
+        info['cropped'] = [x0, 0, W2, H2]
     kw = dict(quality=98, subsampling=0)
     if pil.info.get('icc_profile'):
         kw['icc_profile'] = pil.info['icc_profile']
@@ -549,7 +675,9 @@ def process(args):
     # before/after preview
     a = cv2.imread(src)
     s = 600 / max(a.shape[:2])
-    prev = np.hstack([cv2.resize(a, None, fx=s, fy=s), cv2.resize(u8, None, fx=s, fy=s)])
+    ra = cv2.resize(a, None, fx=s, fy=s)
+    rb = cv2.resize(u8, (int(u8.shape[1] * ra.shape[0] / u8.shape[0]), ra.shape[0]))
+    prev = np.hstack([ra, rb])
     cv2.imwrite(os.path.join(dbg_dir, name), prev, [cv2.IMWRITE_JPEG_QUALITY, 85])
     return info
 
