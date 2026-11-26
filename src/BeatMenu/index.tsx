@@ -53,7 +53,7 @@ const half = (top: boolean): React.CSSProperties => ({
 // page with the finger, so the line being pointed at stays readable.
 const MenuZoom: React.FC = () => {
   const f = useCurrentFrame();
-  const y = interpolate(f, [0, MENU_DURATION - 1], [12, 88], {
+  const y = interpolate(f, [0, MENU_DURATION - 1], [20, 88], {
     easing: Easing.inOut(Easing.quad),
   });
   return (
@@ -65,6 +65,8 @@ const MenuZoom: React.FC = () => {
         height: "100%",
         objectFit: "cover",
         objectPosition: `50% ${y}%`,
+        // slight zoom so the cover's yellow edge never shows at the start
+        transform: "scale(1.06)",
       }}
     />
   );
