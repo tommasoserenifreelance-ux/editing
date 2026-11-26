@@ -1,5 +1,5 @@
 import React from "react";
-import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
+import { Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { Sfx } from "../Testosterone/primitives";
 import { mont, ref } from "../IvTherapy/fx";
 
@@ -144,5 +144,44 @@ export const HookCard: React.FC<{ leadAt: number; dheaAt: number; uomoAt: number
       {frame >= uomoAt ? null : null}
       <div style={{ position: "absolute", left: width * 0.5, top: height * 0.5, transform: "translate(-50%,-50%)" }} />
     </>
+  );
+};
+
+/**
+ * Study page shown full-width (no highlighter, no flying card): it comes
+ * into focus, then the camera slowly pushes in on the title while the rest
+ * of the page dims.
+ */
+export const StudyFocus: React.FC<{ src: string; titleY: [number, number]; top: number }> = ({ src, titleY, top }) => {
+  const frame = useCurrentFrame();
+  const { width, height } = useVideoConfig();
+  const focus = interpolate(frame, [0, 10], [0, 1], { ...clamp, easing: (v) => 1 - Math.pow(1 - v, 3) });
+  const push = interpolate(frame, [8, 90], [1, 1.45], { ...clamp, easing: (v) => v * (2 - v) });
+  const dim = interpolate(frame, [14, 30], [0, 1], clamp);
+  const W = width * 0.94;
+  const cy = (titleY[0] + titleY[1]) / 2;
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left: (width - W) / 2,
+        top: height * top,
+        width: W,
+        transform: `scale(${push * (0.94 + 0.06 * focus)})`,
+        transformOrigin: `50% ${cy * 100}%`,
+        filter: `blur(${(1 - focus) * 8}px)`,
+        opacity: focus,
+        boxShadow: "0 30px 70px rgba(0,0,0,0.6)",
+        borderRadius: 8,
+        overflow: "hidden",
+        background: "#fff",
+      }}
+    >
+      <Img src={staticFile(src)} style={{ width: "100%", display: "block" }} />
+      {/* dim everything but the title band */}
+      <div style={{ position: "absolute", left: 0, right: 0, top: 0, height: `${titleY[0] * 100}%`, background: `rgba(10,10,12,${0.55 * dim})` }} />
+      <div style={{ position: "absolute", left: 0, right: 0, top: `${titleY[1] * 100}%`, bottom: 0, background: `rgba(10,10,12,${0.55 * dim})` }} />
+      <Sfx at={0} name="whoosh" volume={0.13} />
+    </div>
   );
 };

@@ -5,8 +5,8 @@ import { Sfx } from "../Testosterone/primitives";
 import { FPS, sec } from "../Testosterone/theme";
 import { ColorBars, Grain, ref, Room, Smoke, Vignette } from "../IvTherapy/fx";
 import { chunksOf, Kinetic, Word } from "../IvTherapy/kinetic";
-import { Big, BrollWord, Card, Chip, Lead, Studies } from "../Tiroide/mg";
-import { Cascade, GlandEmit, HookCard } from "./mg";
+import { Big, BrollWord, Card, Lead } from "../Tiroide/mg";
+import { Cascade, HookCard, StudyFocus } from "./mg";
 import words from "./words.json";
 
 /*
@@ -70,13 +70,7 @@ const SCENES: Scene[] = [
   },
   {
     from: f("Il", 2.0),
-    render: (t0) => (
-      <Card>
-        <Lead words={lead(t0, "il DHEA è prodotto soprattutto dai")} top={0.1} />
-        <GlandEmit at={at(t0, "surreni")} top={0.56} />
-        <Big text="SURRENI" at={at(t0, "surreni")} top={0.8} size={150} />
-      </Card>
-    ),
+    render: (t0) => <BrollWord src="dheau/biochimica.mp4" word="SURRENI" at={at(t0, "surreni")} lead={lead(t0, "il DHEA è prodotto soprattutto dai")} />,
   },
   { from: f("e", 5.1), speaker: true, render: (t0) => <Speaker start={t0} punch={["precursore"]} /> },
   {
@@ -113,18 +107,23 @@ const SCENES: Scene[] = [
   {
     from: f("poiché", 23.9),
     render: (t0) => (
-      <Studies
-        items={[{ src: "dheau/study0.png", at: 3, hl: [0.31, 0.56] }]}
-        label={
-          <>
-            <Lead words={lead(t0, "le prove che un'integrazione a tappeto porti benefici concreti di longevità sono")} top={0.08} />
-            <Chip text="STUDIO RANDOMIZZATO" at={at(t0, "a")} x={0.5} y={0.6} rot={-3} size={58} />
-            <Chip text="2 ANNI" at={at(t0, "benefici")} x={0.26} y={0.69} rot={4} bg="#fff" color="#141416" size={64} />
-            <Chip text="DHEA ≈ PLACEBO" at={at(t0, "longevità")} x={0.66} y={0.77} rot={-4} bg={ref.red} size={64} />
-            <Big text="PRESSOCHÉ DEBOLI." at={at(t0, "pressoché")} top={0.9} color={ref.yellow} size={92} boom />
-          </>
-        }
-      />
+      <Card>
+        <StudyFocus src="dheau/study0.png" titleY={[0.3, 0.57]} top={0.34} />
+        <Lead words={lead(t0, "le prove che un'integrazione a tappeto")} top={0.1} />
+      </Card>
+    ),
+  },
+  {
+    from: f("porti", 27),
+    render: (t0) => <BrollWord src="dheau/barattolo.mp4" word="DI LONGEVITÀ" at={at(t0, "longevità")} lead={lead(t0, "porti benefici concreti")} />,
+  },
+  {
+    from: f("sono", 29.1),
+    render: (t0) => (
+      <Card bg="red">
+        <Lead words={lead(t0, "sono")} top={0.36} />
+        <Big text={"PRESSOCHÉ\nDEBOLI."} at={at(t0, "pressoché")} top={0.5} color="#fff" size={140} boom />
+      </Card>
     ),
   },
   { from: f("È", 31.3), speaker: true, render: (t0) => <Speaker start={t0} punch={["rispetto"]} /> },
