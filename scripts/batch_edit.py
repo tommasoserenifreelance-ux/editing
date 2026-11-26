@@ -66,6 +66,12 @@ def smooth_fill(img, m, scale=4):
 
 
 # ---------------------------------------------------------------- 1) backdrop
+SHADOW_KEEP = set()
+LIGHT_WALL = {'DSC06743.jpg', 'DSC06745.jpg', 'DSC06749.jpg', 'DSC06716.jpg'}   # over-exposed pale wall
+PROTECT_RECTS = {'DSC07001.jpg': [(40, 1050, 480, 1250)], 'DSC07418.jpg': [(1230, 2080, 1667, 2500)]}   # objects with wall-like colour
+FLOOR_TO_BG = {'DSC06925.jpg'}
+FORCE_BG_RECTS = {'DSC06833.jpg': [(0, 1450, 600, 2500)], 'DSC06925.jpg': [(0, 1750, 1667, 2500), (1150, 1450, 1667, 2500)],
+                  'DSC07140.jpg': [(0, 2000, 220, 2500)], 'DSC06814.jpg': [(0, 1500, 220, 2500)]}   # x0, y0, x1, y1: leftover plant
 NO_BACKDROP = {'DSC06844.jpg', 'DSC07362.jpg', 'DSC07376.jpg', 'DSC07304.jpg'}   # still lifes: blue furniture, not the wall
 
 
@@ -81,7 +87,7 @@ def backdrop(im, info, name='', person=None):
     hsv = cv2.cvtColor(u8, cv2.COLOR_BGR2HSV).astype(np.float32)
     H, S, V = hsv[..., 0], hsv[..., 1], hsv[..., 2]
     # Wall candidates: blue/cyan, including very light (over-exposed) wall.
-    cand = ((H > 84) & (H < 112) & (S > 30) & (br > 12) & (V > 60))
+    cand = ((H > 84) & (H < 112) & (S > 30) & (br > 12) & (V > 35))
     # typical wall colour of this photo (border pixels), then drop blues that differ from it
     bmask = np.zeros((h, w), bool)
     bmask[: int(0.06 * h)] = True; bmask[:, : int(0.05 * w)] = True; bmask[:, -int(0.05 * w):] = True
@@ -89,7 +95,10 @@ def backdrop(im, info, name='', person=None):
         Hm, Sm = np.median(H[cand & bmask]), np.median(S[cand & bmask])
     else:
         Hm, Sm = np.median(H[cand]) if cand.any() else 100, np.median(S[cand]) if cand.any() else 150
-    cand &= (np.abs(H - Hm) < 7) & (S < Sm + 45)
+    if name in LIGHT_WALL:
+        cand = (H > 84) & (H < 112) & (S > 10) & (br > 6) & (V > 120)
+    else:
+        cand &= (np.abs(H - Hm) < 7) & (S < Sm + 45) & (S > 0.55 * Sm)
     cand = cand.astype(np.uint8)
     cand = cv2.morphologyEx(cand, cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
     n, lab, st, _ = cv2.connectedComponentsWithStats(cand, 8)
@@ -116,8 +125,21 @@ def backdrop(im, info, name='', person=None):
     Hw, Sw = hs[..., 0], hs[..., 1]
     consistent = np.clip(1 - (np.abs(H - Hw) - 5) / 4, 0, 1) * np.clip(1 - (S - Sw - 50) / 30, 0, 1)
     a *= consistent
+    # much darker than the local wall -> an object (device, dark cabinet), not wall
+    Vw = smooth_fill(V[..., None].repeat(3, 2).copy(), sure.astype(np.float32))[..., 0]
+    dark_ok = np.clip((V / np.maximum(Vw, 1) - 0.55) / 0.2, 0, 1)
+    wall_like = np.clip(1 - (np.abs(H - Hw) - 3) / 3, 0, 1) * np.clip((S - 0.85 * Sw) / (0.1 * Sw + 1), 0, 1)
+    if name in SHADOW_KEEP:
+        a *= cv2.GaussianBlur(dark_ok.astype(np.float32), (0, 0), 6)
+    else:
+        a *= np.maximum(dark_ok, wall_like)
+    # only pixels on/next to the detected wall can be wall (floor, skirting, objects stay as shot)
+    near = cv2.dilate(wallreg, np.ones((15, 15), np.uint8)).astype(np.float32)
+    a *= cv2.GaussianBlur(near, (0, 0), 3)
     # neutral white/grey objects (door, chair, bottles, gloves) are never wall
-    neutral = (S < 28) & (V > 120)
+    neutral = (S < 28) & (V > 60)
+    if name in LIGHT_WALL:
+        neutral = (S < 8) & (V > 60)
     a[neutral] = 0
     raw = a.copy()
 
@@ -135,8 +157,12 @@ def backdrop(im, info, name='', person=None):
     # Plants: green things (and their dark leaf parts) that are not part of a person.
     plants = 0
     zone_all = np.zeros((h, w), np.uint8)
+    # real foliage only: clearly green and bright enough (black-fabric noise is not green)
+    Gc, Bc_, Rc = im[..., 1], im[..., 0], im[..., 2]
+    true_green = (H > 30) & (H < 85) & (S > 70) & (V > 55) & (Gc > Rc + 15) & (Gc > Bc_ + 5)
+    true_green = cv2.morphologyEx(true_green.astype(np.uint8), cv2.MORPH_OPEN, np.ones((3, 3), np.uint8)) > 0
     if person is not None:
-        green = ((H > 30) & (H < 85) & (S > 50) & (V > 25)).astype(np.uint8)
+        green = true_green.astype(np.uint8)
         not_person = cv2.dilate(person, np.ones((5, 5), np.uint8)) == 0
         gseed = green & not_person.astype(np.uint8)
         n3, lab3, st3, _ = cv2.connectedComponentsWithStats(gseed, 8)
@@ -164,9 +190,8 @@ def backdrop(im, info, name='', person=None):
     if person is not None:
         # loose bits not attached to anything kept and not part of a person (leaf scraps, specks)
         far_from_person = cv2.dilate(person, np.ones((15, 15), np.uint8)) == 0
-        outside |= (cv2.dilate(keep, np.ones((5, 5), np.uint8)) == 0) & far_from_person & ~neutral
         # stray green next to a person's outline (leaf tips touching a sleeve)
-        green_px = (H > 30) & (H < 85) & (S > 50) & (V > 25)
+        green_px = true_green
         core_person = cv2.erode(person, np.ones((15, 15), np.uint8)) > 0
         near_wall = cv2.dilate(wallreg, np.ones((41, 41), np.uint8)) > 0
         stray = green_px & ~core_person & near_wall & (cv2.dilate(person, np.ones((25, 25), np.uint8)) > 0)
@@ -176,27 +201,41 @@ def backdrop(im, info, name='', person=None):
         stray &= ~core_person
         outside |= stray
         keep[stray] = 0
-        # whole kept objects that don't touch any person and aren't white/neutral objects
-        pd = cv2.dilate(person, np.ones((9, 9), np.uint8)) > 0
-        n4, lab4, st4, _ = cv2.connectedComponentsWithStats(keep, 8)
-        dropped = 0
-        for i in range(1, n4):
-            if st4[i, cv2.CC_STAT_AREA] > 0.03 * h * w:
-                continue
-            comp = lab4 == i
-            leafy = np.median(V[comp]) < 100 or green_px[comp].mean() > 0.03
-            if pd[comp].mean() < 0.02 and neutral[comp].mean() < 0.3 and leafy:
-                reg = cv2.dilate(comp.astype(np.uint8), np.ones((7, 7), np.uint8)) > 0
-                reg &= ~pd
-                outside |= reg
-                keep[reg] = 0
-                dropped += 1
-        if dropped:
-            info['loose_objects_removed'] = dropped
+        stray_all = stray
+        rect_all = np.zeros((h, w), bool)
+        for (x0, y0, x1, y1) in FORCE_BG_RECTS.get(name, []):
+            reg = np.zeros((h, w), bool); reg[y0:y1, x0:x1] = True
+            reg &= ~(cv2.dilate(person, np.ones((9, 9), np.uint8)) > 0)
+            outside |= reg; keep[reg] = 0; stray_all = stray_all | reg
+            rect_all = rect_all | reg
+        # leftover dark leaf scraps: kept bits near a detected plant, not touching any person
+        if plants:
+            near_plant = cv2.dilate(seeds, np.ones((161, 161), np.uint8)) > 0
+            pd = cv2.dilate(person, np.ones((9, 9), np.uint8)) > 0
+            n4, lab4, st4, _ = cv2.connectedComponentsWithStats(keep, 8)
+            for i in range(1, n4):
+                if st4[i, cv2.CC_STAT_AREA] > 0.03 * h * w:
+                    continue
+                comp = lab4 == i
+                if near_plant[comp].mean() > 0.5 and pd[comp].mean() < 0.02:
+                    reg = (cv2.dilate(comp.astype(np.uint8), np.ones((7, 7), np.uint8)) > 0) & ~pd
+                    outside |= reg
+                    keep[reg] = 0
+                    stray_all = stray_all | reg
+    outside &= ~cv2.dilate(neutral.astype(np.uint8), np.ones((5, 5), np.uint8)).astype(bool)
+    if 'stray_all' in dir():
+        stray_all &= ~cv2.dilate(neutral.astype(np.uint8), np.ones((5, 5), np.uint8)).astype(bool)
     a[outside] = 1
+    for (x0, y0, x1, y1) in PROTECT_RECTS.get(name, []):
+        reg = np.zeros((h, w), bool); reg[y0:y1, x0:x1] = True
+        reg &= ~((V > 120) & (S > 125))
+        reg = cv2.morphologyEx(reg.astype(np.uint8), cv2.MORPH_CLOSE, np.ones((9, 9), np.uint8)) > 0
+        a[reg] = 0; outside[reg] = False; keep[reg] = 1
+        if 'stray_all' in dir():
+            stray_all &= ~reg
     forced = np.zeros((h, w), np.float32)
-    if person is not None:
-        forced = (outside & (raw < 0.6)).astype(np.float32)
+    if person is not None and 'stray_all' in dir():
+        forced = ((stray_all & (raw < 0.6)) | rect_all).astype(np.float32)
         if plants:
             forced = np.maximum(forced, ((raw >= 0) & (keep == 0) & (a >= 1) & (zone_all > 0)).astype(np.float32))
         forced = cv2.GaussianBlur(cv2.dilate(forced, np.ones((5, 5), np.uint8)), (0, 0), 2)
@@ -222,6 +261,10 @@ def backdrop(im, info, name='', person=None):
     far = cv2.GaussianBlur(far, (0, 0), 3)[..., None]
     out -= far * 0.9 * (im - wall)
     out = out * (1 - forced[..., None]) + new_bg * forced[..., None]   # removed objects: pure backdrop
+    if name in FLOOR_TO_BG:
+        for (x0, y0, x1, y1) in FORCE_BG_RECTS.get(name, []):
+            if x0 == 0 and x1 >= w - 1:
+                out[y0:y1] = new_bg[y0:y1]
 
     # Edge clean-up: in a thin band around the subject rebuild the subject colour from
     # the inside, so no light wall fringe/halo survives on hair, ears, neck, shoulders.
