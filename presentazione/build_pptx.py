@@ -231,8 +231,8 @@ banner(s, 0.95, 5.45, 4.8, 'Obiettivo: più anni in salute', size=13)
 points(s, 6.5, 1.7, 6.2, [
     ('Healthy aging (OMS)', 'Sviluppare e mantenere la capacità funzionale che permette il benessere in età avanzata: non solo assenza di malattia.'),
     ('2021–2030', 'L’ONU ha proclamato il Decennio dell’Invecchiamento in Salute.'),
-    ('12 segni dell’invecchiamento', 'Tra cui: instabilità genomica, telomeri, epigenetica, proteostasi, autofagia, nutrienti, mitocondri, senescenza, staminali, infiammazione, disbiosi.')],
-    h=1.35, gap=0.27)
+    ('12 segni dell’invecchiamento', 'Instabilità genomica, telomeri, epigenetica, proteostasi, autofagia, nutrienti, mitocondri, senescenza, staminali, alterata comunicazione intercellulare, infiammazione, disbiosi.')],
+    h=1.35, gap=0.27, size=12)
 source(s, 'Fonti: WHO, World report on ageing and health 2015 · López-Otín C et al., Cell 2023;186:243-278 · Garmany A, Terzic A, JAMA Netw Open 2024;7:e2450241')
 
 # ===================== 2 · STRESS OSSIDATIVO E INVECCHIAMENTO =====================
