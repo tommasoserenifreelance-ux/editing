@@ -7,6 +7,7 @@ import {
   Sequence,
   staticFile,
 } from "remotion";
+import { EndLogo, endTailFrames, endVolume } from "../BeatShared/EndLogo";
 
 // Split-screen reel modelled on the "the artist / the art" reference:
 // top half the chef at work, bottom half the dishes, both halves cutting
@@ -156,6 +157,9 @@ const Labels: React.FC = () => (
   </AbsoluteFill>
 );
 
+// edit + fade to black + Beat logo on black
+export const ARTIST_TOTAL = ARTIST_DURATION + endTailFrames(ARTIST_FPS);
+
 export const BeatArtist: React.FC = () => (
   <AbsoluteFill style={{ background: "black" }}>
     <Sequence durationInFrames={SPLIT_END}>
@@ -187,6 +191,10 @@ export const BeatArtist: React.FC = () => (
         }}
       />
     </Sequence>
-    <Audio src={staticFile("beat/artist/ref-audio.m4a")} />
+    <EndLogo at={ARTIST_DURATION} />
+    <Audio
+      src={staticFile("beat/artist/ref-audio.m4a")}
+      volume={endVolume(ARTIST_TOTAL, ARTIST_FPS)}
+    />
   </AbsoluteFill>
 );

@@ -10,7 +10,11 @@ export const ReformerDrawing: React.FC<{ delay?: number }> = ({
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
-  const carriage = interpolate(Math.sin(Math.max(0, frame - 45) / 14), [-1, 1], [0, 60]);
+  const carriage = interpolate(
+    Math.sin(Math.max(0, frame - 45) / 14),
+    [-1, 1],
+    [0, 60],
+  );
 
   const stroke = {
     fill: "none",

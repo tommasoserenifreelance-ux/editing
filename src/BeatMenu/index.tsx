@@ -8,6 +8,7 @@ import {
   staticFile,
   useCurrentFrame,
 } from "remotion";
+import { EndLogo, endTailFrames, endVolume } from "../BeatShared/EndLogo";
 
 // Split-screen "menu" reel modelled on the sixth reference: top half a finger
 // running down the menu (beat.ref.6, slowed with motion-interpolated frames so
@@ -77,6 +78,9 @@ const MenuZoom: React.FC = () => {
   );
 };
 
+// edit + fade to black + Beat logo on black
+export const MENU_TOTAL = MENU_DURATION + endTailFrames(MENU_FPS);
+
 export const BeatMenu: React.FC = () => (
   <AbsoluteFill style={{ background: "black" }}>
     <div style={half(true)}>
@@ -99,6 +103,10 @@ export const BeatMenu: React.FC = () => (
         </Sequence>
       ))}
     </div>
-    <Audio src={staticFile("beat/menu/ref-audio.m4a")} />
+    <EndLogo at={MENU_DURATION} />
+    <Audio
+      src={staticFile("beat/menu/ref-audio.m4a")}
+      volume={endVolume(MENU_TOTAL, MENU_FPS)}
+    />
   </AbsoluteFill>
 );

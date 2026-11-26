@@ -1,4 +1,10 @@
-import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
+import {
+  AbsoluteFill,
+  interpolate,
+  spring,
+  useCurrentFrame,
+  useVideoConfig,
+} from "remotion";
 import { colors, sans, serif } from "./theme";
 
 export const Reason: React.FC<{
@@ -14,11 +20,28 @@ export const Reason: React.FC<{
 
   return (
     <AbsoluteFill style={{ padding: "0 100px", justifyContent: "center" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 24, marginBottom: 40 }}>
-        <div style={{ fontFamily: sans, fontWeight: 700, fontSize: 34, letterSpacing: 8, color: colors.muted }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 24,
+          marginBottom: 40,
+        }}
+      >
+        <div
+          style={{
+            fontFamily: sans,
+            fontWeight: 700,
+            fontSize: 34,
+            letterSpacing: 8,
+            color: colors.muted,
+          }}
+        >
           MOTIVO
         </div>
-        <div style={{ height: 3, width: 220 * rule, background: colors.accent }} />
+        <div
+          style={{ height: 3, width: 220 * rule, background: colors.accent }}
+        />
       </div>
       <div
         style={{
@@ -37,7 +60,11 @@ export const Reason: React.FC<{
       </div>
       <div style={{ marginTop: 60 }}>
         {lines.map((line, i) => {
-          const s = spring({ frame: frame - 14 - i * 6, fps, config: { damping: 200 } });
+          const s = spring({
+            frame: frame - 14 - i * 6,
+            fps,
+            config: { damping: 200 },
+          });
           return (
             <div key={line} style={{ overflow: "hidden", paddingTop: 16 }}>
               <div
@@ -56,7 +83,15 @@ export const Reason: React.FC<{
           );
         })}
       </div>
-      <div style={{ position: "absolute", bottom: 160, left: 100, display: "flex", gap: 16 }}>
+      <div
+        style={{
+          position: "absolute",
+          bottom: 160,
+          left: 100,
+          display: "flex",
+          gap: 16,
+        }}
+      >
         {Array.from({ length: total }).map((_, i) => (
           <div
             key={i}

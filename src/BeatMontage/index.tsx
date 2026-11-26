@@ -8,6 +8,7 @@ import {
   staticFile,
   useCurrentFrame,
 } from "remotion";
+import { EndLogo, endTailFrames, endVolume } from "../BeatShared/EndLogo";
 
 // Cinematic montage modelled on the fourth reference: one shot per scene
 // (nothing shown twice), every shot slowly pushing in, fast whip-slides with
@@ -132,6 +133,9 @@ const End: React.FC = () => {
   );
 };
 
+// edit + fade to black + Beat logo on black
+export const MONTAGE_TOTAL = MONTAGE_DURATION + endTailFrames(MONTAGE_FPS);
+
 export const BeatMontage: React.FC = () => (
   <AbsoluteFill style={{ background: "black" }}>
     <MotionBlurDefs />
@@ -147,14 +151,10 @@ export const BeatMontage: React.FC = () => (
     <Sequence from={END_AT}>
       <End />
     </Sequence>
+    <EndLogo at={MONTAGE_DURATION} />
     <Audio
       src={staticFile("beat/montage/ref-audio.m4a")}
-      volume={(f) =>
-        interpolate(f, [MONTAGE_DURATION - 14, MONTAGE_DURATION], [1, 0], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-        })
-      }
+      volume={endVolume(MONTAGE_TOTAL, MONTAGE_FPS)}
     />
   </AbsoluteFill>
 );

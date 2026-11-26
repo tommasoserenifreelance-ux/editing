@@ -9,6 +9,7 @@ import {
   staticFile,
   useCurrentFrame,
 } from "remotion";
+import { EndLogo, endTailFrames, endVolume } from "../BeatShared/EndLogo";
 import tracks from "./tracks.json";
 
 // Overhead "named plates" reel modelled on the second reference: the four
@@ -120,6 +121,9 @@ const LabelView: React.FC<{ l: Label }> = ({ l }) => {
 
 const full: React.CSSProperties = { width: "100%", height: "100%" };
 
+// edit + fade to black + Beat logo on black
+export const PLATES_TOTAL = PLATES_DURATION + endTailFrames(PLATES_FPS);
+
 export const BeatPlates: React.FC = () => (
   <AbsoluteFill style={{ background: "black" }}>
     <Sequence durationInFrames={IN.frames}>
@@ -140,6 +144,10 @@ export const BeatPlates: React.FC = () => (
     {LABELS.map((l) => (
       <LabelView key={l.key} l={l} />
     ))}
-    <Audio src={staticFile("beat/plates/ref-audio.m4a")} />
+    <EndLogo at={PLATES_DURATION} />
+    <Audio
+      src={staticFile("beat/plates/ref-audio.m4a")}
+      volume={endVolume(PLATES_TOTAL, PLATES_FPS)}
+    />
   </AbsoluteFill>
 );

@@ -3,13 +3,11 @@ import {
   Audio,
   continueRender,
   delayRender,
-  Img,
-  interpolate,
   OffthreadVideo,
   Sequence,
   staticFile,
-  useCurrentFrame,
 } from "remotion";
+import { EndLogo, endTailFrames, endVolume } from "../BeatShared/EndLogo";
 import captions from "./captions.json";
 
 // Pizza reel modelled on the seventh reference: booking-call voiceover with
@@ -40,7 +38,7 @@ const SRC = {
 // Reference cut points (s): 0.7 1.37 2.03 3.23 4.3 5.37 6.27 7.13 7.8 8.67
 // 9.87 11.17 12.13 14.1 15.07 15.93 17.1 17.8 18.73 19.27 20.57, end 21.8.
 // Every shot sits inside one take of its source clip.
-type Shot = { src: keyof typeof SRC; from: number };
+type Shot = { src: keyof typeof SRC; from: number; light?: number };
 const CUTS = [
   0, 0.7, 1.37, 2.03, 3.23, 4.3, 5.37, 6.27, 7.13, 7.8, 8.67, 9.87, 11.17,
   12.13, 14.1, 15.07, 15.93, 17.1, 17.8, 18.73, 19.27, 20.57,
@@ -58,20 +56,19 @@ const SHOTS: Shot[] = [
   { src: "pizza", from: 33.2 }, // finishing touch
   { src: "pizza", from: 36.7 }, // finished pizza
   { src: "pizza", from: 16.0 }, // courgette-flower pizza
-  { src: "pizza", from: 4.0 }, // slicing
-  { src: "pizza", from: 8.5 }, // slicing, closer
+  { src: "pizza", from: 4.0, light: 1.9 }, // slicing (dark take, lifted)
+  { src: "pizza", from: 8.5, light: 1.9 }, // slicing, closer (lifted)
   { src: "pizza", from: 43.6 }, // pizza at the table
   { src: "room", from: 36.2 }, // booth
   { src: "bar", from: 49.6 }, // guests at the bar
   { src: "pizza", from: 45.5 }, // sharing at the table
   { src: "pizza", from: 74.3 }, // cheers
   { src: "pizza", from: 21.0 }, // courgette-flower pizza, wide
-  { src: "pizza", from: 40.0 }, // last pizza, logo comes in
+  { src: "pizza", from: 40.0 }, // last pizza, fades to black
 ];
 const f24 = (s: number) => Math.round(s * PIZZA_FPS);
 const END = 21.8;
 export const PIZZA_DURATION = f24(END);
-const LOGO_AT = f24(19.6);
 
 const full: React.CSSProperties = { width: "100%", height: "100%" };
 
@@ -93,17 +90,8 @@ const Caption: React.FC<{ text: string }> = ({ text }) => (
   </AbsoluteFill>
 );
 
-const Logo: React.FC = () => {
-  const f = useCurrentFrame();
-  const o = interpolate(f, [0, 4], [0, 1], { extrapolateRight: "clamp" });
-  return (
-    <AbsoluteFill
-      style={{ alignItems: "center", justifyContent: "center", opacity: o }}
-    >
-      <Img src={staticFile("beat/logo-bianco.png")} style={{ width: 300 }} />
-    </AbsoluteFill>
-  );
-};
+// edit + fade to black + Beat logo on black
+export const PIZZA_TOTAL = PIZZA_DURATION + endTailFrames(PIZZA_FPS);
 
 export const BeatPizza: React.FC = () => (
   <AbsoluteFill style={{ background: "black" }}>
@@ -116,7 +104,11 @@ export const BeatPizza: React.FC = () => (
             src={SRC[s.src]}
             startFrom={f24(s.from)}
             muted
-            style={full}
+            style={
+              s.light
+                ? { ...full, filter: `brightness(${s.light}) contrast(0.95)` }
+                : full
+            }
           />
         </Sequence>
       );
@@ -130,9 +122,10 @@ export const BeatPizza: React.FC = () => (
         <Caption text={c.text} />
       </Sequence>
     ))}
-    <Sequence from={LOGO_AT}>
-      <Logo />
-    </Sequence>
-    <Audio src={staticFile("beat/pizza/ref-audio.m4a")} />
+    <EndLogo at={PIZZA_DURATION} />
+    <Audio
+      src={staticFile("beat/pizza/ref-audio.m4a")}
+      volume={endVolume(PIZZA_TOTAL, PIZZA_FPS)}
+    />
   </AbsoluteFill>
 );

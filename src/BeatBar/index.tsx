@@ -7,6 +7,7 @@ import {
   staticFile,
   useCurrentFrame,
 } from "remotion";
+import { EndLogo, endTailFrames, endVolume } from "../BeatShared/EndLogo";
 
 // Bar montage modelled on the third reference: 17 quick shots (~0.5 s) of
 // drinks being made, cut exactly on the reference's cut frames, then a 2 s
@@ -78,6 +79,9 @@ const ShotView: React.FC<{ s: Shot }> = ({ s }) => {
   );
 };
 
+// edit + fade to black + Beat logo on black
+export const BAR_TOTAL = BAR_DURATION + endTailFrames(BAR_FPS);
+
 export const BeatBar: React.FC = () => (
   <AbsoluteFill style={{ background: "black" }}>
     {SHOTS.map((s, i) => {
@@ -94,6 +98,10 @@ export const BeatBar: React.FC = () => (
         </Sequence>
       );
     })}
-    <Audio src={staticFile("beat/bar/ref-audio.m4a")} />
+    <EndLogo at={BAR_DURATION} />
+    <Audio
+      src={staticFile("beat/bar/ref-audio.m4a")}
+      volume={endVolume(BAR_TOTAL, BAR_FPS)}
+    />
   </AbsoluteFill>
 );

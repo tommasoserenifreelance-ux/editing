@@ -13,13 +13,13 @@ import { beatDefaults, beatSchema } from "./BeatRestaurant/schema";
 import { BeatSushi, SUSHI_DURATION, SUSHI_FPS } from "./BeatSushi";
 import { BeatSplit, SPLIT_DURATION, SPLIT_FPS } from "./BeatSplit";
 import { BeatTalk, TALK_DURATION, TALK_FPS } from "./BeatTalk";
-import { ARTIST_DURATION, ARTIST_FPS, BeatArtist } from "./BeatArtist";
-import { BeatPlates, PLATES_DURATION, PLATES_FPS } from "./BeatPlates";
-import { BAR_DURATION, BAR_FPS, BeatBar } from "./BeatBar";
-import { BeatMontage, MONTAGE_DURATION, MONTAGE_FPS } from "./BeatMontage";
-import { BeatRolls, ROLLS_DURATION, ROLLS_FPS } from "./BeatRolls";
-import { BeatMenu, MENU_DURATION, MENU_FPS } from "./BeatMenu";
-import { BeatPizza, PIZZA_DURATION, PIZZA_FPS } from "./BeatPizza";
+import { ARTIST_TOTAL, ARTIST_FPS, BeatArtist } from "./BeatArtist";
+import { BeatPlates, PLATES_TOTAL, PLATES_FPS } from "./BeatPlates";
+import { BAR_TOTAL, BAR_FPS, BeatBar } from "./BeatBar";
+import { BeatMontage, MONTAGE_TOTAL, MONTAGE_FPS } from "./BeatMontage";
+import { BeatRolls, ROLLS_TOTAL, ROLLS_FPS } from "./BeatRolls";
+import { BeatMenu, MENU_TOTAL, MENU_FPS } from "./BeatMenu";
+import { BeatPizza, PIZZA_TOTAL, PIZZA_FPS } from "./BeatPizza";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -122,7 +122,7 @@ export const RemotionRoot: React.FC = () => {
         <Composition
           id="BeatArtist"
           component={BeatArtist}
-          durationInFrames={ARTIST_DURATION}
+          durationInFrames={ARTIST_TOTAL}
           fps={ARTIST_FPS}
           width={1080}
           height={1920}
@@ -130,7 +130,7 @@ export const RemotionRoot: React.FC = () => {
         <Composition
           id="BeatPlates"
           component={BeatPlates}
-          durationInFrames={PLATES_DURATION}
+          durationInFrames={PLATES_TOTAL}
           fps={PLATES_FPS}
           width={1080}
           height={1920}
@@ -138,7 +138,7 @@ export const RemotionRoot: React.FC = () => {
         <Composition
           id="BeatBar"
           component={BeatBar}
-          durationInFrames={BAR_DURATION}
+          durationInFrames={BAR_TOTAL}
           fps={BAR_FPS}
           width={1080}
           height={1920}
@@ -146,7 +146,7 @@ export const RemotionRoot: React.FC = () => {
         <Composition
           id="BeatMontage"
           component={BeatMontage}
-          durationInFrames={MONTAGE_DURATION}
+          durationInFrames={MONTAGE_TOTAL}
           fps={MONTAGE_FPS}
           width={1080}
           height={1920}
@@ -154,7 +154,7 @@ export const RemotionRoot: React.FC = () => {
         <Composition
           id="BeatRolls"
           component={BeatRolls}
-          durationInFrames={ROLLS_DURATION}
+          durationInFrames={ROLLS_TOTAL}
           fps={ROLLS_FPS}
           width={1080}
           height={1920}
@@ -162,7 +162,7 @@ export const RemotionRoot: React.FC = () => {
         <Composition
           id="BeatMenu"
           component={BeatMenu}
-          durationInFrames={MENU_DURATION}
+          durationInFrames={MENU_TOTAL}
           fps={MENU_FPS}
           width={1080}
           height={1920}
@@ -170,7 +170,7 @@ export const RemotionRoot: React.FC = () => {
         <Composition
           id="BeatPizza"
           component={BeatPizza}
-          durationInFrames={PIZZA_DURATION}
+          durationInFrames={PIZZA_TOTAL}
           fps={PIZZA_FPS}
           width={1080}
           height={1920}
