@@ -267,7 +267,7 @@ export const NotEqual: React.FC<{ at: number; top: number; left: string; right: 
  * line sweeps down, then the two glands pop with shock-wave rings and the
  * camera punches in on them.
  */
-export const Adrenals: React.FC<{ at: number; top: number }> = ({ at, top }) => {
+export const Adrenals: React.FC<{ at: number; top: number; male?: boolean }> = ({ at, top, male = false }) => {
   const frame = useCurrentFrame();
   const { fps, width, height } = useVideoConfig();
   const enter = spring({ frame, fps, config: { damping: 14, mass: 0.7 } });
@@ -281,12 +281,20 @@ export const Adrenals: React.FC<{ at: number; top: number }> = ({ at, top }) => 
   const shake = frame >= at && frame < at + 6 ? Math.sin((frame - at) * 2.6) * (6 - (frame - at)) * 2 : 0;
   const size = 1250;
   const GY = 168; // adrenal height in the 200x400 figure box: upper abdomen, above the waist
-  const hair = "M76 44 Q72 8 100 8 Q128 8 124 44 Q126 60 132 72 Q118 74 111 63 L89 63 Q82 74 68 72 Q74 60 76 44 Z";
-  const body =
+  const hairF = "M76 44 Q72 8 100 8 Q128 8 124 44 Q126 60 132 72 Q118 74 111 63 L89 63 Q82 74 68 72 Q74 60 76 44 Z";
+  const bodyF =
     "M92 70 L108 70 L111 80 Q130 82 140 92 Q148 100 148 112 L156 200 Q158 214 150 216 Q142 218 140 206 L132 126 " +
     "Q128 152 126 176 Q122 194 124 204 Q140 228 142 256 L130 392 Q129 400 118 400 Q108 400 108 390 L103 282 L97 282 " +
     "L92 390 Q92 400 82 400 Q71 400 70 392 L58 256 Q60 228 76 204 Q78 194 74 176 Q72 152 68 126 L60 206 Q58 218 50 216 " +
     "Q42 214 44 200 L52 112 Q52 100 60 92 Q70 82 89 80 Z";
+  // male: short hair, broader shoulders, straight waist
+  const hairM = "M78 34 Q80 12 100 12 Q120 12 122 34 Q112 24 100 24 Q88 24 78 34 Z";
+  const bodyM =
+    "M92 70 L108 70 L112 78 Q136 80 150 92 Q160 100 160 114 L168 210 Q170 222 162 224 Q154 226 152 214 L142 128 L138 132 " +
+    "L140 232 Q142 250 136 260 L130 392 Q129 400 118 400 Q108 400 108 390 L103 274 L97 274 L92 390 Q92 400 82 400 Q71 400 70 392 " +
+    "L64 260 Q58 250 60 232 L62 132 L58 128 L48 214 Q46 226 38 224 Q30 222 32 210 L40 114 Q40 100 50 92 Q64 80 88 78 Z";
+  const hair = male ? hairM : hairF;
+  const body = male ? bodyM : bodyF;
   const len = 2600;
   const sy = 10 + scan * 390;
   const rings = [0, 12, 24, 36].map((d) => {
