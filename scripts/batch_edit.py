@@ -422,6 +422,31 @@ def balance_pair(u8, faces, person, name, info):
     return cv2.cvtColor(np.clip(lab, 0, 255).astype(np.uint8), cv2.COLOR_LAB2BGR)
 
 
+# ---------------------------------------------------------------- 4c) tame glaring white furniture
+TAME_WHITES = {'DSC07304.jpg': 0.30}
+
+
+def tame_whites(u8, person, name, info):
+    k = TAME_WHITES.get(name)
+    if not k or person is None:
+        return u8
+    lab = cv2.cvtColor(u8, cv2.COLOR_BGR2LAB).astype(np.float32)
+    hsv = cv2.cvtColor(u8, cv2.COLOR_BGR2HSV)
+    L = lab[..., 0]
+    region = ((hsv[..., 1] < 50) & (hsv[..., 2] > 150) & (cv2.erode(person, np.ones((21, 21), np.uint8)) == 0))
+    region = cv2.morphologyEx(region.astype(np.uint8), cv2.MORPH_OPEN, np.ones((5, 5), np.uint8)).astype(np.float32)
+    region = cv2.GaussianBlur(region, (0, 0), 2)
+    # compress the top of the tonal range: 255 -> ~255-k*105, mid-greys untouched
+    over = np.clip(L - 150, 0, None)
+    L2 = L - k * over
+    # a gentle contrast boost inside the chair so its shape reads
+    local = cv2.GaussianBlur(L2, (0, 0), 20)
+    L2 = local + (L2 - local) * 1.6
+    lab[..., 0] = L * (1 - region) + np.clip(L2, 0, 255) * region
+    info['whites_tamed'] = k
+    return cv2.cvtColor(np.clip(lab, 0, 255).astype(np.uint8), cv2.COLOR_LAB2BGR)
+
+
 # ---------------------------------------------------------------- 5) dust
 def dust(res, a_bg, head, info):
     h, w = res.shape[:2]
@@ -470,6 +495,7 @@ def process(args):
     u8 = skin_retouch(u8, faces, a_bg, info)
     u8 = lift_scrub(u8, a_bg, head, info)
     u8 = balance_pair(u8, faces, person, name, info)
+    u8 = tame_whites(u8, person, name, info)
     u8 = dust(u8, a_bg, head, info)
     kw = dict(quality=98, subsampling=0)
     if pil.info.get('icc_profile'):
