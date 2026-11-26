@@ -1,7 +1,6 @@
+import finger from "./finger.json";
 import {
   AbsoluteFill,
-  Easing,
-  interpolate,
   Audio,
   Img,
   OffthreadVideo,
@@ -51,22 +50,28 @@ const half = (top: boolean): React.CSSProperties => ({
 
 // Zoomed on the menu: the clip fills the width and the frame glides down the
 // page with the finger, so the line being pointed at stays readable.
+// Zoomed on the menu: the frame follows the fingertip (tracked per frame,
+// finger.json = fingertip y in the 1920 px clip), keeping it about a third
+// down the half so the line being pointed at is always readable.
+const ZOOM = 1.06;
 const MenuZoom: React.FC = () => {
   const f = useCurrentFrame();
-  const y = interpolate(f, [0, MENU_DURATION - 1], [20, 88], {
-    easing: Easing.inOut(Easing.quad),
-  });
+  const tip = finger[Math.min(finger.length - 1, f)];
+  // clip scaled to 1080 wide (x ZOOM): 1920 * ZOOM px tall, 960 visible
+  const clipH = 1920 * ZOOM;
+  // never above 150 px into the clip (cover edge ends at ~135 px): the cover's yellow edge stays hidden
+  const offset = Math.max(150 * ZOOM, Math.min(clipH - 960, tip * ZOOM - 320));
   return (
     <OffthreadVideo
       src={staticFile("beat/menu/menu_yellow.mp4")}
       muted
       style={{
-        width: "100%",
-        height: "100%",
-        objectFit: "cover",
-        objectPosition: `50% ${y}%`,
-        // slight zoom so the cover's yellow edge never shows at the start
-        transform: "scale(1.06)",
+        position: "absolute",
+        left: 0,
+        top: -offset,
+        width: 1080 * ZOOM,
+        marginLeft: (1080 - 1080 * ZOOM) / 2,
+        height: clipH,
       }}
     />
   );
