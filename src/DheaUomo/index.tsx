@@ -5,9 +5,8 @@ import { Sfx } from "../Testosterone/primitives";
 import { FPS, sec } from "../Testosterone/theme";
 import { ColorBars, Grain, ref, Room, Smoke, Vignette } from "../IvTherapy/fx";
 import { chunksOf, Kinetic, Word } from "../IvTherapy/kinetic";
-import { Big, BrollWord, Card, Lead, Stamp, Studies } from "../Tiroide/mg";
-import { Adrenals } from "../Dhea/mg";
-import { Cascade } from "./mg";
+import { Big, BrollWord, Card, Chip, Lead, Studies } from "../Tiroide/mg";
+import { Cascade, GlandEmit, HookCard } from "./mg";
 import words from "./words.json";
 
 /*
@@ -59,14 +58,23 @@ const f = (w: string, after: number, pre = 0.04) => wt(w, after) - pre;
 
 const SCENES: Scene[] = [
   // ---- hook
-  { from: 0, speaker: true, render: (t0) => <Speaker start={t0} punch={["nell'uomo"]} /> },
+  {
+    from: 0,
+    render: (t0) => (
+      <Card>
+        <HookCard leadAt={0} dheaAt={sec(0.95)} uomoAt={sec(1.75)} />
+        <Big text="IL DHEA" at={sec(1.05)} top={0.47} size={170} />
+        <Big text="NELL'UOMO" at={sec(1.75)} top={0.6} color={ref.yellow} size={150} boom />
+      </Card>
+    ),
+  },
   {
     from: f("Il", 2.0),
     render: (t0) => (
       <Card>
         <Lead words={lead(t0, "il DHEA è prodotto soprattutto dai")} top={0.1} />
-        <Adrenals at={at(t0, "surreni")} top={0.5} male />
-        <Big text="SURRENI" at={at(t0, "surreni")} top={0.84} size={150} />
+        <GlandEmit at={at(t0, "surreni")} top={0.56} />
+        <Big text="SURRENI" at={at(t0, "surreni")} top={0.8} size={150} />
       </Card>
     ),
   },
@@ -101,7 +109,7 @@ const SCENES: Scene[] = [
     from: f("viene", 17.0),
     render: (t0) => <BrollWord src="dheau/integratore.mp4" word="ANTI-AGING" at={at(t0, "anti-aging")} lead={lead(t0, "proposto come integratore")} />,
   },
-  { from: f("E", 21.5), speaker: true, render: (t0) => <Speaker start={t0} punch={["scetticismo"]} /> },
+  { from: f("genericamente", 19.9), speaker: true, render: (t0) => <Speaker start={t0} punch={["scetticismo"]} /> },
   {
     from: f("poiché", 23.9),
     render: (t0) => (
@@ -110,7 +118,10 @@ const SCENES: Scene[] = [
         label={
           <>
             <Lead words={lead(t0, "le prove che un'integrazione a tappeto porti benefici concreti di longevità sono")} top={0.08} />
-            <Big text={"PRESSOCHÉ\nDEBOLI."} at={at(t0, "pressoché")} top={0.82} color={ref.red} size={130} boom />
+            <Chip text="STUDIO RANDOMIZZATO" at={at(t0, "a")} x={0.5} y={0.6} rot={-3} size={58} />
+            <Chip text="2 ANNI" at={at(t0, "benefici")} x={0.26} y={0.69} rot={4} bg="#fff" color="#141416" size={64} />
+            <Chip text="DHEA ≈ PLACEBO" at={at(t0, "longevità")} x={0.66} y={0.77} rot={-4} bg={ref.red} size={64} />
+            <Big text="PRESSOCHÉ DEBOLI." at={at(t0, "pressoché")} top={0.9} color={ref.yellow} size={92} boom />
           </>
         }
       />
@@ -119,7 +130,12 @@ const SCENES: Scene[] = [
   { from: f("È", 31.3), speaker: true, render: (t0) => <Speaker start={t0} punch={["rispetto"]} /> },
   {
     from: f("e", 35.0),
-    render: (t0) => <BrollWord src="dheau/pillole_colorate.mp4" word="CARAMELLA" at={at(t0, "caramella")} lead={lead(t0, "non come una")} color={ref.red} />,
+    render: (t0) => (
+      <>
+        <BrollWord src="dheau/pillole_colorate.mp4" word="CARAMELLA" at={at(t0, "caramella")} lead={lead(t0, "non come una")} color={ref.red} />
+        <Big text="ANTI-ETÀ" at={at(t0, "anti-età")} top={0.85} color="#fff" size={110} />
+      </>
+    ),
   },
   { from: f("E", 37.1), speaker: true, render: (t0) => <Speaker start={t0} punch={["medico"]} /> },
   {
@@ -131,7 +147,6 @@ const SCENES: Scene[] = [
     render: (t0) => (
       <Card bg="yellow">
         <Big text={"NO AL\nFAI DA TE."} at={at(t0, "non")} top={0.46} color="#141416" size={150} shadow={false} boom />
-        <Stamp text="NO" at={at(t0, "te") + 2} x={0.74} y={0.66} size={220} />
       </Card>
     ),
   },

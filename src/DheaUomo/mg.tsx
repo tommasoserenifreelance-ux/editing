@@ -74,3 +74,75 @@ export const Cascade: React.FC<{ tiers: { text: string; at: number; bg: string; 
     </>
   );
 };
+
+/**
+ * The two adrenal glands as stylised glowing caps (no body, no organs):
+ * they pulse and release little "DHEA" molecules that float up.
+ */
+export const GlandEmit: React.FC<{ at: number; top: number }> = ({ at, top }) => {
+  const frame = useCurrentFrame();
+  const { fps, width, height } = useVideoConfig();
+  const cy = height * top;
+  const pop = spring({ frame: frame - 2, fps, config: { damping: 12, mass: 0.7 } });
+  const lit = spring({ frame: frame - at, fps, config: { damping: 10, mass: 0.5 } });
+  const pulse = 0.5 + 0.5 * Math.sin(frame / 5);
+  const gland = (x: number, flip: number) => (
+    <g transform={`translate(${x} ${cy}) scale(${flip * (1.0 + 0.4 * pop)} ${1.0 + 0.4 * pop})`}>
+      <path d="M-120 60 Q-110 -40 -20 -90 Q40 -110 90 -60 Q130 -10 120 60 Q0 90 -120 60 Z" fill={ref.yellow} opacity={0.12 + 0.18 * lit * pulse} filter="url(#glGlow)" />
+      <path d="M-120 60 Q-110 -40 -20 -90 Q40 -110 90 -60 Q130 -10 120 60 Q0 90 -120 60 Z" fill="rgba(247,198,0,0.12)" stroke={ref.yellow} strokeWidth={6} />
+      {[[-50, 0], [10, -30], [50, 20], [-10, 35]].map(([px, py], i) => (
+        <circle key={i} cx={px} cy={py} r={10 + 4 * lit} fill={ref.yellow} opacity={0.35 + 0.5 * lit} />
+      ))}
+    </g>
+  );
+  const parts = Array.from({ length: 14 }).map((_, i) => {
+    const t0 = at + i * 5;
+    const k = (frame - t0) / 45;
+    if (k <= 0 || k >= 1) return null;
+    const side = i % 2 ? 1 : -1;
+    const x = width / 2 + side * (230 + ((i * 37) % 60)) + Math.sin(k * 6 + i) * 30;
+    const y = cy - 150 - k * 560;
+    return (
+      <div key={i} style={{ position: "absolute", left: x, top: y, transform: "translate(-50%,-50%)", opacity: k < 0.15 ? k / 0.15 : 1 - (k - 0.15) / 0.85, fontFamily: mont, fontWeight: 900, fontStyle: "italic", fontSize: 40, color: "#141416", background: ref.yellow, borderRadius: 30, padding: "4px 16px" }}>
+        DHEA
+      </div>
+    );
+  });
+  return (
+    <>
+      <svg width={width} height={height} style={{ position: "absolute", left: 0, top: 0 }}>
+        <defs>
+          <filter id="glGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="22" />
+          </filter>
+        </defs>
+        {gland(width / 2 - 260, 1)}
+        {gland(width / 2 + 260, -1)}
+      </svg>
+      {parts}
+      <Sfx at={2} name="swoosh" volume={0.14} />
+      <Sfx at={at} name="rise" volume={0.12} />
+    </>
+  );
+};
+
+/** Hook card: "dopo la donna" struck through, then the man. */
+export const HookCard: React.FC<{ leadAt: number; dheaAt: number; uomoAt: number }> = ({ leadAt, dheaAt, uomoAt }) => {
+  const frame = useCurrentFrame();
+  const { fps, width, height } = useVideoConfig();
+  const a = spring({ frame: frame - leadAt, fps, config: { damping: 14 } });
+  const strike = interpolate(frame, [dheaAt - 6, dheaAt + 2], [0, 1], clamp);
+  return (
+    <>
+      <div style={{ position: "absolute", left: 0, right: 0, top: height * 0.3, textAlign: "center", opacity: a, transform: `translateY(${(1 - a) * 30}px)` }}>
+        <span style={{ position: "relative", fontFamily: mont, fontWeight: 800, fontStyle: "italic", fontSize: 78, color: "rgba(255,255,255,0.75)" }}>
+          DOPO LA DONNA
+          <span style={{ position: "absolute", left: -10, top: "52%", height: 10, width: `${strike * 104}%`, background: ref.red, borderRadius: 5 }} />
+        </span>
+      </div>
+      <Sfx at={dheaAt - 6} name="draw" volume={0.14} />
+      {frame >= uomoAt ? null : null}
+      <div style={{ position: "absolute", left: width * 0.5, top: height * 0.5, transform: "translate(-50%,-50%)" }} />
+    </>
+  );
+};
