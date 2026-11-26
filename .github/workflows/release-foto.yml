@@ -3,7 +3,7 @@ name: Release foto servizio
 on:
   push:
     branches: [claude/sweet-knuth-lkz06a]
-    paths: [.github/workflows/release-foto.yml, 'public/foto/servizio/**']
+    paths: [.github/workflows/release-foto.yml, 'public/foto/servizio/**', 'presentazione/**']
   workflow_dispatch:
 
 concurrency:
@@ -33,4 +33,4 @@ jobs:
             --target "${GITHUB_SHA}" \
             --title "Foto servizio – editate ($(ls public/foto/servizio/*.jpg | wc -l))" \
             --notes "Foto editate: sfondo pulito con profondità, pelle ritoccata, nero del camice aperto, polvere rimossa. Scarica foto-servizio-editate.zip per averle tutte insieme." \
-            foto-servizio-editate.zip public/foto/servizio/*.jpg
+            foto-servizio-editate.zip presentazione/GLIALTRINFERMIERI.pptx public/foto/servizio/*.jpg

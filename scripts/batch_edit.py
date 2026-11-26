@@ -634,16 +634,23 @@ def lift_dark_skin(u8, person, head, info):
 
 
 # ---------------------------------------------------------------- 4e) over-exposed faces
-FACE_DIM = {'DSC06607.jpg': ('all', 14), 'DSC06621.jpg': ('all', 14),
-            'DSC06703.jpg': ('right', 12), 'DSC06704.jpg': ('right', 12), 'DSC06705.jpg': ('right', 12),
-            'DSC06719.jpg': ('right', 8), 'DSC06727-2.jpg': ('right', 8), 'DSC06728.jpg': ('right', 8)}
+FACE_DIM = {'DSC06607.jpg': [('all', 14), ('right', 8)], 'DSC06621.jpg': [('all', 14), ('right', 8)],
+            'DSC06650-2.jpg': [('right', 10)], 'DSC06732.jpg': [('right', 10)],
+            'DSC06703.jpg': [('right', 18)], 'DSC06704.jpg': [('right', 18)], 'DSC06705.jpg': [('right', 18)],
+            'DSC06719.jpg': [('right', 13)], 'DSC06727-2.jpg': [('right', 13)], 'DSC06728.jpg': [('right', 13)]}
 
 
 def dim_faces(u8, faces, person, name, info):
-    cfg = FACE_DIM.get(name)
-    if not cfg or person is None:
+    cfgs = FACE_DIM.get(name)
+    if not cfgs or person is None:
         return u8
-    which, amount = cfg
+    for which, amount in cfgs:
+        u8 = _dim_one(u8, person, which, amount)
+    info['faces_dimmed'] = cfgs
+    return u8
+
+
+def _dim_one(u8, person, which, amount):
     h, w = u8.shape[:2]
     hsv = cv2.cvtColor(u8, cv2.COLOR_BGR2HSV).astype(np.int16)
     f = cv2.GaussianBlur(u8.astype(np.float32), (0, 0), 2)
@@ -663,7 +670,6 @@ def dim_faces(u8, faces, person, name, info):
     k = amount / (220.0 * (220.0 / 255.0) ** 2)
     L2 = L * (1 - k * (L / 255.0) ** 2)
     lab[..., 0] = L * (1 - m) + L2 * m
-    info['faces_dimmed'] = [which, amount]
     return cv2.cvtColor(np.clip(lab, 0, 255).astype(np.uint8), cv2.COLOR_LAB2BGR)
 
 
