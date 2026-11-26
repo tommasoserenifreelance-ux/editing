@@ -165,6 +165,11 @@ def badge(s, x, y, text, fill=PINK):
 
 # ===================== 1 · COPERTINA =====================
 s = prs.slides.add_slide(BLANK); bg(s, 'bg-copertina.jpg')
+lw = 3.2; lh = lw * 191 / 996
+picture(s, 'logo-studio.png', 0.68, 6.35, lw, lh, frame=False)
+tb(s, 0.68 + lw + 0.4, 6.33, 8.0, 0.7, [[('Milano', {'bold': True}), ('  Via Luigi Settembrini 54, 20124', {})],
+                                         [('Roma', {'bold': True}), ('  Via Flaminia 489 (zona Ponte Milvio), 00191', {})]],
+   size=11, color=NAVY, line=1.2)
 
 # ===================== 2 · LO STATO DELL'ARTE (video) =====================
 s = inner("Lo stato dell'arte", 'Ossigeno-ozonoterapia oggi')
@@ -226,7 +231,7 @@ banner(s, 0.95, 5.45, 4.8, 'Obiettivo: più anni in salute', size=13)
 points(s, 6.5, 1.7, 6.2, [
     ('Healthy aging (OMS)', 'Sviluppare e mantenere la capacità funzionale che permette il benessere in età avanzata: non solo assenza di malattia.'),
     ('2021–2030', 'L’ONU ha proclamato il Decennio dell’Invecchiamento in Salute.'),
-    ('12 segni dell’invecchiamento', 'Instabilità genomica, telomeri, epigenetica, proteostasi, autofagia, nutrienti, mitocondri, senescenza, staminali, comunicazione, infiammazione, disbiosi.')],
+    ('12 segni dell’invecchiamento', 'Tra cui: instabilità genomica, telomeri, epigenetica, proteostasi, autofagia, nutrienti, mitocondri, senescenza, staminali, infiammazione, disbiosi.')],
     h=1.35, gap=0.27)
 source(s, 'Fonti: WHO, World report on ageing and health 2015 · López-Otín C et al., Cell 2023;186:243-278 · Garmany A, Terzic A, JAMA Netw Open 2024;7:e2450241')
 
@@ -347,13 +352,6 @@ study_slide('Invecchiamento e neurodegenerazione', '07 · Revisione 2020', 'st-s
     'Fonte: Scassellati C et al., Ozone: a natural bioactive molecule with antioxidant property as potential new strategy in aging and in neurodegenerative disorders. Ageing Res Rev 2020;63:101138', CYAN)
 
 # ===================== 08 · GLI STUDI =====================
-study_slide('Prima o dopo l’invecchiamento?', '08 · Gli studi · sperimentale 2014', 'st-safwat.png', 'Studio sperimentale · fegato e reni',
-    'Ozono per via rettale iniziato prima (dai 3 ai 15 mesi) o dopo l’invecchiamento (dai 14 ai 15 mesi).',
-    [('Prima', 'Meno MDA, carbonili proteici e lipofuscina in fegato e reni.'),
-     ('Dopo', 'Effetti simili ma più deboli; lipofuscina invariata.'),
-     ('Il messaggio', 'Iniziare prima funziona meglio: il valore della prevenzione.')],
-    'Fonte: Safwat MH, El-Sawalhi MM, Mausouf MN, Shaheen AA. Ozone ameliorates age-related oxidative stress changes in rat liver and kidney: effects of pre- and post-ageing administration. Biochemistry (Moscow) 2014;79(5):450-458', CYAN)
-
 study_slide('Ozonoterapia in dermatologia', '08 · Gli studi · revisione 2022', 'st-machado.png', 'Revisione · 18 studi clinici',
     'Revisione di 18 studi clinici (2011–2021, 1.279 pazienti) su efficacia e sicurezza dell’ozono nelle malattie della pelle.',
     [('Condizioni trattate', 'Ulcere diabetiche e venose, dermatite atopica, ustioni, onicomicosi e altre infezioni cutanee.'),
@@ -409,7 +407,7 @@ AREAS = [
         ('Oli ozonizzati topici', 'su viso, collo e corpo, con effetto idratante, rigenerante e antinfiammatorio'),
         ('Ozonoterapia sistemica', 'grande autoemotrasfusione nei protocolli antiaging: prelievo, ozonizzazione e reinfusione')]),
     ('img23.png', 'Medicina della longevità', 'Principali vie di somministrazione', [
-        ('Grande autoemotrasfusione', 'gold standard: un lieve stress ossidativo attiva la risposta antiossidante (SOD, catalasi, glutatione)'),
+        ('Ossigeno-ozonoterapia sistemica', 'un lieve stress ossidativo controllato attiva la risposta antiossidante (SOD, catalasi, glutatione)'),
         ('Insufflazioni rettali', 'metodo non invasivo per un effetto sistemico'),
         ('Iniezioni sottocutanee', 'in punti strategici per migliorare microcircolo e ossigenazione dei tessuti')]),
 ]
@@ -446,7 +444,7 @@ source(s, 'Fonte: Ozone therapy for skin diseases: Cellular and molecular mechan
 # ===================== 9 · EVIDENZE E LIMITI =====================
 s = inner('Cosa sappiamo, cosa non sappiamo', '09 · Evidenze cliniche e limiti')
 cols = [('Solido', 'Meccanismi', ['Ormesi a basse dosi', 'Attivazione di Nrf2', 'Aumento di glutatione, SOD, catalasi'], CYAN),
-        ('Promettente', 'Studi sperimentali', ['Ratti anziani: meno danno ossidativo', 'Più energia nei tessuti', 'Meglio se iniziato prima'], LILAC),
+        ('Promettente', 'Studi sperimentali', ['Ratti anziani: meno danno ossidativo', 'Più energia nei tessuti', 'Glutatione ripristinato'], LILAC),
         ('Da dimostrare', 'Nell’uomo', ['Pochi studi, piccoli', 'Nessuna prova su durata della vita', 'Servono studi controllati'], PINK)]
 for i, (lvl, t, items, c) in enumerate(cols):
     x = 0.62 + i * 4.1

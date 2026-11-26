@@ -135,10 +135,6 @@
  },
  {
   "img": "slides/s27.jpg",
-  "videos": []
- },
- {
-  "img": "slides/s28.jpg",
   "videos": [
    {
     "src": "video/preparazione-ozono.mp4",
@@ -152,7 +148,7 @@
   ]
  },
  {
-  "img": "slides/s29.jpg",
+  "img": "slides/s28.jpg",
   "videos": []
  }
 ]
