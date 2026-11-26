@@ -47,14 +47,14 @@ export const EndLogo: React.FC<{ at: number }> = ({ at }) => {
   );
 };
 
-// Audio volume helper: full until the fade, then down to silence by the end.
-export const endVolume = (total: number, fps: number) => (f: number) =>
-  interpolate(
-    f,
-    [total - endTailFrames(fps) - Math.round(END_FADE * fps), total],
-    [1, 0],
-    {
+// Audio volume helper: the music fades out together with the picture going
+// to black (over the last 0.8 s of the edit), so the logo comes in on
+// silence.
+export const endVolume = (total: number, fps: number) => {
+  const at = total - endTailFrames(fps);
+  return (f: number) =>
+    interpolate(f, [at - Math.round(0.8 * fps), at], [1, 0], {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
-    },
-  );
+    });
+};
