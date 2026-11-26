@@ -6,6 +6,10 @@ on:
     paths: [.github/workflows/release-foto.yml, 'public/foto/servizio/**']
   workflow_dispatch:
 
+concurrency:
+  group: release-foto
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
