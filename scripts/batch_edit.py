@@ -85,7 +85,7 @@ def recolor_wall(im, info, name=''):
     conn = np.zeros_like(bw_)
     for i in range(1, n_):
         x, y, cw, ch_, ar = st_[i]
-        if (y == 0 or x == 0 or x + cw == w) and ar > 0.002 * h * w and y < 0.5 * h:
+        if ((y == 0 or x == 0 or x + cw == w) and ar > 0.002 * h * w and y < 0.5 * h) or (ar > 0.001 * h * w and y + ch_ < 0.9 * h):
             conn[l_ == i] = 1
     conn = cv2.dilate(conn, np.ones((9, 9), np.uint8)).astype(np.float32)
     wgt = wgt * cv2.GaussianBlur(conn, (0, 0), 4)
@@ -111,14 +111,19 @@ def recolor_wall(im, info, name=''):
 SHADOW_KEEP = set()
 LIGHT_WALL = {'DSC06743.jpg', 'DSC06745.jpg', 'DSC06749.jpg', 'DSC06716.jpg', 'DSC07278.jpg'}   # over-exposed pale wall
 CROP_ABOVE_SKIRTING = {"DSC06703.jpg": 2453, "DSC06704.jpg": 2451, "DSC06705.jpg": 2449, "DSC06727-2.jpg": 2422, "DSC06728.jpg": 2423, "DSC06732.jpg": 2425, "DSC06863.jpg": 2027, "DSC06870.jpg": 2204, "DSC06873.jpg": 2264, "DSC06874.jpg": 2267, "DSC06881.jpg": 2303, "DSC06925.jpg": 2197, "DSC07046.jpg": 2361, "DSC07050.jpg": 2173, "DSC07226.jpg": 2463, "DSC07227.jpg": 2463, "DSC07258.jpg": 2456, "DSC07270.jpg": 2188}   # y of the skirting line: crop just above it
+EDGE_CROP = {'DSC07198.jpg': (60, 0)}
+# rects painted as backdrop regardless of the person mask; 'keep_dark' keeps the black scrub inside
+FORCE_ANY = {'DSC07185.jpg': [((1440, 0, 1667, 330), True)], 'DSC06834.jpg': [((0, 2250, 80, 2380), False)]}
 CHAIR_SHOTS = {'DSC07278.jpg', 'DSC07281.jpg', 'DSC07319.jpg', 'DSC07361.jpg', 'DSC07395.jpg', 'DSC07418.jpg'}
-PROTECT_POLYS = {'DSC07001.jpg': [[(42, 1050), (55, 1035), (100, 1033), (110, 1010), (125, 990), (155, 980), (195, 985),
+PROTECT_POLYS = {'DSC06925.jpg': [[(420, 1050), (1400, 1050), (1400, 1500), (420, 1500)]],
+                 'DSC07001.jpg': [[(42, 1050), (55, 1035), (100, 1033), (110, 1010), (125, 990), (155, 980), (195, 985),
                                    (222, 1008), (234, 1050), (245, 1078), (310, 1095), (360, 1100), (480, 1200),
                                    (480, 1280), (40, 1280)]]}
 PROTECT_RECTS = {'DSC07418.jpg': [(1230, 2080, 1667, 2500)]}   # objects with wall-like colour
 FLOOR_TO_BG = {'DSC06925.jpg'}
 FORCE_BG_RECTS = {'DSC06833.jpg': [(0, 1450, 600, 2500)], 'DSC06925.jpg': [(0, 1750, 1667, 2500), (1150, 1450, 1667, 2500)],
-                  'DSC07140.jpg': [(0, 2000, 220, 2500)], 'DSC06814.jpg': [(0, 1500, 220, 2500)]}   # x0, y0, x1, y1: leftover plant
+                  'DSC07140.jpg': [(0, 2000, 220, 2500)], 'DSC06814.jpg': [(0, 1500, 220, 2500)],
+                  'DSC07185.jpg': [(1440, 0, 1667, 330)]}   # x0, y0, x1, y1: leftover plant
 NO_BACKDROP = {'DSC06844.jpg', 'DSC07362.jpg', 'DSC07376.jpg', 'DSC07304.jpg'}   # still lifes: blue furniture, not the wall
 
 
@@ -261,10 +266,20 @@ def backdrop(im, info, name='', person=None):
             rect_all = rect_all | reg
         # bottom-left corner: the studio plant peeks in there. Anything that is not a person
         # (or a white object) becomes backdrop.
-        if name not in CHAIR_SHOTS and name not in LIGHT_WALL and person[int(0.5 * h):, :int(0.4 * w)].mean() < 0.6 and person.mean() > 0.05:
+        if name not in CHAIR_SHOTS and name not in LIGHT_WALL and name not in FLOOR_TO_BG and person.mean() > 0.05:
             zone = np.zeros((h, w), bool); zone[int(0.5 * h):, :int(0.4 * w)] = True
             pd25 = cv2.dilate(person, np.ones((11, 11), np.uint8)) > 0
-            regc = zone & ~pd25 & ~neutral
+            blueish_px = (H > 85) & (H < 118) & (S > 45) & (V > 22)
+            warm_px = (im[..., 2] - im[..., 0]) > 0
+            free = (~pd25 & ~neutral) if person[int(0.5 * h):, :int(0.4 * w)].mean() < 0.6 else np.zeros((h, w), bool)
+            regc = zone & (free | (blueish_px & ~warm_px & (V > 75)))
+            regc &= ~(cv2.dilate(neutral.astype(np.uint8), np.ones((15, 15), np.uint8)) > 0)
+            regc = cv2.morphologyEx(regc.astype(np.uint8), cv2.MORPH_CLOSE, np.ones((5, 5), np.uint8))
+            n5, l5, s5, _ = cv2.connectedComponentsWithStats(regc, 8)
+            regc = np.zeros((h, w), bool)
+            for i in range(1, n5):
+                if s5[i, cv2.CC_STAT_AREA] > 800:
+                    regc |= l5 == i
             if regc.sum() > 50:
                 outside |= regc; keep[regc] = 0; stray_all = stray_all | regc
                 rect_all = rect_all | regc
@@ -286,6 +301,9 @@ def backdrop(im, info, name='', person=None):
     outside &= ~cv2.dilate(neutral.astype(np.uint8), np.ones((5, 5), np.uint8)).astype(bool)
     if 'stray_all' in dir():
         stray_all &= ~cv2.dilate(neutral.astype(np.uint8), np.ones((5, 5), np.uint8)).astype(bool)
+    if 'rect_all' in dir():
+        outside |= rect_all
+        stray_all = stray_all | rect_all
     a[outside] = 1
     protect_all = np.zeros((h, w), bool)
     for poly in PROTECT_POLYS.get(name, []):
@@ -343,6 +361,14 @@ def backdrop(im, info, name='', person=None):
     far = cv2.GaussianBlur(far, (0, 0), 1.5)[..., None]
     out -= far * 0.9 * (im - wall)
     out = out * (1 - forced[..., None]) + new_bg * forced[..., None]   # removed objects: pure backdrop
+    for (x0, y0, x1, y1), keep_dark in FORCE_ANY.get(name, []):
+        reg = np.zeros((h, w), np.float32); reg[y0:y1, x0:x1] = 1
+        if keep_dark:
+            reg *= (cv2.GaussianBlur(V, (0, 0), 1.5) > 70).astype(np.float32)
+            reg = cv2.dilate(reg, np.ones((3, 3), np.uint8))
+        reg = cv2.GaussianBlur(reg, (0, 0), 1.2)[..., None]
+        out = out * (1 - reg) + new_bg * reg
+        a = np.maximum(a, reg[..., 0])
     if name in FLOOR_TO_BG:
         for (x0, y0, x1, y1) in FORCE_BG_RECTS.get(name, []):
             if x0 == 0 and x1 >= w - 1:
@@ -580,7 +606,7 @@ def lift_dark_skin(u8, person, head, info):
     hsv = cv2.cvtColor(u8, cv2.COLOR_BGR2HSV).astype(np.int16)
     f = cv2.GaussianBlur(u8.astype(np.float32), (0, 0), 3)
     warm = ((hsv[..., 0] < 25) | (hsv[..., 0] > 170)) & (f[..., 2] - f[..., 0] > 8) & (hsv[..., 1] > 50)
-    dark = (hsv[..., 2] > 12) & (hsv[..., 2] < 90)
+    dark = (hsv[..., 2] > 6) & (hsv[..., 2] < 95)
     reg = (warm & dark & (person > 0) & (head == 0)).astype(np.uint8)
     reg = cv2.morphologyEx(reg, cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
     reg = cv2.morphologyEx(reg, cv2.MORPH_CLOSE, np.ones((15, 15), np.uint8))
@@ -594,15 +620,51 @@ def lift_dark_skin(u8, person, head, info):
     lab_ = cv2.cvtColor(u8, cv2.COLOR_BGR2LAB).astype(np.float32)
     L = lab_[..., 0]
     med = float(np.median(L[keep > 0]))
-    target = 95.0
+    target = 110.0
     if med >= target - 5:
         return u8
     g = float(np.clip(np.log(target / 255) / np.log(max(med, 5) / 255), 0.55, 1.0))
     m = cv2.GaussianBlur(keep.astype(np.float32), (0, 0), 8)
     lifted = 255.0 * (L / 255.0) ** g
     lab_[..., 0] = L + (lifted - L) * m
+    for c in (1, 2):
+        lab_[..., c] = 128 + (lab_[..., c] - 128) * (1 + 0.35 * m)
     info['dark_skin_lifted'] = round(g, 2)
     return cv2.cvtColor(np.clip(lab_, 0, 255).astype(np.uint8), cv2.COLOR_LAB2BGR)
+
+
+# ---------------------------------------------------------------- 4e) over-exposed faces
+FACE_DIM = {'DSC06607.jpg': ('all', 14), 'DSC06621.jpg': ('all', 14),
+            'DSC06703.jpg': ('right', 12), 'DSC06704.jpg': ('right', 12), 'DSC06705.jpg': ('right', 12),
+            'DSC06719.jpg': ('right', 8), 'DSC06727-2.jpg': ('right', 8), 'DSC06728.jpg': ('right', 8)}
+
+
+def dim_faces(u8, faces, person, name, info):
+    cfg = FACE_DIM.get(name)
+    if not cfg or person is None:
+        return u8
+    which, amount = cfg
+    h, w = u8.shape[:2]
+    hsv = cv2.cvtColor(u8, cv2.COLOR_BGR2HSV).astype(np.int16)
+    f = cv2.GaussianBlur(u8.astype(np.float32), (0, 0), 2)
+    skin = ((hsv[..., 0] < 25) | (hsv[..., 0] > 170)) & (f[..., 2] - f[..., 0] > 10) & (hsv[..., 2] > 90) & (person > 0)
+    yy, xx = np.mgrid[0:h, 0:w]
+    top = person.any(1).argmax()
+    region = skin & (yy < top + 0.42 * h)
+    if which == 'right':
+        cov = cv2.blur(person[int(0.1 * h):int(0.6 * h)].astype(np.float32), (1, 1)).mean(0)
+        lo, hi = int(0.3 * w), int(0.75 * w)
+        split = lo + int(np.argmin(cov[lo:hi]))
+        region &= xx > split
+    m = cv2.GaussianBlur(region.astype(np.float32), (0, 0), 12)
+    m = np.clip(m * 1.6, 0, 1)
+    lab = cv2.cvtColor(u8, cv2.COLOR_BGR2LAB).astype(np.float32)
+    L = lab[..., 0]
+    k = amount / (220.0 * (220.0 / 255.0) ** 2)
+    L2 = L * (1 - k * (L / 255.0) ** 2)
+    lab[..., 0] = L * (1 - m) + L2 * m
+    info['faces_dimmed'] = [which, amount]
+    return cv2.cvtColor(np.clip(lab, 0, 255).astype(np.uint8), cv2.COLOR_LAB2BGR)
 
 
 # ---------------------------------------------------------------- 5) dust
@@ -654,9 +716,16 @@ def process(args):
     u8 = lift_scrub(u8, a_bg, head, info)
     u8 = balance_pair(u8, faces, person, name, info)
     u8 = tame_whites(u8, person, name, info)
+    u8 = dim_faces(u8, faces, person, name, info)
     if 'right_person_darkened' in info:
         u8 = lift_dark_skin(u8, person, head, info)
     u8 = dust(u8, a_bg, head, info)
+    if name in EDGE_CROP:                      # trim a strip at the frame edge, keep the aspect ratio
+        hh, ww = u8.shape[:2]
+        left, bottom = EDGE_CROP[name]
+        W2 = ww - left; H2 = int(round(W2 * hh / ww))
+        u8 = u8[:H2, left:]
+        info['cropped'] = [left, 0, W2, H2]
     if name in CROP_ABOVE_SKIRTING:
         hh, ww = u8.shape[:2]
         H2 = CROP_ABOVE_SKIRTING[name] - 12
