@@ -109,7 +109,7 @@ def certo():
              '<div class="lite" style="font-size:44px;line-height:1.4;color:#cfcfcf">come funziona <b style="color:#fff">davvero</b> questo mondo.<br>cosa ci <b style="color:#fff">chiedono</b> le persone.<br>cosa impari stando accanto <b style="color:#fff">a qualcuno.</b></div>')
     o += txt(8, "light",
              '<div class="wm" style="font-size:112px;line-height:.98;white-space:nowrap">niente promesse<i>.</i><br>niente miracoli<i>.</i></div>')
-    o += photo(9, "f_DSC07113.jpg",
+    o += photo(9, "f_DSC06765.jpg",
                '<div class="lite" style="font-size:56px">solo il punto di vista di</div>'
                '<div class="bold" style="font-size:88px;line-height:1">chi ci sta dentro<br><span class="l">con le mani.</span></div>')
     o += txt(10, "dark",
