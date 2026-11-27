@@ -1,4 +1,5 @@
 import { Composition, Folder } from "remotion";
+import { XMAS_DURATION, XMAS_FPS, XmasSponsor } from "./XmasSponsor";
 import { ClassReel, REEL_DURATION, REEL_FPS } from "./ClassReel";
 import { DistrettoWall, WALL_DURATION, WALL_FPS } from "./DistrettoWall";
 import { HelloWorld } from "./HelloWorld";
@@ -97,6 +98,14 @@ export const RemotionRoot: React.FC = () => {
         fps={WALL_FPS}
         width={1920}
         height={1080}
+      />
+      <Composition
+        id="XmasSponsor"
+        component={XmasSponsor}
+        durationInFrames={XMAS_DURATION}
+        fps={XMAS_FPS}
+        width={1080}
+        height={1920}
       />
     </>
   );
