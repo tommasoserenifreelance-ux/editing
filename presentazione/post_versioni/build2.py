@@ -106,7 +106,7 @@ def certo():
              '<div class="lite" style="font-size:48px;line-height:1.25">stesso lavoro,<br><b>un altro modo di farlo.</b></div>')
     o += txt(7, "dark",
              '<div class="bold" style="font-size:80px;line-height:1.02">qui raccontiamo<br>quello che vediamo.</div>'
-             '<div class="lite" style="font-size:44px;line-height:1.4;color:#cfcfcf">come funziona <b style="color:#fff">davvero</b> questo mondo.<br>cosa ci <b style="color:#fff">chiedono</b> le persone.<br>cosa impari stando accanto a qualcuno<br><b class="l">per mezz\'ora.</b></div>')
+             '<div class="lite" style="font-size:44px;line-height:1.4;color:#cfcfcf">come funziona <b style="color:#fff">davvero</b> questo mondo.<br>cosa ci <b style="color:#fff">chiedono</b> le persone.<br>cosa impari stando accanto <b style="color:#fff">a qualcuno.</b></div>')
     o += txt(8, "light",
              '<div class="wm" style="font-size:112px;line-height:.98;white-space:nowrap">niente promesse<i>.</i><br>niente miracoli<i>.</i></div>')
     o += photo(9, "f_DSC07113.jpg",
@@ -160,7 +160,7 @@ def factanza():
               '<div class="box" style="top:330px"><div style="font-size:44px;line-height:1.18;letter-spacing:-.03em">Stesso lavoro,<br><b class="l">un altro modo di farlo.</b></div></div>'
               '<img class="cut ht" src="c_DSC06703.png" style="top:540px">')
     o += s(7, '<div class="col"><div style="font-size:72px;color:#fff;line-height:1.1;letter-spacing:-.03em"><b>Qui raccontiamo<br>quello che vediamo.</b></div>'
-              f'<div class="box" style="margin-top:40px;align-self:stretch;right:0"><div style="font-size:50px;line-height:1.38;letter-spacing:-.025em">Come funziona {CI("<b>davvero</b>", "#C6CC30", 3)} questo mondo.<br>Cosa ci <b class="l">chiedono</b> le persone.<br>Cosa impari stando accanto a qualcuno <b class="l">per mezz\'ora.</b></div></div></div>')
+              f'<div class="box" style="margin-top:40px;align-self:stretch;right:0"><div style="font-size:50px;line-height:1.38;letter-spacing:-.025em">Come funziona {CI("<b>davvero</b>", "#C6CC30", 3)} questo mondo.<br>Cosa ci <b class="l">chiedono</b> le persone.<br>Cosa impari stando accanto <b class="l">a qualcuno.</b></div></div></div>')
     o += s(8, '<div class="col"><div class="box"><div class="big" style="font-size:150px">Niente<br>promesse.</div></div>'
               '<div class="big" style="font-size:190px;color:#fff;margin-top:50px">Niente<br><span class="mk">miracoli.</span></div></div>')
     o += s(9, '<div class="col"><div style="font-size:70px;color:#fff;letter-spacing:-.03em">Solo il punto di vista di</div>'
@@ -205,7 +205,7 @@ def theia():
               '<div class="t tx" style="top:320px;font-size:52px">Stesso lavoro, <b>un altro modo di farlo</b>.</div>'
               '<img class="cut" src="c_DSC06719.png" style="top:500px">')
     o += s(5, f'<div class="col"><div class="tx" style="font-size:72px"><b>Qui raccontiamo quello che <span class="r">{UL("vediamo", "#F24E24", 5)}</span>.</b></div>'
-              '<div class="tx" style="font-size:56px;line-height:1.22">Come funziona <b>davvero</b> questo mondo.<br><br>Cosa ci <b>chiedono</b> le persone.<br><br>Cosa impari stando accanto a qualcuno <b class="r">per mezz\'ora.</b></div></div>')
+              '<div class="tx" style="font-size:56px;line-height:1.22">Come funziona <b>davvero</b> questo mondo.<br><br>Cosa ci <b>chiedono</b> le persone.<br><br>Cosa impari stando accanto <b class="r">a qualcuno.</b></div></div>')
     o += s(6, '<div class="col"><div style="font-size:124px;font-weight:800;letter-spacing:-.055em;line-height:1">Niente promesse.<br><span class="r">Niente miracoli.</span></div>'
               f'<div class="tx">Solo il punto di vista di chi ci sta dentro <b class="r">{UL("con le mani", "#F24E24", 5)}</b>.</div></div>')
     o += s(7, '<div class="t tx" style="top:150px;font-size:54px">Non sapevi che un infermiere potesse fare <b>questo?</b></div>'
@@ -259,7 +259,7 @@ def piccolimondi():
               '<div class="hand" style="position:absolute;left:50px;top:330px;font-size:58px;color:var(--red);transform:rotate(-6deg);z-index:5;line-height:1">stesso lavoro,</div>'
               '<div class="hand" style="position:absolute;right:50px;top:310px;font-size:58px;color:var(--red);transform:rotate(5deg);z-index:5;line-height:1;text-align:right">un altro modo<br>di farlo.</div>')
     o += s(7, f'<div class="t" style="top:180px;{big};font-size:90px">Qui raccontiamo quello che vediamo.</div>'
-              '<div class="t" style="top:560px;font-size:54px;line-height:1.25">Come funziona davvero questo mondo.<br><br>Cosa ci chiedono le persone.<br><br>Cosa impari stando accanto a qualcuno <b>per mezz\'ora.</b></div>'
+              '<div class="t" style="top:560px;font-size:54px;line-height:1.25">Come funziona davvero questo mondo.<br><br>Cosa ci chiedono le persone.<br><br>Cosa impari stando accanto <b>a qualcuno.</b></div>'
               + FLOW % (790, 1080, "#F24E24"))
     o += s(8, '<svg style="position:absolute;left:200px;top:140px;z-index:2" width="680" height="520" viewBox="0 0 680 520" filter="url(#crayon)"><g fill="none" stroke-linecap="round"><path d="M340 60 L385 200 L530 200 L412 285 L458 425 L340 340 L222 425 L268 285 L150 200 L295 200 Z" stroke="#C6CC30" stroke-width="14" stroke-linejoin="round"/><path d="M90 470 L600 60" stroke="#F24E24" stroke-width="18"/></g></svg>'
               f'<div class="t" style="top:760px;{big};font-size:130px">Niente promesse.<br>Niente miracoli.</div>')
