@@ -1,5 +1,10 @@
 import { Composition, Folder, Still } from "remotion";
 import {
+  ALLENAMENTO_DURATION,
+  ALLENAMENTO_FPS,
+  AllenamentoMenopausa,
+} from "./AllenamentoMenopausa";
+import {
   BoccaMenopausa,
   SLIDE_COUNT,
   SLIDE_HEIGHT,
@@ -153,6 +158,14 @@ export const RemotionRoot: React.FC = () => {
         component={CorpoMenopausa}
         durationInFrames={CORPO_DURATION}
         fps={CORPO_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="AllenamentoMenopausa"
+        component={AllenamentoMenopausa}
+        durationInFrames={ALLENAMENTO_DURATION}
+        fps={ALLENAMENTO_FPS}
         width={1080}
         height={1920}
       />
