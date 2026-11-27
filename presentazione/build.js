@@ -74,14 +74,12 @@ for (const m of meta) {
   s.addImage({ path: path.join(DIR, "big", m.n), x: (W - f.w) / 2, y: (H - f.h) / 2, w: f.w, h: f.h, altText: "Foto", objectName: "foto" });
 }
 
-// Instagram bio mockups on iPhone
+// Instagram bio mockup on iPhone
 pres.addSection({ title: "Instagram" });
 s = pres.addSlide({ masterName: "Copertina", sectionTitle: "Instagram" });
 {
-  const ph = H - 0.3, pw = ph * 600 / 1120, gap = 0.6, x0 = (W - 2 * pw - gap) / 2;
-  ["iphone_logo.png", "iphone_photo.png"].forEach((f, i) => {
-    s.addImage({ path: path.join(DIR, "ig", f), x: x0 + i * (pw + gap), y: 0.15, w: pw, h: ph, altText: "Mockup bio Instagram su iPhone", objectName: "iphone_" + (i + 1) });
-  });
+  const ph = H - 0.3, pw = ph * 600 / 1120;
+  s.addImage({ path: path.join(DIR, "ig", "iphone_photo_v2.png"), x: (W - pw) / 2, y: 0.15, w: pw, h: ph, altText: "Mockup bio Instagram su iPhone", objectName: "iphone" });
 }
 
 // Download
