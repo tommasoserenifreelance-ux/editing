@@ -86,37 +86,37 @@ def certo():
         return slide(i, mode + " ctr", f'<div class="cb">{inner}</div>{B}')
     o = ""
     o += photo(1, "f_DSC06650-2.jpg",
-               '<div class="lite" style="font-size:64px;line-height:1">ci chiamiamo</div>'
-               '<div class="wm" style="font-size:112px;line-height:.95;margin-top:10px">glialtrinfermieri<i>.</i></div>'
-               '<div class="lite" style="font-size:46px">non è un caso.</div>')
+               '<div class="lite" style="font-size:64px;line-height:1">Ci chiamiamo</div>'
+               '<div class="wm" style="font-size:92px;line-height:.95;margin-top:10px;letter-spacing:-.035em">GLIALTRINFERMIERI<i>.</i></div>'
+               '<div class="lite" style="font-size:46px">Non è un caso.</div>')
     o += txt(2, "dark",
-             '<div class="lite" style="font-size:96px;line-height:1">pensa a un<br>infermiere.</div>'
-             '<div class="lite" style="font-size:48px;line-height:1.25;color:#cfcfcf">ti viene in mente un ospedale:<br><b style="color:#fff">corsie, turni, camici.</b></div>')
+             '<div class="lite" style="font-size:96px;line-height:1">Pensa a un<br>infermiere.</div>'
+             '<div class="lite" style="font-size:48px;line-height:1.25;color:#cfcfcf">Ti viene in mente un ospedale:<br><b style="color:#fff">corsie, turni, camici.</b></div>')
     o += photo(3, "f_DSC06933.jpg",
-               '<div class="lite" style="font-size:64px;line-height:1.08">per anni è stato<br>il nostro mondo.</div>'
-               '<div class="bold" style="font-size:64px;line-height:1.05">e ci ha insegnato <span class="l">tanto.</span></div>')
+               '<div class="lite" style="font-size:64px;line-height:1.08">Per anni è stato<br>il nostro mondo.</div>'
+               '<div class="bold" style="font-size:64px;line-height:1.05">E ci ha insegnato <span class="l">tanto.</span></div>')
     o += txt(4, "light",
-             '<div class="lite" style="font-size:54px;line-height:1.18">poi abbiamo capito che<br>questo mestiere può essere</div>'
+             '<div class="lite" style="font-size:54px;line-height:1.18">Poi abbiamo capito che<br>questo mestiere può essere</div>'
              '<div class="wm" style="font-size:150px;line-height:.95">anche altro<i>.</i></div>')
     o += txt(5, "dark",
-             '<div class="lite" style="font-size:54px">oggi lavoriamo nella</div>'
+             '<div class="lite" style="font-size:54px">Oggi lavoriamo nella</div>'
              '<div class="bold" style="font-size:96px;line-height:1">medicina rigenerativa<br>e della <span class="l">longevità.</span></div>')
     o += txt(6, "light",
-             '<div class="bold" style="font-size:84px;line-height:1.05">pasquale <span class="lite">e</span> gabriele.<br><span class="lite">milano e roma.</span></div>'
-             '<div class="lite" style="font-size:48px;line-height:1.25">due infermieri e una pagina<br>per raccontare <b>il nostro mestiere.</b></div>')
+             '<div class="bold" style="font-size:84px;line-height:1.05">Pasquale <span class="lite">e</span> Gabriele.<br><span class="lite">Milano e Roma.</span></div>'
+             '<div class="lite" style="font-size:48px;line-height:1.25">Due infermieri e una pagina<br>per raccontare <b>il nostro mestiere.</b></div>')
     o += txt(7, "dark",
-             '<div class="bold" style="font-size:80px;line-height:1.02">qui raccontiamo<br>quello che vediamo.</div>'
-             '<div class="lite" style="font-size:44px;line-height:1.4;color:#cfcfcf">come funziona <b style="color:#fff">davvero</b> questo mondo.<br>cosa ci <b style="color:#fff">chiedono</b> le persone.<br>cosa impari stando accanto <b style="color:#fff">a qualcuno.</b></div>')
+             '<div class="bold" style="font-size:80px;line-height:1.02">Qui raccontiamo<br>quello che vediamo.</div>'
+             '<div class="lite" style="font-size:44px;line-height:1.4;color:#cfcfcf">Come funziona <b style="color:#fff">davvero</b> questo mondo.<br>Cosa ci <b style="color:#fff">chiedono</b> le persone.<br>Cosa impari stando accanto <b style="color:#fff">a qualcuno.</b></div>')
     o += txt(8, "light",
-             '<div class="wm" style="font-size:112px;line-height:.98;white-space:nowrap">niente promesse<i>.</i><br>niente miracoli<i>.</i></div>')
+             '<div class="wm" style="font-size:112px;line-height:.98;white-space:nowrap">Niente promesse<i>.</i><br>Niente miracoli<i>.</i></div>')
     o += photo(9, "f_DSC06765.jpg",
-               '<div class="lite" style="font-size:56px">solo il punto di vista di</div>'
+               '<div class="lite" style="font-size:56px">Solo il punto di vista di</div>'
                '<div class="bold" style="font-size:88px;line-height:1">chi lo fa<br><span class="l">tutti i giorni.</span></div>')
     o += txt(10, "dark",
-             '<div class="lite" style="font-size:58px;line-height:1.15;color:#cfcfcf">non sapevi che un infermiere<br>potesse fare questo?</div>'
-             '<div class="wm" style="font-size:190px;line-height:.95">appunto<i>.</i></div>')
+             '<div class="lite" style="font-size:58px;line-height:1.15;color:#cfcfcf">Non sapevi che un infermiere<br>potesse fare questo?</div>'
+             '<div class="wm" style="font-size:190px;line-height:.95">Appunto<i>.</i></div>')
     o += txt(11, "light",
-             '<div class="lite" style="font-size:56px;line-height:1.15">se vuoi sapere quello che<br>gli altri non ti spiegano,</div>'
+             '<div class="lite" style="font-size:56px;line-height:1.15">Se vuoi sapere quello che<br>gli altri non ti spiegano,</div>'
              '<div class="wm" style="font-size:150px;line-height:.95">seguici<i>.</i></div>'
              '<div class="bold" style="font-size:46px;color:#6b6b6b">@glialtrinfermieri</div>')
     return HEAD.replace("%EXTRA%", CERTO_CSS) + o + TAIL
