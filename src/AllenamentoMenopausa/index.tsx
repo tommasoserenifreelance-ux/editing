@@ -1,5 +1,6 @@
 import {
   AbsoluteFill,
+  Easing,
   Audio,
   Img,
   interpolate,
@@ -8,10 +9,7 @@ import {
   staticFile,
   useCurrentFrame,
 } from "remotion";
-import {
-  interTight,
-  pinkColors as colors,
-} from "../EleonoraPiccolo/brand";
+import { interTight, pinkColors as colors } from "../EleonoraPiccolo/brand";
 import data from "./data.json";
 
 // Talking-head reel: the doctor's clips cut tight, with word-by-word captions,
@@ -249,6 +247,44 @@ const TIMED = CUES.map((c) => ({
   end: f(at(c.clip, c.to)),
   o: c.o,
 }));
+
+const smooth = { ...clamp, easing: Easing.inOut(Easing.cubic) };
+
+// Consecutive overlays slide: the next one pushes the current one off to the
+// left. The current one stays up until the next has fully arrived.
+const SLIDE = 12;
+const chained = (i: number) => i > 0 && TIMED[i].start - TIMED[i - 1].end <= 24;
+const OVERLAYS = TIMED.map((c, i) => {
+  const next = i + 1 < TIMED.length && chained(i + 1) ? TIMED[i + 1] : null;
+  return {
+    ...c,
+    slideIn: chained(i),
+    until: next ? next.start + SLIDE : c.end,
+    next,
+  };
+});
+
+const Slider: React.FC<{
+  start: number;
+  slideIn: boolean;
+  next: { start: number } | null;
+  children: React.ReactNode;
+}> = ({ start, slideIn, next, children }) => {
+  const frame = useCurrentFrame() + start;
+  const ease = { ...clamp, easing: Easing.out(Easing.cubic) };
+  const x =
+    (slideIn
+      ? interpolate(frame, [start, start + SLIDE], [1080, 0], ease)
+      : 0) +
+    (next
+      ? interpolate(frame, [next.start, next.start + SLIDE], [0, -1080], ease)
+      : 0);
+  return (
+    <AbsoluteFill style={{ transform: `translateX(${x}px)` }}>
+      {children}
+    </AbsoluteFill>
+  );
+};
 
 // ---------- Letter reveal ----------
 
@@ -553,7 +589,8 @@ const OverlayView: React.FC<{ o: Overlay; len: number }> = ({ o, len }) => {
 // ---------- Speaker, full screen or picture-in-picture ----------
 
 const PIP_SCALE = 0.42;
-const FADE = 5;
+// Frames for her to shrink into / grow out of the corner.
+const FADE = 16;
 
 // 0 = full screen, 1 = in the corner.
 // Back-to-back cues count as one span, so she stays in the corner between them.
@@ -573,8 +610,8 @@ const pipAmount = (frame: number) => {
     v = Math.max(
       v,
       Math.min(
-        interpolate(frame, [start, start + FADE], [0, 1], clamp),
-        interpolate(frame, [end - FADE, end], [1, 0], clamp),
+        interpolate(frame, [start, start + FADE], [0, 1], smooth),
+        interpolate(frame, [end - FADE, end], [1, 0], smooth),
       ),
     );
   }
@@ -604,24 +641,83 @@ const useSpeakerFrame = () => {
 
 const fill = { width: "100%", height: "100%", objectFit: "cover" } as const;
 
+// Jump cuts between her takes slide too: the next take enters from the right
+// while the previous one keeps playing (muted) as it leaves to the left.
+const CUTS = data.segments.slice(1).map((s) => f(s.at));
+
+const SlidingTake: React.FC<{
+  clip: string;
+  trim: number;
+  slideIn: boolean;
+  slideOut: boolean;
+  len: number;
+  muted?: boolean;
+}> = ({ clip, trim, slideIn, slideOut, len, muted }) => {
+  const t = useCurrentFrame();
+  const ease = { ...clamp, easing: Easing.out(Easing.cubic) };
+  const x =
+    (slideIn ? interpolate(t, [0, SLIDE], [1080, 0], ease) : 0) +
+    (slideOut ? interpolate(t, [len - SLIDE, len], [0, -1080], ease) : 0);
+  return (
+    <AbsoluteFill style={{ transform: `translateX(${x}px)` }}>
+      <OffthreadVideo
+        src={file(`fast/IMG_${clip}.mp4`)}
+        trimBefore={trim}
+        muted={muted}
+        style={fill}
+      />
+    </AbsoluteFill>
+  );
+};
+
 const Speaker: React.FC = () => {
   const { outer, inner } = useSpeakerFrame();
+  const last = data.segments.length - 1;
   return (
     <AbsoluteFill style={outer}>
       <AbsoluteFill style={inner}>
-        {data.segments.map((s) => (
-          <Sequence
-            key={`${s.clip}-${s.from}`}
-            from={f(s.at)}
-            durationInFrames={f(s.at + s.to - s.from) - f(s.at)}
-          >
-            <OffthreadVideo
-              src={file(`fast/IMG_${s.clip}.mp4`)}
-              trimBefore={f(s.from)}
-              style={fill}
-            />
-          </Sequence>
-        ))}
+        {data.segments.map((s, i) => {
+          const start = f(s.at);
+          const len = f(s.at + s.to - s.from) - start;
+          return (
+            <Sequence
+              key={`${s.clip}-${s.from}`}
+              from={start}
+              durationInFrames={len}
+            >
+              <SlidingTake
+                clip={s.clip}
+                trim={f(s.from)}
+                slideIn={i > 0}
+                slideOut={false}
+                len={len}
+              />
+            </Sequence>
+          );
+        })}
+        {/* Tails of each take, under the next one while it slides in. */}
+        {data.segments.slice(0, last).map((s) => {
+          const start = f(s.at + s.to - s.from);
+          return (
+            <Sequence
+              key={`tail-${s.clip}-${s.from}`}
+              from={start}
+              durationInFrames={SLIDE}
+              layout="none"
+            >
+              <AbsoluteFill style={{ zIndex: -1 }}>
+                <SlidingTake
+                  clip={s.clip}
+                  trim={f(s.to)}
+                  slideIn={false}
+                  slideOut
+                  len={SLIDE}
+                  muted
+                />
+              </AbsoluteFill>
+            </Sequence>
+          );
+        })}
       </AbsoluteFill>
     </AbsoluteFill>
   );
@@ -650,9 +746,15 @@ const SpeakerMatte: React.FC = () => {
   );
 };
 
-// A whoosh on every switch between her and the b-roll, softer between cues.
+// A whoosh on every switch between her and the b-roll, softer between cues
+// and on her jump cuts.
 const Sfx: React.FC = () => (
   <>
+    {CUTS.map((c) => (
+      <Sequence key={`k${c}`} from={c - 4} durationInFrames={20}>
+        <Audio src={staticFile("sfx/whoosh-in.wav")} volume={0.3} />
+      </Sequence>
+    ))}
     {PIP_SPANS.map(({ start }) => (
       <Sequence
         key={`s${start}`}
@@ -835,9 +937,11 @@ export const AllenamentoMenopausa: React.FC = () => (
   <AbsoluteFill
     style={{ backgroundColor: colors.pink, fontFamily: interTight }}
   >
-    {TIMED.map(({ start, end, o }) => (
-      <Sequence key={start} from={start} durationInFrames={end - start}>
-        <OverlayView o={o} len={end - start} />
+    {OVERLAYS.map(({ start, until, o, slideIn, next }) => (
+      <Sequence key={start} from={start} durationInFrames={until - start}>
+        <Slider start={start} slideIn={slideIn} next={next}>
+          <OverlayView o={o} len={until - start} />
+        </Slider>
       </Sequence>
     ))}
     <Speaker />
