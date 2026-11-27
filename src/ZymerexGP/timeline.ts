@@ -3,39 +3,42 @@ import { useCurrentFrame, useVideoConfig } from "remotion";
 // Edit of ZYM gonfiore plus 1 + 2 (concatenated, source seconds). The two
 // interview questions become blurred question cards with a music bed; the
 // off-mic aside at 49-51.7 s is dropped. Only real pauses (>=0.3 s below
-// -29 dB, keeping a breath of tail) and two stumbles ("sla- slaccio",
-// "borbo- borborigmi") are cut, for a smoother rhythm.
+// -29 dB, keeping a breath of tail), the "ehm"s (10.6, 27.0, 101.2-103.5 s)
+// and the stumbles ("sla- slaccio", "borbo- borborigmi", "non senti- non
+// sentendomi") are cut, for a smoother rhythm.
 export type Item = { kind: "seg"; a: number; b: number } | { kind: "card"; q: number };
 
 export const ITEMS: Item[] = [
   { kind: "card", q: 0 },
-  { kind: "seg", a: 8.5, b: 18.2 },
-  { kind: "seg", a: 18.35, b: 28.36 },
+  { kind: "seg", a: 8.5, b: 10.57 },
+  { kind: "seg", a: 11.67, b: 18.2 },
+  { kind: "seg", a: 18.35, b: 26.5 },
+  { kind: "seg", a: 27.72, b: 28.36 },
   { kind: "seg", a: 28.51, b: 31.97 },
   { kind: "seg", a: 32.3, b: 37.29 },
   { kind: "seg", a: 37.48, b: 42.74 },
   { kind: "seg", a: 42.98, b: 47.7 },
-  { kind: "seg", a: 51.85, b: 52.72 },
-  { kind: "seg", a: 53.44, b: 62.42 },
+  { kind: "seg", a: 51.85, b: 52.74 },
+  { kind: "seg", a: 53.52, b: 62.42 },
   { kind: "seg", a: 62.72, b: 65.07 },
   { kind: "seg", a: 65.22, b: 66.18 },
   { kind: "seg", a: 66.71, b: 71.38 },
   { kind: "seg", a: 71.84, b: 73.14 },
   { kind: "seg", a: 73.47, b: 77.5 },
   { kind: "seg", a: 77.72, b: 83.11 },
-  { kind: "seg", a: 83.35, b: 86.55 },
+  { kind: "seg", a: 83.35, b: 86.8 },
   { kind: "card", q: 1 },
   { kind: "seg", a: 92.55, b: 94.3 },
-  { kind: "seg", a: 94.44, b: 101.43 },
-  { kind: "seg", a: 101.62, b: 102.96 },
-  { kind: "seg", a: 103.46, b: 106.9 },
+  { kind: "seg", a: 94.44, b: 98.68 },
+  { kind: "seg", a: 99.58, b: 101.16 },
+  { kind: "seg", a: 103.47, b: 106.9 },
   { kind: "seg", a: 107.16, b: 110.6 },
 ];
 
 export const CARD_SECONDS = 3.0;
 
 /** Items (index into ITEMS) that start with a zoom-blur + whoosh: topic changes. */
-export const TRANSITION_ITEMS = [7, 11];
+export const TRANSITION_ITEMS = [4, 9, 13];
 
 const dur = (it: Item) => (it.kind === "card" ? CARD_SECONDS : it.b - it.a);
 export const ITEM_OUT_STARTS: number[] = [];

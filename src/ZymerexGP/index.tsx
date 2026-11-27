@@ -18,7 +18,7 @@ import { CARD_SECONDS, EDIT_END, ITEM_OUT_STARTS, ITEMS, itemAt, TRANSITION_ITEM
 
 export const GP_FPS = 25;
 const VIDEO = "zymerex-gp/video.mp4";
-export const GP_DURATION = Math.round((EDIT_END + 3.0) * GP_FPS);
+export const GP_DURATION = Math.round((EDIT_END + 3.4) * GP_FPS);
 
 const clamp = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
 
@@ -46,7 +46,8 @@ const VideoLayer: React.FC = () => {
   let boost = 0;
   for (const i of BLUR_ITEMS) {
     const d = frame - outFrame(i, fps);
-    if (d >= -TR && d < TR) boost = Math.max(boost, 1 - Math.abs(d + 0.5) / TR);
+    if (d >= -TR && d < 0) boost = Math.max(boost, (d + TR + 1) / (TR + 1));
+    if (d >= 0 && d < 2) boost = Math.max(boost, 0.5 - d * 0.25);
   }
   return (
     <AbsoluteFill
@@ -194,14 +195,14 @@ const Pictogram: React.FC = () => {
         position: "absolute",
         left: 0,
         right: 0,
-        top: 1745,
+        top: 1572,
         display: "flex",
         justifyContent: "center",
         opacity: vis * out * (onCard ? 0 : 0.95),
         transform: `translateY(${interpolate(vis, [0, 1], [40, 0])}px) scale(${1 + Math.sin(t * 2) * 0.02})`,
       }}
     >
-      <Img src={staticFile("zymerex/pittogramma.png")} style={{ height: 110, filter: "drop-shadow(0 4px 10px rgba(0,40,90,0.55))" }} />
+      <Img src={staticFile("zymerex/pittogramma.png")} style={{ height: 68, filter: "drop-shadow(0 3px 8px rgba(0,40,90,0.55))" }} />
     </div>
   );
 };
@@ -210,11 +211,20 @@ const Outro: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = frame / fps;
-  const black = interpolate(t, [0, 0.35], [0, 1], clamp);
-  const logo = interpolate(t, [0.45, 1.1], [0, 1], { ...clamp, easing: (x) => 1 - Math.pow(1 - x, 3) });
+  const ease = (x: number) => x * x * (3 - 2 * x);
+  const black = interpolate(t, [0, 0.7], [0, 1], { ...clamp, easing: ease });
+  const logo = interpolate(t, [0.55, 1.6], [0, 1], { ...clamp, easing: ease });
   return (
     <AbsoluteFill style={{ background: `rgba(0,0,0,${black})`, alignItems: "center", justifyContent: "center" }}>
-      <Img src={staticFile("zymerex/logo.png")} style={{ width: 760, opacity: logo, transform: `scale(${interpolate(logo, [0, 1], [0.94, 1])})` }} />
+      <Img
+        src={staticFile("zymerex/logo.png")}
+        style={{
+          width: 760,
+          opacity: logo,
+          filter: `blur(${(1 - logo) * 10}px)`,
+          transform: `scale(${0.96 + logo * 0.04 + t * 0.006})`,
+        }}
+      />
     </AbsoluteFill>
   );
 };
