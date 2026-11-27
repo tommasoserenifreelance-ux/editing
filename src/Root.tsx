@@ -12,6 +12,7 @@ import {
   ElenaPanorama,
   PANORAMA_W,
 } from "./Elena";
+import { ACQUA_DURATION, ACQUA_FPS, Acqua } from "./Acqua";
 import { COLAZIONE_DURATION, COLAZIONE_FPS, Colazione } from "./Colazione";
 import { ColazioneCover } from "./Colazione/Cover";
 import { HelloWorld } from "./HelloWorld";
@@ -143,6 +144,14 @@ export const RemotionRoot: React.FC = () => {
           />
         ),
       )}
+      <Composition
+        id="Acqua"
+        component={Acqua}
+        durationInFrames={ACQUA_DURATION}
+        fps={ACQUA_FPS}
+        width={1080}
+        height={1920}
+      />
       <Composition
         id="TapisVs"
         component={TapisVs}
