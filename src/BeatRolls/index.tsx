@@ -26,11 +26,53 @@ const SRC = staticFile("beat/rolls/c5.mp4");
 
 // pre = [from, to] source seconds played in real time; the freeze holds the
 // frame at `to` once the plate has settled.
-type Shot = { pre: [number, number]; hold: number; name: string };
+// name and ingredients as on the Beat menu
+type Shot = {
+  pre: [number, number];
+  hold: number;
+  name: string;
+  ingredients: string[];
+};
 const SHOTS: Shot[] = [
-  { pre: [0.4, 1.6], hold: 46, name: "ORLANDO\nFURIOSO" },
-  { pre: [3.55, 4.2], hold: 46, name: "NABUCCO" },
-  { pre: [5.7, 6.6], hold: 46, name: "VITA\nNUOVA" },
+  {
+    pre: [0.4, 1.6],
+    hold: 46,
+    name: "ORLANDO\nFURIOSO",
+    ingredients: [
+      "Crudo di Fassona piemontese",
+      "Burrata artigianale",
+      "Cipolla agrodolce",
+      "Mandorle tostate",
+      "Fondo bruno",
+      "Prezzemolo",
+    ],
+  },
+  {
+    pre: [3.55, 4.2],
+    hold: 46,
+    name: "NABUCCO",
+    ingredients: [
+      "Hummus di ceci",
+      "Melanzana grigliata",
+      "Avocado",
+      "Philadelphia",
+      "Semi di papavero",
+      "Fiori di zucca secchi",
+    ],
+  },
+  {
+    pre: [5.7, 6.6],
+    hold: 46,
+    name: "VITA\nNUOVA",
+    ingredients: [
+      "Salsiccia di Cinta Senese DOP",
+      "Philadelphia",
+      "Pomodoro semi-dry",
+      "Porri croccanti",
+      "Salsa spicy",
+      "Semi di papavero",
+    ],
+  },
 ];
 
 const f24 = (s: number) => Math.round(s * ROLLS_FPS);
@@ -56,42 +98,84 @@ new FontFace(
   .then(() => continueRender(fontHandle));
 
 const SCRAMBLE = 5;
-// Name on the bare stone in the lower left, letters popping in random order.
+// Text whose letters pop in and out in random order (as in the sushi reel).
+const Scrambled: React.FC<{
+  text: string;
+  on: number;
+  off: number;
+  seed: string;
+}> = ({ text, on, off, seed }) => {
+  const f = useCurrentFrame();
+  return (
+    <>
+      {text.split("").map((ch, n) => {
+        const a = on + Math.floor(random(`${seed}i${n}`) * SCRAMBLE);
+        const b = off + Math.floor(random(`${seed}o${n}`) * SCRAMBLE);
+        return (
+          <span key={n} style={{ opacity: f >= a && f < b ? 1 : 0 }}>
+            {ch}
+          </span>
+        );
+      })}
+    </>
+  );
+};
+
+// Name and ingredients on the bare stone in the lower left.
 const Name: React.FC<{ s: Shot; seed: string }> = ({ s, seed }) => {
   const f = useCurrentFrame();
   const on = preFrames(s);
   const off = shotFrames(s) - SCRAMBLE;
   if (f < on) return null;
-  let k = 0;
+  const lines = s.name.split("\n");
+  const shade = Math.min(1, (f - on) / 6);
   return (
-    <div
-      style={{
-        position: "absolute",
-        left: 80,
-        top: 1560,
-        fontFamily: mono,
-        fontSize: 66,
-        lineHeight: 1.1,
-        color: "white",
-        whiteSpace: "pre",
-        textShadow: "0 2px 12px rgba(0,0,0,0.5)",
-      }}
-    >
-      {s.name.split("\n").map((line, li) => (
-        <div key={li}>
-          {line.split("").map((ch) => {
-            const n = k++;
-            const a = on + Math.floor(random(`${seed}i${n}`) * SCRAMBLE);
-            const b = off + Math.floor(random(`${seed}o${n}`) * SCRAMBLE);
-            return (
-              <span key={n} style={{ opacity: f >= a && f < b ? 1 : 0 }}>
-                {ch}
-              </span>
-            );
-          })}
+    <>
+      {/* soft dark gradient from the bottom so the text reads on yellow/stone */}
+      <div
+        style={{
+          position: "absolute",
+          left: 0,
+          right: 0,
+          bottom: 0,
+          height: 820,
+          opacity: shade,
+          background:
+            "linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.45) 45%, rgba(0,0,0,0) 100%)",
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          left: 80,
+          bottom: 110,
+          fontFamily: mono,
+          color: "white",
+          whiteSpace: "pre",
+          textShadow: "0 2px 12px rgba(0,0,0,0.6)",
+        }}
+      >
+        <div style={{ fontSize: 62, lineHeight: 1.1 }}>
+          {lines.map((line, i) => (
+            <div key={i}>
+              <Scrambled text={line} on={on} off={off} seed={`${seed}n${i}`} />
+            </div>
+          ))}
         </div>
-      ))}
-    </div>
+        <div style={{ fontSize: 28, lineHeight: 1.4, marginTop: 16 }}>
+          {s.ingredients.map((line, i) => (
+            <div key={i}>
+              <Scrambled
+                text={line.toUpperCase()}
+                on={on + 6 + i * 3}
+                off={off}
+                seed={`${seed}i${i}`}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
   );
 };
 
