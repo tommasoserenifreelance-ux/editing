@@ -131,6 +131,7 @@ FACT_CSS = """
 .mk{background:linear-gradient(100deg,transparent 1%,var(--lime) 3% 96%,transparent 98%);color:var(--ink);display:inline-block;line-height:1.05;padding:0 .12em;margin-left:-.12em}
 .ht{filter:url(#sticker)}
 .gfx{position:absolute;z-index:2}
+.st{filter:drop-shadow(0 14px 22px rgba(0,0,0,.22))}
 """
 
 
@@ -141,15 +142,14 @@ def factanza():
     o += s(1, '<div class="t big" style="top:150px;font-size:116px;color:#fff">Ci chiamiamo<br><span class="l">gli altri<br>infermieri.</span></div>'
               f'<div class="t hand" style="top:470px;left:104px;font-size:70px;color:#fff;letter-spacing:0">{UL("Non è un caso.", "#F24E24", 5)}</div>'
               '<img class="cut ht" src="duo.png" style="top:590px">')
-    o += s(2, '<img class="gfx" src="g_turni.png" style="right:-60px;top:110px;width:600px;transform:rotate(6deg)">'
-              '<div class="col">'
-              f'<div style="font-size:62px;color:#fff;line-height:1.15;letter-spacing:-.03em;margin-top:330px"><b>Pensa a un infermiere.</b><br>Ti viene in mente un {CI("ospedale", "#141414", 3)}:</div>'
-              '<div class="box" style="margin-top:44px"><div class="big" style="font-size:150px">corsie,<br>turni,<br><span class="l">camici.</span></div></div></div>')
-    o += s(3, '<img class="gfx" src="g_corridoio.png" style="right:-80px;top:80px;width:620px;transform:rotate(-5deg)">'
-              '<div class="col"><div style="font-size:64px;color:#fff;line-height:1.12;letter-spacing:-.03em;margin-top:420px">Per anni è stato<br><b>il nostro mondo.</b></div>'
+    o += s(2, f'<div class="t" style="top:150px;font-size:62px;color:#fff;line-height:1.15"><b>Pensa a un infermiere.</b><br>Ti viene in mente un {CI("ospedale", "#141414", 3)}:</div>'
+              '<div class="box" style="top:470px"><div class="big" style="font-size:150px">corsie,<br>turni,<br><span class="l">camici.</span></div></div>'
+              '<img class="gfx st" src="g_corridoio.png" style="left:610px;top:400px;width:410px;transform:rotate(-5deg)">'
+              '<img class="gfx st" src="g_camice.png" style="left:790px;top:700px;width:250px;transform:rotate(7deg);z-index:3">'
+              '<img class="gfx st" src="g_turni.png" style="left:560px;top:990px;width:420px;transform:rotate(-4deg);z-index:4">')
+    o += s(3, '<div class="col"><div style="font-size:64px;color:#fff;line-height:1.12;letter-spacing:-.03em;margin-top:420px">Per anni è stato<br><b>il nostro mondo.</b></div>'
               '<div class="big" style="font-size:150px;color:#fff;margin-top:40px">E ci ha<br>insegnato<br><span class="mk">tutto.</span></div></div>')
-    o += s(4, '<img class="gfx" src="g_camice.png" style="right:-40px;top:90px;width:420px;transform:rotate(8deg)">'
-              '<div class="col"><div style="font-size:60px;color:#fff;line-height:1.15;letter-spacing:-.03em;margin-top:300px">Poi abbiamo capito che<br>questo mestiere</div>'
+    o += s(4, '<div class="col"><div style="font-size:60px;color:#fff;line-height:1.15;letter-spacing:-.03em;margin-top:300px">Poi abbiamo capito che<br>questo mestiere</div>'
               '<div class="box" style="margin-top:30px"><div style="font-size:72px;font-weight:800;letter-spacing:-.03em;line-height:1">può essere</div></div>'
               '<div class="big" style="font-size:210px;color:#fff;margin-top:40px">anche</div>'
               f'<div class="big l" style="font-size:210px;margin-top:70px;margin-left:40px">{CI("altro.", "#141414", 4)}</div></div>')
@@ -182,6 +182,7 @@ THEIA_CSS = """
 .col{position:absolute;left:100px;right:100px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;z-index:5}
 .col>div+div{margin-top:56px}
 .gfx{position:absolute;z-index:2}
+.st{filter:drop-shadow(0 14px 22px rgba(0,0,0,.22))}
 """
 
 
@@ -191,12 +192,13 @@ def theia():
     o = ""
     o += s(1, '<div class="t tx" style="top:150px;font-size:76px;line-height:1.06"><b>Ci chiamiamo <span class="r">gli altri infermieri</span>.</b></div>'
               '<div class="t tx" style="top:350px">Non è un caso.</div><img class="cut" src="duo.png" style="top:520px">')
-    o += s(2, '<img class="gfx" src="g_corridoio.png" style="right:60px;bottom:70px;width:520px">'
-              '<div class="col" style="bottom:380px"><div class="tx"><b>Pensa a un infermiere.</b></div>'
+    o += s(2, '<img class="gfx st" src="g_corridoio.png" style="left:60px;bottom:90px;width:400px;transform:rotate(-5deg)">'
+              '<img class="gfx st" src="g_camice.png" style="left:420px;bottom:60px;width:250px;transform:rotate(4deg);z-index:3">'
+              '<img class="gfx st" src="g_turni.png" style="right:50px;bottom:110px;width:390px;transform:rotate(6deg)">'
+              '<div class="col" style="bottom:460px"><div class="tx"><b>Pensa a un infermiere.</b></div>'
               '<div class="tx">Ti viene in mente un <b class="r">ospedale</b>: corsie, turni, camici.</div>'
               f'<div class="tx">Per anni è stato {UL("<b>il nostro mondo</b>", "#F24E24", 5)}.<br>E ci ha insegnato <b class="r">tutto</b>.</div></div>')
-    o += s(3, '<img class="gfx" src="g_camice.png" style="right:70px;bottom:60px;width:330px;transform:rotate(-4deg)">'
-              '<div class="col" style="bottom:300px"><div class="tx">Poi abbiamo capito che questo mestiere può essere</div>'
+    o += s(3, '<div class="col" style="bottom:300px"><div class="tx">Poi abbiamo capito che questo mestiere può essere</div>'
               f'<div style="font-size:150px;font-weight:800;letter-spacing:-.06em;line-height:1" class="r">{UL("anche altro.", "#141414", 6)}</div>'
               '<div class="tx">Oggi lavoriamo nella <b>medicina rigenerativa</b> e della <b class="r">longevità</b>.</div></div>')
     o += s(4, '<div class="t tx" style="top:150px"><b>Pasquale</b> a <b class="r">Milano</b>.<br><b>Gabriele</b> a <b class="r">Roma</b>.</div>'
@@ -204,8 +206,7 @@ def theia():
               '<img class="cut" src="c_DSC06719.png" style="top:500px">')
     o += s(5, f'<div class="col"><div class="tx" style="font-size:72px"><b>Qui raccontiamo quello che <span class="r">{UL("vediamo", "#F24E24", 5)}</span>.</b></div>'
               '<div class="tx" style="font-size:56px;line-height:1.22">Come funziona <b>davvero</b> questo mondo.<br><br>Cosa ci <b>chiedono</b> le persone.<br><br>Cosa impari stando accanto a qualcuno <b class="r">per mezz\'ora.</b></div></div>')
-    o += s(6, '<img class="gfx" src="g_turni.png" style="right:60px;bottom:60px;width:460px;transform:rotate(4deg)">'
-              '<div class="col" style="bottom:300px"><div style="font-size:124px;font-weight:800;letter-spacing:-.055em;line-height:1">Niente promesse.<br><span class="r">Niente miracoli.</span></div>'
+    o += s(6, '<div class="col" style="bottom:300px"><div style="font-size:124px;font-weight:800;letter-spacing:-.055em;line-height:1">Niente promesse.<br><span class="r">Niente miracoli.</span></div>'
               f'<div class="tx">Solo il punto di vista di chi ci sta dentro <b class="r">{UL("con le mani", "#F24E24", 5)}</b>.</div></div>')
     o += s(7, '<div class="t tx" style="top:150px;font-size:54px">Non sapevi che un infermiere potesse fare <b>questo?</b></div>'
               '<div class="t" style="top:300px;font-size:150px;font-weight:800;letter-spacing:-.06em;line-height:1">Appunto.</div>'
