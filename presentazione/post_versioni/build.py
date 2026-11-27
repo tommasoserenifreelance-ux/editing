@@ -88,7 +88,7 @@ def certo():
             '<div class="t c-t" style="top:1010px;left:300px;font-size:72px;font-weight:800;line-height:1.02;letter-spacing:-.04em">chi ci sta dentro<br><span class="l">con le mani.</span></div>')
     o += sl(10, "f_DSC06650-2.jpg",
             '<div class="t c-t lite" style="top:850px;left:300px;font-size:52px;line-height:1.15">non sapevi che un infermiere<br>potesse fare questo?</div>'
-            '<div class="t c-t wm" style="top:1000px;left:300px;font-size:140px;line-height:1;white-space:nowrap">appunto<i>.</i>&nbsp;🌳</div>')
+            '<div class="t c-t wm" style="top:1000px;left:300px;font-size:140px;line-height:1;white-space:nowrap">appunto<i>.</i></div>')
     return HEAD.replace("%EXTRA%", CERTO_CSS) + o + TAIL
 
 
@@ -119,16 +119,16 @@ def factanza():
     o += sl(2, '<div class="t" style="top:300px;font-size:62px;color:#fff;line-height:1.12"><b>Pensa a un infermiere.</b><br>Ti viene in mente un ospedale:</div>'
                '<div class="box" style="top:560px;right:300px;padding:40px 100px"><div class="big" style="font-size:140px">corsie,<br>turni,<br><span class="l">camici.</span></div></div>', 1)
     o += sl(3, '<div class="t" style="top:320px;font-size:64px;color:#fff;line-height:1.1">Per anni è stato<br><b>il nostro mondo.</b></div>'
-               '<div class="t big" style="top:640px;font-size:170px;color:#fff">E ci ha<br>insegnato<br><span class="mk" style="color:var(--ink)">tutto.</span></div>', 2)
+               '<div class="t big" style="top:600px;font-size:160px;color:#fff">E ci ha<br>insegnato</div><div class="t big" style="top:920px;font-size:160px"><span class="mk" style="color:var(--ink);display:inline-block;line-height:1.05;padding:0 20px">tutto.</span></div>', 2)
     o += sl(4, '<div class="t" style="top:300px;font-size:58px;color:#fff;line-height:1.15">Poi abbiamo capito che<br>questo mestiere</div>'
                '<div class="box" style="top:500px;right:280px;padding:40px 100px"><div style="font-size:72px;font-weight:800;letter-spacing:-.03em">può essere</div></div>'
                '<div class="t big" style="top:760px;font-size:230px;color:#fff">anche<br><span class="l">altro.</span></div>', 0)
     o += sl(5, '<div class="t" style="top:300px;font-size:60px;color:#fff">Oggi lavoriamo nella</div>'
                '<div class="box" style="top:420px;right:120px;padding:44px 100px"><div class="big" style="font-size:130px">medicina<br><span class="l">rigenerativa</span></div><div style="font:italic 400 44px IT;color:#bbb;margin-top:14px">- e della longevità -</div></div>', 1)
     o += ('<div class="s blue grain" id="s6">' + P + '<div class="num" style="color:rgba(255,255,255,.8)">6/10</div>'
-          '<div class="t" style="top:230px;font-size:66px;color:#fff;line-height:1.1"><b>Pasquale</b> a Milano.<br><b>Gabriele</b> a Roma.</div>'
-          '<div class="box" style="top:470px;right:380px;padding:30px 100px"><div style="font-size:48px;line-height:1.15;letter-spacing:-.03em">Stesso lavoro,<br><b class="l">un altro modo di farlo.</b></div></div>'
-          + SCRIB[2] + '<img class="cut ht" src="duo.png" style="left:0;width:1080px;top:700px"></div>\n')
+          '<div class="t" style="top:170px;font-size:62px;color:#fff;line-height:1.1"><b>Pasquale</b> a Milano.<br><b>Gabriele</b> a Roma.</div>'
+          '<div class="box" style="top:340px;right:380px;padding:26px 100px"><div style="font-size:44px;line-height:1.15;letter-spacing:-.03em">Stesso lavoro,<br><b class="l">un altro modo di farlo.</b></div></div>'
+          '<img class="cut ht" src="duo.png" style="left:0;width:1080px;top:540px"></div>\n')
     o += sl(7, '<div class="t" style="top:260px;font-size:70px;color:#fff;line-height:1.1"><b>Qui raccontiamo<br>quello che vediamo.</b></div>'
                '<div class="box" style="top:560px;right:100px;padding:46px 100px"><div style="font-size:50px;line-height:1.3;letter-spacing:-.025em">Come funziona <b class="l">davvero</b> questo mondo.<br>Cosa ci <b class="l">chiedono</b> le persone.<br>Cosa impari stando accanto a qualcuno <b class="l">per mezz\'ora.</b></div></div>', 0)
     o += sl(8, '<div class="box" style="top:300px;right:120px;padding:50px 100px"><div class="big" style="font-size:150px">Niente<br>promesse.</div></div>'
@@ -136,9 +136,9 @@ def factanza():
     o += sl(9, '<div class="t" style="top:320px;font-size:70px;color:#fff">Solo il punto di vista di</div>'
                '<div class="box" style="top:520px;right:80px;padding:50px 100px"><div class="big" style="font-size:132px">chi ci sta dentro<br><span class="l">con le mani.</span></div></div>', 2)
     o += ('<div class="s blue grain" id="s10">' + P + '<div class="num" style="color:rgba(255,255,255,.8)">10/10</div>'
-          '<div class="t" style="top:250px;font-size:66px;color:#fff;line-height:1.12">Non sapevi che un infermiere potesse fare <b>questo?</b></div>'
-          '<div class="t big" style="top:520px;font-size:200px"><span class="mk" style="color:var(--ink);display:inline-block;line-height:1.05;padding:0 20px">Appunto.</span></div>'
-          + SCRIB[1] + '<img class="cut ht" src="duo.png" style="left:0;width:1080px;top:860px"></div>\n')
+          '<div class="t" style="top:170px;font-size:58px;color:#fff;line-height:1.12">Non sapevi che un infermiere potesse fare <b>questo?</b></div>'
+          '<div class="t big" style="top:330px;font-size:150px"><span class="mk" style="color:var(--ink);display:inline-block;line-height:1.05;padding:0 20px">Appunto.</span></div>'
+          + '<img class="cut ht" src="duo.png" style="left:0;width:1080px;top:540px"></div>\n')
     return HEAD.replace("%EXTRA%", FACT_CSS) + o + TAIL
 
 
@@ -164,14 +164,14 @@ def theia():
     o += sl(3, '<div class="t tx" style="top:300px">Poi abbiamo capito che questo mestiere può essere</div>'
                '<div class="t" style="top:480px;font-size:150px;font-weight:800;letter-spacing:-.06em;line-height:1"><span class="r">anche altro.</span></div>'
                + LINE % 720 + '<div class="t tx" style="top:820px">Oggi lavoriamo nella <b>medicina rigenerativa</b> e della <b class="r">longevità</b>.</div>')
-    o += sl(4, '<div class="t tx" style="top:280px;right:120px"><b>Pasquale</b> a <b class="r">Milano</b>.<br><b>Gabriele</b> a <b class="r">Roma</b>.</div>'
-               '<div class="t tx" style="top:470px">Stesso lavoro, <b>un altro modo di farlo</b>.</div><img class="cut" src="duo.png" style="left:0;width:1080px;top:700px">')
+    o += sl(4, '<div class="t tx" style="top:180px;right:120px"><b>Pasquale</b> a <b class="r">Milano</b>.<br><b>Gabriele</b> a <b class="r">Roma</b>.</div>'
+               '<div class="t tx" style="top:350px;font-size:52px">Stesso lavoro, <b>un altro modo di farlo</b>.</div><img class="cut" src="duo.png" style="left:0;width:1080px;top:540px">')
     o += sl(5, '<div class="t tx" style="top:270px;font-size:70px"><b>Qui raccontiamo quello che <span class="r">vediamo</span>.</b></div>' + LINE % 520 +
                '<div class="t tx" style="top:620px;font-size:56px;line-height:1.22">Come funziona <b>davvero</b> questo mondo.<br><br>Cosa ci <b>chiedono</b> le persone.<br><br>Cosa impari stando accanto a qualcuno <b class="r">per mezz\'ora.</b></div>')
     o += sl(6, '<div class="t" style="top:340px;font-size:120px;font-weight:800;letter-spacing:-.055em;line-height:1">Niente promesse.<br><span class="r">Niente miracoli.</span></div>'
                + LINE % 760 + '<div class="t tx" style="top:860px">Solo il punto di vista di chi ci sta dentro <b class="r">con le mani</b>.</div>')
-    o += sl(7, '<div class="t tx" style="top:300px">Non sapevi che un infermiere potesse fare <b>questo?</b></div>'
-               '<div class="t" style="top:520px;font-size:170px;font-weight:800;letter-spacing:-.06em;line-height:1;white-space:nowrap">Appunto.&nbsp;🌳</div><img class="cut" src="duo.png" style="left:0;width:1080px;top:820px">')
+    o += sl(7, '<div class="t tx" style="top:180px;font-size:54px">Non sapevi che un infermiere potesse fare <b>questo?</b></div>'
+               '<div class="t" style="top:330px;font-size:150px;font-weight:800;letter-spacing:-.06em;line-height:1;white-space:nowrap">Appunto.</div><img class="cut" src="duo.png" style="left:0;width:1080px;top:540px">')
     return HEAD.replace("%EXTRA%", THEIA_CSS) + o + TAIL
 
 
@@ -222,7 +222,7 @@ def piccolimondi():
     o += sl(9, '<svg class="sc" style="left:300px;top:150px" width="480" height="500" viewBox="0 0 480 500" filter="url(#crayon)"><g fill="none" stroke="#EF4122" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"><path d="M140 470c-60-90-40-180 10-250 18-30 50-14 42 18l-18 80 110-160c18-26 52-8 40 22l-60 116 90-90c22-22 52 4 30 30l-90 100 66-44c26-18 48 14 26 36-90 90-150 150-246 142z"/></g></svg>'
                f'<div class="t" style="top:760px;font-size:56px">Solo il punto di vista di</div><div class="t" style="top:860px;{big};font-size:130px">chi ci sta dentro con le mani.</div>')
     o += sl(10, TREE + '<div class="t" style="top:760px;font-size:62px;line-height:1.1">Non sapevi che un infermiere potesse fare questo?</div>'
-               '<div class="t" style="top:960px;font-size:150px;font-weight:600;letter-spacing:-.05em;line-height:1">Appunto. <span style="font-size:110px">🌳</span></div>'
+               '<div class="t" style="top:960px;font-size:150px;font-weight:600;letter-spacing:-.05em;line-height:1">Appunto.</div>'
                '<div class="pill" style="top:auto;bottom:80px;left:50%;transform:translateX(-50%)"><img src="logo.png">GLIALTRINFERMIERI</div>')
     return HEAD.replace("%EXTRA%", PM_CSS) + o + TAIL
 
