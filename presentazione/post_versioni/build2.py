@@ -72,6 +72,9 @@ CERTO_CSS = """
 .badge::after{content:"";position:absolute;right:-5px;bottom:-5px;width:36px;height:36px;border-radius:50%;background:var(--red);border:5px solid #fff}
 .light .badge{box-shadow:0 0 0 1px #e2e0da}
 .light .badge::after{border-color:#F3F1EC}
+.ctr .cb{top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;text-align:left}
+.ctr .cb br{display:block}
+.ctr .badge{left:100px}
 """
 
 
@@ -80,7 +83,7 @@ def certo():
     def photo(i, img, inner):
         return slide(i, "photo", f'<div class="full" style="background-image:url({img})"></div><div class="vig"></div><div class="cb c-t">{inner}</div>{B}')
     def txt(i, mode, inner):
-        return slide(i, mode, f'<div class="cb">{inner}</div>{B}')
+        return slide(i, mode + " ctr", f'<div class="cb">{inner}</div>{B}')
     o = ""
     o += photo(1, "f_DSC06650-2.jpg",
                '<div class="lite" style="font-size:64px;line-height:1">ci chiamiamo</div>'
