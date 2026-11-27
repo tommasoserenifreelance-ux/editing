@@ -112,6 +112,10 @@ def certo():
     o += txt(10, "dark",
              '<div class="lite" style="font-size:58px;line-height:1.15;color:#cfcfcf">non sapevi che un infermiere<br>potesse fare questo?</div>'
              '<div class="wm" style="font-size:190px;line-height:.95">appunto<i>.</i></div>')
+    o += txt(11, "light",
+             '<div class="lite" style="font-size:56px;line-height:1.15">se vuoi sapere quello che<br>gli altri non ti spiegano,</div>'
+             '<div class="wm" style="font-size:150px;line-height:.95">seguici<i>.</i></div>'
+             '<div class="bold" style="font-size:46px;color:#6b6b6b">@glialtrinfermieri</div>')
     return HEAD.replace("%EXTRA%", CERTO_CSS) + o + TAIL
 
 
@@ -158,6 +162,10 @@ def factanza():
     o += s(10, '<div class="t" style="top:150px;font-size:58px;color:#fff;line-height:1.12">Non sapevi che un infermiere potesse fare <b>questo?</b></div>'
                '<div class="t big" style="top:320px;font-size:150px"><span class="mk">Appunto.</span></div>'
                '<img class="cut ht" src="c_DSC06700.png" style="top:540px">')
+    o += s(11, '<div class="t" style="top:300px;font-size:62px;color:#fff;line-height:1.15">Se vuoi sapere quello che<br>gli altri non ti spiegano,</div>'
+               f'<div class="t big" style="top:520px;font-size:240px;color:#fff">{UL("seguici.", "#EF4122", 7)}</div>'
+               '<div class="box" style="top:860px"><div style="font-size:50px;font-weight:800;letter-spacing:-.02em">@glialtrinfermieri</div></div>'
+               '<img src="logo.png" style="position:absolute;right:100px;bottom:110px;width:190px;background:#fff;border-radius:50%;padding:28px 22px;z-index:5">')
     return HEAD.replace("%EXTRA%", FACT_CSS) + o + TAIL
 
 
@@ -197,6 +205,11 @@ def theia():
     o += s(7, '<div class="t tx" style="top:150px;font-size:54px">Non sapevi che un infermiere potesse fare <b>questo?</b></div>'
               '<div class="t" style="top:300px;font-size:150px;font-weight:800;letter-spacing:-.06em;line-height:1">Appunto.</div>'
               '<img class="cut" src="c_DSC06667.png" style="top:520px">')
+    o += s(8, '<div class="t tx" style="top:330px">Se vuoi sapere quello che gli altri non ti spiegano,</div>'
+              '<div class="t" style="top:520px;font-size:170px;font-weight:800;letter-spacing:-.06em;line-height:1"><span class="r">seguici.</span></div>'
+              + DIV % 740 +
+              '<div class="t tx" style="top:800px"><b>@glialtrinfermieri</b></div>'
+              '<img src="logo.png" style="position:absolute;left:100px;bottom:120px;width:150px;z-index:5">')
     return HEAD.replace("%EXTRA%", THEIA_CSS) + o + TAIL
 
 
@@ -249,6 +262,11 @@ def piccolimondi():
               f'<div class="t" style="top:760px;font-size:56px">Solo il punto di vista di</div><div class="t" style="top:860px;{big};font-size:130px">chi ci sta dentro con le mani.</div>')
     o += s(10, TREE + '<div class="t" style="top:760px;font-size:62px;line-height:1.1">Non sapevi che un infermiere potesse fare questo?</div>'
                '<div class="t" style="top:960px;font-size:150px;font-weight:600;letter-spacing:-.05em;line-height:1">Appunto.</div>'
+               '<img class="logo" src="logo.png" style="bottom:70px;width:120px">')
+    o += s(11, TREE.replace('left:250px;top:120px','left:330px;top:150px').replace('width="580" height="560"','width="420" height="405"') +
+               '<div class="t" style="top:640px;font-size:58px;line-height:1.15">Se vuoi sapere quello che gli altri non ti spiegano,</div>'
+               f'<div class="t" style="top:820px;{big};font-size:170px">seguici.</div>'
+               '<div class="t hand" style="top:1020px;font-size:64px;color:var(--red);letter-spacing:0">@glialtrinfermieri</div>'
                '<img class="logo" src="logo.png" style="bottom:70px;width:120px">')
     return HEAD.replace("%EXTRA%", PM_CSS) + o + TAIL
 
