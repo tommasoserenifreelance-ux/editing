@@ -110,7 +110,8 @@ const LabelView: React.FC<{ l: Label }> = ({ l }) => {
         fontFamily: sans,
         fontWeight: 500,
         fontSize: 54,
-        color: "#a3191b",
+        color: "white",
+        textShadow: "0 2px 10px rgba(0,0,0,0.45)",
         whiteSpace: "nowrap",
       }}
     >
