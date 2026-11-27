@@ -103,7 +103,7 @@ def certo():
              '<div class="bold" style="font-size:96px;line-height:1">medicina rigenerativa<br>e della <span class="l">longevità.</span></div>')
     o += txt(6, "light",
              '<div class="bold" style="font-size:84px;line-height:1.05">pasquale <span class="lite">e</span> gabriele.<br><span class="lite">milano e roma.</span></div>'
-             '<div class="lite" style="font-size:48px;line-height:1.25">due infermieri e una pagina<br>per raccontare il nostro mestiere,<br><b>senza filtri.</b></div>')
+             '<div class="lite" style="font-size:48px;line-height:1.25">due infermieri e una pagina<br>per raccontare <b>il nostro mestiere.</b></div>')
     o += txt(7, "dark",
              '<div class="bold" style="font-size:80px;line-height:1.02">qui raccontiamo<br>quello che vediamo.</div>'
              '<div class="lite" style="font-size:44px;line-height:1.4;color:#cfcfcf">come funziona <b style="color:#fff">davvero</b> questo mondo.<br>cosa ci <b style="color:#fff">chiedono</b> le persone.<br>cosa impari stando accanto <b style="color:#fff">a qualcuno.</b></div>')
