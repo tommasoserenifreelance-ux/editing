@@ -94,7 +94,7 @@ def certo():
              '<div class="lite" style="font-size:48px;line-height:1.25;color:#cfcfcf">ti viene in mente un ospedale:<br><b style="color:#fff">corsie, turni, camici.</b></div>')
     o += photo(3, "f_DSC06933.jpg",
                '<div class="lite" style="font-size:64px;line-height:1.08">per anni è stato<br>il nostro mondo.</div>'
-               '<div class="bold" style="font-size:64px;line-height:1.05">e ci ha insegnato <span class="l">tutto.</span></div>')
+               '<div class="bold" style="font-size:64px;line-height:1.05">e ci ha insegnato <span class="l">tanto.</span></div>')
     o += txt(4, "light",
              '<div class="lite" style="font-size:54px;line-height:1.18">poi abbiamo capito che<br>questo mestiere può essere</div>'
              '<div class="wm" style="font-size:150px;line-height:.95">anche altro<i>.</i></div>')
@@ -148,7 +148,7 @@ def factanza():
               '<img class="gfx st" src="g_camice.png" style="left:790px;top:700px;width:250px;transform:rotate(7deg);z-index:3">'
               '<img class="gfx st" src="g_turni.png" style="left:560px;top:990px;width:420px;transform:rotate(-4deg);z-index:4">')
     o += s(3, '<div class="col"><div style="font-size:64px;color:#fff;line-height:1.12;letter-spacing:-.03em">Per anni è stato<br><b>il nostro mondo.</b></div>'
-              '<div class="big" style="font-size:150px;color:#fff;margin-top:40px">E ci ha<br>insegnato<br><span class="mk">tutto.</span></div></div>')
+              '<div class="big" style="font-size:150px;color:#fff;margin-top:40px">E ci ha<br>insegnato<br><span class="mk">tanto.</span></div></div>')
     o += s(4, '<div class="col"><div style="font-size:60px;color:#fff;line-height:1.15;letter-spacing:-.03em">Poi abbiamo capito che<br>questo mestiere</div>'
               '<div class="box" style="margin-top:30px"><div style="font-size:72px;font-weight:800;letter-spacing:-.03em;line-height:1">può essere</div></div>'
               '<div class="big" style="font-size:210px;color:#fff;margin-top:40px">anche</div>'
@@ -197,7 +197,7 @@ def theia():
               '<img class="gfx st" src="g_turni.png" style="right:50px;bottom:110px;width:390px;transform:rotate(6deg)">'
               '<div class="col" style="bottom:460px"><div class="tx"><b>Pensa a un infermiere.</b></div>'
               '<div class="tx">Ti viene in mente un <b class="r">ospedale</b>: corsie, turni, camici.</div>'
-              f'<div class="tx">Per anni è stato {UL("<b>il nostro mondo</b>", "#F24E24", 5)}.<br>E ci ha insegnato <b class="r">tutto</b>.</div></div>')
+              f'<div class="tx">Per anni è stato {UL("<b>il nostro mondo</b>", "#F24E24", 5)}.<br>E ci ha insegnato <b class="r">tanto</b>.</div></div>')
     o += s(3, '<div class="col"><div class="tx">Poi abbiamo capito che questo mestiere può essere</div>'
               f'<div style="font-size:150px;font-weight:800;letter-spacing:-.06em;line-height:1" class="r">{UL("anche altro.", "#141414", 6)}</div>'
               '<div class="tx">Oggi lavoriamo nella <b>medicina rigenerativa</b> e della <b class="r">longevità</b>.</div></div>')
@@ -248,7 +248,7 @@ def piccolimondi():
     o += s(2, HOSP + f'<div class="t" style="top:820px;{big}">Pensa a un<br>infermiere.</div>'
               '<div class="t" style="top:1060px;font-size:50px;line-height:1.15">Ti viene in mente un ospedale:<br><b>corsie, turni, camici.</b></div>')
     o += s(3, FLOW % (760, 160, "#C6CC30") + f'<div class="t" style="top:640px;{big}">Per anni è stato il nostro mondo.</div>'
-              '<div class="t" style="top:1000px;font-size:58px">E ci ha insegnato <b>tutto.</b></div>')
+              '<div class="t" style="top:1000px;font-size:58px">E ci ha insegnato <b>tanto.</b></div>')
     o += s(4, '<svg style="position:absolute;left:120px;top:140px;z-index:2" width="840" height="520" viewBox="0 0 840 520" filter="url(#crayon)"><g fill="none" stroke-linecap="round"><path d="M80 420 C 220 120, 420 460, 560 160 S 760 120, 800 60" stroke="#F24E24" stroke-width="14"/><path d="M760 40 l45 15 -25 40" stroke="#F24E24" stroke-width="14"/></g></svg>'
               f'<div class="t" style="top:720px;font-size:52px;line-height:1.15">Poi abbiamo capito che questo mestiere può essere</div><div class="t" style="top:900px;{big};font-size:150px">anche altro.</div>')
     o += s(5, FLOW % (110, 180, "#C6CC30") + FLOW % (740, 300, "#2F8FC4") +
