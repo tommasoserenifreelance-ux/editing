@@ -102,8 +102,8 @@ def certo():
              '<div class="lite" style="font-size:54px">oggi lavoriamo nella</div>'
              '<div class="bold" style="font-size:96px;line-height:1">medicina rigenerativa<br>e della <span class="l">longevità.</span></div>')
     o += txt(6, "light",
-             '<div class="bold" style="font-size:84px;line-height:1.05">pasquale <span class="lite">a milano.</span><br>gabriele <span class="lite">a roma.</span></div>'
-             '<div class="lite" style="font-size:48px;line-height:1.25">stesso lavoro,<br><b>un altro modo di farlo.</b></div>')
+             '<div class="bold" style="font-size:84px;line-height:1.05">pasquale <span class="lite">e</span> gabriele.<br><span class="lite">milano e roma.</span></div>'
+             '<div class="lite" style="font-size:48px;line-height:1.25">due città,<br><b>un altro modo di fare l\'infermiere.</b></div>')
     o += txt(7, "dark",
              '<div class="bold" style="font-size:80px;line-height:1.02">qui raccontiamo<br>quello che vediamo.</div>'
              '<div class="lite" style="font-size:44px;line-height:1.4;color:#cfcfcf">come funziona <b style="color:#fff">davvero</b> questo mondo.<br>cosa ci <b style="color:#fff">chiedono</b> le persone.<br>cosa impari stando accanto <b style="color:#fff">a qualcuno.</b></div>')
@@ -156,8 +156,8 @@ def factanza():
     o += s(5, '<div class="col"><div style="font-size:60px;color:#fff;letter-spacing:-.03em">Oggi lavoriamo nella</div>'
               '<div class="box" style="margin-top:30px"><div class="big" style="font-size:132px">medicina<br><span class="l">rigenerativa</span></div>'
               '<div style="font:italic 400 44px IT;color:#bbb;margin-top:18px">e della longevità</div></div></div>')
-    o += s(6, '<div class="t" style="top:150px;font-size:62px;color:#fff;line-height:1.12"><b>Pasquale</b> a Milano.<br><b>Gabriele</b> a Roma.</div>'
-              '<div class="box" style="top:330px"><div style="font-size:44px;line-height:1.18;letter-spacing:-.03em">Stesso lavoro,<br><b class="l">un altro modo di farlo.</b></div></div>'
+    o += s(6, '<div class="t" style="top:150px;font-size:62px;color:#fff;line-height:1.12"><b>Pasquale</b> e <b>Gabriele</b>.<br>Milano e Roma.</div>'
+              '<div class="box" style="top:330px"><div style="font-size:44px;line-height:1.18;letter-spacing:-.03em">Due città,<br><b class="l">un altro modo di fare l\'infermiere.</b></div></div>'
               '<img class="cut ht" src="c_DSC06703.png" style="top:540px">')
     o += s(7, '<div class="col"><div style="font-size:72px;color:#fff;line-height:1.1;letter-spacing:-.03em"><b>Qui raccontiamo<br>quello che vediamo.</b></div>'
               f'<div class="box" style="margin-top:40px;align-self:stretch;right:0"><div style="font-size:50px;line-height:1.38;letter-spacing:-.025em">Come funziona {CI("<b>davvero</b>", "#C6CC30", 3)} questo mondo.<br>Cosa ci <b class="l">chiedono</b> le persone.<br>Cosa impari stando accanto <b class="l">a qualcuno.</b></div></div></div>')
@@ -201,8 +201,8 @@ def theia():
     o += s(3, '<div class="col"><div class="tx">Poi abbiamo capito che questo mestiere può essere</div>'
               f'<div style="font-size:150px;font-weight:800;letter-spacing:-.06em;line-height:1" class="r">{UL("anche altro.", "#141414", 6)}</div>'
               '<div class="tx">Oggi lavoriamo nella <b>medicina rigenerativa</b> e della <b class="r">longevità</b>.</div></div>')
-    o += s(4, '<div class="t tx" style="top:150px"><b>Pasquale</b> a <b class="r">Milano</b>.<br><b>Gabriele</b> a <b class="r">Roma</b>.</div>'
-              '<div class="t tx" style="top:320px;font-size:52px">Stesso lavoro, <b>un altro modo di farlo</b>.</div>'
+    o += s(4, '<div class="t tx" style="top:150px"><b>Pasquale</b> e <b>Gabriele</b>.<br><b class="r">Milano</b> e <b class="r">Roma</b>.</div>'
+              '<div class="t tx" style="top:320px;font-size:52px">Due città, <b>un altro modo di fare l\'infermiere</b>.</div>'
               '<img class="cut" src="c_DSC06719.png" style="top:500px">')
     o += s(5, f'<div class="col"><div class="tx" style="font-size:72px"><b>Qui raccontiamo quello che <span class="r">{UL("vediamo", "#F24E24", 5)}</span>.</b></div>'
               '<div class="tx" style="font-size:56px;line-height:1.22">Come funziona <b>davvero</b> questo mondo.<br><br>Cosa ci <b>chiedono</b> le persone.<br><br>Cosa impari stando accanto <b class="r">a qualcuno.</b></div></div>')
@@ -253,11 +253,11 @@ def piccolimondi():
               f'<div class="t" style="top:720px;font-size:52px;line-height:1.15">Poi abbiamo capito che questo mestiere può essere</div><div class="t" style="top:900px;{big};font-size:150px">anche altro.</div>')
     o += s(5, FLOW % (110, 180, "#C6CC30") + FLOW % (740, 300, "#2F8FC4") +
               f'<div class="t" style="top:700px;font-size:52px">Oggi lavoriamo nella</div><div class="t" style="top:790px;{big}">medicina rigenerativa e della longevità.</div>')
-    o += s(6, '<div class="t" style="top:110px;text-align:center;font-size:74px;font-weight:600;letter-spacing:-.045em;line-height:1">Pasquale a Milano.<br>Gabriele a Roma.</div>'
+    o += s(6, '<div class="t" style="top:110px;text-align:center;font-size:74px;font-weight:600;letter-spacing:-.045em;line-height:1">Pasquale e Gabriele.<br>Milano e Roma.</div>'
               + ARROW % 290 +
               '<img class="cut" src="c_DSC06651.png" style="top:520px">'
-              '<div class="hand" style="position:absolute;left:50px;top:330px;font-size:58px;color:var(--red);transform:rotate(-6deg);z-index:5;line-height:1">stesso lavoro,</div>'
-              '<div class="hand" style="position:absolute;right:50px;top:310px;font-size:58px;color:var(--red);transform:rotate(5deg);z-index:5;line-height:1;text-align:right">un altro modo<br>di farlo.</div>')
+              '<div class="hand" style="position:absolute;left:50px;top:330px;font-size:58px;color:var(--red);transform:rotate(-6deg);z-index:5;line-height:1">due città,</div>'
+              '<div class="hand" style="position:absolute;right:50px;top:310px;font-size:58px;color:var(--red);transform:rotate(5deg);z-index:5;line-height:1;text-align:right">un altro modo<br>di fare l\x27infermiere.</div>')
     o += s(7, f'<div class="t" style="top:180px;{big};font-size:90px">Qui raccontiamo quello che vediamo.</div>'
               '<div class="t" style="top:560px;font-size:54px;line-height:1.25">Come funziona davvero questo mondo.<br><br>Cosa ci chiedono le persone.<br><br>Cosa impari stando accanto <b>a qualcuno.</b></div>'
               + FLOW % (790, 1080, "#F24E24"))
