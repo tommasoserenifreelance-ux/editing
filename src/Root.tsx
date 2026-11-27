@@ -10,6 +10,7 @@ import {
 import { PILATES_DURATION, PilatesReformer } from "./PilatesReformer";
 import { IconSheet } from "./Zymerex/IconSheet";
 import { PMS_DURATION, PMS_FPS, ZymerexPMS } from "./ZymerexPMS";
+import { GP_DURATION, GP_FPS, ZymerexGP } from "./ZymerexGP";
 import { Zymerex, ZYMEREX_DURATION, ZYMEREX_FPS } from "./Zymerex";
 
 // Each <Composition> is an entry in the sidebar!
@@ -96,6 +97,14 @@ export const RemotionRoot: React.FC = () => {
         component={ZymerexPMS}
         durationInFrames={PMS_DURATION}
         fps={PMS_FPS}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="ZymerexGonfiorePlus"
+        component={ZymerexGP}
+        durationInFrames={GP_DURATION}
+        fps={GP_FPS}
         width={1080}
         height={1920}
       />
