@@ -1,5 +1,6 @@
 import {
   AbsoluteFill,
+  Audio,
   Img,
   interpolate,
   OffthreadVideo,
@@ -8,9 +9,8 @@ import {
   useCurrentFrame,
 } from "remotion";
 import {
-  inter,
+  interTight,
   pinkColors as colors,
-  Signature,
 } from "../EleonoraPiccolo/brand";
 import data from "./data.json";
 
@@ -28,8 +28,13 @@ const clamp = {
   extrapolateRight: "clamp",
 } as const;
 
+// The clips are sped up 1.2× (public/allenamento/fast); cue times below are in
+// the original clips' seconds.
+const SPEED = 1.2;
+
 // Source time in a clip → seconds on the final timeline.
-const at = (clip: keyof typeof data.tl, src: number) => {
+const at = (clip: keyof typeof data.tl, original: number) => {
+  const src = original / SPEED;
   const segs = data.tl[clip];
   for (const [from, to, start] of segs) {
     if (src >= from && src <= to) return start + src - from;
@@ -576,27 +581,34 @@ const pipAmount = (frame: number) => {
   return v;
 };
 
-const Speaker: React.FC = () => {
+// Full screen ↔ corner, plus a jump zoom on every other caption phrase.
+const useSpeakerFrame = () => {
   const frame = useCurrentFrame();
   const k = pipAmount(frame);
-  const scale = 1 - (1 - PIP_SCALE) * k;
-  // Jump zoom on every other caption phrase while she is full screen.
   const phrase = phraseAt(frame / ALLENAMENTO_FPS);
   const punch = 1 + 0.12 * ((phrase < 0 ? 0 : phrase) % 2) * (1 - k);
   const feather = `rgba(0,0,0,${1 - k})`;
+  const outer: React.CSSProperties = {
+    transformOrigin: "100% 100%",
+    transform: `scale(${1 - (1 - PIP_SCALE) * k})`,
+    overflow: "hidden",
+    WebkitMaskImage: `linear-gradient(to right, ${feather}, #000 22%), linear-gradient(to bottom, ${feather}, #000 18%)`,
+    WebkitMaskComposite: "source-in",
+  };
+  const inner: React.CSSProperties = {
+    transform: `scale(${punch})`,
+    transformOrigin: "50% 35%",
+  };
+  return { outer, inner };
+};
+
+const fill = { width: "100%", height: "100%", objectFit: "cover" } as const;
+
+const Speaker: React.FC = () => {
+  const { outer, inner } = useSpeakerFrame();
   return (
-    <AbsoluteFill
-      style={{
-        transformOrigin: "100% 100%",
-        transform: `scale(${scale})`,
-        overflow: "hidden",
-        WebkitMaskImage: `linear-gradient(to right, ${feather}, #000 22%), linear-gradient(to bottom, ${feather}, #000 18%)`,
-        WebkitMaskComposite: "source-in",
-      }}
-    >
-      <AbsoluteFill
-        style={{ transform: `scale(${punch})`, transformOrigin: "50% 35%" }}
-      >
+    <AbsoluteFill style={outer}>
+      <AbsoluteFill style={inner}>
         {data.segments.map((s) => (
           <Sequence
             key={`${s.clip}-${s.from}`}
@@ -604,9 +616,9 @@ const Speaker: React.FC = () => {
             durationInFrames={f(s.at + s.to - s.from) - f(s.at)}
           >
             <OffthreadVideo
-              src={file(`IMG_${s.clip}.mp4`)}
+              src={file(`fast/IMG_${s.clip}.mp4`)}
               trimBefore={f(s.from)}
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              style={fill}
             />
           </Sequence>
         ))}
@@ -614,6 +626,56 @@ const Speaker: React.FC = () => {
     </AbsoluteFill>
   );
 };
+
+// Her cut-out (public/allenamento/fast/matte_8122.webm, first 4 s of the
+// clip) drawn over the opening title so the title sits behind her.
+const HOOK_END = f(at("8122", 3.4)) + FADE;
+const SpeakerMatte: React.FC = () => {
+  const { outer, inner } = useSpeakerFrame();
+  const first = data.segments[0];
+  return (
+    <AbsoluteFill style={outer}>
+      <AbsoluteFill style={inner}>
+        <Sequence durationInFrames={HOOK_END}>
+          <OffthreadVideo
+            transparent
+            muted
+            src={file("fast/matte_8122.webm")}
+            trimBefore={f(first.from)}
+            style={fill}
+          />
+        </Sequence>
+      </AbsoluteFill>
+    </AbsoluteFill>
+  );
+};
+
+// A whoosh on every switch between her and the b-roll, softer between cues.
+const Sfx: React.FC = () => (
+  <>
+    {PIP_SPANS.map(({ start }) => (
+      <Sequence
+        key={`s${start}`}
+        from={Math.max(0, start - 6)}
+        durationInFrames={20}
+      >
+        <Audio src={staticFile("sfx/whoosh-in.wav")} volume={0.55} />
+      </Sequence>
+    ))}
+    {PIP_SPANS.map(({ end }) => (
+      <Sequence key={`e${end}`} from={end - 8} durationInFrames={18}>
+        <Audio src={staticFile("sfx/whoosh-out.wav")} volume={0.45} />
+      </Sequence>
+    ))}
+    {TIMED.filter((c) => !PIP_SPANS.some((p) => p.start === c.start)).map(
+      (c) => (
+        <Sequence key={`c${c.start}`} from={c.start - 6} durationInFrames={20}>
+          <Audio src={staticFile("sfx/whoosh-in.wav")} volume={0.3} />
+        </Sequence>
+      ),
+    )}
+  </>
+);
 
 // Warm light flash on every switch between her and the b-roll.
 const Flash: React.FC = () => {
@@ -643,35 +705,25 @@ const Flash: React.FC = () => {
 
 type Word = (typeof data.words)[number];
 
-// Phrases of up to two lines (about 3 words each), broken at sentence ends.
+// One-line phrases of about three words, broken at punctuation.
 const PHRASES = (() => {
-  const out: Word[][][] = [];
-  let lines: Word[][] = [];
+  const out: Word[][] = [];
   let line: Word[] = [];
-  const flush = () => {
-    if (line.length) lines.push(line);
-    line = [];
-  };
   for (const w of data.words) {
     line.push(w);
     const len = line.map((x) => x.w).join(" ").length;
-    const end = /[.?!]$/.test(w.w);
-    if (end || len >= 15 || (/,$/.test(w.w) && len >= 8)) {
-      flush();
-      if (end || lines.length === 2) {
-        out.push(lines);
-        lines = [];
-      }
+    if (/[.?!]$/.test(w.w) || len >= 14 || (/,$/.test(w.w) && len >= 7)) {
+      out.push(line);
+      line = [];
     }
   }
-  flush();
-  if (lines.length) out.push(lines);
+  if (line.length) out.push(line);
   return out;
 })();
 
 const phraseAt = (t: number) => {
   for (let i = PHRASES.length - 1; i >= 0; i--) {
-    if (t >= PHRASES[i][0][0].t - 0.05) return i;
+    if (t >= PHRASES[i][0].t - 0.05) return i;
   }
   return -1;
 };
@@ -684,44 +736,44 @@ const Captions: React.FC = () => {
   const i = phraseAt(t);
   if (i < 0) return null;
   const phrase = PHRASES[i];
-  const last = phrase[phrase.length - 1];
-  const end = PHRASES[i + 1]?.[0][0].t ?? last[last.length - 1].e + 0.6;
+  const end = PHRASES[i + 1]?.[0].t ?? phrase[phrase.length - 1].e + 0.6;
   const out = interpolate(t, [end - 0.18, end - 0.02], [0, 1], clamp);
   const side = cue !== undefined;
+  const width = side ? 560 : 920;
+  const text = phrase.map((w) => w.w.replace(/[.,]$/, "")).join(" ");
+  // Never wraps: shrink the type to fit the line instead.
+  const fontSize = Math.min(side ? 64 : 76, width / (text.length * 0.5));
   return (
     <div
       style={{
         position: "absolute",
-        top: side ? 1020 : 1000,
-        left: 80,
-        right: side ? 380 : 80,
+        top: side ? 1560 : 1400,
+        left: side ? 50 : 80,
+        width,
+        whiteSpace: "nowrap",
         textAlign: side ? "left" : "center",
-        fontFamily: inter,
-        fontSize: 66,
-        lineHeight: 1.12,
+        fontFamily: interTight,
+        fontSize,
+        fontWeight: i % 2 ? 700 : 300,
         letterSpacing: -1,
         color: "#fff",
-        textShadow: "0 2px 14px rgba(0,0,0,0.35)",
+        textShadow: "0 2px 16px rgba(0,0,0,0.45), 0 1px 3px rgba(0,0,0,0.35)",
         opacity: 1 - out,
         filter: `blur(${out * 8}px)`,
       }}
     >
-      {phrase.map((ln, li) => (
-        <div key={li} style={{ fontWeight: li % 2 ? 700 : 300 }}>
-          {ln.map((w, wi) => (
-            <span key={wi}>
-              {wi ? " " : ""}
-              <Reveal
-                text={w.w.replace(/[.,]$/, "")}
-                start={w.t - 0.04}
-                now={t}
-                step={0.025}
-                dur={0.22}
-                seed={Math.round(w.t * 100)}
-              />
-            </span>
-          ))}
-        </div>
+      {phrase.map((w, wi) => (
+        <span key={wi}>
+          {wi ? " " : ""}
+          <Reveal
+            text={w.w.replace(/[.,]$/, "")}
+            start={w.t - 0.04}
+            now={t}
+            step={0.025}
+            dur={0.22}
+            seed={Math.round(w.t * 100)}
+          />
+        </span>
       ))}
     </div>
   );
@@ -729,49 +781,48 @@ const Captions: React.FC = () => {
 
 const Hook: React.FC = () => {
   const frame = useCurrentFrame();
-  // Gone before the first b-roll, so it always sits on the light wall.
-  const end = f(at("8122", 3.4)) + FADE;
-  const o = interpolate(frame, [end - 8, end], [1, 0], clamp);
+  const o = interpolate(frame, [HOOK_END - 8, HOOK_END], [1, 0], clamp);
   return (
     <div
       style={{
         position: "absolute",
-        top: 200,
-        left: 70,
-        right: 70,
+        top: 250,
+        left: 50,
+        right: 50,
         opacity: o,
         filter: `blur(${(1 - o) * 8}px)`,
         textAlign: "center",
-        fontFamily: inter,
-        lineHeight: 1.02,
-        letterSpacing: -3,
+        fontFamily: interTight,
+        lineHeight: 0.98,
+        letterSpacing: -4,
       }}
     >
       <div style={{ fontSize: 96, fontWeight: 300, color: colors.plum }}>
         <Reveal
           text="Menopausa:"
-          start={3}
+          start={2}
           now={frame}
           step={1}
           dur={8}
           seed={7}
         />
       </div>
-      <div style={{ fontSize: 104, fontWeight: 700, color: colors.rose }}>
+      <div style={{ fontSize: 124, fontWeight: 700, color: colors.rose }}>
         <Reveal
           text="perché la pancia"
-          start={12}
+          start={10}
           now={frame}
           step={1}
           dur={8}
           seed={19}
         />
-        <br />
+      </div>
+      <div style={{ fontSize: 190, fontWeight: 700, color: colors.rose }}>
         <Reveal
           text="cresce?"
-          start={28}
+          start={24}
           now={frame}
-          step={1}
+          step={1.2}
           dur={8}
           seed={43}
         />
@@ -780,39 +831,20 @@ const Hook: React.FC = () => {
   );
 };
 
-// Plum on the light grid backgrounds, white over video; moved left of the
-// picture-in-picture so it never runs over her.
-const Sign: React.FC = () => {
-  const frame = useCurrentFrame();
-  const cue = TIMED.find(({ start, end }) => frame >= start && frame < end);
-  const light = cue !== undefined && cue.o.kind !== "media";
-  return (
-    <AbsoluteFill style={{ right: 560 * pipAmount(frame) }}>
-      {light ? (
-        <Signature color={colors.plum} fontFamily={inter} bottom={70} />
-      ) : (
-        <Signature
-          color="#fff"
-          shadow="0 2px 10px rgba(0,0,0,0.5)"
-          fontFamily={inter}
-          bottom={70}
-        />
-      )}
-    </AbsoluteFill>
-  );
-};
-
 export const AllenamentoMenopausa: React.FC = () => (
-  <AbsoluteFill style={{ backgroundColor: colors.pink, fontFamily: inter }}>
+  <AbsoluteFill
+    style={{ backgroundColor: colors.pink, fontFamily: interTight }}
+  >
     {TIMED.map(({ start, end, o }) => (
       <Sequence key={start} from={start} durationInFrames={end - start}>
         <OverlayView o={o} len={end - start} />
       </Sequence>
     ))}
     <Speaker />
-    <Flash />
     <Hook />
+    <SpeakerMatte />
+    <Flash />
     <Captions />
-    <Sign />
+    <Sfx />
   </AbsoluteFill>
 );
