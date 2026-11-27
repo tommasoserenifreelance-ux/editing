@@ -1,56 +1,41 @@
 import { useCurrentFrame, useVideoConfig } from "remotion";
 
-// Edit of ZYM gonfiore plus 1 + 2 (concatenated, source seconds). Each spoken
-// question is replaced by a blurred question card with a music bed; pauses
-// (room-reverb tail below -27 dB) and two stumbles ("sla- slaccio",
-// "borbo- borborigmi") are cut as jump cuts.
+// Edit of ZYM gonfiore plus 1 + 2 (concatenated, source seconds). The two
+// interview questions become blurred question cards with a music bed; the
+// off-mic aside at 49-51.7 s is dropped. Only real pauses (>=0.3 s below
+// -29 dB, keeping a breath of tail) and two stumbles ("sla- slaccio",
+// "borbo- borborigmi") are cut, for a smoother rhythm.
 export type Item = { kind: "seg"; a: number; b: number } | { kind: "card"; q: number };
 
 export const ITEMS: Item[] = [
   { kind: "card", q: 0 },
-  { kind: "seg", a: 8.5, b: 17.73 },
-  { kind: "seg", a: 18.39, b: 21.97 },
-  { kind: "seg", a: 22.17, b: 24.91 },
-  { kind: "seg", a: 25.16, b: 26.53 },
-  { kind: "seg", a: 27.03, b: 28.27 },
-  { kind: "seg", a: 28.55, b: 31.88 },
-  { kind: "seg", a: 32.34, b: 32.83 },
-  { kind: "seg", a: 32.96, b: 37.1 },
-  { kind: "seg", a: 37.52, b: 42.61 },
-  { kind: "seg", a: 43.02, b: 45.32 },
-  { kind: "seg", a: 45.46, b: 47.75 },
-  { kind: "card", q: 1 },
+  { kind: "seg", a: 8.5, b: 18.2 },
+  { kind: "seg", a: 18.35, b: 28.36 },
+  { kind: "seg", a: 28.51, b: 31.97 },
+  { kind: "seg", a: 32.3, b: 37.29 },
+  { kind: "seg", a: 37.48, b: 42.74 },
+  { kind: "seg", a: 42.98, b: 47.7 },
   { kind: "seg", a: 51.85, b: 52.72 },
-  { kind: "seg", a: 53.44, b: 56.11 },
-  { kind: "seg", a: 56.25, b: 57.03 },
-  { kind: "seg", a: 57.26, b: 58.66 },
-  { kind: "seg", a: 58.86, b: 61.11 },
-  { kind: "seg", a: 61.36, b: 62.34 },
-  { kind: "seg", a: 62.77, b: 64.96 },
-  { kind: "seg", a: 65.27, b: 66.1 },
-  { kind: "seg", a: 66.75, b: 67.78 },
-  { kind: "seg", a: 68.04, b: 71.38 },
-  { kind: "seg", a: 71.84, b: 73.06 },
-  { kind: "seg", a: 73.52, b: 77.41 },
-  { kind: "seg", a: 77.76, b: 80.14 },
-  { kind: "seg", a: 80.38, b: 83.04 },
-  { kind: "seg", a: 83.39, b: 85.62 },
-  { kind: "seg", a: 85.75, b: 86.1 },
-  { kind: "card", q: 2 },
-  { kind: "seg", a: 92.55, b: 94.21 },
-  { kind: "seg", a: 94.48, b: 98.32 },
-  { kind: "seg", a: 98.45, b: 101.34 },
-  { kind: "seg", a: 101.66, b: 102.89 },
-  { kind: "seg", a: 103.5, b: 105.28 },
-  { kind: "seg", a: 105.38, b: 106.81 },
-  { kind: "seg", a: 107.2, b: 109.27 },
-  { kind: "seg", a: 109.39, b: 110.75 },
+  { kind: "seg", a: 53.44, b: 62.42 },
+  { kind: "seg", a: 62.72, b: 65.07 },
+  { kind: "seg", a: 65.22, b: 66.18 },
+  { kind: "seg", a: 66.71, b: 71.38 },
+  { kind: "seg", a: 71.84, b: 73.14 },
+  { kind: "seg", a: 73.47, b: 77.5 },
+  { kind: "seg", a: 77.72, b: 83.11 },
+  { kind: "seg", a: 83.35, b: 86.55 },
+  { kind: "card", q: 1 },
+  { kind: "seg", a: 92.55, b: 94.3 },
+  { kind: "seg", a: 94.44, b: 101.43 },
+  { kind: "seg", a: 101.62, b: 102.96 },
+  { kind: "seg", a: 103.46, b: 106.9 },
+  { kind: "seg", a: 107.16, b: 110.6 },
 ];
 
 export const CARD_SECONDS = 3.0;
 
 /** Items (index into ITEMS) that start with a zoom-blur + whoosh: topic changes. */
-export const TRANSITION_ITEMS = [5, 17, 21];
+export const TRANSITION_ITEMS = [7, 11];
 
 const dur = (it: Item) => (it.kind === "card" ? CARD_SECONDS : it.b - it.a);
 export const ITEM_OUT_STARTS: number[] = [];

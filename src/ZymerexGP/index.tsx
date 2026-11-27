@@ -22,10 +22,9 @@ export const GP_DURATION = Math.round((EDIT_END + 3.0) * GP_FPS);
 
 const clamp = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
 
-// The three spoken questions, shown as cards (Zymerex reference style).
+// The two interview questions, shown as cards (Zymerex reference style).
 export const QUESTIONS: string[][] = [
   ["Zymerex", "Gonfiore Plus,", "qual è l'occasione", "tipo in cui la pancia", "si fa sentire?"],
-  ["Che cosa fa", "la persona", "tipicamente", "in questi casi?"],
   ["Quanto incide", "questo fastidio", "sul resto", "della giornata?"],
 ];
 
@@ -59,7 +58,8 @@ const VideoLayer: React.FC = () => {
     >
       {ITEMS.map((it, i) => {
         const from = outFrame(i, fps);
-        const end = i + 1 < ITEMS.length ? outFrame(i + 1, fps) : Math.round(EDIT_END * fps) + 3 * fps;
+        // the last segment stops exactly at the end of the talk: nothing plays under the end card
+        const end = i + 1 < ITEMS.length ? outFrame(i + 1, fps) : Math.round(EDIT_END * fps);
         if (it.kind === "card") {
           // blurred, muted footage of the question under the card
           const next = ITEMS.slice(i + 1).find((x) => x.kind === "seg") as { a: number };
