@@ -111,7 +111,7 @@ def certo():
              '<div class="wm" style="font-size:112px;line-height:.98;white-space:nowrap">niente promesse<i>.</i><br>niente miracoli<i>.</i></div>')
     o += photo(9, "f_DSC06765.jpg",
                '<div class="lite" style="font-size:56px">solo il punto di vista di</div>'
-               '<div class="bold" style="font-size:88px;line-height:1">chi ci sta dentro<br><span class="l">con le mani.</span></div>')
+               '<div class="bold" style="font-size:88px;line-height:1">chi lo fa<br><span class="l">tutti i giorni.</span></div>')
     o += txt(10, "dark",
              '<div class="lite" style="font-size:58px;line-height:1.15;color:#cfcfcf">non sapevi che un infermiere<br>potesse fare questo?</div>'
              '<div class="wm" style="font-size:190px;line-height:.95">appunto<i>.</i></div>')
@@ -164,7 +164,7 @@ def factanza():
     o += s(8, '<div class="col"><div class="box"><div class="big" style="font-size:150px">Niente<br>promesse.</div></div>'
               '<div class="big" style="font-size:190px;color:#fff;margin-top:50px">Niente<br><span class="mk">miracoli.</span></div></div>')
     o += s(9, '<div class="col"><div style="font-size:70px;color:#fff;letter-spacing:-.03em">Solo il punto di vista di</div>'
-              '<div class="box" style="margin-top:30px"><div class="big" style="font-size:132px">chi ci sta dentro<br><span class="l">con le mani.</span></div></div></div>')
+              '<div class="box" style="margin-top:30px"><div class="big" style="font-size:132px">chi lo fa<br><span class="l">tutti i giorni.</span></div></div></div>')
     o += s(10, '<div class="t" style="top:150px;font-size:58px;color:#fff;line-height:1.12">Non sapevi che un infermiere potesse fare <b>questo?</b></div>'
                '<div class="t big" style="top:320px;font-size:150px"><span class="mk">Appunto.</span></div>'
                '<img class="cut ht" src="c_DSC06700.png" style="top:540px">')
@@ -207,7 +207,7 @@ def theia():
     o += s(5, f'<div class="col"><div class="tx" style="font-size:72px"><b>Qui raccontiamo quello che <span class="r">{UL("vediamo", "#F24E24", 5)}</span>.</b></div>'
               '<div class="tx" style="font-size:56px;line-height:1.22">Come funziona <b>davvero</b> questo mondo.<br><br>Cosa ci <b>chiedono</b> le persone.<br><br>Cosa impari stando accanto <b class="r">a qualcuno.</b></div></div>')
     o += s(6, '<div class="col"><div style="font-size:124px;font-weight:800;letter-spacing:-.055em;line-height:1">Niente promesse.<br><span class="r">Niente miracoli.</span></div>'
-              f'<div class="tx">Solo il punto di vista di chi ci sta dentro <b class="r">{UL("con le mani", "#F24E24", 5)}</b>.</div></div>')
+              f'<div class="tx">Solo il punto di vista di chi lo fa <b class="r">{UL("tutti i giorni", "#F24E24", 5)}</b>.</div></div>')
     o += s(7, '<div class="t tx" style="top:150px;font-size:54px">Non sapevi che un infermiere potesse fare <b>questo?</b></div>'
               '<div class="t" style="top:300px;font-size:150px;font-weight:800;letter-spacing:-.06em;line-height:1">Appunto.</div>'
               '<img class="cut" src="c_DSC06667.png" style="top:520px">')
@@ -264,7 +264,7 @@ def piccolimondi():
     o += s(8, '<svg style="position:absolute;left:200px;top:140px;z-index:2" width="680" height="520" viewBox="0 0 680 520" filter="url(#crayon)"><g fill="none" stroke-linecap="round"><path d="M340 60 L385 200 L530 200 L412 285 L458 425 L340 340 L222 425 L268 285 L150 200 L295 200 Z" stroke="#C6CC30" stroke-width="14" stroke-linejoin="round"/><path d="M90 470 L600 60" stroke="#F24E24" stroke-width="18"/></g></svg>'
               f'<div class="t" style="top:760px;{big};font-size:130px">Niente promesse.<br>Niente miracoli.</div>')
     o += s(9, '<svg style="position:absolute;left:300px;top:150px;z-index:2" width="480" height="500" viewBox="0 0 480 500" filter="url(#crayon)"><g fill="none" stroke="#F24E24" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"><path d="M140 470c-60-90-40-180 10-250 18-30 50-14 42 18l-18 80 110-160c18-26 52-8 40 22l-60 116 90-90c22-22 52 4 30 30l-90 100 66-44c26-18 48 14 26 36-90 90-150 150-246 142z"/></g></svg>'
-              f'<div class="t" style="top:760px;font-size:56px">Solo il punto di vista di</div><div class="t" style="top:860px;{big};font-size:130px">chi ci sta dentro con le mani.</div>')
+              f'<div class="t" style="top:760px;font-size:56px">Solo il punto di vista di</div><div class="t" style="top:860px;{big};font-size:130px">chi lo fa tutti i giorni.</div>')
     o += s(10, TREE + '<div class="t" style="top:760px;font-size:62px;line-height:1.1">Non sapevi che un infermiere potesse fare questo?</div>'
                '<div class="t" style="top:960px;font-size:150px;font-weight:600;letter-spacing:-.05em;line-height:1">Appunto.</div>'
                '<img class="logo" src="logo.png" style="bottom:70px;width:120px">')
