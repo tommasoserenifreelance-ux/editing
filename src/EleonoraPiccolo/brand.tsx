@@ -12,6 +12,7 @@ const FONTS: [string, string, string][] = [
   [sans, "400", "montserrat-latin-400-normal"],
   [sans, "500", "montserrat-latin-500-normal"],
   [sans, "700", "montserrat-latin-700-normal"],
+  [inter, "300", "inter-latin-300-normal"],
   [inter, "400", "inter-latin-400-normal"],
   [inter, "500", "inter-latin-500-normal"],
   [inter, "600", "inter-latin-600-normal"],

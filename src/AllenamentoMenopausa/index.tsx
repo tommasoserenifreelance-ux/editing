@@ -39,7 +39,7 @@ const at = (clip: keyof typeof data.tl, src: number) => {
 };
 
 type Overlay =
-  | { kind: "media"; src: string; label?: string }
+  | { kind: "media"; src: string }
   | { kind: "image"; src: string; label: string }
   | { kind: "card"; kicker?: string; lines: string[]; accent?: number }
   | { kind: "pillars" }
@@ -53,13 +53,13 @@ const CUES: Cue[] = [
     clip: "8122",
     from: 7.8,
     to: 9.9,
-    o: { kind: "media", src: "addome.mp4", label: "Il metabolismo rallenta" },
+    o: { kind: "media", src: "addome.mp4" },
   },
   {
     clip: "8122",
     from: 10.6,
     to: 14.4,
-    o: { kind: "media", src: "muscoli.mp4", label: "Meno massa muscolare" },
+    o: { kind: "media", src: "muscoli.mp4" },
   },
   {
     clip: "8122",
@@ -100,7 +100,7 @@ const CUES: Cue[] = [
     clip: "8124",
     from: 26.1,
     to: 30.7,
-    o: { kind: "media", src: "manubri.mp4", label: "Aumenta il carico" },
+    o: { kind: "media", src: "manubri.mp4" },
   },
   {
     clip: "8124",
@@ -122,13 +122,13 @@ const CUES: Cue[] = [
     clip: "8125",
     from: 6.2,
     to: 10.9,
-    o: { kind: "media", src: "cuore.mp4", label: "Cuore e vasi elastici" },
+    o: { kind: "media", src: "cuore.mp4" },
   },
   {
     clip: "8125",
     from: 11.4,
     to: 15.1,
-    o: { kind: "media", src: "corsa.mp4", label: "Ogni settimana" },
+    o: { kind: "media", src: "corsa.mp4" },
   },
   {
     clip: "8126",
@@ -182,7 +182,6 @@ const CUES: Cue[] = [
     o: {
       kind: "media",
       src: "ginocchio.mp4",
-      label: "La cartilagine invecchia",
     },
   },
   {
@@ -192,7 +191,6 @@ const CUES: Cue[] = [
     o: {
       kind: "media",
       src: "nuoto.mp4",
-      label: "Pedalare, nuotare, camminare",
     },
   },
   {
@@ -210,13 +208,13 @@ const CUES: Cue[] = [
     clip: "8130",
     from: 4.7,
     to: 6.45,
-    o: { kind: "media", src: "sonno.mp4", label: "Dormi meglio" },
+    o: { kind: "media", src: "sonno.mp4" },
   },
   {
     clip: "8130",
     from: 6.5,
     to: 8.3,
-    o: { kind: "media", src: "sorriso.mp4", label: "Umore migliore" },
+    o: { kind: "media", src: "sorriso.mp4" },
   },
   {
     clip: "8130",
@@ -247,6 +245,49 @@ const TIMED = CUES.map((c) => ({
   o: c.o,
 }));
 
+// ---------- Letter reveal ----------
+
+// Deterministic pseudo-random number in [-1, 1] for a given seed.
+const jitter = (seed: number) => {
+  const v = Math.sin(seed * 12.9898) * 43758.5453;
+  return (v - Math.floor(v)) * 2 - 1;
+};
+
+// Letters fade in one after another, from blurred and scattered to settled.
+const Reveal: React.FC<{
+  text: string;
+  start: number; // seconds or frames, same unit as `now`
+  now: number;
+  step: number; // delay between letters
+  dur: number; // duration of each letter's animation
+  seed?: number;
+}> = ({ text, start, now, step, dur, seed = 0 }) => (
+  <>
+    {[...text].map((ch, i) => {
+      const k = interpolate(
+        now,
+        [start + i * step, start + i * step + dur],
+        [0, 1],
+        clamp,
+      );
+      return (
+        <span
+          key={i}
+          style={{
+            display: "inline-block",
+            whiteSpace: "pre",
+            opacity: k,
+            filter: `blur(${(1 - k) * 8}px)`,
+            transform: `translateY(${(1 - k) * 22 * jitter(seed + i)}px) scale(${0.7 + 0.3 * k})`,
+          }}
+        >
+          {ch}
+        </span>
+      );
+    })}
+  </>
+);
+
 // ---------- Overlay pieces ----------
 
 const GridBg: React.FC = () => (
@@ -259,46 +300,40 @@ const GridBg: React.FC = () => (
   />
 );
 
-const Label: React.FC<{ children: React.ReactNode; light?: boolean }> = ({
-  children,
-  light,
-}) => (
-  <div
-    style={{
-      position: "absolute",
-      top: 230,
-      left: 70,
-      right: 70,
-      display: "flex",
-      justifyContent: "center",
-    }}
-  >
+// Animated title above the illustrations.
+const Label: React.FC<{ children: string }> = ({ children }) => {
+  const frame = useCurrentFrame();
+  return (
     <div
       style={{
-        background: light ? "transparent" : colors.plum,
-        color: light ? colors.plum : "#fff",
-        fontSize: light ? 84 : 52,
-        fontWeight: 700,
-        letterSpacing: light ? -2 : 0,
-        padding: light ? 0 : "18px 34px",
-        borderRadius: 20,
+        position: "absolute",
+        top: 230,
+        left: 70,
+        right: 70,
         textAlign: "center",
+        color: colors.plum,
+        fontSize: 84,
+        fontWeight: 700,
+        letterSpacing: -2,
         lineHeight: 1.1,
       }}
     >
-      {children}
+      <Reveal
+        text={children}
+        start={2}
+        now={frame}
+        step={0.8}
+        dur={7}
+        seed={children.length}
+      />
     </div>
-  </div>
-);
+  );
+};
 
 const zoom = (t: number, len: number) =>
   `scale(${interpolate(t, [0, len], [1, 1.08], clamp)})`;
 
-const Media: React.FC<{ src: string; label?: string; len: number }> = ({
-  src,
-  label,
-  len,
-}) => {
+const Media: React.FC<{ src: string; len: number }> = ({ src, len }) => {
   const t = useCurrentFrame();
   return (
     <AbsoluteFill style={{ backgroundColor: "#000" }}>
@@ -312,7 +347,6 @@ const Media: React.FC<{ src: string; label?: string; len: number }> = ({
           transform: zoom(t, len),
         }}
       />
-      {label ? <Label>{label}</Label> : null}
     </AbsoluteFill>
   );
 };
@@ -326,7 +360,7 @@ const Picture: React.FC<{ src: string; label: string; len: number }> = ({
   return (
     <AbsoluteFill>
       <GridBg />
-      <Label light>{label}</Label>
+      <Label>{label}</Label>
       <Img
         src={file(src)}
         style={{
@@ -374,13 +408,20 @@ const Card: React.FC<{ kicker?: string; lines: string[]; accent?: number }> = ({
               opacity: interpolate(t, [i * 8, i * 8 + 8], [0, 1], clamp),
               transform: `translateY(${interpolate(t, [i * 8, i * 8 + 8], [30, 0], clamp)}px)`,
               fontSize: lines.length === 1 ? 140 : 96,
-              fontWeight: 700,
+              fontWeight: i === accent || lines.length === 1 ? 700 : 300,
               lineHeight: 1.05,
               letterSpacing: -3,
               color: i === accent ? colors.rose : colors.plum,
             }}
           >
-            {line}
+            <Reveal
+              text={line}
+              start={i * 8}
+              now={t}
+              step={0.7}
+              dur={7}
+              seed={i * 31}
+            />
           </div>
         ))}
       </div>
@@ -492,7 +533,7 @@ const Sets: React.FC = () => {
 const OverlayView: React.FC<{ o: Overlay; len: number }> = ({ o, len }) => {
   switch (o.kind) {
     case "media":
-      return <Media src={o.src} label={o.label} len={len} />;
+      return <Media src={o.src} len={len} />;
     case "image":
       return <Picture src={o.src} label={o.label} len={len} />;
     case "card":
@@ -506,8 +547,8 @@ const OverlayView: React.FC<{ o: Overlay; len: number }> = ({ o, len }) => {
 
 // ---------- Speaker, full screen or picture-in-picture ----------
 
-const PIP_SCALE = 0.3;
-const FADE = 6;
+const PIP_SCALE = 0.42;
+const FADE = 5;
 
 // 0 = full screen, 1 = in the corner.
 // Back-to-back cues count as one span, so she stays in the corner between them.
@@ -539,145 +580,225 @@ const Speaker: React.FC = () => {
   const frame = useCurrentFrame();
   const k = pipAmount(frame);
   const scale = 1 - (1 - PIP_SCALE) * k;
+  // Jump zoom on every other caption phrase while she is full screen.
+  const phrase = phraseAt(frame / ALLENAMENTO_FPS);
+  const punch = 1 + 0.12 * ((phrase < 0 ? 0 : phrase) % 2) * (1 - k);
+  const feather = `rgba(0,0,0,${1 - k})`;
   return (
     <AbsoluteFill
       style={{
         transformOrigin: "100% 100%",
-        transform: `translate(${-50 * k}px, ${-200 * k}px) scale(${scale})`,
-        borderRadius: 80 * k,
+        transform: `scale(${scale})`,
         overflow: "hidden",
-        boxShadow:
-          k > 0
-            ? `0 0 0 ${18 * k}px #fff, 0 20px 60px rgba(0,0,0,${0.35 * k})`
-            : undefined,
+        WebkitMaskImage: `linear-gradient(to right, ${feather}, #000 22%), linear-gradient(to bottom, ${feather}, #000 18%)`,
+        WebkitMaskComposite: "source-in",
       }}
     >
-      {data.segments.map((s) => (
-        <Sequence
-          key={`${s.clip}-${s.from}`}
-          from={f(s.at)}
-          durationInFrames={f(s.at + s.to - s.from) - f(s.at)}
-        >
-          <OffthreadVideo
-            src={file(`IMG_${s.clip}.mp4`)}
-            trimBefore={f(s.from)}
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-          />
-        </Sequence>
-      ))}
+      <AbsoluteFill
+        style={{ transform: `scale(${punch})`, transformOrigin: "50% 35%" }}
+      >
+        {data.segments.map((s) => (
+          <Sequence
+            key={`${s.clip}-${s.from}`}
+            from={f(s.at)}
+            durationInFrames={f(s.at + s.to - s.from) - f(s.at)}
+          >
+            <OffthreadVideo
+              src={file(`IMG_${s.clip}.mp4`)}
+              trimBefore={f(s.from)}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          </Sequence>
+        ))}
+      </AbsoluteFill>
     </AbsoluteFill>
+  );
+};
+
+// Warm light flash on every switch between her and the b-roll.
+const Flash: React.FC = () => {
+  const frame = useCurrentFrame();
+  let o = 0;
+  for (const { start, end } of PIP_SPANS) {
+    for (const b of [start + FADE / 2, end - FADE / 2]) {
+      o = Math.max(
+        o,
+        interpolate(frame, [b - 6, b, b + 8], [0, 0.85, 0], clamp),
+      );
+    }
+  }
+  if (o === 0) return null;
+  return (
+    <AbsoluteFill
+      style={{
+        opacity: o,
+        background:
+          "radial-gradient(circle at 65% 40%, rgba(255,246,236,1) 0%, rgba(255,214,190,0.85) 45%, rgba(246,193,204,0.4) 80%, rgba(246,193,204,0) 100%)",
+      }}
+    />
   );
 };
 
 // ---------- Captions ----------
 
-// Groups of up to 3 words, broken after punctuation.
-const CHUNKS = (() => {
-  const out: (typeof data.words)[] = [];
-  let cur: typeof data.words = [];
+type Word = (typeof data.words)[number];
+
+// Phrases of up to two lines (about 3 words each), broken at sentence ends.
+const PHRASES = (() => {
+  const out: Word[][][] = [];
+  let lines: Word[][] = [];
+  let line: Word[] = [];
+  const flush = () => {
+    if (line.length) lines.push(line);
+    line = [];
+  };
   for (const w of data.words) {
-    cur.push(w);
-    if (cur.length === 3 || /[.,?!]$/.test(w.w)) {
-      out.push(cur);
-      cur = [];
+    line.push(w);
+    const len = line.map((x) => x.w).join(" ").length;
+    const end = /[.?!]$/.test(w.w);
+    if (end || len >= 15 || (/,$/.test(w.w) && len >= 8)) {
+      flush();
+      if (end || lines.length === 2) {
+        out.push(lines);
+        lines = [];
+      }
     }
   }
-  if (cur.length) out.push(cur);
+  flush();
+  if (lines.length) out.push(lines);
   return out;
 })();
+
+const phraseAt = (t: number) => {
+  for (let i = PHRASES.length - 1; i >= 0; i--) {
+    if (t >= PHRASES[i][0][0].t - 0.05) return i;
+  }
+  return -1;
+};
 
 const Captions: React.FC = () => {
   const frame = useCurrentFrame();
   const t = frame / ALLENAMENTO_FPS;
-  const chunk = CHUNKS.find(
-    (c, i) =>
-      t >= c[0].t && t < (CHUNKS[i + 1]?.[0].t ?? c[c.length - 1].e + 0.4),
-  );
-  if (!chunk) return null;
+  const cue = TIMED.find(({ start, end }) => frame >= start && frame < end);
+  if (cue && cue.o.kind !== "media") return null; // light backgrounds
+  const i = phraseAt(t);
+  if (i < 0) return null;
+  const phrase = PHRASES[i];
+  const last = phrase[phrase.length - 1];
+  const end = PHRASES[i + 1]?.[0][0].t ?? last[last.length - 1].e + 0.6;
+  const out = interpolate(t, [end - 0.18, end - 0.02], [0, 1], clamp);
+  const side = cue !== undefined;
   return (
     <div
       style={{
         position: "absolute",
-        top: 1030,
-        left: 60,
-        right: 60,
-        display: "flex",
-        justifyContent: "center",
+        top: side ? 1020 : 1000,
+        left: 80,
+        right: side ? 380 : 80,
+        textAlign: side ? "left" : "center",
+        fontFamily: inter,
+        fontSize: 66,
+        lineHeight: 1.12,
+        letterSpacing: -1,
+        color: "#fff",
+        textShadow: "0 2px 14px rgba(0,0,0,0.35)",
+        opacity: 1 - out,
+        filter: `blur(${out * 8}px)`,
       }}
     >
-      <div
-        style={{
-          background: "rgba(110,63,99,0.92)",
-          borderRadius: 18,
-          padding: "14px 28px",
-          fontFamily: inter,
-          fontSize: 58,
-          fontWeight: 700,
-          color: "#fff",
-          textAlign: "center",
-          lineHeight: 1.15,
-        }}
-      >
-        {chunk.map((w, i) => (
-          <span
-            key={i}
-            style={{ color: t >= w.t ? "#fff" : "rgba(255,255,255,0.45)" }}
-          >
-            {i ? " " : ""}
-            {w.w.replace(/[.,]$/, "")}
-          </span>
-        ))}
-      </div>
+      {phrase.map((ln, li) => (
+        <div key={li} style={{ fontWeight: li % 2 ? 700 : 300 }}>
+          {ln.map((w, wi) => (
+            <span key={wi}>
+              {wi ? " " : ""}
+              <Reveal
+                text={w.w.replace(/[.,]$/, "")}
+                start={w.t - 0.04}
+                now={t}
+                step={0.025}
+                dur={0.22}
+                seed={Math.round(w.t * 100)}
+              />
+            </span>
+          ))}
+        </div>
+      ))}
     </div>
   );
 };
 
 const Hook: React.FC = () => {
   const frame = useCurrentFrame();
-  const end = f(at("8122", 5.9));
-  const o = Math.min(
-    interpolate(frame, [0, 8], [0, 1], clamp),
-    interpolate(frame, [end - 8, end], [1, 0], clamp),
-  );
+  // Gone before the first b-roll, so it always sits on the light wall.
+  const end = f(at("8122", 3.4)) + FADE;
+  const o = interpolate(frame, [end - 8, end], [1, 0], clamp);
   return (
     <div
       style={{
         position: "absolute",
-        top: 220,
+        top: 200,
         left: 70,
         right: 70,
         opacity: o,
+        filter: `blur(${(1 - o) * 8}px)`,
         textAlign: "center",
         fontFamily: inter,
-        fontWeight: 700,
-        fontSize: 92,
-        lineHeight: 1.05,
-        letterSpacing: -2,
-        color: "#fff",
-        textShadow: "0 4px 28px rgba(0,0,0,0.6), 0 2px 6px rgba(0,0,0,0.5)",
+        lineHeight: 1.02,
+        letterSpacing: -3,
       }}
     >
-      Menopausa:
-      <br />
-      <span style={{ color: "#F6C1CC" }}>perché la pancia cresce?</span>
+      <div style={{ fontSize: 96, fontWeight: 300, color: colors.plum }}>
+        <Reveal
+          text="Menopausa:"
+          start={3}
+          now={frame}
+          step={1}
+          dur={8}
+          seed={7}
+        />
+      </div>
+      <div style={{ fontSize: 104, fontWeight: 700, color: colors.rose }}>
+        <Reveal
+          text="perché la pancia"
+          start={12}
+          now={frame}
+          step={1}
+          dur={8}
+          seed={19}
+        />
+        <br />
+        <Reveal
+          text="cresce?"
+          start={28}
+          now={frame}
+          step={1}
+          dur={8}
+          seed={43}
+        />
+      </div>
     </div>
   );
 };
 
-// Plum on the light grid backgrounds, white over video.
+// Plum on the light grid backgrounds, white over video; moved left of the
+// picture-in-picture so it never runs over her.
 const Sign: React.FC = () => {
   const frame = useCurrentFrame();
   const cue = TIMED.find(({ start, end }) => frame >= start && frame < end);
   const light = cue !== undefined && cue.o.kind !== "media";
-  return light ? (
-    <Signature color={colors.plum} fontFamily={inter} bottom={70} />
-  ) : (
-    <Signature
-      color="#fff"
-      shadow="0 2px 10px rgba(0,0,0,0.5)"
-      fontFamily={inter}
-      bottom={70}
-    />
+  return (
+    <AbsoluteFill style={{ right: 560 * pipAmount(frame) }}>
+      {light ? (
+        <Signature color={colors.plum} fontFamily={inter} bottom={70} />
+      ) : (
+        <Signature
+          color="#fff"
+          shadow="0 2px 10px rgba(0,0,0,0.5)"
+          fontFamily={inter}
+          bottom={70}
+        />
+      )}
+    </AbsoluteFill>
   );
 };
 
@@ -689,6 +810,7 @@ export const AllenamentoMenopausa: React.FC = () => (
       </Sequence>
     ))}
     <Speaker />
+    <Flash />
     <Hook />
     <Captions />
     <Sign />
