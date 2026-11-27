@@ -510,9 +510,20 @@ const PIP_SCALE = 0.3;
 const FADE = 6;
 
 // 0 = full screen, 1 = in the corner.
+// Back-to-back cues count as one span, so she stays in the corner between them.
+const PIP_SPANS = TIMED.reduce<{ start: number; end: number }[]>((acc, c) => {
+  const last = acc[acc.length - 1];
+  if (last && c.start - last.end <= FADE * 2) {
+    last.end = Math.max(last.end, c.end);
+  } else {
+    acc.push({ start: c.start, end: c.end });
+  }
+  return acc;
+}, []);
+
 const pipAmount = (frame: number) => {
   let v = 0;
-  for (const { start, end } of TIMED) {
+  for (const { start, end } of PIP_SPANS) {
     v = Math.max(
       v,
       Math.min(
