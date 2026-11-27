@@ -2,6 +2,7 @@ import {
   AbsoluteFill,
   Easing,
   Audio,
+  Freeze,
   Img,
   interpolate,
   OffthreadVideo,
@@ -250,34 +251,67 @@ const TIMED = CUES.map((c) => ({
 
 const smooth = { ...clamp, easing: Easing.inOut(Easing.cubic) };
 
-// Consecutive overlays slide: the next one pushes the current one off to the
-// left. The current one stays up until the next has fully arrived.
+const PIP_SCALE = 0.42;
+// Frames for her to shrink into / grow out of the corner.
+const FADE = 16;
 const SLIDE = 12;
-const chained = (i: number) => i > 0 && TIMED[i].start - TIMED[i - 1].end <= 24;
+
+// Back-to-back cues form one span. She shrinks into the corner only during
+// the three longest spans; the others cover her with a slide.
+const SPANS = TIMED.reduce<{ start: number; end: number; first: number }[]>(
+  (acc, c, i) => {
+    const last = acc[acc.length - 1];
+    if (last && c.start - last.end <= FADE * 2) {
+      last.end = Math.max(last.end, c.end);
+    } else {
+      acc.push({ start: c.start, end: c.end, first: i });
+    }
+    return acc;
+  },
+  [],
+);
+const PIP_SPANS = [...SPANS]
+  .sort((x, y) => y.end - y.start - (x.end - x.start))
+  .slice(0, 3)
+  .sort((x, y) => x.start - y.start);
+const spanOf = (frame: number) =>
+  SPANS.find(({ start, end }) => frame >= start && frame < end);
+const isPip = (span: { start: number } | undefined) =>
+  span !== undefined && PIP_SPANS.some((p) => p.start === span.start);
+
+// Overlays slide: the next one pushes the current one off to the left. Outside
+// the corner spans the first slides in over her and the last slides away.
 const OVERLAYS = TIMED.map((c, i) => {
-  const next = i + 1 < TIMED.length && chained(i + 1) ? TIMED[i + 1] : null;
+  const span = spanOf(c.start)!;
+  const pip = isPip(span);
+  const chainedPrev = span.first !== i;
+  const next =
+    i + 1 < TIMED.length && spanOf(TIMED[i + 1].start) === span
+      ? TIMED[i + 1]
+      : null;
+  const outAt = next ? next.start : pip ? null : c.end;
   return {
     ...c,
-    slideIn: chained(i),
-    until: next ? next.start + SLIDE : c.end,
-    next,
+    slideIn: chainedPrev || !pip,
+    outAt,
+    until: outAt === null ? c.end : outAt + SLIDE,
   };
 });
 
 const Slider: React.FC<{
   start: number;
   slideIn: boolean;
-  next: { start: number } | null;
+  outAt: number | null;
   children: React.ReactNode;
-}> = ({ start, slideIn, next, children }) => {
+}> = ({ start, slideIn, outAt, children }) => {
   const frame = useCurrentFrame() + start;
   const ease = { ...clamp, easing: Easing.out(Easing.cubic) };
   const x =
     (slideIn
       ? interpolate(frame, [start, start + SLIDE], [1080, 0], ease)
       : 0) +
-    (next
-      ? interpolate(frame, [next.start, next.start + SLIDE], [0, -1080], ease)
+    (outAt !== null
+      ? interpolate(frame, [outAt, outAt + SLIDE], [0, -1080], ease)
       : 0);
   return (
     <AbsoluteFill style={{ transform: `translateX(${x}px)` }}>
@@ -302,32 +336,43 @@ const Reveal: React.FC<{
   step: number; // delay between letters
   dur: number; // duration of each letter's animation
   seed?: number;
-}> = ({ text, start, now, step, dur, seed = 0 }) => (
-  <>
-    {[...text].map((ch, i) => {
-      const k = interpolate(
-        now,
-        [start + i * step, start + i * step + dur],
-        [0, 1],
-        clamp,
-      );
-      return (
-        <span
-          key={i}
-          style={{
-            display: "inline-block",
-            whiteSpace: "pre",
-            opacity: k,
-            filter: `blur(${(1 - k) * 8}px)`,
-            transform: `translateY(${(1 - k) * 22 * jitter(seed + i)}px) scale(${0.7 + 0.3 * k})`,
-          }}
-        >
-          {ch}
+}> = ({ text, start, now, step, dur, seed = 0 }) => {
+  // Words never break across lines; lines only wrap between words.
+  let i = 0;
+  return (
+    <>
+      {text.split(" ").map((word, wi) => (
+        <span key={wi}>
+          {wi ? " " : ""}
+          <span style={{ whiteSpace: "nowrap" }}>
+            {[...word].map((ch) => {
+              const n = i++;
+              const k = interpolate(
+                now,
+                [start + n * step, start + n * step + dur],
+                [0, 1],
+                clamp,
+              );
+              return (
+                <span
+                  key={n}
+                  style={{
+                    display: "inline-block",
+                    opacity: k,
+                    filter: `blur(${(1 - k) * 8}px)`,
+                    transform: `translateY(${(1 - k) * 22 * jitter(seed + n)}px) scale(${0.7 + 0.3 * k})`,
+                  }}
+                >
+                  {ch}
+                </span>
+              );
+            })}
+          </span>
         </span>
-      );
-    })}
-  </>
-);
+      ))}
+    </>
+  );
+};
 
 // ---------- Overlay pieces ----------
 
@@ -588,22 +633,7 @@ const OverlayView: React.FC<{ o: Overlay; len: number }> = ({ o, len }) => {
 
 // ---------- Speaker, full screen or picture-in-picture ----------
 
-const PIP_SCALE = 0.42;
-// Frames for her to shrink into / grow out of the corner.
-const FADE = 16;
-
 // 0 = full screen, 1 = in the corner.
-// Back-to-back cues count as one span, so she stays in the corner between them.
-const PIP_SPANS = TIMED.reduce<{ start: number; end: number }[]>((acc, c) => {
-  const last = acc[acc.length - 1];
-  if (last && c.start - last.end <= FADE * 2) {
-    last.end = Math.max(last.end, c.end);
-  } else {
-    acc.push({ start: c.start, end: c.end });
-  }
-  return acc;
-}, []);
-
 const pipAmount = (frame: number) => {
   let v = 0;
   for (const { start, end } of PIP_SPANS) {
@@ -619,19 +649,21 @@ const pipAmount = (frame: number) => {
 };
 
 // Full screen ↔ corner, plus a jump zoom on every other caption phrase.
-const useSpeakerFrame = () => {
+const useSpeakerFrame = (corner: boolean) => {
   const frame = useCurrentFrame();
-  const k = pipAmount(frame);
+  const k = corner ? pipAmount(frame) : 0;
   const phrase = phraseAt(frame / ALLENAMENTO_FPS);
   const punch = 1 + 0.12 * ((phrase < 0 ? 0 : phrase) % 2) * (1 - k);
   const feather = `rgba(0,0,0,${1 - k})`;
-  const outer: React.CSSProperties = {
-    transformOrigin: "100% 100%",
-    transform: `scale(${1 - (1 - PIP_SCALE) * k})`,
-    overflow: "hidden",
-    WebkitMaskImage: `linear-gradient(to right, ${feather}, #000 22%), linear-gradient(to bottom, ${feather}, #000 18%)`,
-    WebkitMaskComposite: "source-in",
-  };
+  const outer: React.CSSProperties = corner
+    ? {
+        transformOrigin: "100% 100%",
+        transform: `scale(${1 - (1 - PIP_SCALE) * k})`,
+        overflow: "hidden",
+        WebkitMaskImage: `linear-gradient(to right, ${feather}, #000 22%), linear-gradient(to bottom, ${feather}, #000 18%)`,
+        WebkitMaskComposite: "source-in",
+      }
+    : {};
   const inner: React.CSSProperties = {
     transform: `scale(${punch})`,
     transformOrigin: "50% 35%",
@@ -641,23 +673,19 @@ const useSpeakerFrame = () => {
 
 const fill = { width: "100%", height: "100%", objectFit: "cover" } as const;
 
-// Jump cuts between her takes slide too: the next take enters from the right
-// while the previous one keeps playing (muted) as it leaves to the left.
+// Jump cuts between her takes slide: the next take enters from the right
+// while the last frame of the previous one, frozen, leaves to the left.
 const CUTS = data.segments.slice(1).map((s) => f(s.at));
 
-const SlidingTake: React.FC<{
+const Take: React.FC<{
   clip: string;
   trim: number;
   slideIn: boolean;
-  slideOut: boolean;
-  len: number;
   muted?: boolean;
-}> = ({ clip, trim, slideIn, slideOut, len, muted }) => {
+}> = ({ clip, trim, slideIn, muted }) => {
   const t = useCurrentFrame();
   const ease = { ...clamp, easing: Easing.out(Easing.cubic) };
-  const x =
-    (slideIn ? interpolate(t, [0, SLIDE], [1080, 0], ease) : 0) +
-    (slideOut ? interpolate(t, [len - SLIDE, len], [0, -1080], ease) : 0);
+  const x = slideIn ? interpolate(t, [0, SLIDE], [1080, 0], ease) : 0;
   return (
     <AbsoluteFill style={{ transform: `translateX(${x}px)` }}>
       <OffthreadVideo
@@ -670,54 +698,83 @@ const SlidingTake: React.FC<{
   );
 };
 
+const Tail: React.FC<{ clip: string; lastFrame: number }> = ({
+  clip,
+  lastFrame,
+}) => {
+  const t = useCurrentFrame();
+  const ease = { ...clamp, easing: Easing.out(Easing.cubic) };
+  return (
+    <AbsoluteFill
+      style={{
+        zIndex: -1,
+        transform: `translateX(${interpolate(t, [0, SLIDE], [0, -1080], ease)}px)`,
+      }}
+    >
+      <Freeze frame={0}>
+        <OffthreadVideo
+          muted
+          src={file(`fast/IMG_${clip}.mp4`)}
+          trimBefore={lastFrame}
+          style={fill}
+        />
+      </Freeze>
+    </AbsoluteFill>
+  );
+};
+
+const Takes: React.FC<{ muted?: boolean }> = ({ muted }) => (
+  <>
+    {data.segments.map((s, i) => {
+      const start = f(s.at);
+      const len = f(s.at + s.to - s.from) - start;
+      return (
+        <Sequence
+          key={`${s.clip}-${s.from}`}
+          from={start}
+          durationInFrames={len}
+        >
+          <Take clip={s.clip} trim={f(s.from)} slideIn={i > 0} muted={muted} />
+        </Sequence>
+      );
+    })}
+    {data.segments.slice(0, -1).map((s) => {
+      const start = f(s.at + s.to - s.from);
+      return (
+        <Sequence
+          key={`tail-${s.clip}-${s.from}`}
+          from={start}
+          durationInFrames={SLIDE}
+          layout="none"
+        >
+          <Tail clip={s.clip} lastFrame={f(s.to) - 1} />
+        </Sequence>
+      );
+    })}
+  </>
+);
+
+// Full screen, under the overlays: carries her voice.
 const Speaker: React.FC = () => {
-  const { outer, inner } = useSpeakerFrame();
-  const last = data.segments.length - 1;
+  const { inner } = useSpeakerFrame(false);
+  return (
+    <AbsoluteFill style={inner}>
+      <Takes />
+    </AbsoluteFill>
+  );
+};
+
+// Over the overlays, only during the corner spans.
+const SpeakerCorner: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { outer, inner } = useSpeakerFrame(true);
+  if (!PIP_SPANS.some(({ start, end }) => frame >= start && frame < end)) {
+    return null;
+  }
   return (
     <AbsoluteFill style={outer}>
       <AbsoluteFill style={inner}>
-        {data.segments.map((s, i) => {
-          const start = f(s.at);
-          const len = f(s.at + s.to - s.from) - start;
-          return (
-            <Sequence
-              key={`${s.clip}-${s.from}`}
-              from={start}
-              durationInFrames={len}
-            >
-              <SlidingTake
-                clip={s.clip}
-                trim={f(s.from)}
-                slideIn={i > 0}
-                slideOut={false}
-                len={len}
-              />
-            </Sequence>
-          );
-        })}
-        {/* Tails of each take, under the next one while it slides in. */}
-        {data.segments.slice(0, last).map((s) => {
-          const start = f(s.at + s.to - s.from);
-          return (
-            <Sequence
-              key={`tail-${s.clip}-${s.from}`}
-              from={start}
-              durationInFrames={SLIDE}
-              layout="none"
-            >
-              <AbsoluteFill style={{ zIndex: -1 }}>
-                <SlidingTake
-                  clip={s.clip}
-                  trim={f(s.to)}
-                  slideIn={false}
-                  slideOut
-                  len={SLIDE}
-                  muted
-                />
-              </AbsoluteFill>
-            </Sequence>
-          );
-        })}
+        <Takes muted />
       </AbsoluteFill>
     </AbsoluteFill>
   );
@@ -727,10 +784,10 @@ const Speaker: React.FC = () => {
 // clip) drawn over the opening title so the title sits behind her.
 const HOOK_END = f(at("8122", 3.4)) + FADE;
 const SpeakerMatte: React.FC = () => {
-  const { outer, inner } = useSpeakerFrame();
+  const { inner } = useSpeakerFrame(false);
   const first = data.segments[0];
   return (
-    <AbsoluteFill style={outer}>
+    <AbsoluteFill>
       <AbsoluteFill style={inner}>
         <Sequence durationInFrames={HOOK_END}>
           <OffthreadVideo
@@ -755,7 +812,7 @@ const Sfx: React.FC = () => (
         <Audio src={staticFile("sfx/whoosh-in.wav")} volume={0.3} />
       </Sequence>
     ))}
-    {PIP_SPANS.map(({ start }) => (
+    {SPANS.map(({ start }) => (
       <Sequence
         key={`s${start}`}
         from={Math.max(0, start - 6)}
@@ -764,18 +821,16 @@ const Sfx: React.FC = () => (
         <Audio src={staticFile("sfx/whoosh-in.wav")} volume={0.55} />
       </Sequence>
     ))}
-    {PIP_SPANS.map(({ end }) => (
+    {SPANS.map(({ end }) => (
       <Sequence key={`e${end}`} from={end - 8} durationInFrames={18}>
         <Audio src={staticFile("sfx/whoosh-out.wav")} volume={0.45} />
       </Sequence>
     ))}
-    {TIMED.filter((c) => !PIP_SPANS.some((p) => p.start === c.start)).map(
-      (c) => (
-        <Sequence key={`c${c.start}`} from={c.start - 6} durationInFrames={20}>
-          <Audio src={staticFile("sfx/whoosh-in.wav")} volume={0.3} />
-        </Sequence>
-      ),
-    )}
+    {TIMED.filter((c) => !SPANS.some((p) => p.start === c.start)).map((c) => (
+      <Sequence key={`c${c.start}`} from={c.start - 6} durationInFrames={20}>
+        <Audio src={staticFile("sfx/whoosh-in.wav")} volume={0.3} />
+      </Sequence>
+    ))}
   </>
 );
 
@@ -830,17 +885,30 @@ const phraseAt = (t: number) => {
   return -1;
 };
 
+// Each phrase keeps one place for its whole life, so it is never seen twice:
+// hidden if a light card or picture covers any part of it, beside her if it
+// overlaps a corner span, centred otherwise.
+const PHRASE_MODE = PHRASES.map((phrase, i) => {
+  const a = f(phrase[0].t - 0.05);
+  const b = f(PHRASES[i + 1]?.[0].t ?? phrase[phrase.length - 1].e + 0.6);
+  const overlaps = (s: number, e: number) => s < b && e > a;
+  if (TIMED.some((c) => c.o.kind !== "media" && overlaps(c.start, c.end))) {
+    return "hidden";
+  }
+  if (PIP_SPANS.some((p) => overlaps(p.start, p.end))) return "side";
+  return "center";
+});
+
 const Captions: React.FC = () => {
   const frame = useCurrentFrame();
   const t = frame / ALLENAMENTO_FPS;
-  const cue = TIMED.find(({ start, end }) => frame >= start && frame < end);
-  if (cue && cue.o.kind !== "media") return null; // light backgrounds
   const i = phraseAt(t);
-  if (i < 0) return null;
+  if (i < 0 || PHRASE_MODE[i] === "hidden") return null;
   const phrase = PHRASES[i];
   const end = PHRASES[i + 1]?.[0].t ?? phrase[phrase.length - 1].e + 0.6;
+  if (t >= end) return null;
   const out = interpolate(t, [end - 0.18, end - 0.02], [0, 1], clamp);
-  const side = cue !== undefined;
+  const side = PHRASE_MODE[i] === "side";
   const width = side ? 560 : 920;
   const text = phrase.map((w) => w.w.replace(/[.,]$/, "")).join(" ");
   // Never wraps: shrink the type to fit the line instead.
@@ -937,16 +1005,17 @@ export const AllenamentoMenopausa: React.FC = () => (
   <AbsoluteFill
     style={{ backgroundColor: colors.pink, fontFamily: interTight }}
   >
-    {OVERLAYS.map(({ start, until, o, slideIn, next }) => (
+    <Speaker />
+    <Hook />
+    <SpeakerMatte />
+    {OVERLAYS.map(({ start, until, o, slideIn, outAt }) => (
       <Sequence key={start} from={start} durationInFrames={until - start}>
-        <Slider start={start} slideIn={slideIn} next={next}>
+        <Slider start={start} slideIn={slideIn} outAt={outAt}>
           <OverlayView o={o} len={until - start} />
         </Slider>
       </Sequence>
     ))}
-    <Speaker />
-    <Hook />
-    <SpeakerMatte />
+    <SpeakerCorner />
     <Flash />
     <Captions />
     <Sfx />
