@@ -4,9 +4,10 @@ SRC = "/home/user/editing/public/allenamento/fast"
 tx = json.load(open(sys.argv[1]))
 out_json, out_mp4 = sys.argv[2], sys.argv[3]
 
-# Words to drop (flubs), by clip and word index.
-DROP = {
-    "8126": {1, 2, 15},  # "L'equilibrio." said twice; stray "è" before "peggiora"
+# Hand-picked cuts (seconds in the sped-up clip) for flubs and mumbles.
+EXTRA_CUTS = {
+    "8124": [[20.5, 21.04]],  # mumbled "Una volta che" -> "La serie da 10 diventa..."
+    "8126": [[1.44, 1.86], [5.04, 5.12]],  # 2nd "l'equilibrio"; stray "è"
 }
 GAP = 0.22      # pauses longer than this are removed
 WIN = 0.01      # energy window (s)
@@ -25,8 +26,11 @@ for name in sorted(tx):
     thr = np.percentile(db, 20) + 2
     quiet = db < thr
     ws = tx[name]
-    start = max(0.0, ws[0][0] - 0.15)
-    end = min(dur, ws[-1][1] + 0.3)
+    # Clip edges from the audio: the transcript starts the first word at 0.
+    floor = np.percentile(db, 10)
+    talk = np.where(db > floor + 15)[0]
+    start = max(0.0, talk[0] * WIN - 0.08)
+    end = min(dur, (talk[-1] + 1) * WIN + 0.15)
     # Only clear pauses between two well-timed words are cut, with generous
     # margins: the transcript tends to start words a little late.
     cuts = []
@@ -36,9 +40,7 @@ for name in sorted(tx):
         a, b = pb + 0.1, na - 0.16
         if b - a >= 0.1:
             cuts.append([a, b])
-    # Flubs: drop the word up to the next kept word.
-    for k in DROP.get(clip, set()):
-        cuts.append([ws[k][0] - 0.02, ws[k + 1][0] - 0.02])
+    cuts += EXTRA_CUTS.get(clip, [])
     cuts.sort()
     merged = []
     for a, b in cuts:
