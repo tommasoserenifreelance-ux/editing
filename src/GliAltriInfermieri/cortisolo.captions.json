@@ -1,0 +1,1229 @@
+[
+{
+"start": 0.0,
+"end": 0.7,
+"words": [
+{
+"t": 0.0,
+"text": "SAPETE",
+"style": "white"
+},
+{
+"t": 0.48,
+"text": "QUAL",
+"style": "white"
+},
+{
+"t": 0.62,
+"text": "È",
+"style": "white"
+}
+]
+},
+{
+"start": 0.7,
+"end": 1.46,
+"words": [
+{
+"t": 0.7,
+"text": "IL",
+"style": "white"
+},
+{
+"t": 0.84,
+"text": "TEST",
+"style": "white"
+},
+{
+"t": 1.2,
+"text": "CHE",
+"style": "white"
+}
+]
+},
+{
+"start": 1.46,
+"end": 2.3,
+"words": [
+{
+"t": 1.46,
+"text": "PUNTUALMENTE",
+"style": "white"
+},
+{
+"t": 2.02,
+"text": "TUTTI",
+"style": "white"
+}
+]
+},
+{
+"start": 2.3,
+"end": 3.2,
+"words": [
+{
+"t": 2.3,
+"text": "SBAGLIATE",
+"style": "red"
+}
+]
+},
+{
+"start": 3.2,
+"end": 3.56,
+"words": [
+{
+"t": 3.2,
+"text": "È",
+"style": "white"
+},
+{
+"t": 3.3,
+"text": "IL",
+"style": "white"
+},
+{
+"t": 3.34,
+"text": "TEST",
+"style": "white"
+}
+]
+},
+{
+"start": 3.56,
+"end": 4.3,
+"words": [
+{
+"t": 3.56,
+"text": "DEL",
+"style": "white"
+},
+{
+"t": 3.74,
+"text": "CORTISOLO",
+"style": "lime"
+}
+]
+},
+{
+"start": 4.3,
+"end": 5.24,
+"words": [
+{
+"t": 4.3,
+"text": "SALIVARE",
+"style": "lime"
+}
+]
+},
+{
+"start": 5.24,
+"end": 5.92,
+"words": [
+{
+"t": 5.24,
+"text": "PERCHÉ",
+"style": "white"
+},
+{
+"t": 5.3,
+"text": "VA",
+"style": "white"
+},
+{
+"t": 5.44,
+"text": "FATTO",
+"style": "white"
+}
+]
+},
+{
+"start": 5.92,
+"end": 6.34,
+"words": [
+{
+"t": 5.92,
+"text": "DURANTE",
+"style": "white"
+}
+]
+},
+{
+"start": 6.34,
+"end": 7.4,
+"words": [
+{
+"t": 6.34,
+"text": "LA",
+"style": "white"
+},
+{
+"t": 6.54,
+"text": "GIORNATA",
+"style": "white"
+}
+]
+},
+{
+"start": 7.4,
+"end": 8.68,
+"words": [
+{
+"t": 7.4,
+"text": "A",
+"style": "white"
+},
+{
+"t": 7.5,
+"text": "CASA",
+"style": "lime"
+},
+{
+"t": 7.7,
+"text": "VOSTRA",
+"style": "white"
+}
+]
+},
+{
+"start": 8.68,
+"end": 9.2,
+"words": [
+{
+"t": 8.68,
+"text": "SENZA",
+"style": "white"
+},
+{
+"t": 8.82,
+"text": "IL",
+"style": "white"
+},
+{
+"t": 9.0,
+"text": "NOSTRO",
+"style": "white"
+}
+]
+},
+{
+"start": 9.2,
+"end": 9.9,
+"words": [
+{
+"t": 9.2,
+"text": "AIUTO",
+"style": "white"
+}
+]
+},
+{
+"start": 9.9,
+"end": 10.26,
+"words": [
+{
+"t": 9.9,
+"text": "SI",
+"style": "white"
+},
+{
+"t": 9.98,
+"text": "TRATTA",
+"style": "white"
+}
+]
+},
+{
+"start": 10.26,
+"end": 11.06,
+"words": [
+{
+"t": 10.26,
+"text": "DI",
+"style": "white"
+},
+{
+"t": 10.46,
+"text": "RACCOGLIERE",
+"style": "white"
+}
+]
+},
+{
+"start": 11.06,
+"end": 11.86,
+"words": [
+{
+"t": 11.06,
+"text": "QUATTRO",
+"style": "lime"
+},
+{
+"t": 11.46,
+"text": "PROVETTE",
+"style": "lime"
+}
+]
+},
+{
+"start": 11.86,
+"end": 12.92,
+"words": [
+{
+"t": 11.86,
+"text": "NELLE",
+"style": "white"
+},
+{
+"t": 12.08,
+"text": "24",
+"style": "lime"
+},
+{
+"t": 12.56,
+"text": "ORE",
+"style": "lime"
+}
+]
+},
+{
+"start": 12.92,
+"end": 13.4,
+"words": [
+{
+"t": 12.92,
+"text": "AD",
+"style": "white"
+},
+{
+"t": 13.16,
+"text": "ORARI",
+"style": "white"
+}
+]
+},
+{
+"start": 13.4,
+"end": 14.36,
+"words": [
+{
+"t": 13.4,
+"text": "PRESTABILITI",
+"style": "white"
+}
+]
+},
+{
+"start": 14.36,
+"end": 15.06,
+"words": [
+{
+"t": 14.36,
+"text": "LA",
+"style": "white"
+},
+{
+"t": 14.44,
+"text": "PARTE",
+"style": "white"
+},
+{
+"t": 14.7,
+"text": "PIÙ",
+"style": "white"
+}
+]
+},
+{
+"start": 15.06,
+"end": 15.64,
+"words": [
+{
+"t": 15.06,
+"text": "COMPLICATA",
+"style": "white"
+}
+]
+},
+{
+"start": 15.64,
+"end": 16.88,
+"words": [
+{
+"t": 15.64,
+"text": "È",
+"style": "white"
+},
+{
+"t": 15.84,
+"text": "RIEMPIRE",
+"style": "white"
+},
+{
+"t": 16.54,
+"text": "TUTTA",
+"style": "white"
+}
+]
+},
+{
+"start": 16.88,
+"end": 17.44,
+"words": [
+{
+"t": 16.88,
+"text": "LA",
+"style": "white"
+},
+{
+"t": 17.0,
+"text": "PROVETTA",
+"style": "white"
+},
+{
+"t": 17.22,
+"text": "DI",
+"style": "white"
+}
+]
+},
+{
+"start": 17.44,
+"end": 18.66,
+"words": [
+{
+"t": 17.44,
+"text": "SALIVA",
+"style": "white"
+},
+{
+"t": 17.76,
+"text": "E",
+"style": "white"
+},
+{
+"t": 18.06,
+"text": "SEGNARE",
+"style": "white"
+}
+]
+},
+{
+"start": 18.66,
+"end": 19.8,
+"words": [
+{
+"t": 18.66,
+"text": "L'ORA",
+"style": "white"
+},
+{
+"t": 19.2,
+"text": "ESATTA",
+"style": "lime"
+}
+]
+},
+{
+"start": 19.8,
+"end": 20.84,
+"words": [
+{
+"t": 19.8,
+"text": "SU",
+"style": "white"
+},
+{
+"t": 20.0,
+"text": "OGNI",
+"style": "white"
+},
+{
+"t": 20.26,
+"text": "PROVETTA",
+"style": "white"
+}
+]
+},
+{
+"start": 20.84,
+"end": 21.38,
+"words": [
+{
+"t": 20.84,
+"text": "SE",
+"style": "white"
+},
+{
+"t": 20.88,
+"text": "HAI",
+"style": "white"
+},
+{
+"t": 21.04,
+"text": "RACCOLTO",
+"style": "white"
+}
+]
+},
+{
+"start": 21.38,
+"end": 21.8,
+"words": [
+{
+"t": 21.38,
+"text": "LA",
+"style": "white"
+},
+{
+"t": 21.64,
+"text": "SALIVA",
+"style": "white"
+}
+]
+},
+{
+"start": 21.8,
+"end": 22.94,
+"words": [
+{
+"t": 21.8,
+"text": "ALLE",
+"style": "white"
+},
+{
+"t": 21.96,
+"text": "8.15",
+"style": "lime"
+}
+]
+},
+{
+"start": 22.94,
+"end": 24.58,
+"words": [
+{
+"t": 22.94,
+"text": "SCRIVERAI",
+"style": "white"
+},
+{
+"t": 23.58,
+"text": "8.15",
+"style": "lime"
+}
+]
+},
+{
+"start": 24.58,
+"end": 25.0,
+"words": [
+{
+"t": 24.58,
+"text": "UNA",
+"style": "white"
+},
+{
+"t": 24.78,
+"text": "VOLTA",
+"style": "white"
+}
+]
+},
+{
+"start": 25.0,
+"end": 25.42,
+"words": [
+{
+"t": 25.0,
+"text": "TERMINATA",
+"style": "white"
+}
+]
+},
+{
+"start": 25.42,
+"end": 26.24,
+"words": [
+{
+"t": 25.42,
+"text": "LA",
+"style": "white"
+},
+{
+"t": 25.64,
+"text": "RACCOLTA",
+"style": "white"
+}
+]
+},
+{
+"start": 26.24,
+"end": 27.04,
+"words": [
+{
+"t": 26.24,
+"text": "I",
+"style": "white"
+},
+{
+"t": 26.3,
+"text": "CAMPIONI",
+"style": "white"
+},
+{
+"t": 26.68,
+"text": "VANNO",
+"style": "white"
+}
+]
+},
+{
+"start": 27.04,
+"end": 27.68,
+"words": [
+{
+"t": 27.04,
+"text": "CONSERVATI",
+"style": "white"
+},
+{
+"t": 27.5,
+"text": "IN",
+"style": "white"
+}
+]
+},
+{
+"start": 27.68,
+"end": 27.9,
+"words": [
+{
+"t": 27.68,
+"text": "FRIGO",
+"style": "lime"
+}
+]
+},
+{
+"start": 27.9,
+"end": 28.42,
+"words": [
+{
+"t": 27.9,
+"text": "E",
+"style": "white"
+},
+{
+"t": 28.14,
+"text": "GLI",
+"style": "white"
+},
+{
+"t": 28.22,
+"text": "ERRORI",
+"style": "lime"
+}
+]
+},
+{
+"start": 28.42,
+"end": 29.06,
+"words": [
+{
+"t": 28.42,
+"text": "PIÙ",
+"style": "white"
+},
+{
+"t": 28.58,
+"text": "COMUNI",
+"style": "white"
+},
+{
+"t": 28.88,
+"text": "SAI",
+"style": "white"
+}
+]
+},
+{
+"start": 29.06,
+"end": 29.82,
+"words": [
+{
+"t": 29.06,
+"text": "QUALI",
+"style": "white"
+},
+{
+"t": 29.36,
+"text": "SONO",
+"style": "white"
+}
+]
+},
+{
+"start": 29.82,
+"end": 30.42,
+"words": [
+{
+"t": 29.82,
+"text": "NON",
+"style": "red"
+},
+{
+"t": 29.94,
+"text": "RIEMPIRLO",
+"style": "white"
+}
+]
+},
+{
+"start": 30.42,
+"end": 30.92,
+"words": [
+{
+"t": 30.42,
+"text": "COMPLETAMENTE",
+"style": "lime"
+}
+]
+},
+{
+"start": 30.92,
+"end": 31.62,
+"words": [
+{
+"t": 30.92,
+"text": "FINO",
+"style": "white"
+},
+{
+"t": 31.1,
+"text": "A",
+"style": "white"
+},
+{
+"t": 31.28,
+"text": "5",
+"style": "white"
+}
+]
+},
+{
+"start": 31.62,
+"end": 32.24,
+"words": [
+{
+"t": 31.62,
+"text": "E",
+"style": "white"
+},
+{
+"t": 31.88,
+"text": "AVERE",
+"style": "white"
+}
+]
+},
+{
+"start": 32.24,
+"end": 33.14,
+"words": [
+{
+"t": 32.24,
+"text": "UNA",
+"style": "white"
+},
+{
+"t": 32.52,
+"text": "COLORAZIONE",
+"style": "white"
+}
+]
+},
+{
+"start": 33.14,
+"end": 33.96,
+"words": [
+{
+"t": 33.14,
+"text": "NON",
+"style": "red"
+},
+{
+"t": 33.4,
+"text": "TRASPARENTE",
+"style": "lime"
+}
+]
+},
+{
+"start": 33.96,
+"end": 34.56,
+"words": [
+{
+"t": 33.96,
+"text": "DELLA",
+"style": "white"
+},
+{
+"t": 34.12,
+"text": "SALIVA",
+"style": "white"
+}
+]
+},
+{
+"start": 34.56,
+"end": 35.54,
+"words": [
+{
+"t": 34.56,
+"text": "E",
+"style": "white"
+},
+{
+"t": 34.62,
+"text": "MI",
+"style": "white"
+},
+{
+"t": 34.76,
+"text": "RACCOMANDO",
+"style": "white"
+}
+]
+},
+{
+"start": 35.54,
+"end": 36.0,
+"words": [
+{
+"t": 35.54,
+"text": "NELLA",
+"style": "white"
+},
+{
+"t": 35.64,
+"text": "MEZZ'ORA",
+"style": "lime"
+}
+]
+},
+{
+"start": 36.0,
+"end": 36.44,
+"words": [
+{
+"t": 36.0,
+"text": "PRECEDENTE",
+"style": "white"
+}
+]
+},
+{
+"start": 36.44,
+"end": 37.4,
+"words": [
+{
+"t": 36.44,
+"text": "ALLA",
+"style": "white"
+},
+{
+"t": 36.56,
+"text": "RACCOLTA",
+"style": "white"
+}
+]
+},
+{
+"start": 37.4,
+"end": 37.82,
+"words": [
+{
+"t": 37.4,
+"text": "NON",
+"style": "red"
+},
+{
+"t": 37.46,
+"text": "LAVARTI",
+"style": "white"
+}
+]
+},
+{
+"start": 37.82,
+"end": 38.36,
+"words": [
+{
+"t": 37.82,
+"text": "I",
+"style": "white"
+},
+{
+"t": 37.94,
+"text": "DENTI",
+"style": "white"
+}
+]
+},
+{
+"start": 38.36,
+"end": 39.14,
+"words": [
+{
+"t": 38.36,
+"text": "NON",
+"style": "red"
+},
+{
+"t": 38.48,
+"text": "MANGIARE",
+"style": "white"
+}
+]
+},
+{
+"start": 39.14,
+"end": 39.54,
+"words": [
+{
+"t": 39.14,
+"text": "NON",
+"style": "red"
+},
+{
+"t": 39.28,
+"text": "BERE",
+"style": "white"
+}
+]
+},
+{
+"start": 39.54,
+"end": 40.7,
+"words": [
+{
+"t": 39.54,
+"text": "E",
+"style": "white"
+},
+{
+"t": 39.8,
+"text": "NON",
+"style": "red"
+},
+{
+"t": 39.96,
+"text": "FUMARE",
+"style": "white"
+}
+]
+},
+{
+"start": 40.7,
+"end": 41.34,
+"words": [
+{
+"t": 40.7,
+"text": "PERCHÉ",
+"style": "white"
+},
+{
+"t": 40.76,
+"text": "ALTRIMENTI",
+"style": "white"
+}
+]
+},
+{
+"start": 41.34,
+"end": 42.24,
+"words": [
+{
+"t": 41.34,
+"text": "IL",
+"style": "white"
+},
+{
+"t": 41.58,
+"text": "TEST",
+"style": "white"
+},
+{
+"t": 41.86,
+"text": "POTREBBE",
+"style": "white"
+}
+]
+},
+{
+"start": 42.24,
+"end": 43.3,
+"words": [
+{
+"t": 42.24,
+"text": "VENIRE",
+"style": "white"
+},
+{
+"t": 42.58,
+"text": "ALTERATO",
+"style": "lime"
+}
+]
+},
+{
+"start": 43.3,
+"end": 43.98,
+"words": [
+{
+"t": 43.3,
+"text": "È",
+"style": "white"
+},
+{
+"t": 43.4,
+"text": "L'UNICO",
+"style": "white"
+},
+{
+"t": 43.7,
+"text": "ESAME",
+"style": "white"
+}
+]
+},
+{
+"start": 43.98,
+"end": 44.56,
+"words": [
+{
+"t": 43.98,
+"text": "CHE",
+"style": "white"
+},
+{
+"t": 44.1,
+"text": "IL",
+"style": "white"
+},
+{
+"t": 44.18,
+"text": "RISULTATO",
+"style": "white"
+}
+]
+},
+{
+"start": 44.56,
+"end": 45.22,
+"words": [
+{
+"t": 44.56,
+"text": "DIPENDE",
+"style": "white"
+},
+{
+"t": 44.96,
+"text": "SOLO",
+"style": "lime"
+}
+]
+},
+{
+"start": 45.22,
+"end": 45.8,
+"words": [
+{
+"t": 45.22,
+"text": "DA",
+"style": "white"
+},
+{
+"t": 45.4,
+"text": "TE",
+"style": "lime"
+}
+]
+},
+{
+"start": 45.8,
+"end": 46.0,
+"words": [
+{
+"t": 45.8,
+"text": "PER",
+"style": "white"
+},
+{
+"t": 45.82,
+"text": "QUESTO",
+"style": "white"
+}
+]
+},
+{
+"start": 46.0,
+"end": 46.32,
+"words": [
+{
+"t": 46.0,
+"text": "CI",
+"style": "white"
+},
+{
+"t": 46.14,
+"text": "TENIAMO",
+"style": "white"
+}
+]
+},
+{
+"start": 46.32,
+"end": 46.98,
+"words": [
+{
+"t": 46.32,
+"text": "A",
+"style": "white"
+},
+{
+"t": 46.46,
+"text": "SPIEGARLO",
+"style": "white"
+},
+{
+"t": 46.78,
+"text": "PIÙ",
+"style": "white"
+}
+]
+},
+{
+"start": 46.98,
+"end": 47.56,
+"words": [
+{
+"t": 46.98,
+"text": "VOLTE",
+"style": "white"
+}
+]
+},
+{
+"start": 47.56,
+"end": 48.18,
+"words": [
+{
+"t": 47.56,
+"text": "NOI",
+"style": "white"
+},
+{
+"t": 47.74,
+"text": "SIAMO",
+"style": "white"
+},
+{
+"t": 47.94,
+"text": "GLI",
+"style": "white"
+}
+]
+},
+{
+"start": 48.18,
+"end": 49.06,
+"words": [
+{
+"t": 48.18,
+"text": "ALTRI",
+"style": "white"
+},
+{
+"t": 48.38,
+"text": "INFERMIERI",
+"style": "white"
+}
+]
+},
+{
+"start": 49.06,
+"end": 50.0,
+"words": [
+{
+"t": 49.06,
+"text": "E",
+"style": "white"
+},
+{
+"t": 49.22,
+"text": "VI",
+"style": "white"
+},
+{
+"t": 49.44,
+"text": "SPIEGHIAMO",
+"style": "white"
+}
+]
+},
+{
+"start": 50.0,
+"end": 50.26,
+"words": [
+{
+"t": 50.0,
+"text": "QUELLO",
+"style": "white"
+}
+]
+},
+{
+"start": 50.26,
+"end": 50.88,
+"words": [
+{
+"t": 50.26,
+"text": "CHE",
+"style": "white"
+},
+{
+"t": 50.44,
+"text": "GLI",
+"style": "white"
+},
+{
+"t": 50.62,
+"text": "ALTRI",
+"style": "white"
+}
+]
+},
+{
+"start": 50.88,
+"end": 52.14,
+"words": [
+{
+"t": 50.88,
+"text": "NON",
+"style": "red"
+},
+{
+"t": 51.08,
+"text": "VI",
+"style": "white"
+},
+{
+"t": 51.34,
+"text": "SPIEGANO",
+"style": "white"
+}
+]
+}
+]

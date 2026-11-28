@@ -1,0 +1,931 @@
+[
+{
+"start": 0.0,
+"end": 0.48,
+"words": [
+{
+"t": 0.0,
+"text": "LA",
+"style": "white"
+},
+{
+"t": 0.16,
+"text": "COSA",
+"style": "white"
+},
+{
+"t": 0.36,
+"text": "CHE",
+"style": "white"
+}
+]
+},
+{
+"start": 0.48,
+"end": 1.06,
+"words": [
+{
+"t": 0.48,
+"text": "CI",
+"style": "white"
+},
+{
+"t": 0.66,
+"text": "DIRETE",
+"style": "white"
+},
+{
+"t": 0.88,
+"text": "PIÙ",
+"style": "white"
+}
+]
+},
+{
+"start": 1.06,
+"end": 2.04,
+"words": [
+{
+"t": 1.06,
+"text": "SPESSO",
+"style": "white"
+},
+{
+"t": 1.62,
+"text": "PRIMA",
+"style": "white"
+},
+{
+"t": 1.9,
+"text": "DI",
+"style": "white"
+}
+]
+},
+{
+"start": 2.04,
+"end": 2.68,
+"words": [
+{
+"t": 2.04,
+"text": "UNA",
+"style": "white"
+},
+{
+"t": 2.16,
+"text": "SEDUTA",
+"style": "white"
+},
+{
+"t": 2.44,
+"text": "TIPO",
+"style": "white"
+}
+]
+},
+{
+"start": 2.68,
+"end": 3.58,
+"words": [
+{
+"t": 2.68,
+"text": "OZONOTERAPIA",
+"style": "lime"
+}
+]
+},
+{
+"start": 3.58,
+"end": 5.0,
+"words": [
+{
+"t": 3.58,
+"text": "O",
+"style": "white"
+},
+{
+"t": 3.78,
+"text": "IV THERAPY",
+"style": "white"
+},
+{
+"t": 4.74,
+"text": "È",
+"style": "white"
+}
+]
+},
+{
+"start": 5.0,
+"end": 5.68,
+"words": [
+{
+"t": 5.0,
+"text": "SE",
+"style": "white"
+},
+{
+"t": 5.26,
+"text": "L'AGO",
+"style": "red"
+},
+{
+"t": 5.5,
+"text": "CHE",
+"style": "white"
+}
+]
+},
+{
+"start": 5.68,
+"end": 6.72,
+"words": [
+{
+"t": 5.68,
+"text": "UTILIZZIAMO",
+"style": "white"
+},
+{
+"t": 6.38,
+"text": "RIMANE",
+"style": "white"
+}
+]
+},
+{
+"start": 6.72,
+"end": 7.1,
+"words": [
+{
+"t": 6.72,
+"text": "ALL'INTERNO",
+"style": "white"
+}
+]
+},
+{
+"start": 7.1,
+"end": 7.72,
+"words": [
+{
+"t": 7.1,
+"text": "DELLA VENA",
+"style": "white"
+}
+]
+},
+{
+"start": 7.72,
+"end": 8.48,
+"words": [
+{
+"t": 7.72,
+"text": "NOI",
+"style": "white"
+},
+{
+"t": 8.08,
+"text": "UTILIZZIAMO",
+"style": "white"
+}
+]
+},
+{
+"start": 8.48,
+"end": 9.36,
+"words": [
+{
+"t": 8.48,
+"text": "QUESTO",
+"style": "white"
+},
+{
+"t": 8.8,
+"text": "QUI",
+"style": "white"
+},
+{
+"t": 9.08,
+"text": "CHE",
+"style": "white"
+}
+]
+},
+{
+"start": 9.36,
+"end": 10.54,
+"words": [
+{
+"t": 9.36,
+"text": "È",
+"style": "white"
+},
+{
+"t": 9.58,
+"text": "UN",
+"style": "white"
+},
+{
+"t": 9.7,
+"text": "AGOCANNULA",
+"style": "lime"
+}
+]
+},
+{
+"start": 10.54,
+"end": 11.94,
+"words": [
+{
+"t": 10.54,
+"text": "È",
+"style": "white"
+},
+{
+"t": 10.88,
+"text": "STUDIATO",
+"style": "white"
+},
+{
+"t": 11.26,
+"text": "APPOSTA",
+"style": "white"
+}
+]
+},
+{
+"start": 11.94,
+"end": 13.32,
+"words": [
+{
+"t": 11.94,
+"text": "PER",
+"style": "white"
+},
+{
+"t": 12.52,
+"text": "INCANNULARE",
+"style": "white"
+}
+]
+},
+{
+"start": 13.32,
+"end": 14.64,
+"words": [
+{
+"t": 13.32,
+"text": "IL",
+"style": "white"
+},
+{
+"t": 13.56,
+"text": "VASO",
+"style": "white"
+}
+]
+},
+{
+"start": 14.64,
+"end": 15.9,
+"words": [
+{
+"t": 14.64,
+"text": "DOPODICHÉ",
+"style": "white"
+},
+{
+"t": 15.4,
+"text": "L'AGO",
+"style": "red"
+}
+]
+},
+{
+"start": 15.9,
+"end": 17.82,
+"words": [
+{
+"t": 15.9,
+"text": "VIENE",
+"style": "white"
+},
+{
+"t": 16.3,
+"text": "RIMOSSO",
+"style": "lime"
+}
+]
+},
+{
+"start": 17.82,
+"end": 18.48,
+"words": [
+{
+"t": 17.82,
+"text": "E",
+"style": "white"
+},
+{
+"t": 18.02,
+"text": "ALL'INTERNO",
+"style": "white"
+}
+]
+},
+{
+"start": 18.48,
+"end": 19.26,
+"words": [
+{
+"t": 18.48,
+"text": "DELLA VENA",
+"style": "white"
+},
+{
+"t": 19.02,
+"text": "RIMANE",
+"style": "white"
+}
+]
+},
+{
+"start": 19.26,
+"end": 19.92,
+"words": [
+{
+"t": 19.26,
+"text": "SOLTANTO",
+"style": "white"
+},
+{
+"t": 19.7,
+"text": "QUESTA",
+"style": "white"
+}
+]
+},
+{
+"start": 19.92,
+"end": 20.74,
+"words": [
+{
+"t": 19.92,
+"text": "CANNULINA",
+"style": "lime"
+},
+{
+"t": 20.42,
+"text": "CHE",
+"style": "white"
+}
+]
+},
+{
+"start": 20.74,
+"end": 21.8,
+"words": [
+{
+"t": 20.74,
+"text": "È",
+"style": "white"
+},
+{
+"t": 20.88,
+"text": "FLESSIBILE",
+"style": "lime"
+},
+{
+"t": 21.48,
+"text": "E",
+"style": "white"
+}
+]
+},
+{
+"start": 21.8,
+"end": 22.42,
+"words": [
+{
+"t": 21.8,
+"text": "NON",
+"style": "white"
+},
+{
+"t": 21.94,
+"text": "DÀ",
+"style": "white"
+},
+{
+"t": 22.08,
+"text": "NESSUN",
+"style": "lime"
+}
+]
+},
+{
+"start": 22.42,
+"end": 22.68,
+"words": [
+{
+"t": 22.42,
+"text": "PROBLEMA",
+"style": "lime"
+}
+]
+},
+{
+"start": 22.68,
+"end": 23.82,
+"words": [
+{
+"t": 22.68,
+"text": "AL",
+"style": "white"
+},
+{
+"t": 22.84,
+"text": "PAZIENTE",
+"style": "white"
+}
+]
+},
+{
+"start": 23.82,
+"end": 24.48,
+"words": [
+{
+"t": 23.82,
+"text": "ALCUNI",
+"style": "white"
+},
+{
+"t": 24.14,
+"text": "POSSONO",
+"style": "white"
+}
+]
+},
+{
+"start": 24.48,
+"end": 24.96,
+"words": [
+{
+"t": 24.48,
+"text": "UTILIZZARE",
+"style": "white"
+}
+]
+},
+{
+"start": 24.96,
+"end": 25.94,
+"words": [
+{
+"t": 24.96,
+"text": "IL",
+"style": "white"
+},
+{
+"t": 25.22,
+"text": "BUTTERFLY",
+"style": "lime"
+}
+]
+},
+{
+"start": 25.94,
+"end": 26.64,
+"words": [
+{
+"t": 25.94,
+"text": "CHIAMATO",
+"style": "white"
+},
+{
+"t": 26.34,
+"text": "COSÌ",
+"style": "white"
+}
+]
+},
+{
+"start": 26.64,
+"end": 27.68,
+"words": [
+{
+"t": 26.64,
+"text": "PERCHÉ",
+"style": "white"
+},
+{
+"t": 27.06,
+"text": "È",
+"style": "white"
+},
+{
+"t": 27.06,
+"text": "PICCOLINO",
+"style": "white"
+}
+]
+},
+{
+"start": 27.68,
+"end": 28.18,
+"words": [
+{
+"t": 27.68,
+"text": "E",
+"style": "white"
+},
+{
+"t": 27.84,
+"text": "HA",
+"style": "white"
+},
+{
+"t": 27.98,
+"text": "FORMA",
+"style": "white"
+}
+]
+},
+{
+"start": 28.18,
+"end": 28.9,
+"words": [
+{
+"t": 28.18,
+"text": "DI",
+"style": "white"
+},
+{
+"t": 28.38,
+"text": "FARFALLA",
+"style": "lime"
+}
+]
+},
+{
+"start": 28.9,
+"end": 29.54,
+"words": [
+{
+"t": 28.9,
+"text": "AL",
+"style": "white"
+},
+{
+"t": 29.32,
+"text": "CONTRARIO",
+"style": "white"
+}
+]
+},
+{
+"start": 29.54,
+"end": 30.64,
+"words": [
+{
+"t": 29.54,
+"text": "DELLA",
+"style": "white"
+},
+{
+"t": 29.76,
+"text": "CANNULA",
+"style": "white"
+}
+]
+},
+{
+"start": 30.64,
+"end": 31.06,
+"words": [
+{
+"t": 30.64,
+"text": "QUESTO",
+"style": "white"
+},
+{
+"t": 30.74,
+"text": "QUI",
+"style": "white"
+}
+]
+},
+{
+"start": 31.06,
+"end": 31.98,
+"words": [
+{
+"t": 31.06,
+"text": "UNA",
+"style": "white"
+},
+{
+"t": 31.26,
+"text": "VOLTA",
+"style": "white"
+},
+{
+"t": 31.46,
+"text": "INSERITO",
+"style": "white"
+}
+]
+},
+{
+"start": 31.98,
+"end": 32.54,
+"words": [
+{
+"t": 31.98,
+"text": "RIMANE",
+"style": "white"
+},
+{
+"t": 32.36,
+"text": "L'AGO",
+"style": "red"
+}
+]
+},
+{
+"start": 32.54,
+"end": 33.6,
+"words": [
+{
+"t": 32.54,
+"text": "ALL'INTERNO",
+"style": "white"
+}
+]
+},
+{
+"start": 33.6,
+"end": 34.36,
+"words": [
+{
+"t": 33.6,
+"text": "AD",
+"style": "white"
+},
+{
+"t": 33.72,
+"text": "OGNI",
+"style": "white"
+},
+{
+"t": 33.92,
+"text": "MODO",
+"style": "white"
+}
+]
+},
+{
+"start": 34.36,
+"end": 34.9,
+"words": [
+{
+"t": 34.36,
+"text": "NON",
+"style": "white"
+},
+{
+"t": 34.64,
+"text": "C'È",
+"style": "white"
+}
+]
+},
+{
+"start": 34.9,
+"end": 36.14,
+"words": [
+{
+"t": 34.9,
+"text": "UNA",
+"style": "white"
+},
+{
+"t": 35.02,
+"text": "REGOLA",
+"style": "lime"
+},
+{
+"t": 35.26,
+"text": "FISSA",
+"style": "lime"
+}
+]
+},
+{
+"start": 36.14,
+"end": 36.32,
+"words": [
+{
+"t": 36.14,
+"text": "PER",
+"style": "white"
+},
+{
+"t": 36.16,
+"text": "OGNI",
+"style": "white"
+}
+]
+},
+{
+"start": 36.32,
+"end": 37.12,
+"words": [
+{
+"t": 36.32,
+"text": "TRATTAMENTO",
+"style": "white"
+}
+]
+},
+{
+"start": 37.12,
+"end": 38.3,
+"words": [
+{
+"t": 37.12,
+"text": "CHE",
+"style": "white"
+},
+{
+"t": 37.36,
+"text": "ESEGUITE",
+"style": "white"
+},
+{
+"t": 37.96,
+"text": "FATE",
+"style": "white"
+}
+]
+},
+{
+"start": 38.3,
+"end": 38.94,
+"words": [
+{
+"t": 38.3,
+"text": "RIFERIMENTO",
+"style": "white"
+}
+]
+},
+{
+"start": 38.94,
+"end": 39.66,
+"words": [
+{
+"t": 38.94,
+"text": "AL",
+"style": "white"
+},
+{
+"t": 39.14,
+"text": "PROFESSIONISTA",
+"style": "lime"
+}
+]
+},
+{
+"start": 39.66,
+"end": 40.54,
+"words": [
+{
+"t": 39.66,
+"text": "CHE",
+"style": "white"
+},
+{
+"t": 39.74,
+"text": "LO",
+"style": "white"
+},
+{
+"t": 39.86,
+"text": "SVOLGE",
+"style": "white"
+}
+]
+},
+{
+"start": 40.54,
+"end": 41.2,
+"words": [
+{
+"t": 40.54,
+"text": "NOI",
+"style": "white"
+},
+{
+"t": 40.72,
+"text": "SIAMO",
+"style": "white"
+},
+{
+"t": 40.92,
+"text": "GLI",
+"style": "white"
+}
+]
+},
+{
+"start": 41.2,
+"end": 42.0,
+"words": [
+{
+"t": 41.2,
+"text": "ALTRI",
+"style": "white"
+},
+{
+"t": 41.38,
+"text": "INFERMIERI",
+"style": "white"
+}
+]
+},
+{
+"start": 42.0,
+"end": 43.14,
+"words": [
+{
+"t": 42.0,
+"text": "E",
+"style": "white"
+},
+{
+"t": 42.34,
+"text": "VI",
+"style": "white"
+},
+{
+"t": 42.58,
+"text": "SPIEGHIAMO",
+"style": "white"
+}
+]
+},
+{
+"start": 43.14,
+"end": 43.38,
+"words": [
+{
+"t": 43.14,
+"text": "QUELLO",
+"style": "white"
+}
+]
+},
+{
+"start": 43.38,
+"end": 44.0,
+"words": [
+{
+"t": 43.38,
+"text": "CHE",
+"style": "white"
+},
+{
+"t": 43.56,
+"text": "GLI",
+"style": "white"
+},
+{
+"t": 43.76,
+"text": "ALTRI",
+"style": "white"
+}
+]
+},
+{
+"start": 44.0,
+"end": 45.28,
+"words": [
+{
+"t": 44.0,
+"text": "NON",
+"style": "white"
+},
+{
+"t": 44.22,
+"text": "VI",
+"style": "white"
+},
+{
+"t": 44.46,
+"text": "SPIEGANO",
+"style": "white"
+}
+]
+}
+]

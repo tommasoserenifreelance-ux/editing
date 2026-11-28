@@ -5,3 +5,7 @@ dist
 
 # Ignore the output video from Git but not videos you import into src/.
 out
+
+# GLIALTRINFERMIERI footage and photos live in the GitHub release, not in git
+public/gai/*.mp4
+public/gai/img/

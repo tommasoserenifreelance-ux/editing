@@ -2,6 +2,7 @@ import { Composition, Folder } from "remotion";
 import { XMAS_DURATION, XMAS_FPS, XmasSponsor } from "./XmasSponsor";
 import { ClassReel, REEL_DURATION, REEL_FPS } from "./ClassReel";
 import { DistrettoWall, WALL_DURATION, WALL_FPS } from "./DistrettoWall";
+import { AGHI, CORTISOLO, GaiReel, reelDuration } from "./GliAltriInfermieri";
 import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
@@ -106,6 +107,24 @@ export const RemotionRoot: React.FC = () => {
         fps={XMAS_FPS}
         width={1080}
         height={1920}
+      />
+      <Composition
+        id="GAI-Cortisolo"
+        component={GaiReel}
+        durationInFrames={reelDuration(CORTISOLO)}
+        fps={24}
+        width={1080}
+        height={1920}
+        defaultProps={{ config: CORTISOLO }}
+      />
+      <Composition
+        id="GAI-Aghi"
+        component={GaiReel}
+        durationInFrames={reelDuration(AGHI)}
+        fps={24}
+        width={1080}
+        height={1920}
+        defaultProps={{ config: AGHI }}
       />
     </>
   );
