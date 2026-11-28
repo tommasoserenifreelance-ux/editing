@@ -6,7 +6,7 @@ out_json, out_mp4 = sys.argv[2], sys.argv[3]
 
 # Hand-picked cuts (seconds in the sped-up clip) for flubs and mumbles.
 EXTRA_CUTS = {
-    "8124": [[20.5, 21.04]],  # mumbled "Una volta che" -> "La serie da 10 diventa..."
+    "8124": [[20.5, 22.38]],  # stumble on "Una volta che la serie da 10": keep "...da 10. Diventa non faticosa? Allora..."
     "8126": [[1.44, 1.86], [5.04, 5.12]],  # 2nd "l'equilibrio"; stray "è"
 }
 GAP = 0.22      # pauses longer than this are removed

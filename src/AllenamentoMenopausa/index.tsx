@@ -136,9 +136,11 @@ const CUES: Cue[] = [
   },
   { clip: "8128", from: 9.3, to: 13.6, o: { kind: "media", src: "nuoto.mp4" } },
   {
+    // From the clip's first frame to its last, so the card itself is the
+    // transition in and out (no separate take slide next to it).
     clip: "8129",
-    from: 2.0,
-    to: 9.5,
+    from: 0,
+    to: 9.81,
     o: {
       kind: "card",
       kicker: "LA VERITÀ SCOMODA",
@@ -608,7 +610,11 @@ const fill = { width: "100%", height: "100%", objectFit: "cover" } as const;
 
 // Jump cuts between her takes slide: the next take enters from the right
 // while the last frame of the previous one, frozen, leaves to the left.
-const CUTS = data.segments.slice(1).map((s) => f(s.at));
+// Only a change of clip (a new take) slides; cuts inside a clip are plain
+// jump cuts, masked by the zoom changing on every take.
+const newClip = (i: number) =>
+  i > 0 && data.segments[i].clip !== data.segments[i - 1].clip;
+const CUTS = data.segments.flatMap((s, i) => (newClip(i) ? [f(s.at)] : []));
 
 const Take: React.FC<{
   clip: string;
@@ -667,11 +673,17 @@ const Takes: React.FC<{ muted?: boolean }> = ({ muted }) => (
           from={start}
           durationInFrames={len}
         >
-          <Take clip={s.clip} trim={f(s.from)} slideIn={i > 0} muted={muted} />
+          <Take
+            clip={s.clip}
+            trim={f(s.from)}
+            slideIn={newClip(i)}
+            muted={muted}
+          />
         </Sequence>
       );
     })}
-    {data.segments.slice(0, -1).map((s) => {
+    {data.segments.slice(0, -1).map((s, i) => {
+      if (!newClip(i + 1)) return null;
       const start = f(s.at + s.to - s.from);
       return (
         <Sequence
@@ -796,13 +808,6 @@ const Flash: React.FC = () => {
 type Word = (typeof data.words)[number];
 
 // One-line phrases of about three words, broken at punctuation.
-// Phrases also break wherever the picture changes (she moves to or from the
-// corner, or a light card comes or goes), so a phrase never changes place.
-const BREAKS = [
-  ...PIP_SPANS.flatMap((p) => [p.start, p.end]),
-  ...TIMED.filter((c) => c.o.kind !== "media").flatMap((c) => [c.start, c.end]),
-].map((fr) => fr / ALLENAMENTO_FPS);
-
 const MAX_CHARS = 30;
 const textOf = (ws: Word[]) => ws.map((w) => w.w).join(" ");
 // "3." at the start of a sentence numbers a point; "10." at the end ends one.
@@ -813,17 +818,10 @@ const endsSentence = (w: Word) =>
   /[.?!]$/.test(w.w) && !isNumbering(data.words.indexOf(w));
 
 const PHRASES = (() => {
-  // 1. Clauses: split at sentence ends, commas and picture changes.
+  // 1. Clauses: split at sentence ends and commas.
   const clauses: Word[][] = [];
   let cur: Word[] = [];
   data.words.forEach((w, i) => {
-    if (cur.length) {
-      const prev = cur[cur.length - 1];
-      if (BREAKS.some((b) => b > prev.t + 0.05 && b <= w.t + 0.05)) {
-        clauses.push(cur);
-        cur = [];
-      }
-    }
     cur.push(w);
     if (/[.?!,]$/.test(w.w) && !isNumbering(i)) {
       clauses.push(cur);
@@ -842,23 +840,31 @@ const PHRASES = (() => {
     }
     const target = len / n;
     let part: Word[] = [];
-    for (const w of c) {
-      part.push(w);
+    c.forEach((w, k) => {
+      const before = textOf(part).length;
+      const after = textOf([...part, w]).length;
+      const left = c.length - k; // words not yet placed, w included
+      // Close the chunk before w when that lands closer to the target, but
+      // never leave a single word behind.
       if (
-        textOf(part).length >= target &&
-        chunks.length >= 0 &&
-        part.length > 1
+        part.length &&
+        after > target &&
+        after - target > target - before &&
+        left > 1
       ) {
         chunks.push(part);
         part = [];
       }
-    }
-    if (part.length) {
-      if (part.length === 1 && chunks.length) {
-        chunks[chunks.length - 1] = [...chunks[chunks.length - 1], ...part];
-      } else {
-        chunks.push(part);
-      }
+      part.push(w);
+    });
+    if (
+      part.length === 1 &&
+      chunks.length &&
+      chunks[chunks.length - 1] !== undefined
+    ) {
+      chunks[chunks.length - 1] = [...chunks[chunks.length - 1], ...part];
+    } else if (part.length) {
+      chunks.push(part);
     }
   }
   // 3. Phrases on screen for under a second join the next one when they fit,
@@ -868,14 +874,10 @@ const PHRASES = (() => {
     const prev = merged[merged.length - 1];
     if (prev) {
       const sentenceEnd = endsSentence(prev[prev.length - 1]);
-      const split = BREAKS.some(
-        (b) => b > prev[prev.length - 1].t + 0.05 && b <= ph[0].t + 0.05,
-      );
       const short = ph[0].t - prev[0].t < 1.1 || ph.length === 1;
       if (
         short &&
         !sentenceEnd &&
-        !split &&
         textOf([...prev, ...ph]).length <=
           (prev.length === 1 || ph.length === 1 ? 44 : 38)
       ) {
@@ -895,17 +897,6 @@ const phraseAt = (t: number) => {
   return -1;
 };
 
-// Captions are always on. Each phrase keeps one place and one colour for its
-// whole life: beside her if it starts during a corner span, centred otherwise;
-// plum on the light cards and pictures, white over video.
-const PHRASE_MODE = PHRASES.map((phrase) => {
-  const a = f(phrase[0].t - 0.15);
-  const side = PIP_SPANS.some((p) => a + 6 >= p.start && a < p.end - FADE);
-  const cue = TIMED.find((c) => a + 6 >= c.start && a < c.end);
-  const light = cue !== undefined && cue.o.kind !== "media";
-  return { side, light };
-});
-
 const Captions: React.FC = () => {
   const frame = useCurrentFrame();
   const t = frame / ALLENAMENTO_FPS;
@@ -918,7 +909,12 @@ const Captions: React.FC = () => {
   // read even with the 1.2x speech.
   const start = phrase[0].t - 0.15;
   const fadeIn = interpolate(t, [start, start + 0.12], [0, 1], clamp);
-  const { side, light } = PHRASE_MODE[i];
+  // Colour and place follow the picture as it is right now: plum on the
+  // light cards and pictures, white over video; above the corner picture
+  // while she is in the corner.
+  const cue = TIMED.find((c) => frame >= c.start && frame < c.end);
+  const light = cue !== undefined && cue.o.kind !== "media";
+  const k = pipAmount(frame);
   // Beside her = full width just above the corner picture.
   const width = 920;
   const text = phrase
@@ -932,7 +928,7 @@ const Captions: React.FC = () => {
     <div
       style={{
         position: "absolute",
-        top: side ? 980 : 1400,
+        top: 1400 - 420 * k,
         left: 80,
         width,
         whiteSpace: "nowrap",
