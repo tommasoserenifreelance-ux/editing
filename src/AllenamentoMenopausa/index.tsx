@@ -817,19 +817,37 @@ const PHRASES = (() => {
     line.push(w);
     const len = line.map((x) => x.w).join(" ").length;
     const next = data.words[i + 1];
-    const tooLong = next && len + next.w.length + 1 > 26;
+    const tooLong = next && len + next.w.length + 1 > 30;
     if (/[.?!]$/.test(w.w) || tooLong || (/,$/.test(w.w) && len >= 12)) {
       out.push(line);
       line = [];
     }
   });
   if (line.length) out.push(line);
-  return out;
+  // Phrases on screen for under a second join the next one when they fit on
+  // one line and no picture change sits between them.
+  const merged: Word[][] = [];
+  out.forEach((ph) => {
+    const prev = merged[merged.length - 1];
+    if (prev) {
+      const prevDur = ph[0].t - prev[0].t;
+      const text = [...prev, ...ph].map((w) => w.w).join(" ");
+      const split = BREAKS.some(
+        (b) => b > prev[prev.length - 1].t + 0.05 && b <= ph[0].t + 0.05,
+      );
+      if (prevDur < 1 && text.length <= 32 && !split) {
+        merged[merged.length - 1] = [...prev, ...ph];
+        return;
+      }
+    }
+    merged.push(ph);
+  });
+  return merged;
 })();
 
 const phraseAt = (t: number) => {
   for (let i = PHRASES.length - 1; i >= 0; i--) {
-    if (t >= PHRASES[i][0].t - 0.05) return i;
+    if (t >= PHRASES[i][0].t - 0.15) return i;
   }
   return -1;
 };
@@ -844,7 +862,8 @@ const PHRASE_MODE = PHRASES.map((phrase, i) => {
   if (TIMED.some((c) => c.o.kind !== "media" && overlaps(c.start, c.end))) {
     return "hidden";
   }
-  if (PIP_SPANS.some((p) => a + 6 >= p.start && a < p.end - FADE)) return "side";
+  if (PIP_SPANS.some((p) => a + 6 >= p.start && a < p.end - FADE))
+    return "side";
   return "center";
 });
 
@@ -856,12 +875,15 @@ const Captions: React.FC = () => {
   const phrase = PHRASES[i];
   const end = PHRASES[i + 1]?.[0].t ?? phrase[phrase.length - 1].e + 0.6;
   if (t >= end) return null;
-  const out = interpolate(t, [end - 0.25, end - 0.02], [0, 1], clamp);
+  // The whole phrase appears at once and stays until the next one: easy to
+  // read even with the 1.2x speech.
+  const start = phrase[0].t - 0.15;
+  const fadeIn = interpolate(t, [start, start + 0.12], [0, 1], clamp);
   const side = PHRASE_MODE[i] === "side";
   const width = side ? 560 : 920;
   const text = phrase.map((w) => w.w.replace(/[.,]$/, "")).join(" ");
   // Never wraps: shrink the type to fit the line instead.
-  const fontSize = Math.min(side ? 60 : 72, width / (text.length * 0.5));
+  const fontSize = Math.min(side ? 60 : 72, width / (text.length * 0.52));
   return (
     <div
       style={{
@@ -873,27 +895,15 @@ const Captions: React.FC = () => {
         textAlign: side ? "left" : "center",
         fontFamily: interTight,
         fontSize,
-        fontWeight: i % 2 ? 700 : 300,
-        letterSpacing: -1,
+        fontWeight: 700,
+        letterSpacing: -0.5,
         color: "#fff",
-        textShadow: "0 2px 16px rgba(0,0,0,0.45), 0 1px 3px rgba(0,0,0,0.35)",
-        opacity: 1 - out,
-        filter: `blur(${out * 8}px)`,
+        textShadow: "0 2px 18px rgba(0,0,0,0.55), 0 1px 4px rgba(0,0,0,0.5)",
+        opacity: fadeIn,
+        transform: `translateY(${(1 - fadeIn) * 12}px)`,
       }}
     >
-      {phrase.map((w, wi) => (
-        <span key={wi}>
-          {wi ? " " : ""}
-          <Reveal
-            text={w.w.replace(/[.,]$/, "")}
-            start={w.t - 0.04}
-            now={t}
-            step={0.025}
-            dur={0.22}
-            seed={Math.round(w.t * 100)}
-          />
-        </span>
-      ))}
+      {text}
     </div>
   );
 };
