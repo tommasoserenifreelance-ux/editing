@@ -818,7 +818,11 @@ const PHRASES = (() => {
     const len = line.map((x) => x.w).join(" ").length;
     const next = data.words[i + 1];
     const tooLong = next && len + next.w.length + 1 > 30;
-    if (/[.?!]$/.test(w.w) || tooLong || (/,$/.test(w.w) && len >= 12)) {
+    if (
+      (/[.?!]$/.test(w.w) && !/^\d+\.$/.test(w.w)) ||
+      tooLong ||
+      (/,$/.test(w.w) && len >= 18)
+    ) {
       out.push(line);
       line = [];
     }
@@ -835,7 +839,10 @@ const PHRASES = (() => {
       const split = BREAKS.some(
         (b) => b > prev[prev.length - 1].t + 0.05 && b <= ph[0].t + 0.05,
       );
-      if (prevDur < 1 && text.length <= 32 && !split) {
+      const last = prev[prev.length - 1].w;
+      // "3." introduces a point, it doesn't end a sentence.
+      const sentenceEnd = /[.?!]$/.test(last) && !/^\d+\.$/.test(last);
+      if (prevDur < 1 && text.length <= 32 && !split && !sentenceEnd) {
         merged[merged.length - 1] = [...prev, ...ph];
         return;
       }
@@ -852,26 +859,22 @@ const phraseAt = (t: number) => {
   return -1;
 };
 
-// Each phrase keeps one place for its whole life, so it is never seen twice:
-// hidden if a light card or picture covers any part of it, beside her if it
-// overlaps a corner span, centred otherwise.
-const PHRASE_MODE = PHRASES.map((phrase, i) => {
-  const a = f(phrase[0].t - 0.05);
-  const b = f(PHRASES[i + 1]?.[0].t ?? phrase[phrase.length - 1].e + 0.6);
-  const overlaps = (s: number, e: number) => s < b && e > a;
-  if (TIMED.some((c) => c.o.kind !== "media" && overlaps(c.start, c.end))) {
-    return "hidden";
-  }
-  if (PIP_SPANS.some((p) => a + 6 >= p.start && a < p.end - FADE))
-    return "side";
-  return "center";
+// Captions are always on. Each phrase keeps one place and one colour for its
+// whole life: beside her if it starts during a corner span, centred otherwise;
+// plum on the light cards and pictures, white over video.
+const PHRASE_MODE = PHRASES.map((phrase) => {
+  const a = f(phrase[0].t - 0.15);
+  const side = PIP_SPANS.some((p) => a + 6 >= p.start && a < p.end - FADE);
+  const cue = TIMED.find((c) => a + 6 >= c.start && a < c.end);
+  const light = cue !== undefined && cue.o.kind !== "media";
+  return { side, light };
 });
 
 const Captions: React.FC = () => {
   const frame = useCurrentFrame();
   const t = frame / ALLENAMENTO_FPS;
   const i = phraseAt(t);
-  if (i < 0 || PHRASE_MODE[i] === "hidden") return null;
+  if (i < 0) return null;
   const phrase = PHRASES[i];
   const end = PHRASES[i + 1]?.[0].t ?? phrase[phrase.length - 1].e + 0.6;
   if (t >= end) return null;
@@ -879,26 +882,31 @@ const Captions: React.FC = () => {
   // read even with the 1.2x speech.
   const start = phrase[0].t - 0.15;
   const fadeIn = interpolate(t, [start, start + 0.12], [0, 1], clamp);
-  const side = PHRASE_MODE[i] === "side";
-  const width = side ? 560 : 920;
-  const text = phrase.map((w) => w.w.replace(/[.,]$/, "")).join(" ");
+  const { side, light } = PHRASE_MODE[i];
+  // Beside her = full width just above the corner picture.
+  const width = 920;
+  const text = phrase
+    .map((w) => (/^\d+\.$/.test(w.w) ? w.w : w.w.replace(/[.,]$/, "")))
+    .join(" ");
   // Never wraps: shrink the type to fit the line instead.
-  const fontSize = Math.min(side ? 60 : 72, width / (text.length * 0.52));
+  const fontSize = Math.min(72, width / (text.length * 0.52));
   return (
     <div
       style={{
         position: "absolute",
-        top: side ? 1560 : 1400,
-        left: side ? 50 : 80,
+        top: side ? 980 : 1400,
+        left: 80,
         width,
         whiteSpace: "nowrap",
-        textAlign: side ? "left" : "center",
+        textAlign: "center",
         fontFamily: interTight,
         fontSize,
         fontWeight: 700,
         letterSpacing: -0.5,
-        color: "#fff",
-        textShadow: "0 2px 18px rgba(0,0,0,0.55), 0 1px 4px rgba(0,0,0,0.5)",
+        color: light ? colors.plum : "#fff",
+        textShadow: light
+          ? "none"
+          : "0 2px 18px rgba(0,0,0,0.55), 0 1px 4px rgba(0,0,0,0.5)",
         opacity: fadeIn,
         transform: `translateY(${(1 - fadeIn) * 12}px)`,
       }}
