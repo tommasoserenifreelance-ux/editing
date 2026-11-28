@@ -23,20 +23,23 @@ import { sans } from "../PilatesReformer/theme";
 export const ACQUA_FPS = 30;
 const s = (sec: number) => Math.round(sec * ACQUA_FPS);
 
-const HOOK_LEN = 2.3;
-const WIPE = 10; // frames, lilac wave covering the clip
+const HOOK_LEN = 2.6; // 4.5 → 7.1 s of the clip
+const DISSOLVE = 15; // frames: freeze frame softens, table fades in
 const TABLE_LEN = 6.2;
 export const ACQUA_DURATION = s(HOOK_LEN + TABLE_LEN);
 
-// Hook clip: water poured into a glass (client's clip, 720x1280).
-const HOOK_SRC = "acqua/hook.mp4";
-const HOOK_FROM = 0.9; // seconds into the clip: the pour is already flowing
+// Hook clip: Elena drinking among the bougainvillea (release asset
+// 290994D6…MP4 → public/acqua/elena_src.mp4). It plays from 4.5 s and stops
+// on her smile at 7.1 s, which stays as a freeze frame
+// (public/acqua/elena_end.png) under the table, dissolved in over it.
+const HOOK_SRC = "acqua/elena_src.mp4";
+const HOOK_FROM = 4.5;
+const FREEZE = "acqua/elena_end.png";
 
 const YELLOW = "#EEF7A3";
 const LILAC = "#D9C4F1";
 const LILAC_DEEP = "#B89AE6";
 const INK = "#1F1F1F";
-const CREAM = "#FAF6EE";
 
 const clamp = {
   extrapolateLeft: "clamp",
@@ -82,8 +85,16 @@ const Drop: React.FC<{ size: number; color?: string }> = ({
 const Hook: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const a = spring({ frame: frame - 3, fps, config: { damping: 12, mass: 0.6 } });
-  const b = spring({ frame: frame - 9, fps, config: { damping: 12, mass: 0.6 } });
+  const a = spring({
+    frame: frame - 3,
+    fps,
+    config: { damping: 12, mass: 0.6 },
+  });
+  const b = spring({
+    frame: frame - 9,
+    fps,
+    config: { damping: 12, mass: 0.6 },
+  });
   const bob = Math.sin(frame / 6) * 6;
   return (
     <AbsoluteFill>
@@ -96,10 +107,10 @@ const Hook: React.FC = () => {
       <AbsoluteFill
         style={{
           background:
-            "linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0) 35%)",
+            "linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(0,0,0,0.25) 100%)",
         }}
       />
-      <AbsoluteFill style={{ alignItems: "center", paddingTop: 300 }}>
+      <AbsoluteFill style={{ alignItems: "center", paddingTop: 1180 }}>
         <div
           style={{
             display: "flex",
@@ -142,41 +153,6 @@ const Hook: React.FC = () => {
           </div>
         </div>
       </AbsoluteFill>
-    </AbsoluteFill>
-  );
-};
-
-// Lilac wave rising over the clip into the table.
-const Wipe: React.FC = () => {
-  const frame = useCurrentFrame();
-  const p = interpolate(frame, [0, WIPE], [0, 1], clamp);
-  const top = interpolate(p, [0, 1], [1920, -200]);
-  const out = interpolate(frame, [WIPE, WIPE + 8], [1, 0], clamp);
-  const wave = (ph: number) =>
-    Array.from({ length: 21 }, (_, i) => {
-      const x = (i / 20) * 1080;
-      const y = Math.sin(i / 3 + frame / 2 + ph) * 40;
-      return `${x},${y + 60}`;
-    }).join(" ");
-  return (
-    <AbsoluteFill style={{ opacity: out }}>
-      <svg
-        width={1080}
-        height={2400}
-        style={{ position: "absolute", top: top - 60, left: 0 }}
-      >
-        <polygon points={`0,2400 ${wave(0)} 1080,2400`} fill={LILAC} />
-        <polygon
-          points={`0,2400 ${wave(2)
-            .split(" ")
-            .map((pt) => {
-              const [x, y] = pt.split(",").map(Number);
-              return `${x},${y + 70}`;
-            })
-            .join(" ")} 1080,2400`}
-          fill={YELLOW}
-        />
-      </svg>
     </AbsoluteFill>
   );
 };
@@ -255,144 +231,144 @@ const Row: React.FC<{ i: number }> = ({ i }) => {
 const Table: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const card = spring({ frame, fps, config: { damping: 14, mass: 0.7 } });
-  const head = spring({ frame: frame - 4, fps, config: { damping: 12 } });
+  const dis = interpolate(frame, [0, DISSOLVE], [0, 1], clamp);
+  const card = spring({
+    frame: frame - 6,
+    fps,
+    config: { damping: 14, mass: 0.7 },
+  });
+  const head = spring({ frame: frame - 8, fps, config: { damping: 12 } });
   const share = spring({
     frame: frame - s(TABLE_LEN - 2.2),
     fps,
     config: { damping: 9, mass: 0.6 },
   });
   return (
-    <AbsoluteFill style={{ backgroundColor: CREAM }}>
-      {/* soft brand blobs */}
-      <div
+    <AbsoluteFill style={{ backgroundColor: "black" }}>
+      <Img
+        src={staticFile(FREEZE)}
         style={{
-          position: "absolute",
-          width: 700,
-          height: 700,
-          borderRadius: "50%",
-          background: YELLOW,
-          filter: "blur(120px)",
-          opacity: 0.75,
-          left: -260,
-          top: 120 + Math.sin(frame / 25) * 30,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          filter: `blur(${interpolate(frame, [0, DISSOLVE], [0, 7], clamp)}px)`,
+          transform: "scale(1.04)",
         }}
       />
-      <div
+      <AbsoluteFill
         style={{
-          position: "absolute",
-          width: 760,
-          height: 760,
-          borderRadius: "50%",
-          background: LILAC,
-          filter: "blur(130px)",
-          opacity: 0.8,
-          right: -300,
-          bottom: 80 + Math.cos(frame / 25) * 30,
+          background: `linear-gradient(180deg, rgba(250,246,238,${0.25 * dis}) 0%, rgba(250,246,238,${0.45 * dis}) 100%)`,
         }}
       />
-      <AbsoluteFill style={{ alignItems: "center", paddingTop: 270 }}>
-        <Img
-          src={staticFile("logo.png")}
-          style={{
-            width: 62,
-            filter: "invert(1)",
-            opacity: 0.85 * head,
-          }}
-        />
-        <div
-          style={{
-            marginTop: 10,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            transform: `rotate(-2deg) scale(${head})`,
-          }}
-        >
-          <div
+      <AbsoluteFill style={{ opacity: dis }}>
+        <AbsoluteFill style={{ alignItems: "center", paddingTop: 270 }}>
+          <Img
+            src={staticFile("logo.png")}
             style={{
-              ...pill,
-              background: YELLOW,
-              fontSize: 54,
-              padding: "10px 40px",
+              width: 62,
+              filter: "invert(1)",
+              opacity: 0.85 * head,
             }}
-          >
-            Quanta acqua
-          </div>
+          />
           <div
             style={{
-              ...pill,
-              background: LILAC,
-              fontSize: 48,
-              padding: "10px 38px",
-              marginTop: -4,
-              marginLeft: 50,
-            }}
-          >
-            devi bere al giorno?
-          </div>
-        </div>
-        <div
-          style={{
-            marginTop: 18,
-            width: 940,
-            background: "rgba(255,255,255,0.9)",
-            borderRadius: 44,
-            padding: "26px 22px 22px",
-            boxShadow: "0 20px 60px rgba(90,60,130,0.18)",
-            opacity: Math.min(1, card * 1.5),
-            transform: `translateY(${interpolate(card, [0, 1], [80, 0])}px)`,
-          }}
-        >
-          <div
-            style={{
+              marginTop: 10,
               display: "flex",
-              justifyContent: "space-between",
+              flexDirection: "column",
               alignItems: "center",
-              padding: "0 10px 14px",
+              transform: `rotate(-2deg) scale(${head})`,
             }}
           >
             <div
-              style={{ ...pill, background: YELLOW, fontSize: 38, padding: "8px 30px", boxShadow: "none" }}
+              style={{
+                ...pill,
+                background: YELLOW,
+                fontSize: 54,
+                padding: "10px 40px",
+              }}
             >
-              Peso
+              Quanta acqua
             </div>
             <div
               style={{
                 ...pill,
                 background: LILAC,
-                fontSize: 38,
-                padding: "8px 30px",
-                boxShadow: "none",
-                display: "flex",
-                alignItems: "center",
-                gap: 12,
+                fontSize: 48,
+                padding: "10px 38px",
+                marginTop: -4,
+                marginLeft: 50,
               }}
             >
-              <Drop size={26} />
-              Acqua al giorno
+              devi bere al giorno?
             </div>
           </div>
-          {ROWS.map((_, i) => (
-            <Row key={i} i={i} />
-          ))}
-        </div>
-        <div
-          style={{
-            marginTop: 18,
-            fontFamily: sans,
-            fontWeight: 500,
-            fontSize: 27,
-            lineHeight: 1.35,
-            color: "#6E6478",
-            textAlign: "center",
-            opacity: head,
-          }}
-        >
-          stima indicativa: 30–35 ml per kg, acqua dei cibi compresa
-          <br />
-          di più con caldo, sport, gravidanza e allattamento
-        </div>
+          <div
+            style={{
+              marginTop: 18,
+              width: 940,
+              background: "rgba(255,255,255,0.9)",
+              borderRadius: 44,
+              padding: "26px 22px 22px",
+              boxShadow: "0 20px 60px rgba(90,60,130,0.18)",
+              opacity: Math.min(1, card * 1.5),
+              transform: `translateY(${interpolate(card, [0, 1], [80, 0])}px)`,
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: "0 10px 14px",
+              }}
+            >
+              <div
+                style={{
+                  ...pill,
+                  background: YELLOW,
+                  fontSize: 38,
+                  padding: "8px 30px",
+                  boxShadow: "none",
+                }}
+              >
+                Peso
+              </div>
+              <div
+                style={{
+                  ...pill,
+                  background: LILAC,
+                  fontSize: 38,
+                  padding: "8px 30px",
+                  boxShadow: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 12,
+                }}
+              >
+                <Drop size={26} />
+                Acqua al giorno
+              </div>
+            </div>
+            {ROWS.map((_, i) => (
+              <Row key={i} i={i} />
+            ))}
+            <div
+              style={{
+                marginTop: 14,
+                fontFamily: sans,
+                fontWeight: 500,
+                fontSize: 27,
+                lineHeight: 1.35,
+                color: "#6E6478",
+                textAlign: "center",
+              }}
+            >
+              stima indicativa: 30–35 ml per kg, acqua dei cibi compresa
+              <br />
+              di più con caldo, sport, gravidanza e allattamento
+            </div>
+          </div>
+        </AbsoluteFill>
       </AbsoluteFill>
       <AbsoluteFill
         style={{
@@ -419,15 +395,12 @@ const Table: React.FC = () => {
 };
 
 export const Acqua: React.FC = () => (
-  <AbsoluteFill style={{ backgroundColor: CREAM }}>
-    <Sequence durationInFrames={s(HOOK_LEN) + WIPE}>
+  <AbsoluteFill style={{ backgroundColor: "black" }}>
+    <Sequence durationInFrames={s(HOOK_LEN) + 1}>
       <Hook />
     </Sequence>
-    <Sequence from={s(HOOK_LEN) + WIPE - 2}>
+    <Sequence from={s(HOOK_LEN)}>
       <Table />
-    </Sequence>
-    <Sequence from={s(HOOK_LEN)} durationInFrames={WIPE + 10}>
-      <Wipe />
     </Sequence>
   </AbsoluteFill>
 );
