@@ -15,7 +15,7 @@ import { sans } from "../PilatesReformer/theme";
 // "Quanta acqua devi bere al giorno?" — trend format (reference reel: a
 // 2 s clip of a girl drinking with the question, then a weight → water
 // table to screenshot and share), redone in the Santa Longevity yellow &
-// lilac. No music: the client adds her own track.
+// lilac. Music: the client's track (see Song).
 // Water = 30–35 ml per kg of body weight, shown as a range: the usual
 // practical rule, consistent with EFSA's adequate intake (2.0 L/day for
 // women, 2.5 L for men, water from food included). The reference reel's
@@ -395,11 +395,35 @@ const Table: React.FC = () => {
   );
 };
 
-// Sound effects only (the client adds the music): her pop on the question,
-// a soft water-like bloop when the freeze frame and table dissolve in, her
-// pop again on "Condividilo".
+// Music: chorus of the client's "Think I'm going dumb"
+// (public/music/going_dumb.mp3), from 40.2 s: "That's why I love to mess
+// with you…" up to just before the next verse ("But every time", 48.9 s).
+// Sound effects: her pop on the question, a soft water-like bloop when the
+// freeze frame and table dissolve in, her pop again on "Condividilo".
+const SONG_FROM = 40.2;
+
+const Song: React.FC = () => {
+  const { durationInFrames } = useVideoConfig();
+  return (
+    <Audio
+      src={staticFile("music/going_dumb.mp3")}
+      trimBefore={s(SONG_FROM)}
+      volume={(f) =>
+        0.5 *
+        interpolate(
+          f,
+          [0, 6, durationInFrames - 20, durationInFrames],
+          [0, 1, 1, 0],
+          clamp,
+        )
+      }
+    />
+  );
+};
+
 export const Acqua: React.FC = () => (
   <AbsoluteFill style={{ backgroundColor: "black" }}>
+    <Song />
     <Sequence durationInFrames={s(HOOK_LEN) + 1}>
       <Hook />
     </Sequence>
