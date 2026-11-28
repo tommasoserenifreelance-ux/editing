@@ -51,12 +51,13 @@ type Overlay =
 
 type Cue = { clip: keyof typeof data.tl; from: number; to: number; o: Overlay };
 
+// Fewer, longer b-roll moments than a fast-cut reel, so captions can be read.
 const CUES: Cue[] = [
-  { clip: "8122", from: 3.4, to: 5.9, o: { kind: "media", src: "pancia.mp4" } },
+  { clip: "8122", from: 3.4, to: 6.2, o: { kind: "media", src: "pancia.mp4" } },
   {
     clip: "8122",
     from: 7.8,
-    to: 9.9,
+    to: 10.4,
     o: { kind: "media", src: "addome.mp4" },
   },
   {
@@ -78,17 +79,7 @@ const CUES: Cue[] = [
   },
   {
     clip: "8123",
-    from: 3.2,
-    to: 5.1,
-    o: {
-      kind: "card",
-      lines: ["Il muscolo è", "un organo di", "longevità"],
-      accent: 2,
-    },
-  },
-  {
-    clip: "8123",
-    from: 6.3,
+    from: 6.0,
     to: 10.5,
     o: { kind: "image", src: "spesa.png", label: "Autonomia" },
   },
@@ -102,101 +93,48 @@ const CUES: Cue[] = [
   { clip: "8124", from: 14.6, to: 24.3, o: { kind: "sets" } },
   {
     clip: "8124",
-    from: 26.1,
-    to: 30.7,
+    from: 27.6,
+    to: 32.4,
     o: { kind: "media", src: "manubri.mp4" },
   },
-  {
-    clip: "8124",
-    from: 32.9,
-    to: 35.4,
-    o: {
-      kind: "card",
-      lines: ["Carico", "progressivo", "e crescente"],
-      accent: 1,
-    },
-  },
-  {
-    clip: "8125",
-    from: 0.2,
-    to: 2.0,
-    o: { kind: "card", kicker: "PILASTRO 2", lines: ["Cardio"], accent: 0 },
-  },
-  {
-    clip: "8125",
-    from: 6.2,
-    to: 10.9,
-    o: { kind: "media", src: "cuore.mp4" },
-  },
+  { clip: "8125", from: 6.2, to: 10.9, o: { kind: "media", src: "cuore.mp4" } },
   {
     clip: "8125",
     from: 11.4,
-    to: 15.1,
+    to: 15.5,
     o: { kind: "media", src: "corsa.mp4" },
   },
   {
     clip: "8126",
-    from: 0.2,
-    to: 2.9,
-    o: { kind: "card", kicker: "PILASTRO 3", lines: ["Equilibrio"], accent: 0 },
-  },
-  {
-    clip: "8126",
     from: 3.0,
-    to: 7.6,
-    o: {
-      kind: "image",
-      src: "equilibrio.png",
-      label: "Meno rischio di cadute",
-    },
+    to: 7.8,
+    o: { kind: "image", src: "equilibrio.png", label: "3. Equilibrio" },
   },
   {
     clip: "8127",
     from: 1.1,
-    to: 2.4,
+    to: 2.5,
     o: { kind: "image", src: "pilates.png", label: "Pilates" },
   },
   {
     clip: "8127",
-    from: 2.4,
-    to: 3.2,
+    from: 2.5,
+    to: 3.4,
     o: { kind: "image", src: "taichi.png", label: "Tai Chi" },
   },
   {
     clip: "8127",
-    from: 3.2,
-    to: 4.7,
+    from: 3.4,
+    to: 5.6,
     o: { kind: "image", src: "yoga.png", label: "Yoga" },
   },
   {
     clip: "8128",
-    from: 0.0,
-    to: 2.85,
-    o: {
-      kind: "card",
-      kicker: "PILASTRO 4",
-      lines: ["Articolazioni"],
-      accent: 0,
-    },
-  },
-  {
-    clip: "8128",
     from: 2.9,
-    to: 7.2,
-    o: {
-      kind: "media",
-      src: "ginocchio.mp4",
-    },
+    to: 7.4,
+    o: { kind: "media", src: "ginocchio.mp4" },
   },
-  {
-    clip: "8128",
-    from: 9.3,
-    to: 13.3,
-    o: {
-      kind: "media",
-      src: "nuoto.mp4",
-    },
-  },
+  { clip: "8128", from: 9.3, to: 13.6, o: { kind: "media", src: "nuoto.mp4" } },
   {
     clip: "8129",
     from: 2.0,
@@ -208,12 +146,7 @@ const CUES: Cue[] = [
       accent: 1,
     },
   },
-  {
-    clip: "8130",
-    from: 4.7,
-    to: 6.45,
-    o: { kind: "media", src: "sonno.mp4" },
-  },
+  { clip: "8130", from: 4.4, to: 6.5, o: { kind: "media", src: "sonno.mp4" } },
   {
     clip: "8130",
     from: 6.5,
@@ -229,7 +162,7 @@ const CUES: Cue[] = [
   {
     clip: "8130",
     from: 13.0,
-    to: 18.5,
+    to: 18.6,
     o: {
       kind: "card",
       lines: [
@@ -253,8 +186,8 @@ const smooth = { ...clamp, easing: Easing.inOut(Easing.cubic) };
 
 const PIP_SCALE = 0.42;
 // Frames for her to shrink into / grow out of the corner.
-const FADE = 16;
-const SLIDE = 12;
+const FADE = 20;
+const SLIDE = 16;
 
 // Back-to-back cues form one span. She shrinks into the corner only during
 // the three longest spans; the others cover her with a slide.
@@ -305,7 +238,7 @@ const Slider: React.FC<{
   children: React.ReactNode;
 }> = ({ start, slideIn, outAt, children }) => {
   const frame = useCurrentFrame() + start;
-  const ease = { ...clamp, easing: Easing.out(Easing.cubic) };
+  const ease = { ...clamp, easing: Easing.inOut(Easing.cubic) };
   const x =
     (slideIn
       ? interpolate(frame, [start, start + SLIDE], [1080, 0], ease)
@@ -652,8 +585,8 @@ const pipAmount = (frame: number) => {
 const useSpeakerFrame = (corner: boolean) => {
   const frame = useCurrentFrame();
   const k = corner ? pipAmount(frame) : 0;
-  const phrase = phraseAt(frame / ALLENAMENTO_FPS);
-  const punch = 1 + 0.12 * ((phrase < 0 ? 0 : phrase) % 2) * (1 - k);
+  const take = data.segments.filter((s) => frame >= f(s.at)).length - 1;
+  const punch = 1 + 0.08 * (Math.max(0, take) % 2) * (1 - k);
   const feather = `rgba(0,0,0,${1 - k})`;
   const outer: React.CSSProperties = corner
     ? {
@@ -684,7 +617,7 @@ const Take: React.FC<{
   muted?: boolean;
 }> = ({ clip, trim, slideIn, muted }) => {
   const t = useCurrentFrame();
-  const ease = { ...clamp, easing: Easing.out(Easing.cubic) };
+  const ease = { ...clamp, easing: Easing.inOut(Easing.cubic) };
   const x = slideIn ? interpolate(t, [0, SLIDE], [1080, 0], ease) : 0;
   return (
     <AbsoluteFill style={{ transform: `translateX(${x}px)` }}>
@@ -703,7 +636,7 @@ const Tail: React.FC<{ clip: string; lastFrame: number }> = ({
   lastFrame,
 }) => {
   const t = useCurrentFrame();
-  const ease = { ...clamp, easing: Easing.out(Easing.cubic) };
+  const ease = { ...clamp, easing: Easing.inOut(Easing.cubic) };
   return (
     <AbsoluteFill
       style={{
@@ -863,17 +796,33 @@ const Flash: React.FC = () => {
 type Word = (typeof data.words)[number];
 
 // One-line phrases of about three words, broken at punctuation.
+// Phrases also break wherever the picture changes (she moves to or from the
+// corner, or a light card comes or goes), so a phrase never changes place.
+const BREAKS = [
+  ...PIP_SPANS.flatMap((p) => [p.start, p.end]),
+  ...TIMED.filter((c) => c.o.kind !== "media").flatMap((c) => [c.start, c.end]),
+].map((fr) => fr / ALLENAMENTO_FPS);
+
 const PHRASES = (() => {
   const out: Word[][] = [];
   let line: Word[] = [];
-  for (const w of data.words) {
+  data.words.forEach((w, i) => {
+    if (line.length) {
+      const prev = line[line.length - 1];
+      if (BREAKS.some((b) => b > prev.t + 0.05 && b <= w.t + 0.05)) {
+        out.push(line);
+        line = [];
+      }
+    }
     line.push(w);
     const len = line.map((x) => x.w).join(" ").length;
-    if (/[.?!]$/.test(w.w) || len >= 14 || (/,$/.test(w.w) && len >= 7)) {
+    const next = data.words[i + 1];
+    const tooLong = next && len + next.w.length + 1 > 26;
+    if (/[.?!]$/.test(w.w) || tooLong || (/,$/.test(w.w) && len >= 12)) {
       out.push(line);
       line = [];
     }
-  }
+  });
   if (line.length) out.push(line);
   return out;
 })();
@@ -895,7 +844,7 @@ const PHRASE_MODE = PHRASES.map((phrase, i) => {
   if (TIMED.some((c) => c.o.kind !== "media" && overlaps(c.start, c.end))) {
     return "hidden";
   }
-  if (PIP_SPANS.some((p) => overlaps(p.start, p.end))) return "side";
+  if (PIP_SPANS.some((p) => a + 6 >= p.start && a < p.end - FADE)) return "side";
   return "center";
 });
 
@@ -907,12 +856,12 @@ const Captions: React.FC = () => {
   const phrase = PHRASES[i];
   const end = PHRASES[i + 1]?.[0].t ?? phrase[phrase.length - 1].e + 0.6;
   if (t >= end) return null;
-  const out = interpolate(t, [end - 0.18, end - 0.02], [0, 1], clamp);
+  const out = interpolate(t, [end - 0.25, end - 0.02], [0, 1], clamp);
   const side = PHRASE_MODE[i] === "side";
   const width = side ? 560 : 920;
   const text = phrase.map((w) => w.w.replace(/[.,]$/, "")).join(" ");
   // Never wraps: shrink the type to fit the line instead.
-  const fontSize = Math.min(side ? 64 : 76, width / (text.length * 0.5));
+  const fontSize = Math.min(side ? 60 : 72, width / (text.length * 0.5));
   return (
     <div
       style={{

@@ -30,7 +30,9 @@ for name in sorted(tx):
     floor = np.percentile(db, 10)
     talk = np.where(db > floor + 15)[0]
     start = max(0.0, talk[0] * WIN - 0.08)
-    end = min(dur, (talk[-1] + 1) * WIN + 0.15)
+    # Soft word endings fall below the loudness gate: never end before the
+    # transcript's last word.
+    end = min(dur, max((talk[-1] + 1) * WIN + 0.15, ws[-1][1] + 0.15))
     # Only clear pauses between two well-timed words are cut, with generous
     # margins: the transcript tends to start words a little late.
     cuts = []
