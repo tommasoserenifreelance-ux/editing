@@ -803,52 +803,88 @@ const BREAKS = [
   ...TIMED.filter((c) => c.o.kind !== "media").flatMap((c) => [c.start, c.end]),
 ].map((fr) => fr / ALLENAMENTO_FPS);
 
+const MAX_CHARS = 30;
+const textOf = (ws: Word[]) => ws.map((w) => w.w).join(" ");
+// "3." at the start of a sentence numbers a point; "10." at the end ends one.
+const isNumbering = (i: number) =>
+  /^\d+\.$/.test(data.words[i].w) &&
+  (i === 0 || /[.?!]$/.test(data.words[i - 1].w));
+const endsSentence = (w: Word) =>
+  /[.?!]$/.test(w.w) && !isNumbering(data.words.indexOf(w));
+
 const PHRASES = (() => {
-  const out: Word[][] = [];
-  let line: Word[] = [];
+  // 1. Clauses: split at sentence ends, commas and picture changes.
+  const clauses: Word[][] = [];
+  let cur: Word[] = [];
   data.words.forEach((w, i) => {
-    if (line.length) {
-      const prev = line[line.length - 1];
+    if (cur.length) {
+      const prev = cur[cur.length - 1];
       if (BREAKS.some((b) => b > prev.t + 0.05 && b <= w.t + 0.05)) {
-        out.push(line);
-        line = [];
+        clauses.push(cur);
+        cur = [];
       }
     }
-    line.push(w);
-    const len = line.map((x) => x.w).join(" ").length;
-    const next = data.words[i + 1];
-    const tooLong = next && len + next.w.length + 1 > 30;
-    if (
-      (/[.?!]$/.test(w.w) && !/^\d+\.$/.test(w.w)) ||
-      tooLong ||
-      (/,$/.test(w.w) && len >= 18)
-    ) {
-      out.push(line);
-      line = [];
+    cur.push(w);
+    if (/[.?!,]$/.test(w.w) && !isNumbering(i)) {
+      clauses.push(cur);
+      cur = [];
     }
   });
-  if (line.length) out.push(line);
-  // Phrases on screen for under a second join the next one when they fit on
-  // one line and no picture change sits between them.
+  if (cur.length) clauses.push(cur);
+  // 2. Long clauses: split into chunks of similar length, no lone words.
+  const chunks: Word[][] = [];
+  for (const c of clauses) {
+    const len = textOf(c).length;
+    const n = Math.ceil(len / MAX_CHARS);
+    if (n <= 1) {
+      chunks.push(c);
+      continue;
+    }
+    const target = len / n;
+    let part: Word[] = [];
+    for (const w of c) {
+      part.push(w);
+      if (
+        textOf(part).length >= target &&
+        chunks.length >= 0 &&
+        part.length > 1
+      ) {
+        chunks.push(part);
+        part = [];
+      }
+    }
+    if (part.length) {
+      if (part.length === 1 && chunks.length) {
+        chunks[chunks.length - 1] = [...chunks[chunks.length - 1], ...part];
+      } else {
+        chunks.push(part);
+      }
+    }
+  }
+  // 3. Phrases on screen for under a second join the next one when they fit,
+  // stay in the same sentence and no picture change sits between them.
   const merged: Word[][] = [];
-  out.forEach((ph) => {
+  for (const ph of chunks) {
     const prev = merged[merged.length - 1];
     if (prev) {
-      const prevDur = ph[0].t - prev[0].t;
-      const text = [...prev, ...ph].map((w) => w.w).join(" ");
+      const sentenceEnd = endsSentence(prev[prev.length - 1]);
       const split = BREAKS.some(
         (b) => b > prev[prev.length - 1].t + 0.05 && b <= ph[0].t + 0.05,
       );
-      const last = prev[prev.length - 1].w;
-      // "3." introduces a point, it doesn't end a sentence.
-      const sentenceEnd = /[.?!]$/.test(last) && !/^\d+\.$/.test(last);
-      if (prevDur < 1 && text.length <= 32 && !split && !sentenceEnd) {
+      const short = ph[0].t - prev[0].t < 1.1 || ph.length === 1;
+      if (
+        short &&
+        !sentenceEnd &&
+        !split &&
+        textOf([...prev, ...ph]).length <=
+          (prev.length === 1 || ph.length === 1 ? 44 : 38)
+      ) {
         merged[merged.length - 1] = [...prev, ...ph];
-        return;
+        continue;
       }
     }
     merged.push(ph);
-  });
+  }
   return merged;
 })();
 
@@ -886,7 +922,9 @@ const Captions: React.FC = () => {
   // Beside her = full width just above the corner picture.
   const width = 920;
   const text = phrase
-    .map((w) => (/^\d+\.$/.test(w.w) ? w.w : w.w.replace(/[.,]$/, "")))
+    .map((w) =>
+      isNumbering(data.words.indexOf(w)) ? w.w : w.w.replace(/[.,]$/, ""),
+    )
     .join(" ");
   // Never wraps: shrink the type to fit the line instead.
   const fontSize = Math.min(72, width / (text.length * 0.52));
