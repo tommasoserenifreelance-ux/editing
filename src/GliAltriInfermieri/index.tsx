@@ -188,6 +188,12 @@ const FlashTitle: React.FC<{ fl: Flash; t: number; y: number }> = ({ fl, t, y })
   const f = (t - fl.from) * FPS;
   const s = spring({ frame: f, fps: FPS, config: { damping: 10, stiffness: 240, mass: 0.7 } });
   const out = interpolate(t, [fl.to - 0.12, fl.to], [1, 0], { extrapolateLeft: "clamp" });
+  // numbered chapters spin in: the number does two turns, the name follows with one
+  const spin = (delay: number, turns: number) => {
+    const k = spring({ frame: f - delay, fps: FPS, config: { damping: 14, stiffness: 170, mass: 0.8 } });
+    return { transform: `scale(${k}) rotate(${(1 - k) * -360 * turns}deg)`, display: "inline-block" } as React.CSSProperties;
+  };
+  const spinning = Boolean(fl.num);
   return (
     <div
       style={{
@@ -195,7 +201,7 @@ const FlashTitle: React.FC<{ fl: Flash; t: number; y: number }> = ({ fl, t, y })
         left: 40,
         right: 40,
         top: y * H,
-        transform: `translateY(-50%) scale(${s}) rotate(-3deg)`,
+        transform: `translateY(-50%) scale(${spinning ? 1 : s}) rotate(-3deg)`,
         textAlign: "center",
         opacity: out,
       }}
@@ -213,6 +219,7 @@ const FlashTitle: React.FC<{ fl: Flash; t: number; y: number }> = ({ fl, t, y })
             borderRadius: 26,
             marginBottom: 14,
             boxShadow: "0 14px 30px rgba(0,0,0,.35)",
+            ...spin(0, 2),
           }}
         >
           {fl.num}
@@ -229,8 +236,10 @@ const FlashTitle: React.FC<{ fl: Flash; t: number; y: number }> = ({ fl, t, y })
             ...outline(20),
           }}
         >
-          {line}
-          {i === fl.title.length - 1 ? <span style={{ color: RED }}>.</span> : null}
+          <span style={spinning ? spin(3 + i * 2, 1) : undefined}>
+            {line}
+            {i === fl.title.length - 1 ? <span style={{ color: RED }}>.</span> : null}
+          </span>
         </div>
       ))}
     </div>
@@ -364,7 +373,11 @@ const Sfx: React.FC<{ c: ReelConfig }> = ({ c }) => {
     cues.push({ at: s.from, src: "pop_u", lead: 0.02, v: 1 });
     if (s.kind === "img" && s.xAt !== undefined) cues.push({ at: s.xAt, src: "wrong", lead: 0.05, v: 0.7 });
   }
-  for (const f of c.flashes) swoosh(f.from, 0.9);
+  // B/W flashes: reverse-cymbal swell into a soft deep timpani hit (peak 0.72 s in)
+  for (const f of c.flashes) {
+    cues.push({ at: f.from, src: "flash", lead: 0.72, v: 0.9 });
+    if (f.num) cues.push({ at: f.from + 0.2, src: "swoosh_u", lead: SWOOSH_PEAK, v: 0.5 });
+  }
   // a swoosh on every zoom, unless another effect already lands there
   for (const z of c.zooms) {
     const at = z.f / FPS;
