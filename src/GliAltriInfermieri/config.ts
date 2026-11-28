@@ -26,7 +26,7 @@ export type ReelConfig = {
   captions: CaptionGroup[];
   /** vertical centre of captions, fraction of height (chest level, below every face) */
   captionY: number;
-  hook: { from: number; to: number; y: number; lines: HookLine[]; hideCaptions: boolean };
+  hook: { from: number; to: number; y: number; lines: HookLine[]; hideCaptions: boolean; riserPeak?: number };
   stickers: Sticker[];
   stickerY: number;
   flashes: Flash[];
@@ -62,6 +62,7 @@ export const CORTISOLO: ReelConfig = {
     to: 3.18,
     y: 0.6,
     hideCaptions: true,
+    riserPeak: 3.1,
     lines: [
       { text: "Il test che", kind: "small" },
       { text: "TUTTI", kind: "big" },

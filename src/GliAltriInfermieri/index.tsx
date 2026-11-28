@@ -369,6 +369,8 @@ const Sfx: React.FC<{ c: ReelConfig }> = ({ c }) => {
   const cues: { at: number; src: string; lead: number; v: number }[] = [];
   const swoosh = (at: number, v: number) => cues.push({ at, src: "swoosh_u", lead: SWOOSH_PEAK, v });
   swoosh(c.hook.from + SWOOSH_PEAK, 0.8);
+  // riser under the hook question, peaking as it lands (riser.wav peaks 2.85 s in)
+  if (c.hook.riserPeak !== undefined) cues.push({ at: c.hook.riserPeak, src: "riser", lead: 2.85, v: 0.55 });
   for (const s of c.stickers) {
     cues.push({ at: s.from, src: "pop_u", lead: 0.02, v: 1 });
     if (s.kind === "img" && s.xAt !== undefined) cues.push({ at: s.xAt, src: "wrong", lead: 0.05, v: 0.7 });
