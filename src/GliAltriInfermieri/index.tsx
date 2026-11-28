@@ -332,21 +332,19 @@ const Slogan: React.FC<{ c: ReelConfig; t: number }> = ({ c, t }) => {
         transform: `translateY(-50%) scale(${0.9 + 0.1 * sa})`,
         textAlign: "center",
         opacity: sa,
-        background: "rgba(20,20,20,.88)",
-        borderRadius: 34,
-        padding: "34px 40px 40px",
         color: "#fff",
         fontFamily: SANS,
-        boxShadow: "0 20px 40px rgba(0,0,0,.35)",
+        // no box: a soft dark halo keeps the type readable on the footage
+        textShadow: "0 3px 14px rgba(0,0,0,.85), 0 0 5px rgba(0,0,0,.7), 0 0 2px rgba(0,0,0,.9)",
       }}
     >
-      <div style={{ fontWeight: 300, fontSize: 54, lineHeight: 1 }}>Noi siamo</div>
-      <div style={{ fontWeight: 800, fontSize: 82, lineHeight: 1.02, letterSpacing: "-0.035em", marginTop: 6 }}>
+      <div style={{ fontWeight: 300, fontSize: 58, lineHeight: 1 }}>Noi siamo</div>
+      <div style={{ fontWeight: 800, fontSize: 88, lineHeight: 1.02, letterSpacing: "-0.035em", marginTop: 6, ...outline(8) }}>
         GLIALTRINFERMIERI<span style={{ color: RED }}>.</span>
       </div>
       <div style={{ opacity: t >= c.slogan.b ? sb : 0, transform: `translateY(${(1 - sb) * 20}px)`, marginTop: 22 }}>
-        <div style={{ fontWeight: 300, fontSize: 46, lineHeight: 1.15 }}>Vi spieghiamo quello che</div>
-        <div style={{ fontWeight: 800, fontSize: 50, lineHeight: 1.15, letterSpacing: "-0.02em" }}>
+        <div style={{ fontWeight: 300, fontSize: 50, lineHeight: 1.15 }}>Vi spieghiamo quello che</div>
+        <div style={{ fontWeight: 800, fontSize: 56, lineHeight: 1.15, letterSpacing: "-0.02em", ...outline(7) }}>
           <span style={{ color: LIME }}>gli altri</span> non vi spiegano<span style={{ color: RED }}>.</span>
         </div>
       </div>
@@ -355,28 +353,29 @@ const Slogan: React.FC<{ c: ReelConfig; t: number }> = ({ c, t }) => {
 };
 
 // ---------------------------------------------------------------- sound effects
+// Swoosh peaks 0.35 s after it starts, so it is started early to peak on the visual change.
+const SWOOSH_PEAK = 0.35;
 const Sfx: React.FC<{ c: ReelConfig }> = ({ c }) => {
-  const cues: { t: number; src: string; v: number }[] = [];
-  cues.push({ t: c.hook.from, src: "swoosh", v: 0.8 });
+  // at = moment the sound must land on
+  const cues: { at: number; src: string; lead: number; v: number }[] = [];
+  const swoosh = (at: number, v: number) => cues.push({ at, src: "swoosh_u", lead: SWOOSH_PEAK, v });
+  swoosh(c.hook.from + SWOOSH_PEAK, 0.8);
   for (const s of c.stickers) {
-    cues.push({ t: s.from, src: "pop", v: 0.9 });
-    if (s.kind === "img" && s.xAt !== undefined) cues.push({ t: s.xAt, src: "wrong", v: 0.85 });
+    cues.push({ at: s.from, src: "pop_u", lead: 0.02, v: 1 });
+    if (s.kind === "img" && s.xAt !== undefined) cues.push({ at: s.xAt, src: "wrong", lead: 0.05, v: 0.7 });
   }
-  for (const f of c.flashes) {
-    cues.push({ t: Math.max(0, f.from - 0.1), src: "swoosh", v: 0.8 });
-    cues.push({ t: f.from, src: "impact", v: 0.7 });
-  }
-  // a short whoosh on every zoom, unless another effect already sits there
+  for (const f of c.flashes) swoosh(f.from, 0.9);
+  // a swoosh on every zoom, unless another effect already lands there
   for (const z of c.zooms) {
-    const t = z.f / FPS;
-    if (t < 0.2) continue;
-    if (cues.some((q) => Math.abs(q.t - t) < 0.25)) continue;
-    cues.push({ t: Math.max(0, t - 0.06), src: "zoom", v: 0.6 });
+    const at = z.f / FPS;
+    if (at < 0.5) continue;
+    if (cues.some((q) => Math.abs(q.at - at) < 0.3)) continue;
+    swoosh(at, 0.7);
   }
   return (
     <>
       {cues.map((q, i) => (
-        <Sequence key={i} from={sec(q.t)} durationInFrames={sec(1.4)} layout="none">
+        <Sequence key={i} from={Math.max(0, sec(q.at - q.lead))} durationInFrames={sec(1.2)} layout="none">
           <Audio src={staticFile(`gai/sfx/${q.src}.wav`)} volume={q.v} />
         </Sequence>
       ))}
