@@ -1,5 +1,6 @@
 import {
   AbsoluteFill,
+  Audio,
   Img,
   interpolate,
   OffthreadVideo,
@@ -394,6 +395,9 @@ const Table: React.FC = () => {
   );
 };
 
+// Sound effects only (the client adds the music): her pop on the question,
+// a soft water-like bloop when the freeze frame and table dissolve in, her
+// pop again on "Condividilo".
 export const Acqua: React.FC = () => (
   <AbsoluteFill style={{ backgroundColor: "black" }}>
     <Sequence durationInFrames={s(HOOK_LEN) + 1}>
@@ -401,6 +405,15 @@ export const Acqua: React.FC = () => (
     </Sequence>
     <Sequence from={s(HOOK_LEN)}>
       <Table />
+    </Sequence>
+    <Sequence from={3}>
+      <Audio src={staticFile("sfx/pop_user.wav")} volume={0.6} />
+    </Sequence>
+    <Sequence from={s(HOOK_LEN)}>
+      <Audio src={staticFile("sfx/soft_bloop.wav")} volume={0.55} />
+    </Sequence>
+    <Sequence from={s(HOOK_LEN) + s(TABLE_LEN - 2.2)}>
+      <Audio src={staticFile("sfx/pop_user.wav")} volume={0.6} />
     </Sequence>
   </AbsoluteFill>
 );
