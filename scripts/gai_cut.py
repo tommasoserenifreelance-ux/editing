@@ -22,6 +22,8 @@ for s,e,_ in cuts:
     if s>t: keep.append((t,s))
     t=e
 keep.append((t,end))
+snap=lambda x: round(round(x*24)/24,6)
+keep=[(snap(a),snap(b)) for a,b in keep]
 print(name,'cuts',cuts);print('keep',len(keep),'new dur',round(sum(e-s for s,e in keep),2),'old',round(dur,2))
 json.dump(keep,open(f'in/{name}.keep.json','w'))
 # remap words
@@ -38,8 +40,8 @@ json.dump(nw,open(f'in/{name}.words.cut.json','w'),ensure_ascii=False)
 fc='';cat=''
 for i,(s,e) in enumerate(keep):
     d=e-s
-    fc+=f"[0:v]trim={s}:{e},setpts=PTS-STARTPTS[v{i}];[0:a]atrim={s}:{e},asetpts=PTS-STARTPTS,afade=t=in:d=0.012,afade=t=out:st={max(0,d-0.012)}:d=0.012[a{i}];"
+    fc+=f"[0:v]trim=start_frame={round(s*24)}:end_frame={round(e*24)},setpts=PTS-STARTPTS[v{i}];[0:a]atrim={s}:{e},asetpts=PTS-STARTPTS,afade=t=in:d=0.012,afade=t=out:st={max(0,d-0.012)}:d=0.012[a{i}];"
     cat+=f"[v{i}][a{i}]"
 fc+=f"{cat}concat=n={len(keep)}:v=1:a=1[v][a]"
-subprocess.run(['ffmpeg','-v','error','-y','-i',f'in/{name}.mov','-filter_complex',fc,'-map','[v]','-map','[a]','-r','24','-c:v','libx264','-crf','14','-preset','fast','-pix_fmt','yuv420p','-c:a','aac','-b:a','256k','-ar','48000',f'/workspace/editing/public/gai/{name}_cut.mp4'],check=True)
+subprocess.run(['ffmpeg','-v','error','-y','-i',f'in/{name}.mov','-filter_complex',fc,'-map','[v]','-map','[a]','-c:v','libx264','-crf','14','-preset','fast','-pix_fmt','yuv420p','-c:a','aac','-b:a','256k','-ar','48000',f'/workspace/editing/public/gai/{name}_cut.mp4'],check=True)
 json.dump(keep,open(f'/workspace/editing/public/gai/{name}_keep.json','w'))

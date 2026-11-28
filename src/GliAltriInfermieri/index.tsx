@@ -14,13 +14,13 @@ import {
   staticFile,
   useCurrentFrame,
 } from "remotion";
-import { DISPLAY, FPS, H, INK, LIME, PAPER, RED, SANS, W } from "./brand";
+import { DISPLAY, FPS, H, INK, LIME, RED, SANS, W } from "./brand";
 import { CaptionGroup, Flash, HookLine, ReelConfig, Sticker } from "./config";
 
 export { AGHI, CORTISOLO } from "./config";
 
 const sec = (s: number) => Math.round(s * FPS);
-export const reelDuration = (c: ReelConfig) => sec(c.videoDuration + c.tail);
+export const reelDuration = (c: ReelConfig) => c.videoFrames + sec(c.tail);
 
 // ---------------------------------------------------------------- fonts
 const FONTS: [string, string, string][] = [
@@ -42,7 +42,7 @@ const useFonts = () => {
   }, [handle]);
 };
 
-const inAny = (t: number, ws: [number, number][]) => ws.some(([a, b]) => t >= a && t < b);
+const inAny = (f: number, ws: [number, number][]) => ws.some(([a, b]) => f >= a && f < b);
 
 // Bold white type with a dark outline: readable on any shot.
 const outline = (px: number): React.CSSProperties => ({
@@ -52,24 +52,31 @@ const outline = (px: number): React.CSSProperties => ({
 });
 
 // ---------------------------------------------------------------- zoom
-const zoomAt = (c: ReelConfig, t: number) => {
-  const close = inAny(t, c.closeups);
+const DRIFT = 0.02;
+const zoomAt = (c: ReelConfig, frame: number) => {
+  const close = inAny(frame, c.closeups);
+  const cap = (v: number) => (close ? Math.min(v, 1.05) : v);
   let i = 0;
-  while (i + 1 < c.zooms.length && c.zooms[i + 1][0] <= t) i++;
-  const cap = (s: number) => (close ? Math.min(s, 1.05) : s);
-  const [t0, s0] = c.zooms[i];
-  const prev = i > 0 ? cap(c.zooms[i - 1][1]) : cap(s0);
-  const t1 = i + 1 < c.zooms.length ? c.zooms[i + 1][0] : c.videoDuration + c.tail;
-  const punch = interpolate(t - t0, [0, 0.16], [prev, cap(s0)], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: Easing.out(Easing.cubic),
-  });
-  const drift = interpolate(t, [t0, t1], [0, 0.025], { extrapolateRight: "clamp" });
+  while (i + 1 < c.zooms.length && c.zooms[i + 1].f <= frame) i++;
+  const z = c.zooms[i];
+  const f1 = i + 1 < c.zooms.length ? c.zooms[i + 1].f : reelDuration(c);
+  const drift = interpolate(frame, [z.f, f1], [0, DRIFT], { extrapolateRight: "clamp" });
+  let scale = cap(z.s) + drift;
+  if (!z.instant && i > 0) {
+    // quick punch (3 frames) from where the previous framing ended
+    const p = c.zooms[i - 1];
+    const from = cap(p.s) + DRIFT;
+    scale = interpolate(frame - z.f, [0, 3], [from, cap(z.s)], {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+      easing: Easing.out(Easing.cubic),
+    }) + drift;
+  }
   // flashes punch in a bit more
-  const fl = c.flashes.find((f) => t >= f.from && t < f.to);
-  const flashBoost = fl ? interpolate(t - fl.from, [0, 0.12], [0, 0.08], { extrapolateRight: "clamp" }) : 0;
-  return { scale: punch + drift + flashBoost, originY: close ? 0 : 30 };
+  const t = frame / FPS;
+  const fl = c.flashes.find((x) => t >= x.from && t < x.to);
+  const flashBoost = fl ? interpolate(t - fl.from, [0, 0.08], [0, 0.08], { extrapolateRight: "clamp" }) : 0;
+  return { scale: scale + flashBoost, originY: close ? 0 : 30 };
 };
 
 // ---------------------------------------------------------------- captions
@@ -79,9 +86,10 @@ const Captions: React.FC<{ c: ReelConfig; t: number }> = ({ c, t }) => {
     c.flashes.some((f) => t >= f.from - 0.02 && t < f.to) ||
     t >= c.slogan.a;
   if (hidden) return null;
-  const g: CaptionGroup | undefined = c.captions.find((x) => t >= x.start && t < x.end);
+  const LEAD = 2 / FPS;
+  const g: CaptionGroup | undefined = c.captions.find((x) => t + LEAD >= x.start && t + LEAD < x.end);
   if (!g) return null;
-  const local = (t - g.start) * FPS;
+  const local = (t + LEAD - g.start) * FPS;
   const pop = spring({ frame: local, fps: FPS, config: { damping: 14, stiffness: 260, mass: 0.6 } });
   return (
     <div
@@ -101,7 +109,7 @@ const Captions: React.FC<{ c: ReelConfig; t: number }> = ({ c, t }) => {
       }}
     >
       {g.words.map((w, i) => {
-        const on = t >= w.t - 0.04;
+        const on = t + LEAD >= w.t;
         const color = w.style === "lime" ? LIME : w.style === "red" ? RED : "#fff";
         return (
           <span key={i} style={{ color, opacity: on ? 1 : 0.0, ...outline(14) }}>
@@ -233,28 +241,6 @@ const FlashTitle: React.FC<{ fl: Flash; t: number; y: number }> = ({ fl, t, y })
 const stickerOutline =
   "drop-shadow(6px 0 0 #fff) drop-shadow(-6px 0 0 #fff) drop-shadow(0 6px 0 #fff) drop-shadow(0 -6px 0 #fff) drop-shadow(0 18px 24px rgba(0,0,0,.4))";
 
-const Clock: React.FC<{ f: number }> = ({ f }) => {
-  // hands sweep in and settle on 8:15
-  const k = interpolate(f, [0, 12], [0, 1], { extrapolateRight: "clamp", easing: Easing.out(Easing.back(1.6)) });
-  const minute = -270 + k * (90 + 270); // ends at 90deg (15 min)
-  const hour = 240 + 7.5; // 8:15
-  return (
-    <svg width={330} height={330} viewBox="-110 -110 220 220" style={{ filter: "drop-shadow(0 18px 24px rgba(0,0,0,.4))" }}>
-      <circle r={100} fill={PAPER} stroke="#fff" strokeWidth={10} />
-      <circle r={92} fill={PAPER} stroke={INK} strokeWidth={7} />
-      {Array.from({ length: 12 }, (_, i) => (
-        <rect key={i} x={-3} y={-84} width={6} height={i % 3 === 0 ? 18 : 10} rx={3} fill={INK} transform={`rotate(${i * 30})`} />
-      ))}
-      <rect x={-5} y={-50} width={10} height={58} rx={5} fill={INK} transform={`rotate(${hour * k})`} />
-      <rect x={-3.5} y={-74} width={7} height={82} rx={3.5} fill={RED} transform={`rotate(${minute})`} />
-      <circle r={9} fill={LIME} stroke={INK} strokeWidth={3} />
-      <text y={58} textAnchor="middle" fontFamily={DISPLAY} fontSize={30} fill={INK}>
-        8:15
-      </text>
-    </svg>
-  );
-};
-
 const StickerView: React.FC<{ s: Sticker; t: number; y: number }> = ({ s, t, y }) => {
   if (t < s.from || t >= s.to) return null;
   const f = (t - s.from) * FPS;
@@ -269,7 +255,7 @@ const StickerView: React.FC<{ s: Sticker; t: number; y: number }> = ({ s, t, y }
   };
   let body: React.ReactNode = null;
   if (s.kind === "img") {
-    body = <Img src={staticFile(s.src)} style={{ width: s.w, maxHeight: 330, objectFit: "contain", filter: stickerOutline }} />;
+    body = <Img src={staticFile(s.src)} style={{ width: s.w, maxHeight: 340, objectFit: "contain", filter: stickerOutline }} />;
   } else if (s.kind === "photo") {
     body = (
       <Img
@@ -277,8 +263,6 @@ const StickerView: React.FC<{ s: Sticker; t: number; y: number }> = ({ s, t, y }
         style={{ width: s.w, borderRadius: 30, border: "10px solid #fff", boxShadow: "0 18px 30px rgba(0,0,0,.4)", display: "block" }}
       />
     );
-  } else if (s.kind === "clock") {
-    body = <Clock f={f} />;
   } else {
     body = (
       <div
@@ -292,7 +276,9 @@ const StickerView: React.FC<{ s: Sticker; t: number; y: number }> = ({ s, t, y }
         }}
       >
         <div style={{ fontFamily: DISPLAY, fontSize: 118, lineHeight: 0.95, color: "#fff" }}>
-          <span style={{ color: LIME }}>{s.big.split(" ").slice(0, 2).join(" ")}</span> {s.big.split(" ").slice(2).join(" ")}
+          <span style={{ color: LIME }}>{s.big.split(" ").slice(0, 2).join(" ")}</span>
+          <br />
+          {s.big.split(" ").slice(2).join(" ")}
           <span style={{ color: RED }}>.</span>
         </div>
       </div>
@@ -342,8 +328,9 @@ const Slogan: React.FC<{ c: ReelConfig; t: number }> = ({ c, t }) => {
         position: "absolute",
         left: 70,
         right: 70,
-        top: c.captionY * H - 40,
+        top: c.slogan.y * H,
         transform: `translateY(-50%) scale(${0.9 + 0.1 * sa})`,
+        textAlign: "center",
         opacity: sa,
         background: "rgba(20,20,20,.88)",
         borderRadius: 34,
@@ -370,14 +357,21 @@ const Slogan: React.FC<{ c: ReelConfig; t: number }> = ({ c, t }) => {
 // ---------------------------------------------------------------- sound effects
 const Sfx: React.FC<{ c: ReelConfig }> = ({ c }) => {
   const cues: { t: number; src: string; v: number }[] = [];
-  cues.push({ t: c.hook.from, src: "swoosh", v: 0.5 });
+  cues.push({ t: c.hook.from, src: "swoosh", v: 0.8 });
   for (const s of c.stickers) {
-    cues.push({ t: s.from, src: "pop", v: 0.55 });
-    if (s.kind === "img" && s.xAt !== undefined) cues.push({ t: s.xAt, src: "wrong", v: 0.6 });
+    cues.push({ t: s.from, src: "pop", v: 0.9 });
+    if (s.kind === "img" && s.xAt !== undefined) cues.push({ t: s.xAt, src: "wrong", v: 0.85 });
   }
   for (const f of c.flashes) {
-    cues.push({ t: Math.max(0, f.from - 0.12), src: "swoosh", v: 0.5 });
-    cues.push({ t: f.from, src: "impact", v: 0.4 });
+    cues.push({ t: Math.max(0, f.from - 0.1), src: "swoosh", v: 0.8 });
+    cues.push({ t: f.from, src: "impact", v: 0.7 });
+  }
+  // a short whoosh on every zoom, unless another effect already sits there
+  for (const z of c.zooms) {
+    const t = z.f / FPS;
+    if (t < 0.2) continue;
+    if (cues.some((q) => Math.abs(q.t - t) < 0.25)) continue;
+    cues.push({ t: Math.max(0, t - 0.06), src: "zoom", v: 0.6 });
   }
   return (
     <>
@@ -395,9 +389,9 @@ export const GaiReel: React.FC<{ config: ReelConfig }> = ({ config: c }) => {
   useFonts();
   const frame = useCurrentFrame();
   const t = frame / FPS;
-  const z = zoomAt(c, t);
+  const z = zoomAt(c, frame);
   const flash = c.flashes.find((f) => t >= f.from && t < f.to);
-  const lastFrame = sec(c.videoDuration) - 1;
+  const lastFrame = c.videoFrames - 1;
   return (
     <AbsoluteFill style={{ background: INK }}>
       <AbsoluteFill
